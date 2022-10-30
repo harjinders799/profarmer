@@ -1,0 +1,186 @@
+import * as React from 'react'
+import { View, StyleSheet, TouchableOpacity } from 'react-native'
+import { useRoute, useTheme } from '@react-navigation/native'
+import Button from 'src/components/button';
+import Input from 'src/components/input';
+import Text from 'src/components/text';
+import DateTimePick from 'src/components/DateTime';
+import { currentStamp, dateFormat } from 'src/utils/dateformat';
+import { submitInterestAmount } from 'src/network/interest-service';
+import Loader from 'src/components/loader';
+import BaseView from 'src/container/base';
+import { ToastError, ToastSuccess } from 'src/utils/toast';
+import DataPicker from 'src/components/dataPicker';
+import { strings } from 'src/translations/locale';
+import { navigate } from 'src/navigation/ref';
+import { useStore } from 'src/context/context';
+import { goBack } from 'src/navigation/ref';
+import { updateIneterstAmt } from 'src/network/interest-service';
+import { submitLabourExpense } from '../../network/labour-service';
+import Header from '../../components/header';
+import Icon from '../../components/icon';
+
+
+
+export default function AddLabourExpense() {
+    const { colors } = useTheme();
+    const { setLabours, labours } = useStore();
+    const { params } = useRoute();
+    const editData = params?.data ?? {};
+    const refAmt = React.useRef()
+    const [data, setData] = React.useState({
+        id: editData?.id ?? "",
+        labour: editData?.labour ?? "",
+        detail: editData?.detail ?? "",
+        amount: editData?.amount ?? "",
+        date: editData?.date ? new Date(editData?.date) : new Date(),
+    });
+    const [showDate, setShowDate] = React.useState(false);
+    const [loading, setLoading] = React.useState(false);
+
+    const { labour, detail, amount, date } = data;
+
+    const onChangeValue = (key, value) => {
+        setData({
+            ...data,
+            [key]: value
+        })
+        if (key == 'labour') refAmt.current.focus();
+    }
+
+    const onPress = () => {
+        if (editData.labour) updateWt()
+        else AddNew()
+    }
+    const updateWt = async () => {
+        if (labour == "") {
+            ToastError(strings.giver_name, "Amount")
+        } else if (amount.trim() == "" || parseInt(amount) <= 0) {
+            ToastError(strings.amount, "Amount")
+        }
+        else {
+            setLoading(true);
+            let res = await updateIneterstAmt({
+                ...data,
+                date: currentStamp(date),
+            });
+            setLoading(false);
+            ToastSuccess(strings.picker_amt_added, "Amount")
+            navigate("Main")
+        }
+    };
+    const AddNew = async () => {
+        if (labour == "") {
+            ToastError(strings.err_picker, "Amount")
+        } else if (amount.trim() == "" || parseInt(amount) <= 0) {
+            ToastError(strings.amount, "Amount")
+        }
+        else {
+            setLoading(true);
+            let res = await submitLabourExpense({
+                ...data,
+                labour: labour.trim(),
+                date: currentStamp(date),
+            });
+            setLoading(false);
+            ToastSuccess(strings.picker_amt_added, "Amount")
+            let name = labour.trim();
+            if (Array.isArray(labours) && labours.length) {
+                let exist = labours.findIndex(o => o.toUpperCase() === name.toUpperCase())
+                if (exist == -1) {
+                    setLabours([...labours, name])
+                }
+            } else {
+                setLabours([name])
+            }
+            // setInterstRate(amount)
+            goBack();
+            // }
+        }
+    };
+
+
+    return (
+        <BaseView style={styles.container}>
+            <Loader visible={loading} />
+            <Header
+                leftComponent={
+                    <Icon name="back" size={28} color={colors.text} onPress={() => goBack()} />
+                }
+                centerComponent={
+                    <Text h2>
+                        {strings.add_expense}
+                    </Text>
+                }
+                rightComponent={<Text h2>   </Text>}
+            />
+            <View style={styles.form}>
+                <DataPicker
+                    data={labours}
+                    intialVisible={!editData?.labour}
+                    placeholder={strings.labour}
+                    selectedItem={labour}
+                    setSelectedItem={(val) => { onChangeValue('labour', val) }}
+                />
+                {/* <Input
+                    refs={refAmt}
+                    placeholder={strings.taken_amount}
+                    value={amount}
+                    keyboardType="number-pad"
+                    setValue={(value) => onChangeValue('amount', value)}
+                /> */}
+                <Input
+                    refs={refAmt}
+                    placeholder={strings.amount}
+                    value={amount}
+                    keyboardType="number-pad"
+                    setValue={(value) => onChangeValue('amount', value)}
+                />
+                <Input
+                    placeholder={strings.remark}
+                    multiline
+                    autoCapitalize='words'
+                    value={detail}
+                    setValue={(value) => onChangeValue('detail', value)}
+                />
+                <TouchableOpacity style={[styles.date, { borderColor: colors.border }]} onPress={() => setShowDate(true)}>
+                    <Text h3 medium >{dateFormat(date)}</Text>
+                </TouchableOpacity>
+                <DateTimePick
+                    show={showDate}
+                    setShow={setShowDate}
+                    date={date}
+                    setDate={(data) => onChangeValue("date", data)}
+                />
+                <Button
+                    label={strings.save}
+                    onPress={onPress}
+                />
+            </View>
+        </BaseView>
+    )
+}
+const styles = StyleSheet.create({
+    container: {
+    },
+    type: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-around",
+        paddingBottom: 20,
+    },
+    date: {
+        borderWidth: 1,
+        height: 50,
+        width: '100%',
+        borderRadius: 10,
+        marginVertical: 5,
+        marginBottom: 30,
+        justifyContent: 'center',
+        paddingHorizontal: 10
+    },
+    form: {
+        paddingVertical: 25,
+        width: '100%'
+    },
+});

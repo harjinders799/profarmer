@@ -1,0 +1,92 @@
+{
+  "project_info": {
+    "project_number": "416058833468",
+    "project_id": "pro--farmer",
+    "storage_bucket": "pro--farmer.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:416058833468:android:821a5ec4399bb0377de139",
+        "android_client_info": {
+          "package_name": "com.calcy.farmer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "416058833468-22rqvjnolkk9sjcrss8s9mpsbk2cg6va.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.calcy.farmer",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "416058833468-c5t3td6e94o6ud3pf9c63gh1uhtbar79.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.calcy.farmer",
+            "certificate_hash": "353597ebc1b3efaa771a7754c8e10589a6acba2d"
+          }
+        },
+        {
+          "client_id": "416058833468-n8mtpeeg6kqfiq3v6io30gpeprpaktdv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.calcy.farmer",
+            "certificate_hash": "520c13c66b89d61342d86c848c1a4ec45cda89f5"
+          }
+        },
+        {
+          "client_id": "416058833468-5rn56d49jdg3ar3e0mp2o4e5nio1o65g.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBRyj5dwFu1hHNf65F0cXKMueLd3swanTY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "416058833468-5rn56d49jdg3ar3e0mp2o4e5nio1o65g.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:416058833468:android:0e54543844b10f567de139",
+        "android_client_info": {
+          "package_name": "com.profarmer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "416058833468-5rn56d49jdg3ar3e0mp2o4e5nio1o65g.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBRyj5dwFu1hHNf65F0cXKMueLd3swanTY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "416058833468-5rn56d49jdg3ar3e0mp2o4e5nio1o65g.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
