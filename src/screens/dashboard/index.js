@@ -18,6 +18,8 @@ import { useStore } from 'src/context/context'
 import List from 'src/container/list'
 import Loader from '../../components/loader'
 import { ToastError } from '../../utils/toast'
+import Button from '../../components/button'
+import { navigate } from '../../navigation/ref'
 
 export default function DashBoard({ navigation }) {
     const { lang } = useLang();
@@ -62,18 +64,24 @@ export default function DashBoard({ navigation }) {
     }, [data]);
 
     return (
-        <BaseView addBtn onPress={() => navigation.navigate("AddForm")}>
+        <BaseView>
             <Loader visible={loading} />
-            {/* <Header
-                leftComponent={<LanguagePicker />}
-                rightComponent={
-                    <TouchableOpacity onPress={()=>navigation.navigate("Setting")}>
-                        <Logo
-                            style={{ width: 50, height: 50 }}
-                        />
-                    </TouchableOpacity>
+            <Header
+                leftComponent={
+                    <Button
+                        label={strings.aadhat_expense}
+                        btnStyle={{ width: '40%' }}
+                        onPress={() => navigate('AddForm')}
+                    />
                 }
-            /> */}
+                rightComponent={
+                    <Button
+                        label={strings.add_crop}
+                        btnStyle={{ width: '40%' }}
+                        onPress={() => navigate('AddCrop')}
+                    />
+                }
+            />
             {/* <Text h2 style={{ paddingTop: 10 }}>
                 {strings.total_amount} {sumBy(arr, o => o.total)} Rs
             </Text>
@@ -86,7 +94,7 @@ export default function DashBoard({ navigation }) {
                 </Text>
             </View> */}
             <Text h2 style={[commonStyle.p_v_10, { borderBottomWidth: StyleSheet.hairlineWidth }]}>
-                {strings.givers_list}
+                {strings.aadhatiya_hisab}
             </Text>
             <List data={data} />
         </BaseView>

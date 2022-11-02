@@ -16,7 +16,7 @@ import { navigate } from 'src/navigation/ref';
 import { useStore } from 'src/context/context';
 import { goBack } from 'src/navigation/ref';
 import { updateIneterstAmt } from 'src/network/interest-service';
-import { submitLabourExpense } from '../../network/labour-service';
+import { getLabourByName, submitLabour, submitLabourExpense } from '../../network/labour-service';
 import Header from '../../components/header';
 import Icon from '../../components/icon';
 
@@ -77,11 +77,22 @@ export default function AddLabourExpense() {
         }
         else {
             setLoading(true);
+
             let res = await submitLabourExpense({
                 ...data,
                 labour: labour.trim(),
                 date: currentStamp(date),
             });
+            let exist = await getLabourByName(labour.trim())
+            console.log(exist)
+            if (Array.isArray(exist) && !exist.length) {
+                await submitLabour({
+                    count: 0,
+                    rate: 0,
+                    labour: labour.trim(),
+                    date: currentStamp(date),
+                });
+            }
             setLoading(false);
             ToastSuccess(strings.picker_amt_added, "Amount")
             let name = labour.trim();

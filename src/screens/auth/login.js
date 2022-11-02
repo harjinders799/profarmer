@@ -18,7 +18,7 @@ import OtpInputs from 'react-native-otp-inputs'
 import Icon from 'src/components/icon';
 import { replace } from 'src/navigation/ref';
 
-import { LoginButton, AccessToken, LoginManager } from 'react-native-fbsdk-next';
+import { LoginButton, AccessToken, LoginManager, GraphRequest, GraphRequestManager } from 'react-native-fbsdk-next';
 import { GoogleSignin, GoogleSigninButton, statusCodes } from '@react-native-google-signin/google-signin';
 import { blue } from 'src/utils/color';
 
@@ -136,6 +136,25 @@ const Login = ({ navigation }) => {
             }
         }
     };
+
+
+    const getFacebookEmail = () => new Promise(resolve => {
+        const infoRequest = new GraphRequest(
+            '/me?fields=email',
+            null,
+            (error, result) => {
+                if (error) {
+                    resolve(null);
+                    return;
+                }
+
+                resolve(result.email);
+            },
+        );
+        new GraphRequestManager().addRequest(infoRequest).start();
+    });
+
+
     async function onFacebookButtonPress() {
         // Attempt login with permissions
         const result = await LoginManager.logInWithPermissions(['public_profile', 'email']);
@@ -151,7 +170,29 @@ const Login = ({ navigation }) => {
         const facebookCredential = Auth.FacebookAuthProvider.credential(data.accessToken);
 
         // Sign-in the user with the credential
-        await Auth().signInWithCredential(facebookCredential);
+        await Auth().signInWithCredential(facebookCredential).then((res) => {
+            ToastSuccess(`Yay! Success`, 'Login')
+        })
+            .catch(async (error) => {
+                if (
+                    error.code &&
+                    error.code === 'auth/account-exists-with-different-credential'
+                ) {
+                    const email = await getFacebookEmail();
+                    if (email) {
+                        let provider = await Auth().fetchSignInMethodsForEmail(email);
+                        if (provider[0] == "google.com") {
+                            ToastError(`You have already used "${email}". Please continue with Google login.`, 'Facebook')
+                            signInG();
+                            return;
+                        }
+                        if (provider[0]) {
+                            signInG();
+                            ToastError(`You have already used "${email}". Please continue with Email and Password or Try with Google Login.`, 'Facebook');
+                        }
+                    }
+                }
+            })
         // replace('Main');
     }
     return (

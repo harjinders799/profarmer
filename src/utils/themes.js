@@ -7,7 +7,7 @@ export const themeLight = {
     background: colors.white,
     card: colors.white,
     text: colors.gray5,
-    border: colors.gray2,
+    border: colors.gray4,
     error: colors.red,
     success: colors.green,
     warning: colors.orange,

@@ -105,7 +105,7 @@ function Modal(props) {
             styles.modal,
             {
               height: height,
-              backgroundColor: colors.border,
+              backgroundColor: colors.secondaryBackground,
               bottom: bottom,
             },
           ]}>

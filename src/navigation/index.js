@@ -35,7 +35,6 @@ export default function Navigation() {
         if (initializing) setInitializing(false);
     }
     useEffect(() => {
-        console.log('=====================================')
         const subscriber = Auth().onAuthStateChanged(onAuthStateChanged);
         return subscriber; // unsubscribe on unmount
     }, []);

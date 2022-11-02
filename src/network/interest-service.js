@@ -1,4 +1,4 @@
-import { Auth, firestore, storage } from "src/service/setup";
+import { Auth, firestore } from "src/service/setup";
 
 export const submitInterestAmount = async (data) => {
     return new Promise(async function (resolve, reject) {
@@ -41,44 +41,6 @@ export const deleteIneterstAmt = async (id) => {
     })
 };
 
-export const submitPickerExpense = async (data) => {
-    return new Promise(async function (resolve, reject) {
-        try {
-            let id = Auth().currentUser?.uid;
-            await firestore()
-                .collection('picker_expense')
-                .add({ ...data, uid: id });
-            resolve("success")
-        } catch (error) {
-            reject(new Error(error));
-        }
-    })
-};
-
-export const getPickerExpense = async (name) => {
-    return new Promise(async function (resolve, reject) {
-        try {
-            let userId = Auth().currentUser?.uid;
-            await firestore()
-                .collection('picker_expense')
-                .where('uid', '==', userId)
-                .where('picker', '==', name)
-                .get()
-                .then(querySnapshot => {
-                    let arr = [];
-                    querySnapshot.forEach(documentSnapshot => {
-                        arr.push(documentSnapshot.data());
-                    });
-                    resolve(arr)
-                })
-            resolve("success")
-        } catch (error) {
-            reject(new Error(error));
-        }
-    })
-};
-
-
 export const getInterstAmount = () => {
     return new Promise(async function (resolve, reject) {
         let userId = Auth().currentUser?.uid;
@@ -99,18 +61,58 @@ export const getInterstAmount = () => {
     })
 }
 
-export const getCottonByPicker = (search) => {
+export const submitCrop = async (data) => {
+    return new Promise(async function (resolve, reject) {
+        try {
+            let id = Auth().currentUser?.uid;
+            await firestore()
+                .collection('crop')
+                .add({ ...data, uid: id });
+            resolve("success")
+        } catch (error) {
+            reject(new Error(error));
+        }
+    })
+};
+export const updateCrop = async (data) => {
+    return new Promise(async function (resolve, reject) {
+        try {
+            await firestore()
+                .collection('crop')
+                .doc(data?.id)
+                .update(data);
+            resolve("success")
+        } catch (error) {
+            reject(new Error(error));
+        }
+    })
+};
+
+export const deleteCrop = async (id) => {
+    return new Promise(async function (resolve, reject) {
+        try {
+            await firestore()
+                .collection('crop')
+                .doc(id)
+                .delete()
+            resolve("success")
+        } catch (error) {
+            reject(new Error(error));
+        }
+    })
+};
+
+export const getCrops = () => {
     return new Promise(async function (resolve, reject) {
         let userId = Auth().currentUser?.uid;
         await firestore()
-            .collection('cotton')
+            .collection('crop')
             .where('uid', '==', userId)
-            .where('picker', '==', search)
             .get()
             .then(querySnapshot => {
                 let arr = [];
                 querySnapshot.forEach(documentSnapshot => {
-                    arr.push(documentSnapshot.data());
+                    arr.push({ ...documentSnapshot.data(), id: documentSnapshot.id });
                 });
                 resolve(arr)
             })

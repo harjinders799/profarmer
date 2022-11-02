@@ -17,7 +17,7 @@ import { useStore } from 'src/context/context';
 import { goBack } from 'src/navigation/ref';
 import { updateIneterstAmt } from 'src/network/interest-service';
 import Checkbox from '../../components/checkbox';
-import { submitLabour } from '../../network/labour-service';
+import { getLabourRagular, submitLabour } from '../../network/labour-service';
 import Header from '../../components/header';
 import Icon from '../../components/icon';
 
@@ -84,25 +84,31 @@ export default function AddLabour() {
         }
         else {
             setLoading(true);
-            let res = await submitLabour({
-                ...data,
-                labour: labour.trim(),
-                date: currentStamp(date),
-            });
-            setLoading(false);
-            ToastSuccess(strings.picker_amt_added, "Amount")
-            let name = labour.trim();
-            if (Array.isArray(labours) && labours.length) {
-                let exist = labours.findIndex(o => o.toUpperCase() === name.toUpperCase())
-                if (exist == -1) {
-                    setLabours([...labours, name])
-                }
-            } else {
-                setLabours([name])
+            let exist = await getLabourRagular(labour.trim());
+            if (Array.isArray(exist) && exist.length) {
+                setLoading(false);
+                ToastError("Aleady Regular Labour", "Labour")
             }
-            // setInterstRate(rate)
-            goBack();
-            // }
+            else {
+                let res = await submitLabour({
+                    ...data,
+                    labour: labour.trim(),
+                    date: currentStamp(date),
+                });
+                setLoading(false);
+                ToastSuccess(strings.picker_amt_added, "Amount")
+                let name = labour.trim();
+                if (Array.isArray(labours) && labours.length) {
+                    let exist = labours.findIndex(o => o.toUpperCase() === name.toUpperCase())
+                    if (exist == -1) {
+                        setLabours([...labours, name])
+                    }
+                } else {
+                    setLabours([name])
+                }
+                setInterstRate(rate)
+                goBack();
+            }
         }
     };
 

@@ -95,7 +95,7 @@ export default function DateWiseList({ data }) {
                                     >{tot - item?.amount} /-</Text>
                                 </Animated.View>
                                 <Button
-                                    label={"Add Leave"}
+                                    label={strings.add_leave}
                                     onPress={() => navigate('AddLabourLeave', { item })}
                                     btnStyle={{ width: '50%', height: 30, marginVertical: 10 }}
                                 />

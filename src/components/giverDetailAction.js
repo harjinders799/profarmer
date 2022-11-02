@@ -68,14 +68,14 @@ export default function GiverDetailAction({ data }) {
                     name="delete"
                     size={20}
                     color={red}
-                    style={[styles.icon, { backgroundColor: colors.border }]}
+                    style={[styles.icon, { backgroundColor: colors.secondaryBackground }]}
                     onPress={delteData}
                 />
                 <Icon
                     name="edit"
                     size={20}
                     color={orange}
-                    style={[styles.icon, { backgroundColor: colors.border }]}
+                    style={[styles.icon, { backgroundColor: colors.secondaryBackground }]}
                     onPress={() => replace("AddForm", { data })}
                 />
             </View>

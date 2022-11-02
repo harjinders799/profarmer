@@ -30,7 +30,7 @@ export default function App() {
 
   return (
     <SafeAreaProvider>
-      {/* {
+      {
         version?.needsUpdate &&
         <View style={{ alignItems: 'center' }}>
           <Text>
@@ -41,7 +41,7 @@ export default function App() {
             onPress={update}
           />
         </View>
-      } */}
+      }
       <StoreProvider>
         <CottonProvider>
           <LangProvider>

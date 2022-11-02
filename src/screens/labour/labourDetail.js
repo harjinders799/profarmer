@@ -69,43 +69,43 @@ export default function LabourDetail({ navigation }) {
         }
       />
       <ScrollView style={{ width: '100%', }} contentContainerStyle={{ paddingBottom: 150 }} showsVerticalScrollIndicator={false}>
-      <View style={[styles.row, styles.underline]}>
-        <Text h3>
-          {strings.labour}
-        </Text>
-        <Text h3 style={{ color: green }}>
-          {data?.total}
-        </Text>
-      </View>
-      <View style={[styles.row, styles.underline]}>
-        <Text h3>
-          {strings.total_labour}
-        </Text>
-        <Text h3 style={{ color: green }}>
-          {totalLabour} /-
-        </Text>
-      </View>
-      <View style={[styles.row, styles.underline]}>
-        <Text h3>
-          {strings.amount}
-        </Text>
-        <Text h3 style={{ color: red }}>
-          {expenseTot} /-
-        </Text>
-      </View>
-      <View style={[styles.row, styles.underline]}>
-        <Text h3>
-          {strings.total_amount}
-        </Text>
-        <Text h3 style={{ color: totalLabour - expenseTot > 0 ? green : red }}>
-          {totalLabour - expenseTot} /-
-        </Text>
-      </View>
+        <View style={[styles.row, styles.underline]}>
+          <Text h3>
+            {strings.labour}
+          </Text>
+          <Text h3 style={{ color: green }}>
+            {data?.total}
+          </Text>
+        </View>
+        <View style={[styles.row, styles.underline]}>
+          <Text h3>
+            {strings.total_labour}
+          </Text>
+          <Text h3 style={{ color: green }}>
+            {totalLabour} /-
+          </Text>
+        </View>
+        <View style={[styles.row, styles.underline]}>
+          <Text h3>
+            {strings.amount}
+          </Text>
+          <Text h3 style={{ color: red }}>
+            {expenseTot} /-
+          </Text>
+        </View>
+        <View style={[styles.row, styles.underline]}>
+          <Text h3>
+            {strings.total_amount}
+          </Text>
+          <Text h3 style={{ color: totalLabour - expenseTot > 0 ? green : red }}>
+            {totalLabour - expenseTot} /-
+          </Text>
+        </View>
         <View style={styles.wt}>
           <Text h4 style={styles.underline}>{strings.labour_record}</Text>
           {Array.isArray(data.data) && data.data.length ?
             sortBy(data.data, (a, b) => moment(b?.date) - moment(a?.date)).map((v, i) => (
-              <LabourDetailAction key={i} data={v} />
+              data?.count ? <LabourDetailAction key={i} data={v} /> : null
             ))
             : <Text>0</Text>
           }

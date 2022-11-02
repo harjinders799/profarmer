@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { FlatList, View, StyleSheet, TouchableOpacity } from 'react-native'
-import { findIndex, flatten } from 'lodash'
+import { findIndex, flatten, includes } from 'lodash'
 import { useTheme } from '@react-navigation/native'
 import { useAuth } from 'src/context/context'
 import Text from 'src/components/text'
@@ -32,6 +32,7 @@ export default function DataPicker(props) {
         setSearchKey(selectedItem)
     }, [selectedItem])
 
+
     return (
         <View style={styles.screen}>
             <Input
@@ -42,22 +43,18 @@ export default function DataPicker(props) {
                 value={searchKey ?? selectedItem}
                 setValue={v => {
                     setSearchKey(v)
-                    // let name = v.trim();
-                    // if (Array.isArray(givers) && givers.length) {
-                    //     let exist = givers.findIndex(o => o.toUpperCase() === name.toUpperCase())
-                    //     if (exist == -1) {
-                    //         setGivers([...givers, name])
-                    //     }
-                    // } else {
-                    //     setGivers([name])
-                    // }
-                    // setSelectedItem(v)
                 }}
-                style={{ marginBottom: 10 }}
+                style={{ marginBottom: 10, height: 50 }}
             />
-            {modalVisible && data.length != 1 ?
-                <View style={[styles.modal, { backgroundColor: colors.border }]}>
-                    <Text h3 style={commonStyle.p_v_10}>{placeholder}</Text>
+            {modalVisible && (selectedItem != searchKey || !selectedItem) ?
+                <View style={[styles.modal, { backgroundColor: colors.secondaryBackground }]}>
+                    <Text h2 style={commonStyle.p_v_10}>{placeholder}</Text>
+                    {searchKey && !includes(data, searchKey) ?
+                        <Text h3
+                            onPress={() => { setSelectedItem(searchKey); setModalVisible(false); }}
+                            style={{ borderBottomWidth: StyleSheet.hairlineWidth }}
+                        >{searchKey}</Text>
+                        : null}
                     <FlatList
                         data={data}
                         keyboardShouldPersistTaps='always'
@@ -111,7 +108,7 @@ const styles = StyleSheet.create({
     modal: {
         paddingHorizontal: 20,
         height: HEIGHT / 2,
-        zIndex: 99,
+        zIndex: 900009,
         elevation: 5,
         borderRadius: 10,
         borderWidth: 1

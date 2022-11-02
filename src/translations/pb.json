@@ -62,5 +62,10 @@
     "leaves": "ਛੁੱਟੀਆਂ",
     "start_date": "ਸ਼ੁਰੂ ਤਾਰੀਖ",
     "total_days_from_start": "ਸ਼ੁਰੂਆਤ ਤੋਂ ਕੁੱਲ ਦਿਨ",
-    "labour_day": "ਮਜ਼ਦੂਰੀ ਦਿਨ"
+    "labour_day": "ਮਜ਼ਦੂਰੀ ਦਿਨ",
+    "add_leave":"ਛੁੱਟੀ ਸ਼ਾਮਲ ਕਰੋ",
+    "add_crop": "ਫਸਲ ਸ਼ਾਮਿਲ ਕਰੋ",
+    "aadhat_expense":"ਆੜ੍ਹਤੀਆ ਖਰਚਾ",
+    "aadhatiya_hisab":"ਆੜ੍ਹਤੀਏ ਦਾ ਹਿਸਾਬ",
+    "crop": "ਫਸਲ"
 }

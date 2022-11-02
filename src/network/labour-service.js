@@ -60,6 +60,48 @@ export const getLabourData = () => {
     })
 }
 
+export const getLabourRagular = (name) => {
+    return new Promise(async function (resolve, reject) {
+        let userId = Auth().currentUser?.uid;
+        await firestore()
+            .collection('labour')
+            .where('uid', '==', userId)
+            .where('labour', '==', name)
+            .where('is_regulare', '==', true)
+            .get()
+            .then(querySnapshot => {
+                let arr = [];
+                querySnapshot.forEach(documentSnapshot => {
+                    arr.push({ ...documentSnapshot.data(), id: documentSnapshot.id });
+                });
+                resolve(arr)
+            })
+            .catch(error => {
+                reject(new Error(error));
+            })
+    })
+}
+export const getLabourByName = (name) => {
+    return new Promise(async function (resolve, reject) {
+        let userId = Auth().currentUser?.uid;
+        await firestore()
+            .collection('labour')
+            .where('uid', '==', userId)
+            .where('labour', '==', name)
+            .get()
+            .then(querySnapshot => {
+                let arr = [];
+                querySnapshot.forEach(documentSnapshot => {
+                    arr.push({ ...documentSnapshot.data(), id: documentSnapshot.id });
+                });
+                resolve(arr)
+            })
+            .catch(error => {
+                reject(new Error(error));
+            })
+    })
+}
+
 export const getLabourExpense = async (name) => {
     return new Promise(async function (resolve, reject) {
         try {

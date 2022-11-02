@@ -12,6 +12,7 @@ const Input = ({
     numberType,
     keyboardType,
     inputStyle,
+    multiline = false,
     leftComponent = null,
     placeholder,
     placeholderColor,
@@ -24,19 +25,20 @@ const Input = ({
             <TextInput
                 ref={refs}
                 {...props}
+                multiline={multiline}
                 style={[styles.input, { color: colors.text }, inputStyle]}
                 value={value}
                 onChangeText={(text) => setValue(text)}
                 placeholder={placeholder}
                 keyboardType={emailType ? 'email-address' : numberType ? 'phone-pad' : keyboardType}
-                placeholderTextColor={placeholderColor}
+                placeholderTextColor={placeholderColor ?? colors.border}
             />
         </View>
     );
 };
 const styles = StyleSheet.create({
     container: {
-        height: 50,
+        // height: 50,
         width: '100%',
         flexDirection: 'row',
         alignItems: 'center',
@@ -47,7 +49,6 @@ const styles = StyleSheet.create({
     input: {
         paddingHorizontal: 15,
         fontSize: 20,
-        height: 50,
         width: '100%',
     }
 });

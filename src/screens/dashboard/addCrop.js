@@ -18,27 +18,28 @@ import { goBack } from 'src/navigation/ref';
 import { updateIneterstAmt } from 'src/network/interest-service';
 import Header from '../../components/header';
 import Icon from '../../components/icon';
+import { submitCrop, updateCrop } from '../../network/interest-service';
 
-export default function AddForm() {
+export default function AddCrop() {
     const { colors } = useTheme();
-    const { setGivers, interest_rate: storeRate, setInterstRate, givers } = useStore();
+    const { setGivers, givers } = useStore();
     const { params } = useRoute();
     const editData = params?.data ?? {};
     const refAmt = React.useRef()
     const [data, setData] = React.useState({
         id: editData?.id ?? "",
-        giver: editData?.giver ?? "",
+        agent: editData?.agent ?? "",
         detail: editData?.detail ?? "",
         amount: editData?.amount ?? "",
-        interest_rate: editData?.interest_rate ?? storeRate ?? "",
+        crop: editData?.crop ?? "",
         date: editData?.date ? new Date(editData?.date) : new Date(),
     });
     const [showDate, setShowDate] = React.useState(false);
     const [loading, setLoading] = React.useState(false);
-    const { giver, detail, amount, interest_rate, date } = data;
+    const { agent, detail, amount, crop, date } = data;
 
     React.useEffect(() => {
-        if (givers.length == 1 && !giver) onChangeValue('giver', givers[0])
+        if (givers.length == 1 && !agent) onChangeValue('agent', givers[0])
     }), [givers]
 
     const onChangeValue = (key, value) => {
@@ -46,52 +47,50 @@ export default function AddForm() {
             ...data,
             [key]: value
         })
-        if (key == 'giver') refAmt.current.focus();
     }
 
     const onPress = () => {
-        if (editData.giver) updateWt()
+        if (editData.agent) updateWt()
         else AddNew()
     }
     const updateWt = async () => {
-        if (giver == "") {
+        if (agent == "") {
             ToastError(strings.giver_name, "Amount")
         } else if (amount.trim() == "" || parseInt(amount) <= 0) {
             ToastError(strings.taken_amount, "Amount")
-        } else if (interest_rate.trim() == "" || parseInt(interest_rate) <= 0) {
-            ToastError(strings.interest_rate, "Amount")
+        } else if (crop.trim() == "" || parseInt(crop) <= 0) {
+            ToastError(strings.crop, "Amount")
         }
         else {
             setLoading(true);
-            let res = await updateIneterstAmt({
+            let res = await updateCrop({
                 ...data,
                 date: currentStamp(date),
             });
             setLoading(false);
-            setInterstRate(interest_rate)
             ToastSuccess(strings.picker_amt_added, "Amount")
             goBack();
         }
     };
 
     const AddNew = async () => {
-        if (giver == "") {
+        if (agent == "") {
             ToastError(strings.err_picker, "Amount")
         } else if (amount.trim() == "" || parseInt(amount) <= 0) {
             ToastError(strings.taken_amount, "Amount")
-        } else if (interest_rate.trim() == "" || parseInt(interest_rate) <= 0) {
-            ToastError(strings.interest_rate, "Amount")
+        } else if (crop.trim() == "" || parseInt(crop) <= 0) {
+            ToastError(strings.crop, "Amount")
         }
         else {
             setLoading(true);
-            let res = await submitInterestAmount({
+            let res = await submitCrop({
                 ...data,
-                giver: giver.trim(),
+                agent: agent.trim(),
                 date: currentStamp(date),
             });
             setLoading(false);
             ToastSuccess(strings.picker_amt_added, "Amount")
-            let name = giver.trim();
+            let name = agent.trim();
             if (Array.isArray(givers) && givers.length) {
                 let exist = givers.findIndex(o => o.toUpperCase() === name.toUpperCase())
                 if (exist == -1) {
@@ -100,7 +99,6 @@ export default function AddForm() {
             } else {
                 setGivers([name])
             }
-            setInterstRate(interest_rate)
             goBack();
             // }
         }
@@ -116,31 +114,31 @@ export default function AddForm() {
                 }
                 centerComponent={
                     <Text h2>
-                        {strings.aadhtiya}
+                        {strings.crop}
                     </Text>
                 }
                 rightComponent={<Text h2>   </Text>}
             />
             <View style={styles.form}>
+                <Input
+                    placeholder={strings.crop}
+                    value={crop}
+                    autoCapitalize='words'
+                    setValue={(value) => onChangeValue('crop', value)}
+                />
                 <DataPicker
                     data={givers}
-                    intialVisible={!editData?.giver}
-                    placeholder={strings.giver_name}
-                    selectedItem={giver}
-                    setSelectedItem={(val) => { onChangeValue('giver', val) }}
+                    // intialVisible={!editData?.agent}
+                    placeholder={strings.aadhtiya}
+                    selectedItem={agent}
+                    setSelectedItem={(val) => { onChangeValue('agent', val) }}
                 />
                 <Input
                     refs={refAmt}
-                    placeholder={strings.taken_amount}
+                    placeholder={strings.total_amount}
                     value={amount}
                     keyboardType="number-pad"
                     setValue={(value) => onChangeValue('amount', value)}
-                />
-                <Input
-                    placeholder={strings.interest_rate}
-                    value={interest_rate}
-                    keyboardType="number-pad"
-                    setValue={(value) => onChangeValue('interest_rate', value)}
                 />
                 <Input
                     placeholder={strings.remark}

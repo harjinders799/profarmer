@@ -62,5 +62,10 @@
     "leaves": "छुट्टियां",
     "start_date": "आरंभ करने की तिथि",
     "total_days_from_start": "शुरू से कुल दिन",
-    "labour_day": "मजदूरी दिन"
+    "labour_day": "मजदूरी दिन",
+    "add_leave": "छुट्टी जोड़ें",
+    "add_crop": "फसल जोड़ें",
+    "aadhat_expense": "आढ़तिया व्यय",
+    "aadhatiya_hisab": "आढ़तिए का हिसाब",
+    "crop":"फसल"
 }

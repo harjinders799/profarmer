@@ -62,5 +62,10 @@
     "leaves":"Leaves",
     "start_date":"Start Date",
     "total_days_from_start":"Total Days from Start",
-    "labour_day":"Labour Day"
+    "labour_day":"Labour Day",
+    "add_leave":"Add Leave",
+    "add_crop":"Add Crop",
+    "aadhat_expense": "Aadhtiya Expence",
+    "aadhatiya_hisab":"Aadhtiya's Calculation",
+    "crop": "Crop"
 }
