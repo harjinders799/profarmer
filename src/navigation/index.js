@@ -47,7 +47,6 @@ export default function Navigation() {
             ref={navigationRef}
         >
             <Stack.Navigator>
-                {/* <Stack.Screen name="Splash" component={Splash} options={{ headerShown: false }} /> */}
                 {!user ? <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} /> :
                     <>
                         <Stack.Screen name="Main" component={Tabs} options={{ headerShown: false }} />
@@ -56,11 +55,6 @@ export default function Navigation() {
                         <Stack.Screen name="Detail" component={Detail} options={{ headerShown: false }} />
                     </>
                 }
-                {/* */}
-                {/* <Stack.Screen name="CottonPickerAdd" component={CottonPickerAdd} options={{ headerShown: false }} />
-                <Stack.Screen name="CottonPickerExpense" component={CottonPickerExpense} options={{ headerShown: false }} />
-                <Stack.Screen name="CottonFilter" component={CottonFilter} options={{ headerShown: false }} />
-                <Stack.Screen name="CottonDateFilter" component={CottonDateFilter} options={{ headerShown: false }} /> */}
             </Stack.Navigator>
             {/* <AdBanner /> */}
         </NavigationContainer>
