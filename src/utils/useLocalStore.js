@@ -1,26 +1,24 @@
-import { useState, useEffect } from "react";
-import { getAsyncStorage, setAsyncStorage } from "src/network/AsyncStorage";
+import {useState, useEffect} from 'react';
+import {getAsyncStorage, setAsyncStorage} from 'src/network/AsyncStorage';
 
 const useLocalStorage = (key, defaultValue) => {
-    const [value, setValue] = useState(() => {
-        let currentValue;
+  const [value, setValue] = useState(() => {
+    let currentValue;
 
-        try {
-            currentValue = JSON.parse(
-                getAsyncStorage(key) || String(defaultValue)
-            );
-        } catch (error) {
-            currentValue = defaultValue;
-        }
+    try {
+      currentValue = JSON.parse(getAsyncStorage(key) || String(defaultValue));
+    } catch (error) {
+      currentValue = defaultValue;
+    }
 
-        return currentValue;
-    });
+    return currentValue;
+  });
 
-    useEffect(() => {
-        // setAsyncStorage(key, JSON.stringify(value));
-    }, [value, key]);
+  useEffect(() => {
+    // setAsyncStorage(key, JSON.stringify(value));
+  }, [value, key]);
 
-    return [value, setValue];
+  return [value, setValue];
 };
 
 export default useLocalStorage;
