@@ -70,17 +70,17 @@ export default function DashBoard({ navigation }) {
                 leftComponent={
                     <Button
                         label={strings.aadhat_expense}
-                        btnStyle={{ width: '40%' }}
+                        // btnStyle={{ width: '0%' }}
                         onPress={() => navigate('AddForm')}
                     />
                 }
-                rightComponent={
-                    <Button
-                        label={strings.add_crop}
-                        btnStyle={{ width: '40%' }}
-                        onPress={() => navigate('AddCrop')}
-                    />
-                }
+                // rightComponent={
+                //     <Button
+                //         label={strings.add_crop}
+                //         btnStyle={{ width: '40%' }}
+                //         onPress={() => navigate('AddCrop')}
+                //     />
+                // }
             />
             {/* <Text h2 style={{ paddingTop: 10 }}>
                 {strings.total_amount} {sumBy(arr, o => o.total)} Rs

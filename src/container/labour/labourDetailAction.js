@@ -11,9 +11,10 @@ import { dateFormat } from 'src/utils/dateformat'
 import { useTheme } from '@react-navigation/native'
 import moment from 'moment'
 import { deleteIneterstAmt } from 'src/network/interest-service'
-import { getLabourExpense } from '../../network/labour-service'
+import { deleteLabour, getLabourExpense } from '../../network/labour-service'
+import { green } from '../../utils/color'
 
-export default function LabourDetailAction({ data }) {
+export default function LabourDetailAction({ data, totalExpense, totalLabour }) {
     const [loading, setLoading] = React.useState(false);
     const { colors } = useTheme();
 
@@ -24,10 +25,10 @@ export default function LabourDetailAction({ data }) {
                     text: 'Yes',
                     onPress: async () => {
                         setLoading(true);
-                        await deleteIneterstAmt(data?.id)
+                        await deleteLabour(data?.id)
                         setLoading(false);
                         ToastSuccess(strings.weight_delete, "Amount")
-                        navigate("Main");
+                        navigate("Labour");
                     }
                 },
                 {
@@ -37,44 +38,49 @@ export default function LabourDetailAction({ data }) {
             { cancelable: true }
         )
     }
-    let start_date = moment(data?.date);
-    let today = moment();
-    let days = today.diff(start_date, 'days')
-    let interest = (((parseFloat(data?.amount) * (parseFloat(data?.interest_rate) / 100)) / 30) * (parseFloat(days))).toFixed(2)
-    let final_amount = parseFloat(data?.amount) + parseFloat(interest);
     return (
         <View style={[styles.list, { backgroundColor: colors.background }]}>
             <Loader visible={loading} />
             <View style={styles.row}>
                 <Text h3 numberOfLines={1} >{dateFormat(data?.date)}</Text>
-                <Text h3 numberOfLines={1} >{data?.count}{" "+strings.labour}</Text>
+                <Text h3 numberOfLines={1} >{data?.count}{" " + strings.labour}</Text>
             </View>
             <View style={styles.row}>
                 <Text h3>{strings.labour_rate}</Text>
                 <Text h3>{data?.rate} /-</Text>
             </View>
-            <View style={styles.row}>
+            {!data?.is_regulare ?
+                <View style={styles.row}>
                 <Text h3>{strings.total_labour}</Text>
                 <Text h3>{parseFloat(data?.rate) * parseFloat(data?.count)} /-</Text>
-            </View>
+                </View>
+                : null
+            }
             <Text h4 style={{ textAlign: 'center', paddingTop: 20 }}>{strings.remark}</Text>
             <Text h4>{data?.detail}</Text>
-            {/* <View style={styles.icons}>
-                <Icon
-                    name="delete"
-                    size={20}
-                    color={red}
-                    style={[styles.icon, { backgroundColor: colors.border }]}
-                    onPress={delteData}
-                />
+            <View style={styles.icons}>
                 <Icon
                     name="edit"
                     size={20}
                     color={orange}
-                    style={[styles.icon, { backgroundColor: colors.border }]}
-                    onPress={() => replace("AddForm", { data })}
+                    style={[styles.icon, { backgroundColor: colors.card }]}
+                    onPress={() => navigate("AddLabour", { data: { ...data, edit: true } })}
                 />
-            </View> */}
+                {data?.is_regulare ?
+                    <Text h3 style={{ color: green, marginTop: 15 }}>{strings.regular}</Text>
+                    : null
+                }
+                {totalExpense != 1 || totalLabour > 1 ?
+                    <Icon
+                        name="delete"
+                        size={20}
+                        color={red}
+                        style={[styles.icon, { backgroundColor: colors.card }]}
+                        onPress={delteData}
+                    />
+                    : null
+                }
+            </View>
         </View>
     )
 }

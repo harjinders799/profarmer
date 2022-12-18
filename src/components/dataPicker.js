@@ -42,11 +42,12 @@ export default function DataPicker(props) {
                 onBlur={() => { setModalVisible(false); setSelectedItem(searchKey) }}
                 value={searchKey ?? selectedItem}
                 setValue={v => {
-                    setSearchKey(v)
+                    if (data.length) setSearchKey(v)
+                    else setSelectedItem(v)
                 }}
                 style={{ marginBottom: 10, height: 50 }}
             />
-            {modalVisible && (selectedItem != searchKey || !selectedItem) ?
+            {modalVisible && data.length && (selectedItem != searchKey || !selectedItem) ?
                 <View style={[styles.modal, { backgroundColor: colors.secondaryBackground }]}>
                     <Text h2 style={commonStyle.p_v_10}>{placeholder}</Text>
                     {searchKey && !includes(data, searchKey) ?

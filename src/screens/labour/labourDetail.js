@@ -10,11 +10,12 @@ import { useRoute, useTheme } from '@react-navigation/native'
 import { strings } from 'src/translations/locale'
 import { commonStyle } from 'src/utils/style'
 import LabourDetailAction from '../../container/labour/labourDetailAction'
-import { getLabourExpense, getLabourLeave } from '../../network/labour-service'
+import { deleteLabour, getLabourExpense, getLabourLeave } from '../../network/labour-service'
 import LabourExpenseDetail from '../../container/labour/labourExpenseDetail'
 import Header from '../../components/header'
 import Icon from '../../components/icon'
-import { goBack } from '../../navigation/ref'
+import { goBack, navigate } from '../../navigation/ref'
+import Button from '../../components/button'
 
 export default function LabourDetail({ navigation }) {
   const { params } = useRoute();
@@ -68,6 +69,24 @@ export default function LabourDetail({ navigation }) {
           <Text numberOfLines={1} style={{ color: green }} h4>{data?.is_regulare ? strings.regular : ""}</Text>
         }
       />
+      <Header
+        leftComponent={
+          <Button
+            label={strings.add_labour}
+            btnStyle={{ width: '40%' }}
+            onPress={() =>
+              navigate('AddLabour', { data: Array.isArray(data?.data) && data?.data.length ? { ...data, ...data?.data[0] } : data })
+            }
+          />
+        }
+        rightComponent={
+          <Button
+            label={strings.add_expense}
+            btnStyle={{ width: '40%' }}
+            onPress={() => navigate('AddLabourExpense', { data: { labour: data?.labour } })}
+          />
+        }
+      />
       <ScrollView style={{ width: '100%', }} contentContainerStyle={{ paddingBottom: 150 }} showsVerticalScrollIndicator={false}>
         <View style={[styles.row, styles.underline]}>
           <Text h3>
@@ -103,20 +122,27 @@ export default function LabourDetail({ navigation }) {
         </View>
         <View style={styles.wt}>
           <Text h4 style={styles.underline}>{strings.labour_record}</Text>
-          {Array.isArray(data.data) && data.data.length ?
+          {Array.isArray(data.data) && data.data.length && data?.total ?
             sortBy(data.data, (a, b) => moment(b?.date) - moment(a?.date)).map((v, i) => (
-              data?.count ? <LabourDetailAction key={i} data={v} /> : null
+              <LabourDetailAction key={i} data={v} totalExpense={expense.length} totalLabour={data?.total} /> 
             ))
-            : <Text>0</Text>
+            : <Text>No Record</Text>
           }
         </View>
         <View style={styles.wt}>
           <Text h4 style={styles.underline}>{strings.amount}</Text>
           {Array.isArray(expense) && expense.length ?
             sortBy(expense, (a, b) => moment(b?.date) - moment(a?.date)).map((v, i) => (
-              <LabourExpenseDetail key={i} data={v} />
+              <LabourExpenseDetail
+                key={i}
+                data={v}
+                onPress={async () => {
+                  if (!data?.total && Array.isArray(data.data) && data.data.length && expense.length==1 )
+                  await deleteLabour(data?.data[0]?.id)
+                }}
+              />
             ))
-            : <Text>0</Text>
+            : <Text>No Record</Text>
           }
         </View>
       </ScrollView>
@@ -137,7 +163,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    width: '90%',
+    width: '100%',
     marginVertical: 5
   },
   underline: {

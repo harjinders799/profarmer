@@ -40,7 +40,6 @@ export default function Category(props) {
         }
     };
 
-    console.log(categories, '>>>herererere')
     return (
         <View style={styles.screen}>
             {/* <Text secondary style={{ marginBottom: 4 }}>Category</Text> */}

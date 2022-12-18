@@ -114,7 +114,7 @@ export const getLabourExpense = async (name) => {
                 .then(querySnapshot => {
                     let arr = [];
                     querySnapshot.forEach(documentSnapshot => {
-                        arr.push(documentSnapshot.data());
+                        arr.push({ ...documentSnapshot.data(), id: documentSnapshot.id });
                     });
                     resolve(arr)
                 })
@@ -137,7 +137,7 @@ export const getLabourLeave = async (name) => {
                 .then(querySnapshot => {
                     let arr = [];
                     querySnapshot.forEach(documentSnapshot => {
-                        arr.push(documentSnapshot.data());
+                        arr.push({ ...documentSnapshot.data(), id: documentSnapshot.id });
                     });
                     resolve(arr)
                 })
@@ -159,7 +159,7 @@ export const getAllLabourExpense = async (name) => {
                 .then(querySnapshot => {
                     let arr = [];
                     querySnapshot.forEach(documentSnapshot => {
-                        arr.push(documentSnapshot.data());
+                        arr.push({ ...documentSnapshot.data(), id: documentSnapshot.id });
                     });
                     resolve(arr)
                 })
@@ -169,7 +169,21 @@ export const getAllLabourExpense = async (name) => {
         }
     })
 };
-export const updateIneterstAmt = async (data) => {
+
+export const deleteLabourExpense = async (id) => {
+    return new Promise(async function (resolve, reject) {
+        try {
+            await firestore()
+                .collection('labour_expense')
+                .doc(id)
+                .delete()
+            resolve("success")
+        } catch (error) {
+            reject(new Error(error));
+        }
+    })
+};
+export const updateLabour = async (data) => {
     return new Promise(async function (resolve, reject) {
         try {
             await firestore()
@@ -183,11 +197,53 @@ export const updateIneterstAmt = async (data) => {
     })
 };
 
-export const deleteIneterstAmt = async (id) => {
+export const updateLabourLeave = async (data) => {
+    return new Promise(async function (resolve, reject) {
+        try {
+            await firestore()
+                .collection('labour_leave')
+                .doc(data?.id)
+                .update(data);
+            resolve("success")
+        } catch (error) {
+            reject(new Error(error));
+        }
+    })
+};
+
+
+export const updateLabourExpense = async (data) => {
+    return new Promise(async function (resolve, reject) {
+        try {
+            await firestore()
+                .collection('labour_expense')
+                .doc(data?.id)
+                .update(data);
+            resolve("success")
+        } catch (error) {
+            reject(new Error(error));
+        }
+    })
+};
+export const deleteLabour = async (id) => {
     return new Promise(async function (resolve, reject) {
         try {
             await firestore()
                 .collection('labour')
+                .doc(id)
+                .delete()
+            resolve("success")
+        } catch (error) {
+            reject(new Error(error));
+        }
+    })
+};
+
+export const deleteLabourLeave = async (id) => {
+    return new Promise(async function (resolve, reject) {
+        try {
+            await firestore()
+                .collection('labour_leave')
                 .doc(id)
                 .delete()
             resolve("success")

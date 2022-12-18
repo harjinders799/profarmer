@@ -11,23 +11,25 @@ import { dateFormat } from 'src/utils/dateformat'
 import { useTheme } from '@react-navigation/native'
 import moment from 'moment'
 import { deleteIneterstAmt } from 'src/network/interest-service'
-import { getLabourExpense } from '../../network/labour-service'
+import { deleteLabour, deleteLabourExpense, getLabourExpense } from '../../network/labour-service'
+import { goBack } from '../../navigation/ref'
 
-export default function LabourExpenseDetail({ data }) {
+export default function LabourExpenseDetail({ data, onPress }) {
     const [loading, setLoading] = React.useState(false);
     const { colors } = useTheme();
 
     const delteData = async () => {
-        Alert.alert(data?.giver, `${strings.delete_wt} ${strings.taken_amount} ${data?.amount}Rs`,
+        Alert.alert(data?.labour, `${strings.delete_wt} ${strings.taken_amount} ${data?.amount}Rs`,
             [
                 {
                     text: 'Yes',
                     onPress: async () => {
                         setLoading(true);
-                        await deleteIneterstAmt(data?.id)
+                        await deleteLabourExpense(data?.id)
+                        onPress();
                         setLoading(false);
-                        ToastSuccess(strings.weight_delete, "Amount")
-                        navigate("Main");
+                        ToastSuccess('strings.expense_delete', "Amount")
+                        goBack();
                     }
                 },
                 {
@@ -49,32 +51,24 @@ export default function LabourExpenseDetail({ data }) {
                 <Text h3 numberOfLines={1} >{dateFormat(data?.date)}</Text>
                 <Text h3 numberOfLines={1} >{data?.amount} /-</Text>
             </View>
-            {/* <View style={styles.row}>
-                <Text h3>{strings.total_principal}</Text>
-                <Text h3>{data?.rate} /-</Text>
-            </View>
-            <View style={styles.row}>
-                <Text h3>{strings.total_principal}</Text>
-                <Text h3>{parseFloat(data?.rate) * parseFloat(data?.count)} /-</Text>
-            </View> */}
             <Text h4 style={{ textAlign: 'center', paddingTop: 20 }}>{strings.remark}</Text>
             <Text h4>{data?.detail}</Text>
-            {/* <View style={styles.icons}>
+            <View style={styles.icons}>
                 <Icon
                     name="delete"
                     size={20}
                     color={red}
-                    style={[styles.icon, { backgroundColor: colors.border }]}
+                    style={[styles.icon, { backgroundColor: colors.card }]}
                     onPress={delteData}
                 />
                 <Icon
                     name="edit"
                     size={20}
                     color={orange}
-                    style={[styles.icon, { backgroundColor: colors.border }]}
-                    onPress={() => replace("AddForm", { data })}
+                    style={[styles.icon, { backgroundColor: colors.card }]}
+                    onPress={() => replace("AddLabourExpense", { data: { ...data, edit: true } })}
                 />
-            </View> */}
+            </View>
         </View>
     )
 }

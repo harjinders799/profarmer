@@ -56,13 +56,10 @@ const styles = {
         fontSize: sizes.base,
         textAlign: 'left',
         color,
-        fontFamily: fonts.regular,
     }),
     medium: {
-        fontFamily: fonts.medium,
     },
     bold: {
-        fontFamily: fonts.bold,
     },
     color: (color) => ({
         color,

@@ -16,9 +16,10 @@ import { navigate } from 'src/navigation/ref';
 import { useStore } from 'src/context/context';
 import { goBack } from 'src/navigation/ref';
 import { updateIneterstAmt } from 'src/network/interest-service';
-import { getLabourByName, submitLabour, submitLabourExpense } from '../../network/labour-service';
+import { getLabourByName, submitLabour, submitLabourExpense, updateLabourExpense } from '../../network/labour-service';
 import Header from '../../components/header';
 import Icon from '../../components/icon';
+import { find } from 'lodash';
 
 
 
@@ -45,11 +46,11 @@ export default function AddLabourExpense() {
             ...data,
             [key]: value
         })
-        if (key == 'labour') refAmt.current.focus();
+        if (key == 'labour' && Array.isArray(labours) && labours.length) refAmt.current.focus();
     }
 
     const onPress = () => {
-        if (editData.labour) updateWt()
+        if (editData.edit) updateWt()
         else AddNew()
     }
     const updateWt = async () => {
@@ -60,13 +61,13 @@ export default function AddLabourExpense() {
         }
         else {
             setLoading(true);
-            let res = await updateIneterstAmt({
+            let res = await updateLabourExpense({
                 ...data,
                 date: currentStamp(date),
             });
             setLoading(false);
             ToastSuccess(strings.picker_amt_added, "Amount")
-            navigate("Main")
+            navigate("Labour")
         }
     };
     const AddNew = async () => {
@@ -77,14 +78,12 @@ export default function AddLabourExpense() {
         }
         else {
             setLoading(true);
-
-            let res = await submitLabourExpense({
+            await submitLabourExpense({
                 ...data,
                 labour: labour.trim(),
                 date: currentStamp(date),
             });
             let exist = await getLabourByName(labour.trim())
-            console.log(exist)
             if (Array.isArray(exist) && !exist.length) {
                 await submitLabour({
                     count: 0,
@@ -104,9 +103,7 @@ export default function AddLabourExpense() {
             } else {
                 setLabours([name])
             }
-            // setInterstRate(amount)
-            goBack();
-            // }
+            navigate("Labour")
         }
     };
 

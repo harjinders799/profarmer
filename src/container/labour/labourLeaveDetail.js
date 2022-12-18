@@ -11,7 +11,7 @@ import { dateFormat } from 'src/utils/dateformat'
 import { useTheme } from '@react-navigation/native'
 import moment from 'moment'
 import { deleteIneterstAmt } from 'src/network/interest-service'
-import { getLabourExpense } from '../../network/labour-service'
+import { deleteLabourLeave, getLabourExpense } from '../../network/labour-service'
 
 export default function LabourLeaveDetail({ data }) {
     const [loading, setLoading] = React.useState(false);
@@ -24,10 +24,10 @@ export default function LabourLeaveDetail({ data }) {
                     text: 'Yes',
                     onPress: async () => {
                         setLoading(true);
-                        await deleteIneterstAmt(data?.id)
+                        await deleteLabourLeave(data?.id)
                         setLoading(false);
                         ToastSuccess(strings.weight_delete, "Amount")
-                        navigate("Main");
+                        navigate("Labour");
                     }
                 },
                 {
@@ -47,26 +47,26 @@ export default function LabourLeaveDetail({ data }) {
             <Loader visible={loading} />
             <View style={styles.row}>
                 <Text h3 numberOfLines={1} >{dateFormat(data?.date)}</Text>
-                <Text h3 numberOfLines={1} >{data?.count}{" "+ strings.leave}</Text>
+                <Text h3 numberOfLines={1} >{data?.count}{" " + strings.leave}</Text>
             </View>
             <Text h4 style={{ textAlign: 'center', paddingTop: 20 }}>{strings.remark}</Text>
             <Text h4>{data?.detail}</Text>
-            {/* <View style={styles.icons}>
+            <View style={styles.icons}>
                 <Icon
                     name="delete"
                     size={20}
                     color={red}
-                    style={[styles.icon, { backgroundColor: colors.border }]}
+                    style={[styles.icon, { backgroundColor: colors.card }]}
                     onPress={delteData}
                 />
                 <Icon
                     name="edit"
                     size={20}
                     color={orange}
-                    style={[styles.icon, { backgroundColor: colors.border }]}
-                    onPress={() => replace("AddForm", { data })}
+                    style={[styles.icon, { backgroundColor: colors.card }]}
+                    onPress={() => navigate("AddLabourLeave", { item: { ...data, edit: true } })}
                 />
-            </View> */}
+            </View>
         </View>
     )
 }

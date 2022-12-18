@@ -19,13 +19,16 @@ import Animated, { BounceInDown, FadeIn, FadeInDown, FadeInUp, Layout, LightSpee
 
 export default function DateWiseList({ data }) {
     const [fullData, setFullData] = useState([]);
+    const [loading, setLoading] = useState(true)
 
     useEffect(() => {
         if (data.length) getExpense();
+        else setFullData([])
     }, [data]);
 
     const getExpense = async () => {
         let arr = [];
+        setLoading(true);
         let grp = groupBy(data, v => v.labour)
         Object.keys(grp).map(v => arr.push({ labour: v, total: sumBy(grp[v], o => parseInt(o.count)), is_regulare: some(grp[v], o => o?.is_regulare), data: grp[v] }))
         setFullData(arr)
@@ -38,34 +41,29 @@ export default function DateWiseList({ data }) {
                     let grp = groupBy(res, v => v.labour)
                     Object.keys(grp).map(v => expense.push({ labour: v, amount: sumBy(grp[v], o => parseInt(o.amount)) }))
                     let leave = [];
-                    // console.log(grp[v])
-                    // if (grp[v]?.is_regulare) {
                     let lev = await getLabourLeave(v);
                     let grpLeave = groupBy(lev, v => v.labour)
                     Object.keys(grpLeave).map(v => leave.push({ labour: v, leaves: sumBy(grpLeave[v], o => parseInt(o.count)) }))
-                    // console.log(leave)
                     result.push({ ...expense[0], ...leave[0], ...find(arr, o => o.labour == v) })
-                    // }
-                    // result.push({ ...expense[0], ...leave[0], ...find(arr, o => o.labour == v) })
                 })
             )
-
             setFullData(result)
+            setLoading(false);
         } catch (error) {
+            setLoading(false);
             ToastError(error?.message, 'Labour')
         }
     }
 
     const renderItem = (item) => {
-        // console.log(item)
         let tot = 0
         if (item.data) {
             item.data.map(v => {
-                tot += (item?.is_regulare ? item?.leaves ? dayCount(v?.date) - item?.leaves : dayCount(v?.date) : parseFloat(v?.count)) * parseFloat(v?.rate)
+                tot += (v?.is_regulare ? item?.leaves ? dayCount(v?.date) - item?.leaves : dayCount(v?.date) : parseInt(v?.count)) * parseFloat(v?.rate)
                 return tot;
             })
         }
-        // console.log(tot)
+
         return (
             <Animated.View style={[styles.list, styles.line]}>
                 <TouchableOpacity onPress={() => navigate(item?.is_regulare ? 'RegularLabourDetail' : 'LabourDetail', { item })}>
@@ -74,25 +72,31 @@ export default function DateWiseList({ data }) {
                         <Text numberOfLines={1} h3 style={{ width: '60%' }}>{item?.labour}</Text>
                         <Text h5 >{strings.view}</Text>
                     </View>
-                    {!item?.is_regulare && !isNaN(tot - item?.amount) ?
+                    {!item?.is_regulare ?
                         <Animated.View style={styles.row} entering={FadeInUp} layout={Layout.springify}>
                             <Text numberOfLines={1} h4>{strings.final}</Text>
                             <Text numberOfLines={1} h3
-                                style={{ color: tot - item?.amount > 0 ? green : red }}
-                            >{tot - item?.amount} /-</Text>
+                                style={{
+                                    color:
+                                        loading ? green : (tot - (!isNaN(item?.amount) ? item?.amount : 0)) > 0 ? green : red
+                                }}
+                            >{!loading ? tot - (!isNaN(item?.amount) ? item?.amount : 0) : '__'} /-</Text>
                         </Animated.View>
                         :
                         null
                     }
                     {
-                        item?.is_regulare && !isNaN(tot - item?.amount) ?
+                        item?.is_regulare ?
                             <>
                                 <Animated.View style={styles.row} entering={FadeInUp}
                                     layout={Layout.damping}>
                                     <Text numberOfLines={1} h4>{strings.final}</Text>
                                     <Text numberOfLines={1} h3
-                                        style={{ color: tot - item?.amount > 0 ? green : red }}
-                                    >{tot - item?.amount} /-</Text>
+                                        style={{
+                                            color:
+                                                loading ? green : (tot - (!isNaN(item?.amount) ? item?.amount : 0)) > 0 ? green : red
+                                        }}
+                                    >{!loading ? tot - (!isNaN(item?.amount) ? item?.amount : 0) : '__'} /-</Text>
                                 </Animated.View>
                                 <Button
                                     label={strings.add_leave}

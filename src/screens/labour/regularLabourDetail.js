@@ -5,19 +5,20 @@ import Loader from 'src/components/loader'
 import { FlatList, ScrollView, Share, StyleSheet, View } from 'react-native'
 import { green, red, white } from 'src/utils/color'
 import moment from 'moment'
-import { sortBy, sumBy } from 'lodash'
+import { filter, find, sortBy, sumBy } from 'lodash'
 import { useRoute, useTheme } from '@react-navigation/native'
 import { strings } from 'src/translations/locale'
 import { commonStyle } from 'src/utils/style'
 import LabourDetailAction from '../../container/labour/labourDetailAction'
 import { getLabourExpense, getLabourLeave } from '../../network/labour-service'
 import LabourExpenseDetail from '../../container/labour/labourExpenseDetail'
-import { dateFormat } from '../../utils/dateformat'
+import { dateFormat, dayCount } from '../../utils/dateformat'
 import Header from '../../components/header'
 import Icon from '../../components/icon'
-import { goBack } from '../../navigation/ref'
 import LabourLeaveDetail from '../../container/labour/labourLeaveDetail'
 import Animated, { BounceInUp, Easing, FadeInUp, useAnimatedScrollHandler, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated'
+import Button from '../../components/button'
+import { goBack, navigate } from '../../navigation/ref'
 
 export default function RegularLabourDetail() {
   const { params } = useRoute();
@@ -46,22 +47,27 @@ export default function RegularLabourDetail() {
       setLoading(false)
     }
   }
+
+  let extraDay = parseInt(sumBy((filter(data?.data, o => !o?.is_regulare)), o => parseInt(o.count)))
+  let expenseTot = Array.isArray(expense) && expense.length ? sumBy(expense, o => parseFloat(o?.amount)) : 0
+  let start_date = moment(find(data?.data, o => o?.is_regulare === true)?.date);
+  let today = moment();
+  let days = today.diff(start_date, 'days')
+  let leaveTot = Array.isArray(leaves) && leaves.length ? sumBy(leaves, o => parseFloat(o?.count)) : 0
+
+
   useEffect(() => {
     if (Array.isArray(data.data) && data.data.length) {
       let tot = 0;
       data.data.map(v => {
-        tot += parseFloat(v?.count) * parseFloat(v?.rate)
+        tot += (v?.is_regulare ? dayCount(v?.date) - leaveTot : parseInt(v?.count)) * parseFloat(v?.rate)
+
       });
       setTotalLabour(tot)
     }
   }, [data])
 
-  let expenseTot = Array.isArray(expense) && expense.length ? sumBy(expense, o => parseFloat(o?.amount)) : 0
-  let start_date = moment(data?.data[0]?.date);
-  let today = moment();
-  let days = today.diff(start_date, 'days')
-  let leaveTot = Array.isArray(leaves) && leaves.length ? sumBy(leaves, o => parseFloat(o?.count)) : 0
-
+  
   return (
     <BaseView>
       <Loader visible={loading} />
@@ -79,6 +85,25 @@ export default function RegularLabourDetail() {
         }
       />
 
+      <Header
+        leftComponent={
+          <Button
+            label={strings.add_leave}
+            btnStyle={{ width: '40%' }}
+            onPress={() =>
+              // { console.log(Array.isArray(data?.data) && data?.data.length ? data?.data[0] : data)}
+              navigate('AddLabourLeave', { item: Array.isArray(data?.data) && data?.data.length ? data?.data[0] : data })
+            }
+          />
+        }
+        rightComponent={
+          <Button
+            label={strings.add_expense}
+            btnStyle={{ width: '40%' }}
+            onPress={() => navigate('AddLabourExpense', { data: { labour: data?.labour } })}
+          />
+        }
+      />
       <Animated.ScrollView
         style={[{ width: '100%', }]}
         contentContainerStyle={{ paddingBottom: 150 }}
@@ -89,7 +114,7 @@ export default function RegularLabourDetail() {
             {strings.start_date}
           </Text>
           <Text h3 style={{ color: green }}>
-            {dateFormat(data?.data[0]?.date)}
+            {dateFormat(find(data?.data, o => o?.is_regulare === true)?.date)}
           </Text>
         </View>
         <View style={[styles.row, styles.underline]}>
@@ -102,9 +127,17 @@ export default function RegularLabourDetail() {
         </View>
         <View style={[styles.row, styles.underline]}>
           <Text h3>
-            {strings.leaves}
+            {"Extra Days"}
           </Text>
           <Text h3 style={{ color: green }}>
+            {extraDay}
+          </Text>
+        </View>
+        <View style={[styles.row, styles.underline]}>
+          <Text h3>
+            {strings.leaves}
+          </Text>
+          <Text h3 style={{ color: red }}>
             {leaveTot}
           </Text>
         </View>
@@ -113,7 +146,7 @@ export default function RegularLabourDetail() {
             {strings.labour_day}
           </Text>
           <Text h3 style={{ color: green }}>
-            {days - leaveTot}
+            {days + extraDay - leaveTot}
           </Text>
         </View>
         <View style={[styles.row, styles.underline]}>
@@ -129,7 +162,7 @@ export default function RegularLabourDetail() {
             {strings.total_labour}
           </Text>
           <Text h3 style={{ color: green }}>
-            {(days - leaveTot) * data?.data[0]?.rate} /-
+            {totalLabour} /-
           </Text>
         </View>
         <View style={[styles.row, styles.underline]}>
@@ -144,8 +177,8 @@ export default function RegularLabourDetail() {
           <Text h3>
             {strings.total_amount}
           </Text>
-          <Text h3 style={{ color: (days - leaveTot) * data?.data[0]?.rate - expenseTot > 0 ? green : red }}>
-            {(days - leaveTot) * data?.data[0]?.rate - expenseTot} /-
+          <Text h3 style={{ color: totalLabour - expenseTot > 0 ? green : red }}>
+            {totalLabour - expenseTot} /-
           </Text>
         </View>
         <Text h3 style={styles.subhead}>{strings.leaves}</Text>
@@ -158,13 +191,22 @@ export default function RegularLabourDetail() {
           </Animated.View>
           : <Text>0</Text>
         }
+        <View style={styles.wt}>
+          <Text h4 style={styles.underline}>{strings.labour_record}</Text>
+          {Array.isArray(data.data) && data.data.length && data?.total ?
+            sortBy(data.data, (a, b) => moment(b?.date) - moment(a?.date)).map((v, i) => (
+              <LabourDetailAction key={i} data={v} totalExpense={expense.length} totalLabour={data?.total} />
+            ))
+            : <Text>No Record</Text>
+          }
+        </View>
         <Text h3 style={styles.subhead}>{strings.amount}</Text>
         {Array.isArray(expense) && expense.length ?
           <Animated.View style={styles.wt}
             entering={FadeInUp}>
 
             {sortBy(expense, (a, b) => moment(b?.date) - moment(a?.date)).map((v, i) => (
-              <LabourExpenseDetail key={i} data={v} />
+              <LabourExpenseDetail key={i} data={v} onPress={() => { }} />
             ))}
           </Animated.View>
           : <Text>0</Text>

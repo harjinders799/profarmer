@@ -15,9 +15,7 @@ import { strings } from 'src/translations/locale';
 import { navigate } from 'src/navigation/ref';
 import { useStore } from 'src/context/context';
 import { goBack } from 'src/navigation/ref';
-import { updateIneterstAmt } from 'src/network/interest-service';
-import Checkbox from '../../components/checkbox';
-import { submitLabour, submitLabourLeave } from '../../network/labour-service';
+import { submitLabour, submitLabourLeave, updateLabourLeave } from '../../network/labour-service';
 import Header from '../../components/header';
 import Icon from '../../components/icon';
 
@@ -49,9 +47,8 @@ export default function AddLabourLeave() {
     }
 
     const onPress = () => {
-        // if (editData.labour) updateWt()
-        // else
-        AddNew()
+        if (editData.edit) updateWt()
+        else AddNew()
     }
     const updateWt = async () => {
         if (labour == "") {
@@ -61,13 +58,13 @@ export default function AddLabourLeave() {
         }
         else {
             setLoading(true);
-            let res = await updateIneterstAmt({
+            let res = await updateLabourLeave({
                 ...data,
                 date: currentStamp(date),
             });
             setLoading(false);
             ToastSuccess(strings.picker_amt_added, "Amount")
-            goBack();
+            navigate("Labour")
         }
     };
     const AddNew = async () => {
@@ -84,11 +81,10 @@ export default function AddLabourLeave() {
             });
             setLoading(false);
             ToastSuccess(strings.picker_amt_added, "Amount")
-            goBack();
+            navigate("Labour")
             // }
         }
     };
-
 
     return (
         <BaseView style={styles.container}>

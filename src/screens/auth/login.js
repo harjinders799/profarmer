@@ -225,12 +225,13 @@ const Login = ({ navigation }) => {
                         inputStyles={[styles.cellTxt, { color: colors.text }]}
                         textBreakStrategy='highQuality'
                     />
-                    : null
+                    : 
+                    <Button
+                        label={strings.login}
+                        onPress={signIn}
+                    />
                 }
-                <Button
-                    label={strings.login}
-                    onPress={signIn}
-                />
+                
                 {/* <LoginButton
                     onLoginFinished={
                         (error, result) => {

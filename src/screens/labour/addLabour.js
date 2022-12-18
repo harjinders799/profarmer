@@ -17,7 +17,7 @@ import { useStore } from 'src/context/context';
 import { goBack } from 'src/navigation/ref';
 import { updateIneterstAmt } from 'src/network/interest-service';
 import Checkbox from '../../components/checkbox';
-import { getLabourRagular, submitLabour } from '../../network/labour-service';
+import { getLabourRagular, submitLabour, updateLabour } from '../../network/labour-service';
 import Header from '../../components/header';
 import Icon from '../../components/icon';
 
@@ -48,11 +48,11 @@ export default function AddLabour() {
             ...data,
             [key]: value
         })
-        if (key == 'labour') refAmt.current.focus();
+        if (key == 'labour' && Array.isArray(labours) && labours.length) refAmt.current.focus();
     }
 
     const onPress = () => {
-        if (editData.labour) updateWt()
+        if (editData?.edit) updateWt()
         else AddNew()
     }
     const updateWt = async () => {
@@ -65,13 +65,13 @@ export default function AddLabour() {
         }
         else {
             setLoading(true);
-            let res = await updateIneterstAmt({
+            let res = await updateLabour({
                 ...data,
                 date: currentStamp(date),
             });
             setLoading(false);
             ToastSuccess(strings.picker_amt_added, "Amount")
-            navigate("Main")
+            navigate("Labour")
         }
     };
     const AddNew = async () => {
@@ -84,12 +84,12 @@ export default function AddLabour() {
         }
         else {
             setLoading(true);
-            let exist = await getLabourRagular(labour.trim());
-            if (Array.isArray(exist) && exist.length) {
-                setLoading(false);
-                ToastError("Aleady Regular Labour", "Labour")
-            }
-            else {
+            // let exist = await getLabourRagular(labour.trim());
+            // if (Array.isArray(exist) && exist.length) {
+            //     setLoading(false);
+            //     ToastError("Aleady Regular Labour", "Labour")
+            // }
+            // else {
                 let res = await submitLabour({
                     ...data,
                     labour: labour.trim(),
@@ -106,9 +106,8 @@ export default function AddLabour() {
                 } else {
                     setLabours([name])
                 }
-                setInterstRate(rate)
-                goBack();
-            }
+                navigate('Labour');
+            // }
         }
     };
 
