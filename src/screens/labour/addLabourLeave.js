@@ -49,9 +49,9 @@ export default function AddLabourLeave() {
   };
   const updateWt = async () => {
     if (labour == '') {
-      ToastError(strings.giver_name, 'Amount');
+      ToastError(strings.labour_name, strings.labour);
     } else if (count.trim() == '' || parseInt(count) <= 0) {
-      ToastError(strings.rate, 'Amount');
+      ToastError(strings.rate, strings.labour);
     } else {
       setLoading(true);
       let res = await updateLabourLeave({
@@ -59,15 +59,15 @@ export default function AddLabourLeave() {
         date: currentStamp(date),
       });
       setLoading(false);
-      ToastSuccess(strings.picker_amt_added, 'Amount');
+      ToastSuccess(strings.labour_leave_added, strings.labour);
       navigate('Labour');
     }
   };
   const AddNew = async () => {
     if (labour == '') {
-      ToastError(strings.err_picker, 'Amount');
+      ToastError(strings.err_picker, strings.labour);
     } else if (count.trim() == '' || parseInt(count) <= 0) {
-      ToastError(strings.count, 'Amount');
+      ToastError(strings.count, strings.labour);
     } else {
       setLoading(true);
       let res = await submitLabourLeave({
@@ -75,7 +75,7 @@ export default function AddLabourLeave() {
         date: currentStamp(date),
       });
       setLoading(false);
-      ToastSuccess(strings.picker_amt_added, 'Amount');
+      ToastSuccess(strings.labour_leave_added, strings.labour);
       navigate('Labour');
       // }
     }
@@ -97,24 +97,10 @@ export default function AddLabourLeave() {
         rightComponent={<Text h2> </Text>}
       />
       <View style={styles.form}>
-        {/* <DataPicker
-                    data={labours}
-                    intialVisible={!editData?.labour}
-                    placeholder={strings.labour + " " + strings.name}
-                    selectedItem={labour}
-                    setSelectedItem={(val) => { onChangeValue('labour', val) }}
-                /> */}
-        <Input
-          // refs={refAmt}
-          // placeholder={strings.labour + " 1, 2, 3..."}
-          value={labour}
-          editable={false}
-          // keyboardType="number-pad"
-          // setValue={(value) => onChangeValue('count', value)}
-        />
+        <Input value={labour} editable={false} />
         <Input
           refs={refAmt}
-          placeholder={strings.labour + ' 1, 2, 3...'}
+          placeholder={strings.leave_count + ' 1, 2, 3...'}
           value={count}
           keyboardType="number-pad"
           setValue={value => onChangeValue('count', value)}

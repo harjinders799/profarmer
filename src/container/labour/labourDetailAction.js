@@ -9,19 +9,17 @@ import {ToastError, ToastSuccess} from 'src/utils/toast';
 import Loader from 'src/components/loader';
 import {dateFormat} from 'src/utils/dateformat';
 import {useTheme} from '@react-navigation/native';
-import moment from 'moment';
-import {deleteIneterstAmt} from 'src/network/interest-service';
 import {deleteLabour, getLabourExpense} from '../../network/labour-service';
 import {green} from '../../utils/color';
+import {currencyFormat} from '../../utils/dateformat';
 
 export default function LabourDetailAction({data, totalExpense, totalLabour}) {
   const [loading, setLoading] = React.useState(false);
   const {colors} = useTheme();
-
   const delteData = async () => {
     Alert.alert(
-      data?.giver,
-      `${strings.delete_wt} ${strings.taken_amount} ${data?.amount}Rs`,
+      `${data.count} ${strings.labour}`,
+      `${strings.delete_wt}`,
       [
         {
           text: 'Yes',
@@ -29,7 +27,7 @@ export default function LabourDetailAction({data, totalExpense, totalLabour}) {
             setLoading(true);
             await deleteLabour(data?.id);
             setLoading(false);
-            ToastSuccess(strings.weight_delete, 'Amount');
+            ToastSuccess(strings.labour_deleted, strings.labour);
             navigate('Labour');
           },
         },
@@ -54,12 +52,14 @@ export default function LabourDetailAction({data, totalExpense, totalLabour}) {
       </View>
       <View style={styles.row}>
         <Text h3>{strings.labour_rate}</Text>
-        <Text h3>{data?.rate} /-</Text>
+        <Text h3>{currencyFormat(data?.rate)}</Text>
       </View>
       {!data?.is_regulare ? (
         <View style={styles.row}>
           <Text h3>{strings.total_labour}</Text>
-          <Text h3>{parseFloat(data?.rate) * parseFloat(data?.count)} /-</Text>
+          <Text h3>
+            {currencyFormat(parseFloat(data?.rate) * parseFloat(data?.count))}
+          </Text>
         </View>
       ) : null}
       <Text h4 style={{textAlign: 'center', paddingTop: 20}}>
@@ -79,7 +79,7 @@ export default function LabourDetailAction({data, totalExpense, totalLabour}) {
             {strings.regular}
           </Text>
         ) : null}
-        {totalExpense != 1 || totalLabour > 1 ? (
+        {totalExpense < 1 || totalLabour > 1 ? (
           <Icon
             name="delete"
             size={20}

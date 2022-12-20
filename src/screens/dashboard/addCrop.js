@@ -68,7 +68,7 @@ export default function AddCrop() {
         date: currentStamp(date),
       });
       setLoading(false);
-      ToastSuccess(strings.picker_amt_added, 'Amount');
+      ToastSuccess('strings.picker_amt_added', 'Amount');
       goBack();
     }
   };
@@ -88,7 +88,7 @@ export default function AddCrop() {
         date: currentStamp(date),
       });
       setLoading(false);
-      ToastSuccess(strings.picker_amt_added, 'Amount');
+      ToastSuccess('strings.picker_amt_added', 'Amount');
       let name = agent.trim();
       if (Array.isArray(givers) && givers.length) {
         let exist = givers.findIndex(

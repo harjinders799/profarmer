@@ -10,15 +10,18 @@ import {Linking, View} from 'react-native';
 import {LangProvider} from 'src/context/langContext';
 import {strings} from 'src/translations/locale';
 import Navigation from 'src/navigation';
+import Modal from 'src/components/Modal';
+import {orange} from 'src/utils/color';
 
 export default function App() {
   const [version, setVersion] = useState();
+  const [visible, setVisible] = useState(true);
   useEffect(() => {
     (async () => {
-      const version = await checkVersion({
+      const res = await checkVersion({
         platform: 'android',
       });
-      setVersion(version);
+      setVersion(res);
     })();
   }, []);
 
@@ -28,12 +31,20 @@ export default function App() {
 
   return (
     <SafeAreaProvider>
-      {version?.needsUpdate && (
-        <View style={{alignItems: 'center'}}>
+      <Modal
+        visible={version?.needsUpdate && visible}
+        setModalVisible={() => setVisible(false)}
+        ratioHeight={0.7}>
+        <View
+          style={{
+            alignItems: 'center',
+            padding: 20,
+            backgroundColor: orange,
+          }}>
           <Text>{strings.new_version}</Text>
           <Button label="Update" onPress={update} />
         </View>
-      )}
+      </Modal>
       <StoreProvider>
         <CottonProvider>
           <LangProvider>

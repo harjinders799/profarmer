@@ -89,7 +89,6 @@ const Login = ({navigation}) => {
       setLoading(true);
       SignInUser(state.phone)
         .then(data => {
-          console.log(data);
           setConfirm(data);
           setLoading(false);
         })
@@ -267,25 +266,6 @@ const Login = ({navigation}) => {
         ) : (
           <Button label={strings.login} onPress={signIn} />
         )}
-
-        {/* <LoginButton
-                    onLoginFinished={
-                        (error, result) => {
-                            if (error) {
-                                console.log("login has error: " + result.error);
-                            } else if (result.isCancelled) {
-                                console.log("login is cancelled.");
-                            } else {
-                                AccessToken.getCurrentAccessToken().then(
-                                    (data) => {
-                                        console.log(data.accessToken.toString())
-                                    }
-                                )
-                            }
-                        }
-                    }
-                    onLogoutFinished={() => console.log("logout.")}
-                /> */}
         <Button
           label="Google Sign-In"
           btnStyle={{backgroundColor: '#3b519f'}}

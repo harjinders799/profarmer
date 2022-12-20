@@ -20,6 +20,7 @@ import Header from '../../components/header';
 import Icon from '../../components/icon';
 import {goBack, navigate} from '../../navigation/ref';
 import Button from '../../components/button';
+import {currencyFormat} from '../../utils/dateformat';
 
 export default function LabourDetail({navigation}) {
   const {params} = useRoute();
@@ -109,27 +110,27 @@ export default function LabourDetail({navigation}) {
         contentContainerStyle={{paddingBottom: 150}}
         showsVerticalScrollIndicator={false}>
         <View style={[styles.row, styles.underline]}>
-          <Text h3>{strings.labour}</Text>
+          <Text h3>{strings.total_labour}</Text>
           <Text h3 style={{color: green}}>
             {data?.total}
           </Text>
         </View>
         <View style={[styles.row, styles.underline]}>
-          <Text h3>{strings.total_labour}</Text>
+          <Text h3>{strings.labour_amount}</Text>
           <Text h3 style={{color: green}}>
-            {totalLabour} /-
+            {currencyFormat(totalLabour)}
           </Text>
         </View>
         <View style={[styles.row, styles.underline]}>
-          <Text h3>{strings.amount}</Text>
+          <Text h3>{strings.given_amount}</Text>
           <Text h3 style={{color: red}}>
-            {expenseTot} /-
+            {currencyFormat(expenseTot)}
           </Text>
         </View>
         <View style={[styles.row, styles.underline]}>
-          <Text h3>{strings.total_amount}</Text>
+          <Text h3>{strings.final}</Text>
           <Text h3 style={{color: totalLabour - expenseTot > 0 ? green : red}}>
-            {totalLabour - expenseTot} /-
+            {currencyFormat(totalLabour - expenseTot)}
           </Text>
         </View>
         <View style={styles.wt}>

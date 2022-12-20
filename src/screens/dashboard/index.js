@@ -78,10 +78,10 @@ export default function DashBoard({navigation}) {
     <BaseView>
       <Loader visible={loading} />
       <Header
-        leftComponent={
+        centerComponent={
           <Button
             label={strings.aadhat_expense}
-            // btnStyle={{ width: '0%' }}
+            btnStyle={{width: '100%'}}
             onPress={() => navigate('AddForm')}
           />
         }

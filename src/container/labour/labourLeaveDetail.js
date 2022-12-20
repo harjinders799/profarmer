@@ -9,21 +9,15 @@ import {ToastError, ToastSuccess} from 'src/utils/toast';
 import Loader from 'src/components/loader';
 import {dateFormat} from 'src/utils/dateformat';
 import {useTheme} from '@react-navigation/native';
-import moment from 'moment';
-import {deleteIneterstAmt} from 'src/network/interest-service';
-import {
-  deleteLabourLeave,
-  getLabourExpense,
-} from '../../network/labour-service';
+import {deleteLabourLeave} from '../../network/labour-service';
 
 export default function LabourLeaveDetail({data}) {
   const [loading, setLoading] = React.useState(false);
   const {colors} = useTheme();
-
   const delteData = async () => {
     Alert.alert(
-      data?.giver,
-      `${strings.delete_wt} ${strings.taken_amount} ${data?.amount}Rs`,
+      `${data?.count} ${strings.labour}`,
+      `${strings.delete_wt}`,
       [
         {
           text: 'Yes',
@@ -31,7 +25,7 @@ export default function LabourLeaveDetail({data}) {
             setLoading(true);
             await deleteLabourLeave(data?.id);
             setLoading(false);
-            ToastSuccess(strings.weight_delete, 'Amount');
+            ToastSuccess(strings.labour_leave_deleted, strings.leave);
             navigate('Labour');
           },
         },
@@ -42,15 +36,6 @@ export default function LabourLeaveDetail({data}) {
       {cancelable: true},
     );
   };
-  let start_date = moment(data?.date);
-  let today = moment();
-  let days = today.diff(start_date, 'days');
-  let interest = (
-    ((parseFloat(data?.amount) * (parseFloat(data?.interest_rate) / 100)) /
-      30) *
-    parseFloat(days)
-  ).toFixed(2);
-  let final_amount = parseFloat(data?.amount) + parseFloat(interest);
   return (
     <View style={[styles.list, {backgroundColor: colors.background}]}>
       <Loader visible={loading} />

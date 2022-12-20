@@ -11,7 +11,7 @@ import {strings} from 'src/translations/locale';
 import LabourDetailAction from '../../container/labour/labourDetailAction';
 import {getLabourExpense, getLabourLeave} from '../../network/labour-service';
 import LabourExpenseDetail from '../../container/labour/labourExpenseDetail';
-import {dateFormat, dayCount} from '../../utils/dateformat';
+import {currencyFormat, dateFormat, dayCount} from '../../utils/dateformat';
 import Header from '../../components/header';
 import Icon from '../../components/icon';
 import LabourLeaveDetail from '../../container/labour/labourLeaveDetail';
@@ -139,7 +139,7 @@ export default function RegularLabourDetail() {
           </Text>
         </View>
         <View style={[styles.row, styles.underline]}>
-          <Text h3>{'Extra Days'}</Text>
+          <Text h3>{strings.extra_labour}</Text>
           <Text h3 style={{color: green}}>
             {extraDay}
           </Text>
@@ -159,25 +159,25 @@ export default function RegularLabourDetail() {
         <View style={[styles.row, styles.underline]}>
           <Text h3>{strings.labour_rate}</Text>
           <Text h3 style={{color: green}}>
-            {data?.data[0]?.rate} /-
+            {currencyFormat(data?.data[0]?.rate)}
           </Text>
         </View>
         <View style={[styles.row, styles.underline]}>
           <Text h3>{strings.total_labour}</Text>
           <Text h3 style={{color: green}}>
-            {totalLabour} /-
+            {currencyFormat(totalLabour)}
           </Text>
         </View>
         <View style={[styles.row, styles.underline]}>
-          <Text h3>{strings.amount}</Text>
+          <Text h3>{strings.given_amount}</Text>
           <Text h3 style={{color: red}}>
-            {expenseTot} /-
+            {currencyFormat(expenseTot)}
           </Text>
         </View>
         <View style={[styles.row, styles.underline]}>
-          <Text h3>{strings.total_amount}</Text>
+          <Text h3>{strings.final}</Text>
           <Text h3 style={{color: totalLabour - expenseTot > 0 ? green : red}}>
-            {totalLabour - expenseTot} /-
+            {currencyFormat(totalLabour - expenseTot)}
           </Text>
         </View>
         <Text h3 style={styles.subhead}>
@@ -194,25 +194,23 @@ export default function RegularLabourDetail() {
         ) : (
           <Text>0</Text>
         )}
-        <View style={styles.wt}>
-          <Text h4 style={styles.underline}>
-            {strings.labour_record}
-          </Text>
-          {Array.isArray(data.data) && data.data.length && data?.total ? (
-            sortBy(data.data, (a, b) => moment(b?.date) - moment(a?.date)).map(
-              (v, i) => (
-                <LabourDetailAction
-                  key={i}
-                  data={v}
-                  totalExpense={expense.length}
-                  totalLabour={data?.total}
-                />
-              ),
-            )
-          ) : (
-            <Text>No Record</Text>
-          )}
-        </View>
+        <Text h3 style={styles.subhead}>
+          {strings.labour_record}
+        </Text>
+        {Array.isArray(data.data) && data.data.length && data?.total ? (
+          sortBy(data.data, (a, b) => moment(b?.date) - moment(a?.date)).map(
+            (v, i) => (
+              <LabourDetailAction
+                key={i}
+                data={v}
+                totalExpense={expense.length}
+                totalLabour={data?.total}
+              />
+            ),
+          )
+        ) : (
+          <Text>No Record</Text>
+        )}
         <Text h3 style={styles.subhead}>
           {strings.amount}
         </Text>

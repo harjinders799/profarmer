@@ -60,11 +60,11 @@ export default function AddLabour() {
   };
   const updateWt = async () => {
     if (labour == '') {
-      ToastError(strings.giver_name, 'Amount');
+      ToastError(strings.labour_name, strings.labour);
     } else if (rate.trim() == '' || parseInt(rate) <= 0) {
-      ToastError(strings.rate, 'Amount');
+      ToastError(strings.rate, strings.labour);
     } else if (count.trim() == '' || parseInt(count) <= 0) {
-      ToastError(strings.rate, 'Amount');
+      ToastError(strings.labour_count, strings.labour);
     } else {
       setLoading(true);
       let res = await updateLabour({
@@ -72,32 +72,26 @@ export default function AddLabour() {
         date: currentStamp(date),
       });
       setLoading(false);
-      ToastSuccess(strings.picker_amt_added, 'Amount');
+      ToastSuccess(strings.labour_added, strings.labour);
       navigate('Labour');
     }
   };
   const AddNew = async () => {
     if (labour == '') {
-      ToastError(strings.err_picker, 'Amount');
+      ToastError(strings.labour_name, strings.labour);
     } else if (rate.trim() == '' || parseInt(rate) <= 0) {
-      ToastError(strings.rate, 'Amount');
+      ToastError(strings.rate, strings.labour);
     } else if (count.trim() == '' || parseInt(count) <= 0) {
-      ToastError(strings.count, 'Amount');
+      ToastError(strings.labour_count, strings.labour);
     } else {
       setLoading(true);
-      // let exist = await getLabourRagular(labour.trim());
-      // if (Array.isArray(exist) && exist.length) {
-      //     setLoading(false);
-      //     ToastError("Aleady Regular Labour", "Labour")
-      // }
-      // else {
-      let res = await submitLabour({
+      await submitLabour({
         ...data,
         labour: labour.trim(),
         date: currentStamp(date),
       });
       setLoading(false);
-      ToastSuccess(strings.picker_amt_added, 'Amount');
+      ToastSuccess(strings.labour_added, strings.labour);
       let name = labour.trim();
       if (Array.isArray(labours) && labours.length) {
         let exist = labours.findIndex(
@@ -133,7 +127,7 @@ export default function AddLabour() {
         <DataPicker
           data={labours}
           intialVisible={!editData?.labour}
-          placeholder={strings.labour + ' ' + strings.name}
+          placeholder={strings.labour_name}
           selectedItem={labour}
           setSelectedItem={val => {
             onChangeValue('labour', val);
@@ -141,7 +135,7 @@ export default function AddLabour() {
         />
         <Input
           refs={refAmt}
-          placeholder={strings.labour + ' 1, 2, 3...'}
+          placeholder={strings.labour_count + ' 1, 2, 3...'}
           value={count}
           keyboardType="number-pad"
           setValue={value => onChangeValue('count', value)}

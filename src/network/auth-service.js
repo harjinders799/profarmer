@@ -29,7 +29,7 @@ export const SignInUser = phone => {
             break;
           case auth.PhoneAuthState.AUTO_VERIFIED: // or 'verified'
             ToastSuccess('Logged In', 'Login');
-            console.log(phoneAuthSnapshot, '??');
+            // console.log(phoneAuthSnapshot, '??');
             // replace('Main');
             resolve(phoneAuthSnapshot);
             break;

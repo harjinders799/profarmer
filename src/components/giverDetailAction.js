@@ -19,8 +19,8 @@ export default function GiverDetailAction({data}) {
   const {colors} = useTheme();
   const delteData = async () => {
     Alert.alert(
-      data?.giver,
-      `${strings.delete_wt} ${strings.taken_amount} ${data?.amount}Rs`,
+      `${data?.amount} Rs`,
+      `${strings.delete_wt}`,
       [
         {
           text: 'Yes',
@@ -28,7 +28,7 @@ export default function GiverDetailAction({data}) {
             setLoading(true);
             await deleteIneterstAmt(data?.id);
             setLoading(false);
-            ToastSuccess(strings.weight_delete, 'Amount');
+            ToastSuccess(strings.amount_deleted, strings.amount);
             goBack();
           },
         },

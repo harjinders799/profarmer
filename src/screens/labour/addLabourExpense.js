@@ -59,9 +59,9 @@ export default function AddLabourExpense() {
   };
   const updateWt = async () => {
     if (labour == '') {
-      ToastError(strings.giver_name, 'Amount');
+      ToastError(strings.labour_name, strings.labour);
     } else if (amount.trim() == '' || parseInt(amount) <= 0) {
-      ToastError(strings.amount, 'Amount');
+      ToastError(strings.given_amount_to_labour, strings.labour);
     } else {
       setLoading(true);
       let res = await updateLabourExpense({
@@ -69,15 +69,15 @@ export default function AddLabourExpense() {
         date: currentStamp(date),
       });
       setLoading(false);
-      ToastSuccess(strings.picker_amt_added, 'Amount');
+      ToastSuccess(strings.labour_expense_added, strings.labour);
       navigate('Labour');
     }
   };
   const AddNew = async () => {
     if (labour == '') {
-      ToastError(strings.err_picker, 'Amount');
+      ToastError(strings.err_picker, strings.labour);
     } else if (amount.trim() == '' || parseInt(amount) <= 0) {
-      ToastError(strings.amount, 'Amount');
+      ToastError(strings.given_amount_to_labour, strings.labour);
     } else {
       setLoading(true);
       await submitLabourExpense({
@@ -95,7 +95,7 @@ export default function AddLabourExpense() {
         });
       }
       setLoading(false);
-      ToastSuccess(strings.picker_amt_added, 'Amount');
+      ToastSuccess(strings.labour_expense_added, strings.labour);
       let name = labour.trim();
       if (Array.isArray(labours) && labours.length) {
         let exist = labours.findIndex(
@@ -130,22 +130,15 @@ export default function AddLabourExpense() {
         <DataPicker
           data={labours}
           intialVisible={!editData?.labour}
-          placeholder={strings.labour}
+          placeholder={strings.labour_name}
           selectedItem={labour}
           setSelectedItem={val => {
             onChangeValue('labour', val);
           }}
         />
-        {/* <Input
-                    refs={refAmt}
-                    placeholder={strings.taken_amount}
-                    value={amount}
-                    keyboardType="number-pad"
-                    setValue={(value) => onChangeValue('amount', value)}
-                /> */}
         <Input
           refs={refAmt}
-          placeholder={strings.amount}
+          placeholder={strings.given_amount_to_labour}
           value={amount}
           keyboardType="number-pad"
           setValue={value => onChangeValue('amount', value)}

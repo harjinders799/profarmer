@@ -16,7 +16,7 @@ import {
 } from '../../network/labour-service';
 import {ToastError} from '../../utils/toast';
 import {green, red} from '../../utils/color';
-import {dayCount} from '../../utils/dateformat';
+import {currencyFormat, dayCount} from '../../utils/dateformat';
 import Button from '../../components/button';
 import {WIDTH} from '../../utils/constant';
 import Animated, {
@@ -142,9 +142,10 @@ export default function DateWiseList({data}) {
                     : red,
                 }}>
                 {!loading
-                  ? tot - (!isNaN(item?.amount) ? item?.amount : 0)
+                  ? currencyFormat(
+                      tot - (!isNaN(item?.amount) ? item?.amount : 0),
+                    )
                   : '__'}{' '}
-                /-
               </Text>
             </Animated.View>
           ) : null}
@@ -168,9 +169,10 @@ export default function DateWiseList({data}) {
                       : red,
                   }}>
                   {!loading
-                    ? tot - (!isNaN(item?.amount) ? item?.amount : 0)
+                    ? currencyFormat(
+                        tot - (!isNaN(item?.amount) ? item?.amount : 0),
+                      )
                     : '__'}{' '}
-                  /-
                 </Text>
               </Animated.View>
               <Button

@@ -17,6 +17,7 @@ import {
   getLabourExpense,
 } from '../../network/labour-service';
 import {goBack} from '../../navigation/ref';
+import {currencyFormat} from '../../utils/dateformat';
 
 export default function LabourExpenseDetail({data, onPress}) {
   const [loading, setLoading] = React.useState(false);
@@ -24,8 +25,8 @@ export default function LabourExpenseDetail({data, onPress}) {
 
   const delteData = async () => {
     Alert.alert(
-      data?.labour,
-      `${strings.delete_wt} ${strings.taken_amount} ${data?.amount}Rs`,
+      `${data?.amount} Rs`,
+      `${strings.delete_wt}`,
       [
         {
           text: 'Yes',
@@ -34,7 +35,7 @@ export default function LabourExpenseDetail({data, onPress}) {
             await deleteLabourExpense(data?.id);
             onPress();
             setLoading(false);
-            ToastSuccess('strings.expense_delete', 'Amount');
+            ToastSuccess(strings.labour_expense_deleted, strings.labour);
             goBack();
           },
         },
@@ -45,15 +46,7 @@ export default function LabourExpenseDetail({data, onPress}) {
       {cancelable: true},
     );
   };
-  let start_date = moment(data?.date);
-  let today = moment();
-  let days = today.diff(start_date, 'days');
-  let interest = (
-    ((parseFloat(data?.amount) * (parseFloat(data?.interest_rate) / 100)) /
-      30) *
-    parseFloat(days)
-  ).toFixed(2);
-  let final_amount = parseFloat(data?.amount) + parseFloat(interest);
+
   return (
     <View style={[styles.list, {backgroundColor: colors.background}]}>
       <Loader visible={loading} />
@@ -62,7 +55,7 @@ export default function LabourExpenseDetail({data, onPress}) {
           {dateFormat(data?.date)}
         </Text>
         <Text h3 numberOfLines={1}>
-          {data?.amount} /-
+          {currencyFormat(data?.amount)}
         </Text>
       </View>
       <Text h4 style={{textAlign: 'center', paddingTop: 20}}>

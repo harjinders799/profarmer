@@ -61,11 +61,11 @@ export default function AddForm() {
   };
   const updateWt = async () => {
     if (giver == '') {
-      ToastError(strings.giver_name, 'Amount');
+      ToastError(strings.giver_name, strings.amount);
     } else if (amount.trim() == '' || parseInt(amount) <= 0) {
-      ToastError(strings.taken_amount, 'Amount');
+      ToastError(strings.taken_amount_from_aadhtiya, strings.amount);
     } else if (interest_rate.trim() == '' || parseInt(interest_rate) <= 0) {
-      ToastError(strings.interest_rate, 'Amount');
+      ToastError(strings.interest_rate, strings.amount);
     } else {
       setLoading(true);
       let res = await updateIneterstAmt({
@@ -74,18 +74,18 @@ export default function AddForm() {
       });
       setLoading(false);
       setInterstRate(interest_rate);
-      ToastSuccess(strings.picker_amt_added, 'Amount');
+      ToastSuccess(strings.amount_added, strings.amount);
       goBack();
     }
   };
 
   const AddNew = async () => {
     if (giver == '') {
-      ToastError(strings.err_picker, 'Amount');
+      ToastError(strings.giver_name, strings.amount);
     } else if (amount.trim() == '' || parseInt(amount) <= 0) {
-      ToastError(strings.taken_amount, 'Amount');
+      ToastError(strings.taken_amount_from_aadhtiya, strings.amount);
     } else if (interest_rate.trim() == '' || parseInt(interest_rate) <= 0) {
-      ToastError(strings.interest_rate, 'Amount');
+      ToastError(strings.interest_rate, strings.amount);
     } else {
       setLoading(true);
       let res = await submitInterestAmount({
@@ -94,7 +94,7 @@ export default function AddForm() {
         date: currentStamp(date),
       });
       setLoading(false);
-      ToastSuccess(strings.picker_amt_added, 'Amount');
+      ToastSuccess(strings.amount_added, strings.amount);
       let name = giver.trim();
       if (Array.isArray(givers) && givers.length) {
         let exist = givers.findIndex(
@@ -139,7 +139,7 @@ export default function AddForm() {
         />
         <Input
           refs={refAmt}
-          placeholder={strings.taken_amount}
+          placeholder={strings.taken_amount_from_aadhtiya}
           value={amount}
           keyboardType="number-pad"
           setValue={value => onChangeValue('amount', value)}
