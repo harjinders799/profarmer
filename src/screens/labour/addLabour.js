@@ -24,6 +24,7 @@ import {
 } from '../../network/labour-service';
 import Header from '../../components/header';
 import Icon from '../../components/icon';
+import {currencyInput} from '../../utils/dateformat';
 
 export default function AddLabour() {
   const {colors} = useTheme();
@@ -46,10 +47,17 @@ export default function AddLabour() {
   const {labour, detail, rate, date, count, is_regulare} = data;
 
   const onChangeValue = (key, value) => {
-    setData({
-      ...data,
-      [key]: value,
-    });
+    if (key == 'rate') {
+      setData({
+        ...data,
+        rate: value.replace(/[^0-9]/g, ''),
+      });
+    } else {
+      setData({
+        ...data,
+        [key]: value,
+      });
+    }
     if (key == 'labour' && Array.isArray(labours) && labours.length)
       refAmt.current.focus();
   };
@@ -142,7 +150,7 @@ export default function AddLabour() {
         />
         <Input
           placeholder={strings.labour_rate + ' 300, 400...'}
-          value={rate}
+          value={currencyInput(rate)}
           keyboardType="number-pad"
           setValue={value => onChangeValue('rate', value)}
         />

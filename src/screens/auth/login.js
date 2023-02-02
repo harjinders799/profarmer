@@ -256,6 +256,8 @@ const Login = ({navigation}) => {
         />
         {confirm ? (
           <OtpInputs
+            autofillFromClipboard
+            autofillListenerIntervalMS={3000}
             handleChange={handleOtp}
             numberOfInputs={6}
             style={styles.otp}

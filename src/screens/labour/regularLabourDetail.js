@@ -74,7 +74,7 @@ export default function RegularLabourDetail() {
       });
       setTotalLabour(tot);
     }
-  }, [data]);
+  }, [data, leaveTot]);
 
   return (
     <BaseView>

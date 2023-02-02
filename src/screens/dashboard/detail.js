@@ -98,37 +98,10 @@ export default function Detail({navigation}) {
         <Text h3>{strings.total_amount}</Text>
         <Text h3>{currencyFormat(data?.total + interest)}</Text>
       </View>
-      {/* {rate ?
-        <>
-          <View style={[styles.row, styles.underline]}>
-            <Text h3>
-              Rate X  {strings.total_cotton}
-            </Text>
-            <Text h3>
-              {`${rate * data?.total} Rs`}
-            </Text>
-          </View>
-          <View style={[styles.row, styles.underline]}>
-            <Text h3>
-              {strings.amount}
-            </Text>
-            <Text h3>
-              {sumBy(paid, o => parseInt(o.amount))} Rs
-            </Text>
-          </View>
-          <View style={[[styles.row, styles.underline]]}>
-            <Text h3>
-              {strings.final}
-            </Text>
-            <Text h2 style={{ color: (rate * data?.total - (sumBy(paid, o => parseInt(o.amount)))) > 0 ? green : red }}>
-              {rate * data?.total - (sumBy(paid, o => parseInt(o.amount)))} Rs
-            </Text>
-          </View>
-        </>
-        :
-        <Text style={{ color: red }}>{strings.enter_rate}</Text>
-      } */}
-      <ScrollView style={{width: '100%'}} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        style={{width: '100%'}}
+        contentContainerStyle={{paddingBottom: 150}}
+        showsVerticalScrollIndicator={false}>
         <View style={styles.wt}>
           <Text h4>{strings.amount}</Text>
           {Array.isArray(data.data) && data.data.length ? (

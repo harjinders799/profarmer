@@ -96,6 +96,7 @@ export default function Tabs() {
         tabBarInactiveTintColor: colors.primary + 60,
         headerShown: false,
         tabBarHideOnKeyboard: true,
+        unmountOnBlur: true,
       }}>
       {bottomTabs.map(value => {
         return (

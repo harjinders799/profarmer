@@ -24,7 +24,7 @@ import {
 } from '../../network/labour-service';
 import Header from '../../components/header';
 import Icon from '../../components/icon';
-import {find} from 'lodash';
+import {currencyFormat, currencyInput} from '../../utils/dateformat';
 
 export default function AddLabourExpense() {
   const {colors} = useTheme();
@@ -45,10 +45,17 @@ export default function AddLabourExpense() {
   const {labour, detail, amount, date} = data;
 
   const onChangeValue = (key, value) => {
-    setData({
-      ...data,
-      [key]: value,
-    });
+    if (key == 'amount') {
+      setData({
+        ...data,
+        amount: value.replace(/[^0-9]/g, ''),
+      });
+    } else {
+      setData({
+        ...data,
+        [key]: value,
+      });
+    }
     if (key == 'labour' && Array.isArray(labours) && labours.length)
       refAmt.current.focus();
   };
@@ -60,12 +67,13 @@ export default function AddLabourExpense() {
   const updateWt = async () => {
     if (labour == '') {
       ToastError(strings.labour_name, strings.labour);
-    } else if (amount.trim() == '' || parseInt(amount) <= 0) {
+    } else if (amount.trim() == '' || amount < 0) {
       ToastError(strings.given_amount_to_labour, strings.labour);
     } else {
       setLoading(true);
       let res = await updateLabourExpense({
         ...data,
+        amount: amount,
         date: currentStamp(date),
       });
       setLoading(false);
@@ -75,14 +83,15 @@ export default function AddLabourExpense() {
   };
   const AddNew = async () => {
     if (labour == '') {
-      ToastError(strings.err_picker, strings.labour);
-    } else if (amount.trim() == '' || parseInt(amount) <= 0) {
+      ToastError(strings.labour_name, strings.labour);
+    } else if (amount.trim() == '' || amount <= 0) {
       ToastError(strings.given_amount_to_labour, strings.labour);
     } else {
       setLoading(true);
       await submitLabourExpense({
         ...data,
         labour: labour.trim(),
+        amount: amount,
         date: currentStamp(date),
       });
       let exist = await getLabourByName(labour.trim());
@@ -139,7 +148,7 @@ export default function AddLabourExpense() {
         <Input
           refs={refAmt}
           placeholder={strings.given_amount_to_labour}
-          value={amount}
+          value={currencyInput(amount)}
           keyboardType="number-pad"
           setValue={value => onChangeValue('amount', value)}
         />

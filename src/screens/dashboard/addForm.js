@@ -18,6 +18,7 @@ import {goBack} from 'src/navigation/ref';
 import {updateIneterstAmt} from 'src/network/interest-service';
 import Header from '../../components/header';
 import Icon from '../../components/icon';
+import {currencyInput} from '../../utils/dateformat';
 
 export default function AddForm() {
   const {colors} = useTheme();
@@ -48,11 +49,19 @@ export default function AddForm() {
     [givers];
 
   const onChangeValue = (key, value) => {
-    setData({
-      ...data,
-      [key]: value,
-    });
-    if (key == 'giver') refAmt.current.focus();
+    if (key == 'amount') {
+      setData({
+        ...data,
+        amount: value.replace(/[^0-9]/g, ''),
+      });
+    } else {
+      setData({
+        ...data,
+        [key]: value,
+      });
+    }
+    if (key == 'giver' && Array.isArray(givers) && givers.length)
+      refAmt.current.focus();
   };
 
   const onPress = () => {
@@ -140,7 +149,7 @@ export default function AddForm() {
         <Input
           refs={refAmt}
           placeholder={strings.taken_amount_from_aadhtiya}
-          value={amount}
+          value={currencyInput(amount)}
           keyboardType="number-pad"
           setValue={value => onChangeValue('amount', value)}
         />

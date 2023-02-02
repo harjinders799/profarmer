@@ -15,7 +15,7 @@ import {orange} from 'src/utils/color';
 
 export default function App() {
   const [version, setVersion] = useState();
-  const [visible, setVisible] = useState(true);
+  const [visible, setVisible] = useState(false);
   useEffect(() => {
     (async () => {
       const res = await checkVersion({
@@ -23,6 +23,9 @@ export default function App() {
       });
       setVersion(res);
     })();
+    setTimeout(() => {
+      setVisible(true);
+    }, 3000);
   }, []);
 
   const update = () => {

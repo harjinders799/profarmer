@@ -6,27 +6,26 @@ export const dateFormat = value => {
 export const currentStamp = value => {
   return moment(value).valueOf();
 };
-const defaultOptions = {
-  // significantDigits: 2,
-  thousandsSeparator: ',',
-  // decimalSeparator: '.',
-  symbol: '₹',
+
+export const currencyFormat = value => {
+  const formatter = new Intl.NumberFormat('en-IN', {
+    style: 'currency',
+    currency: 'INR',
+    minimumFractionDigits: 0,
+  });
+  return `${formatter.format(parseInt(value))} /-`;
 };
 
-export const currencyFormat = (value, options) => {
-  if (typeof value !== 'number') value = parseInt(value);
-  options = {...defaultOptions, ...options};
-  value = value.toFixed(options.significantDigits);
-
-  const [currency, decimal] = value.split('.');
-  return `${options.symbol} ${currency.replace(
-    /\B(?=(\d{3})+(?!\d))/g,
-    options.thousandsSeparator,
-  )} /-`;
+export const currencyInput = value => {
+  if (!value) return '';
+  const formatter = new Intl.NumberFormat('en-IN', {
+    style: 'currency',
+    currency: 'INR',
+    minimumFractionDigits: 0,
+  });
+  return formatter.format(value.replace(/[^0-9]/g, ''));
 };
-// export function currencyFormat(num) {
-//     return '₹' + num.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, ',')
-// }
+
 export const dayCount = value => {
   let start_date = moment(value);
   let today = moment();
