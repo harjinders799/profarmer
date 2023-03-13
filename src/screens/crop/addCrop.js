@@ -1,29 +1,25 @@
 import * as React from 'react';
-import {View, StyleSheet, TouchableOpacity} from 'react-native';
-import {useRoute, useTheme} from '@react-navigation/native';
+import { View, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { useRoute, useTheme } from '@react-navigation/native';
 import Button from 'src/components/button';
 import Input from 'src/components/input';
 import Text from 'src/components/text';
 import DateTimePick from 'src/components/DateTime';
-import {currentStamp, dateFormat} from 'src/utils/dateformat';
-import {submitInterestAmount} from 'src/network/interest-service';
+import { currentStamp, dateFormat } from 'src/utils/dateformat';
 import Loader from 'src/components/loader';
 import BaseView from 'src/container/base';
-import {ToastError, ToastSuccess} from 'src/utils/toast';
-import DataPicker from 'src/components/dataPicker';
-import {strings} from 'src/translations/locale';
-import {navigate} from 'src/navigation/ref';
-import {useStore} from 'src/context/context';
-import {goBack} from 'src/navigation/ref';
-import {updateIneterstAmt} from 'src/network/interest-service';
+import { ToastError, ToastSuccess } from 'src/utils/toast';
+import { strings } from 'src/translations/locale';
+import { useStore } from 'src/context/context';
+import { goBack } from 'src/navigation/ref';
 import Header from '../../components/header';
 import Icon from '../../components/icon';
-import {submitCrop, updateCrop} from '../../network/interest-service';
+import { submitCrop, updateCrop } from '../../network/interest-service';
 
 export default function AddCrop() {
-  const {colors} = useTheme();
-  const {setGivers, givers} = useStore();
-  const {params} = useRoute();
+  const { colors } = useTheme();
+  const { setGivers, givers } = useStore();
+  const { params } = useRoute();
   const editData = params?.data ?? {};
   const refAmt = React.useRef();
   const [data, setData] = React.useState({
@@ -31,12 +27,13 @@ export default function AddCrop() {
     agent: editData?.agent ?? '',
     detail: editData?.detail ?? '',
     amount: editData?.amount ?? '',
+    interest_rate: editData?.interest_rate ?? '',
     crop: editData?.crop ?? '',
     date: editData?.date ? new Date(editData?.date) : new Date(),
   });
   const [showDate, setShowDate] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
-  const {agent, detail, amount, crop, date} = data;
+  const { agent, detail, amount, crop, interest_rate, date } = data;
 
   React.useEffect(() => {
     if (givers.length == 1 && !agent) onChangeValue('agent', givers[0]);
@@ -120,14 +117,22 @@ export default function AddCrop() {
         centerComponent={<Text h2>{strings.crop}</Text>}
         rightComponent={<Text h2> </Text>}
       />
-      <View style={styles.form}>
-        <Input
-          placeholder={strings.crop}
-          value={crop}
-          autoCapitalize="words"
-          setValue={value => onChangeValue('crop', value)}
-        />
-        <DataPicker
+      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+        <View style={styles.form}>
+          <Input
+            placeholder={strings.crop}
+            value={crop}
+            autoCapitalize="words"
+            setValue={value => onChangeValue('crop', value)}
+          />
+          <Input
+            placeholder={strings.interest_rate}
+            value={interest_rate}
+            keyboardType="number-pad"
+            autoCapitalize="words"
+            setValue={value => onChangeValue('interest_rate', value)}
+          />
+          {/* <DataPicker
           data={givers}
           // intialVisible={!editData?.agent}
           placeholder={strings.aadhtiya}
@@ -135,37 +140,38 @@ export default function AddCrop() {
           setSelectedItem={val => {
             onChangeValue('agent', val);
           }}
-        />
-        <Input
-          refs={refAmt}
-          placeholder={strings.total_amount}
-          value={amount}
-          keyboardType="number-pad"
-          setValue={value => onChangeValue('amount', value)}
-        />
-        <Input
-          placeholder={strings.remark}
-          multiline
-          autoCapitalize="words"
-          value={detail}
-          setValue={value => onChangeValue('detail', value)}
-        />
-        <TouchableOpacity
-          style={[styles.date, {borderColor: colors.border}]}
-          onPress={() => setShowDate(true)}>
-          <Text h3 medium>
-            {dateFormat(date)}
-          </Text>
-        </TouchableOpacity>
+        /> */}
+          <Input
+            refs={refAmt}
+            placeholder={strings.total_amount}
+            value={amount}
+            keyboardType="number-pad"
+            setValue={value => onChangeValue('amount', value)}
+          />
+          <Input
+            placeholder={strings.remark}
+            multiline
+            autoCapitalize="words"
+            value={detail}
+            setValue={value => onChangeValue('detail', value)}
+          />
+          <TouchableOpacity
+            style={[styles.date, { borderColor: colors.border }]}
+            onPress={() => setShowDate(true)}>
+            <Text h3 medium>
+              {dateFormat(date)}
+            </Text>
+          </TouchableOpacity>
 
-        <DateTimePick
-          show={showDate}
-          setShow={setShowDate}
-          date={date}
-          setDate={data => onChangeValue('date', data)}
-        />
-        <Button label={strings.save} onPress={onPress} />
-      </View>
+          <DateTimePick
+            show={showDate}
+            setShow={setShowDate}
+            date={date}
+            setDate={data => onChangeValue('date', data)}
+          />
+          <Button label={strings.save} onPress={onPress} />
+        </View>
+      </TouchableWithoutFeedback>
     </BaseView>
   );
 }

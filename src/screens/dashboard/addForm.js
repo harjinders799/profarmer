@@ -1,34 +1,33 @@
 import * as React from 'react';
-import {View, StyleSheet, TouchableOpacity} from 'react-native';
-import {useRoute, useTheme} from '@react-navigation/native';
+import { View, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { useRoute, useTheme } from '@react-navigation/native';
 import Button from 'src/components/button';
 import Input from 'src/components/input';
 import Text from 'src/components/text';
 import DateTimePick from 'src/components/DateTime';
-import {currentStamp, dateFormat} from 'src/utils/dateformat';
-import {submitInterestAmount} from 'src/network/interest-service';
+import { currentStamp, dateFormat } from 'src/utils/dateformat';
+import { submitInterestAmount } from 'src/network/interest-service';
 import Loader from 'src/components/loader';
 import BaseView from 'src/container/base';
-import {ToastError, ToastSuccess} from 'src/utils/toast';
+import { ToastError, ToastSuccess } from 'src/utils/toast';
 import DataPicker from 'src/components/dataPicker';
-import {strings} from 'src/translations/locale';
-import {navigate} from 'src/navigation/ref';
-import {useStore} from 'src/context/context';
-import {goBack} from 'src/navigation/ref';
-import {updateIneterstAmt} from 'src/network/interest-service';
+import { strings } from 'src/translations/locale';
+import { useStore } from 'src/context/context';
+import { goBack } from 'src/navigation/ref';
+import { updateIneterstAmt } from 'src/network/interest-service';
 import Header from '../../components/header';
 import Icon from '../../components/icon';
-import {currencyInput} from '../../utils/dateformat';
+import { currencyInput } from '../../utils/dateformat';
 
 export default function AddForm() {
-  const {colors} = useTheme();
+  const { colors } = useTheme();
   const {
     setGivers,
     interest_rate: storeRate,
     setInterstRate,
     givers,
   } = useStore();
-  const {params} = useRoute();
+  const { params } = useRoute();
   const editData = params?.data ?? {};
   const refAmt = React.useRef();
   const [data, setData] = React.useState({
@@ -41,7 +40,7 @@ export default function AddForm() {
   });
   const [showDate, setShowDate] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
-  const {giver, detail, amount, interest_rate, date} = data;
+  const { giver, detail, amount, interest_rate, date } = data;
 
   React.useEffect(() => {
     if (givers.length == 1 && !giver) onChangeValue('giver', givers[0]);
@@ -136,52 +135,54 @@ export default function AddForm() {
         centerComponent={<Text h2>{strings.aadhtiya}</Text>}
         rightComponent={<Text h2> </Text>}
       />
-      <View style={styles.form}>
-        <DataPicker
-          data={givers}
-          intialVisible={!editData?.giver}
-          placeholder={strings.giver_name}
-          selectedItem={giver}
-          setSelectedItem={val => {
-            onChangeValue('giver', val);
-          }}
-        />
-        <Input
-          refs={refAmt}
-          placeholder={strings.taken_amount_from_aadhtiya}
-          value={currencyInput(amount)}
-          keyboardType="number-pad"
-          setValue={value => onChangeValue('amount', value)}
-        />
-        <Input
-          placeholder={strings.interest_rate}
-          value={interest_rate}
-          keyboardType="number-pad"
-          setValue={value => onChangeValue('interest_rate', value)}
-        />
-        <Input
-          placeholder={strings.remark}
-          multiline
-          autoCapitalize="words"
-          value={detail}
-          setValue={value => onChangeValue('detail', value)}
-        />
-        <TouchableOpacity
-          style={[styles.date, {borderColor: colors.border}]}
-          onPress={() => setShowDate(true)}>
-          <Text h3 medium>
-            {dateFormat(date)}
-          </Text>
-        </TouchableOpacity>
+      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+        <View style={styles.form}>
+          <DataPicker
+            data={givers}
+            intialVisible={!editData?.giver}
+            placeholder={strings.giver_name}
+            selectedItem={giver}
+            setSelectedItem={val => {
+              onChangeValue('giver', val);
+            }}
+          />
+          <Input
+            refs={refAmt}
+            placeholder={strings.taken_amount_from_aadhtiya}
+            value={currencyInput(amount)}
+            keyboardType="number-pad"
+            setValue={value => onChangeValue('amount', value)}
+          />
+          <Input
+            placeholder={strings.interest_rate}
+            value={interest_rate}
+            keyboardType="number-pad"
+            setValue={value => onChangeValue('interest_rate', value)}
+          />
+          <Input
+            placeholder={strings.remark}
+            multiline
+            autoCapitalize="words"
+            value={detail}
+            setValue={value => onChangeValue('detail', value)}
+          />
+          <TouchableOpacity
+            style={[styles.date, { borderColor: colors.border }]}
+            onPress={() => setShowDate(true)}>
+            <Text h3 medium>
+              {dateFormat(date)}
+            </Text>
+          </TouchableOpacity>
 
-        <DateTimePick
-          show={showDate}
-          setShow={setShowDate}
-          date={date}
-          setDate={data => onChangeValue('date', data)}
-        />
-        <Button label={strings.save} onPress={onPress} />
-      </View>
+          <DateTimePick
+            show={showDate}
+            setShow={setShowDate}
+            date={date}
+            setDate={data => onChangeValue('date', data)}
+          />
+          <Button label={strings.save} onPress={onPress} />
+        </View>
+      </TouchableWithoutFeedback>
     </BaseView>
   );
 }

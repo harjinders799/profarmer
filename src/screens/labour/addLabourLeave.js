@@ -1,17 +1,17 @@
 import * as React from 'react';
-import {View, StyleSheet, TouchableOpacity} from 'react-native';
-import {useRoute, useTheme} from '@react-navigation/native';
+import { View, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { useRoute, useTheme } from '@react-navigation/native';
 import Button from 'src/components/button';
 import Input from 'src/components/input';
 import Text from 'src/components/text';
 import DateTimePick from 'src/components/DateTime';
-import {currentStamp, dateFormat} from 'src/utils/dateformat';
+import { currentStamp, dateFormat } from 'src/utils/dateformat';
 import Loader from 'src/components/loader';
 import BaseView from 'src/container/base';
-import {ToastError, ToastSuccess} from 'src/utils/toast';
-import {strings} from 'src/translations/locale';
-import {navigate} from 'src/navigation/ref';
-import {goBack} from 'src/navigation/ref';
+import { ToastError, ToastSuccess } from 'src/utils/toast';
+import { strings } from 'src/translations/locale';
+import { navigate } from 'src/navigation/ref';
+import { goBack } from 'src/navigation/ref';
 import {
   submitLabourLeave,
   updateLabourLeave,
@@ -20,8 +20,8 @@ import Header from '../../components/header';
 import Icon from '../../components/icon';
 
 export default function AddLabourLeave() {
-  const {colors} = useTheme();
-  const {params} = useRoute();
+  const { colors } = useTheme();
+  const { params } = useRoute();
   const editData = params?.item ?? {};
   const refAmt = React.useRef();
   const [data, setData] = React.useState({
@@ -34,7 +34,7 @@ export default function AddLabourLeave() {
   const [showDate, setShowDate] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
 
-  const {labour, detail, date, count} = data;
+  const { labour, detail, date, count } = data;
 
   const onChangeValue = (key, value) => {
     setData({
@@ -96,37 +96,39 @@ export default function AddLabourLeave() {
         centerComponent={<Text h2>{strings.add_labour}</Text>}
         rightComponent={<Text h2> </Text>}
       />
-      <View style={styles.form}>
-        <Input value={labour} editable={false} />
-        <Input
-          refs={refAmt}
-          placeholder={strings.leave_count + ' 1, 2, 3...'}
-          value={count}
-          keyboardType="number-pad"
-          setValue={value => onChangeValue('count', value)}
-        />
-        <Input
-          placeholder={strings.remark}
-          multiline
-          autoCapitalize="words"
-          value={detail}
-          setValue={value => onChangeValue('detail', value)}
-        />
-        <TouchableOpacity
-          style={[styles.date, {borderColor: colors.border}]}
-          onPress={() => setShowDate(true)}>
-          <Text h3 medium>
-            {dateFormat(date)}
-          </Text>
-        </TouchableOpacity>
-        <DateTimePick
-          show={showDate}
-          setShow={setShowDate}
-          date={date}
-          setDate={data => onChangeValue('date', data)}
-        />
-        <Button label={strings.save} onPress={onPress} />
-      </View>
+      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+        <View style={styles.form}>
+          <Input value={labour} editable={false} />
+          <Input
+            refs={refAmt}
+            placeholder={strings.leave_count + ' 1, 2, 3...'}
+            value={count}
+            keyboardType="number-pad"
+            setValue={value => onChangeValue('count', value)}
+          />
+          <Input
+            placeholder={strings.remark}
+            multiline
+            autoCapitalize="words"
+            value={detail}
+            setValue={value => onChangeValue('detail', value)}
+          />
+          <TouchableOpacity
+            style={[styles.date, { borderColor: colors.border }]}
+            onPress={() => setShowDate(true)}>
+            <Text h3 medium>
+              {dateFormat(date)}
+            </Text>
+          </TouchableOpacity>
+          <DateTimePick
+            show={showDate}
+            setShow={setShowDate}
+            date={date}
+            setDate={data => onChangeValue('date', data)}
+          />
+          <Button label={strings.save} onPress={onPress} />
+        </View>
+      </TouchableWithoutFeedback>
     </BaseView>
   );
 }

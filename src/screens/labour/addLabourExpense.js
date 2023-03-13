@@ -1,21 +1,21 @@
 import * as React from 'react';
-import {View, StyleSheet, TouchableOpacity} from 'react-native';
-import {useRoute, useTheme} from '@react-navigation/native';
+import { View, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { useRoute, useTheme } from '@react-navigation/native';
 import Button from 'src/components/button';
 import Input from 'src/components/input';
 import Text from 'src/components/text';
 import DateTimePick from 'src/components/DateTime';
-import {currentStamp, dateFormat} from 'src/utils/dateformat';
-import {submitInterestAmount} from 'src/network/interest-service';
+import { currentStamp, dateFormat } from 'src/utils/dateformat';
+import { submitInterestAmount } from 'src/network/interest-service';
 import Loader from 'src/components/loader';
 import BaseView from 'src/container/base';
-import {ToastError, ToastSuccess} from 'src/utils/toast';
+import { ToastError, ToastSuccess } from 'src/utils/toast';
 import DataPicker from 'src/components/dataPicker';
-import {strings} from 'src/translations/locale';
-import {navigate} from 'src/navigation/ref';
-import {useStore} from 'src/context/context';
-import {goBack} from 'src/navigation/ref';
-import {updateIneterstAmt} from 'src/network/interest-service';
+import { strings } from 'src/translations/locale';
+import { navigate } from 'src/navigation/ref';
+import { useStore } from 'src/context/context';
+import { goBack } from 'src/navigation/ref';
+import { updateIneterstAmt } from 'src/network/interest-service';
 import {
   getLabourByName,
   submitLabour,
@@ -24,12 +24,12 @@ import {
 } from '../../network/labour-service';
 import Header from '../../components/header';
 import Icon from '../../components/icon';
-import {currencyFormat, currencyInput} from '../../utils/dateformat';
+import { currencyFormat, currencyInput } from '../../utils/dateformat';
 
 export default function AddLabourExpense() {
-  const {colors} = useTheme();
-  const {setLabours, labours} = useStore();
-  const {params} = useRoute();
+  const { colors } = useTheme();
+  const { setLabours, labours } = useStore();
+  const { params } = useRoute();
   const editData = params?.data ?? {};
   const refAmt = React.useRef();
   const [data, setData] = React.useState({
@@ -42,7 +42,7 @@ export default function AddLabourExpense() {
   const [showDate, setShowDate] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
 
-  const {labour, detail, amount, date} = data;
+  const { labour, detail, amount, date } = data;
 
   const onChangeValue = (key, value) => {
     if (key == 'amount') {
@@ -135,45 +135,47 @@ export default function AddLabourExpense() {
         centerComponent={<Text h2>{strings.add_expense}</Text>}
         rightComponent={<Text h2> </Text>}
       />
-      <View style={styles.form}>
-        <DataPicker
-          data={labours}
-          intialVisible={!editData?.labour}
-          placeholder={strings.labour_name}
-          selectedItem={labour}
-          setSelectedItem={val => {
-            onChangeValue('labour', val);
-          }}
-        />
-        <Input
-          refs={refAmt}
-          placeholder={strings.given_amount_to_labour}
-          value={currencyInput(amount)}
-          keyboardType="number-pad"
-          setValue={value => onChangeValue('amount', value)}
-        />
-        <Input
-          placeholder={strings.remark}
-          multiline
-          autoCapitalize="words"
-          value={detail}
-          setValue={value => onChangeValue('detail', value)}
-        />
-        <TouchableOpacity
-          style={[styles.date, {borderColor: colors.border}]}
-          onPress={() => setShowDate(true)}>
-          <Text h3 medium>
-            {dateFormat(date)}
-          </Text>
-        </TouchableOpacity>
-        <DateTimePick
-          show={showDate}
-          setShow={setShowDate}
-          date={date}
-          setDate={data => onChangeValue('date', data)}
-        />
-        <Button label={strings.save} onPress={onPress} />
-      </View>
+      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+        <View style={styles.form}>
+          <DataPicker
+            data={labours}
+            intialVisible={!editData?.labour}
+            placeholder={strings.labour_name}
+            selectedItem={labour}
+            setSelectedItem={val => {
+              onChangeValue('labour', val);
+            }}
+          />
+          <Input
+            refs={refAmt}
+            placeholder={strings.given_amount_to_labour}
+            value={currencyInput(amount)}
+            keyboardType="number-pad"
+            setValue={value => onChangeValue('amount', value)}
+          />
+          <Input
+            placeholder={strings.remark}
+            multiline
+            autoCapitalize="words"
+            value={detail}
+            setValue={value => onChangeValue('detail', value)}
+          />
+          <TouchableOpacity
+            style={[styles.date, { borderColor: colors.border }]}
+            onPress={() => setShowDate(true)}>
+            <Text h3 medium>
+              {dateFormat(date)}
+            </Text>
+          </TouchableOpacity>
+          <DateTimePick
+            show={showDate}
+            setShow={setShowDate}
+            date={date}
+            setDate={data => onChangeValue('date', data)}
+          />
+          <Button label={strings.save} onPress={onPress} />
+        </View>
+      </TouchableWithoutFeedback>
     </BaseView>
   );
 }

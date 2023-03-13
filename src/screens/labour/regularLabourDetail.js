@@ -1,27 +1,27 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import BaseView from 'src/container/base';
 import Text from 'src/components/text';
 import Loader from 'src/components/loader';
-import {StyleSheet, View} from 'react-native';
-import {green, red, white} from 'src/utils/color';
+import { StyleSheet, View } from 'react-native';
+import { green, red, white } from 'src/utils/color';
 import moment from 'moment';
-import {filter, find, sortBy, sumBy} from 'lodash';
-import {useRoute, useTheme} from '@react-navigation/native';
-import {strings} from 'src/translations/locale';
+import { filter, find, sortBy, sumBy } from 'lodash';
+import { useRoute, useTheme } from '@react-navigation/native';
+import { strings } from 'src/translations/locale';
 import LabourDetailAction from '../../container/labour/labourDetailAction';
-import {getLabourExpense, getLabourLeave} from '../../network/labour-service';
+import { getLabourExpense, getLabourLeave } from '../../network/labour-service';
 import LabourExpenseDetail from '../../container/labour/labourExpenseDetail';
-import {currencyFormat, dateFormat, dayCount} from '../../utils/dateformat';
+import { currencyFormat, dateFormat, dayCount } from '../../utils/dateformat';
 import Header from '../../components/header';
 import Icon from '../../components/icon';
 import LabourLeaveDetail from '../../container/labour/labourLeaveDetail';
-import Animated, {FadeInUp} from 'react-native-reanimated';
+import Animated, { FadeInUp } from 'react-native-reanimated';
 import Button from '../../components/button';
-import {goBack, navigate} from '../../navigation/ref';
+import { goBack, navigate } from '../../navigation/ref';
 
 export default function RegularLabourDetail() {
-  const {params} = useRoute();
-  const {colors} = useTheme();
+  const { params } = useRoute();
+  const { colors } = useTheme();
   const [loading, setLoading] = useState(false);
   const data = params?.item ?? [];
   const [totalLabour, setTotalLabour] = useState(0);
@@ -56,7 +56,8 @@ export default function RegularLabourDetail() {
     Array.isArray(expense) && expense.length
       ? sumBy(expense, o => parseFloat(o?.amount))
       : 0;
-  let start_date = moment(find(data?.data, o => o?.is_regulare === true)?.date);
+  let date = moment(find(data?.data, o => o?.is_regulare === true)?.date).format("YYYY-MM-DD");
+  let start_date = moment(date);
   let today = moment();
   let days = today.diff(start_date, 'days');
   let leaveTot =
@@ -90,7 +91,7 @@ export default function RegularLabourDetail() {
         }
         centerComponent={<Text h2>{data?.labour}</Text>}
         rightComponent={
-          <Text numberOfLines={1} style={{color: green}} h4>
+          <Text numberOfLines={1} style={{ color: green }} h4>
             {data?.is_regulare ? strings.regular : ''}
           </Text>
         }
@@ -100,7 +101,7 @@ export default function RegularLabourDetail() {
         leftComponent={
           <Button
             label={strings.add_leave}
-            btnStyle={{width: '40%'}}
+            btnStyle={{ width: '40%' }}
             onPress={() =>
               // { console.log(Array.isArray(data?.data) && data?.data.length ? data?.data[0] : data)}
               navigate('AddLabourLeave', {
@@ -115,68 +116,68 @@ export default function RegularLabourDetail() {
         rightComponent={
           <Button
             label={strings.add_expense}
-            btnStyle={{width: '40%'}}
+            btnStyle={{ width: '40%' }}
             onPress={() =>
-              navigate('AddLabourExpense', {data: {labour: data?.labour}})
+              navigate('AddLabourExpense', { data: { labour: data?.labour } })
             }
           />
         }
       />
       <Animated.ScrollView
-        style={[{width: '100%'}]}
-        contentContainerStyle={{paddingBottom: 150}}
+        style={[{ width: '100%' }]}
+        contentContainerStyle={{ paddingBottom: 150 }}
         showsVerticalScrollIndicator={false}>
         <View style={[styles.row, styles.underline]}>
           <Text h3>{strings.start_date}</Text>
-          <Text h3 style={{color: green}}>
+          <Text h3 style={{ color: green }}>
             {dateFormat(find(data?.data, o => o?.is_regulare === true)?.date)}
           </Text>
         </View>
         <View style={[styles.row, styles.underline]}>
           <Text h3>{strings.total_days_from_start}</Text>
-          <Text h3 style={{color: green}}>
+          <Text h3 style={{ color: green }}>
             {days}
           </Text>
         </View>
         <View style={[styles.row, styles.underline]}>
           <Text h3>{strings.extra_labour}</Text>
-          <Text h3 style={{color: green}}>
+          <Text h3 style={{ color: green }}>
             {extraDay}
           </Text>
         </View>
         <View style={[styles.row, styles.underline]}>
           <Text h3>{strings.leaves}</Text>
-          <Text h3 style={{color: red}}>
+          <Text h3 style={{ color: red }}>
             {leaveTot}
           </Text>
         </View>
         <View style={[styles.row, styles.underline]}>
           <Text h3>{strings.labour_day}</Text>
-          <Text h3 style={{color: green}}>
+          <Text h3 style={{ color: green }}>
             {days + extraDay - leaveTot}
           </Text>
         </View>
         <View style={[styles.row, styles.underline]}>
           <Text h3>{strings.labour_rate}</Text>
-          <Text h3 style={{color: green}}>
+          <Text h3 style={{ color: green }}>
             {currencyFormat(data?.data[0]?.rate)}
           </Text>
         </View>
         <View style={[styles.row, styles.underline]}>
           <Text h3>{strings.total_labour}</Text>
-          <Text h3 style={{color: green}}>
+          <Text h3 style={{ color: green }}>
             {currencyFormat(totalLabour)}
           </Text>
         </View>
         <View style={[styles.row, styles.underline]}>
           <Text h3>{strings.given_amount}</Text>
-          <Text h3 style={{color: red}}>
+          <Text h3 style={{ color: red }}>
             {currencyFormat(expenseTot)}
           </Text>
         </View>
         <View style={[styles.row, styles.underline]}>
           <Text h3>{strings.final}</Text>
-          <Text h3 style={{color: totalLabour - expenseTot > 0 ? green : red}}>
+          <Text h3 style={{ color: totalLabour - expenseTot > 0 ? green : red }}>
             {currencyFormat(totalLabour - expenseTot)}
           </Text>
         </View>
@@ -218,7 +219,7 @@ export default function RegularLabourDetail() {
           <Animated.View style={styles.wt} entering={FadeInUp}>
             {sortBy(expense, (a, b) => moment(b?.date) - moment(a?.date)).map(
               (v, i) => (
-                <LabourExpenseDetail key={i} data={v} onPress={() => {}} />
+                <LabourExpenseDetail key={i} data={v} onPress={() => { }} />
               ),
             )}
           </Animated.View>

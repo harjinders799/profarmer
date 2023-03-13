@@ -27,7 +27,8 @@ export const currencyInput = value => {
 };
 
 export const dayCount = value => {
-  let start_date = moment(value);
+  let date = moment(value).format("YYYY-MM-DD");
+  let start_date = moment(date);
   let today = moment();
   return today.diff(start_date, 'days');
 };
