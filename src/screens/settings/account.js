@@ -14,6 +14,7 @@ import Feather from 'react-native-vector-icons/Feather';
 import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../../context/authContext';
 import { green, red } from '../../utils/color';
+import { strings } from '../../translations/locale';
 
 const Account = ({ }) => {
   const navigation = useNavigation()
@@ -22,17 +23,17 @@ const Account = ({ }) => {
   let userData = [
     {
       icon: 'user',
-      lable: 'Name',
+      lable: strings.name,
       value: user?.name && user?.name.trim() != "" ? user?.name : '--'
     },
     {
       icon: 'phone',
-      lable: 'Mobile Number',
+      lable: strings.phone,
       value: user?.phone && user?.phone.trim() != "" ? user?.phone : '--'
     },
     {
       icon: 'mail',
-      lable: 'Email Address',
+      lable: strings.email,
       value: user?.email && user?.email.trim() != "" ? user?.email : '--'
     },
   ]

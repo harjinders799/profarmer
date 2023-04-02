@@ -1,21 +1,30 @@
-import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
-import React, { useEffect } from 'react';
+import { ScrollView, StyleSheet, Switch, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
 import BaseView from 'src/container/base';
 import Account from './account';
 import Text from 'src/components/text';
-import { strings } from 'src/translations/locale';
-import { HEIGHT, WIDTH } from 'src/utils/constant';
+import { HEIGHT } from 'src/utils/constant';
 import { useCotton } from 'src/context/cottonContext';
 import { useLang } from '../../context/langContext';
 import Icon from '../../components/icon';
-import LanguagePicker from '../../components/languagePicker';
+import { green, black } from '../../utils/color'
+import { strings } from '../../translations/locale';
+import ReactNativeBiometrics, { BiometryTypes } from 'react-native-biometrics'
+
+const rnBiometrics = new ReactNativeBiometrics()
 
 export default function Setting({ navigation }) {
   const { resetPicker } = useCotton();
-  const { lang } = useLang();
+  const { lang, setFingerLock, fingerLock } = useLang();
+  const [isBiometry, setIsBiometry] = useState(false)
   // const { user, reset } = useAuth();
-  useEffect(() => { }, [lang]);
+  useEffect(() => {
+    (async () => {
+      const { available } = await rnBiometrics.isSensorAvailable()
+      setIsBiometry(available);
+    })()
 
+  }, [lang]);
   return (
     <BaseView>
       <ScrollView
@@ -27,19 +36,27 @@ export default function Setting({ navigation }) {
 
         <View style={styles.footer}>
           <TouchableOpacity style={styles.row} onPress={() => navigation.navigate("SalectLanguage")}>
-            <Text style={styles.txt}>Salect Language</Text>
+            <Text style={styles.txt}>{strings.lang}</Text>
             <Icon name='chevron-right' type="Entypo" size={25} />
           </TouchableOpacity>
           <TouchableOpacity style={styles.row} onPress={() => navigation.navigate("ContactUs")}>
-            <Text style={styles.txt}>Contact Us</Text>
+            <Text style={styles.txt}>{strings.contact}</Text>
             <Icon name='chevron-right' type="Entypo" size={25} />
           </TouchableOpacity>
           <TouchableOpacity style={styles.row} onPress={() => navigation.navigate("AboutUs")}>
             <Text style={styles.txt}>About Us</Text>
             <Icon name='chevron-right' type="Entypo" size={25} />
           </TouchableOpacity>
-
-          {/* <Biometrics /> */}
+          {isBiometry ?
+            <TouchableOpacity style={styles.row} onPress={() => navigation.navigate("AboutUs")}>
+              <Text style={styles.txt}>Finger Lock</Text>
+              <Switch value={fingerLock}
+                trackColor={{ false: '#767577', true: black }}
+                thumbColor={fingerLock ? green : '#f4f3f4'}
+                onValueChange={() => setFingerLock(!fingerLock)} />
+            </TouchableOpacity>
+            : null
+          }
 
           <TouchableOpacity style={styles.row} onPress={async () => {
             resetPicker();

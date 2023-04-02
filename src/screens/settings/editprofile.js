@@ -14,6 +14,7 @@ import Icon from '../../components/icon';
 import { goBack } from '../../navigation/ref';
 import { useTheme } from '@react-navigation/native';
 import { UpdateUser } from '../../network/auth-service';
+import { strings } from '../../translations/locale';
 
 export default function EditProfile({ navigation }) {
     const { user: data, getUser } = useAuth();
@@ -79,17 +80,17 @@ export default function EditProfile({ navigation }) {
                 /> */}
                 <View style={styles.body}>
                     <Input
-                        placeholder="Name"
+                        placeholder={strings.name}
                         value={name} setValue={v => updateData('name', v)} />
                     <Input
                         value={phone}
-                        placeholder="Phone"
+                        placeholder={strings.phone}
                         keyboardType="phone-pad"
                         setValue={v => updateData('phone', v)}
                     />
                     <Input
                         keyboardType="email-address"
-                        placeholder="Email"
+                        placeholder={strings.email}
                         value={email}
                         setValue={v => updateData('email', v)}
                     />

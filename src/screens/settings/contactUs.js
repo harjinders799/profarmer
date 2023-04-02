@@ -7,11 +7,25 @@ import Text from '../../components/text';
 import BaseView from '../../container/base';
 import Logo from '../../container/logo';
 import { green } from '../../utils/color';
+import Header from '../../components/header';
+import { goBack } from '../../navigation/ref';
+import { useTheme } from '@react-navigation/native';
 
 export default function ContactUs() {
+  const { colors } = useTheme()
 
   return (
     <BaseView>
+      <Header
+        leftComponent={
+          <Icon
+            name="back"
+            size={28}
+            color={colors.text}
+            onPress={() => goBack()}
+          />
+        }
+      />
       <Logo />
       <Text h2 style={{ marginTop: 25, width: '100%' }}>{`Hi Solution`}</Text>
       <Text style={{ marginTop: 5, width: '100%' }}>{`Village Bhagsar \nShri Ganganager (Raj.)\n9928185712`}</Text>
