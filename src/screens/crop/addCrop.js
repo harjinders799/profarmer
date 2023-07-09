@@ -15,16 +15,15 @@ import { goBack } from 'src/navigation/ref';
 import Header from '../../components/header';
 import Icon from '../../components/icon';
 import { submitCrop, updateCrop } from '../../network/interest-service';
+import { currencyInput } from '../../utils/dateformat';
 
 export default function AddCrop() {
   const { colors } = useTheme();
-  const { setGivers, givers } = useStore();
   const { params } = useRoute();
   const editData = params?.data ?? {};
   const refAmt = React.useRef();
   const [data, setData] = React.useState({
     id: editData?.id ?? '',
-    agent: editData?.agent ?? '',
     detail: editData?.detail ?? '',
     amount: editData?.amount ?? '',
     interest_rate: editData?.interest_rate ?? '',
@@ -33,31 +32,31 @@ export default function AddCrop() {
   });
   const [showDate, setShowDate] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
-  const { agent, detail, amount, crop, interest_rate, date } = data;
+  const { detail, amount, crop, interest_rate, date } = data;
 
-  React.useEffect(() => {
-    if (givers.length == 1 && !agent) onChangeValue('agent', givers[0]);
-  }),
-    [givers];
 
   const onChangeValue = (key, value) => {
-    setData({
-      ...data,
-      [key]: value,
-    });
-  };
-
+    if (key == 'amount') {
+      setData({
+        ...data,
+        amount: value.replace(/[^0-9]/g, ''),
+      });
+    } else {
+      setData({
+        ...data,
+        [key]: value,
+      });
+    };
+  }
   const onPress = () => {
-    if (editData.agent) updateWt();
+    if (editData.id) updateWt();
     else AddNew();
   };
   const updateWt = async () => {
-    if (agent == '') {
-      ToastError(strings.giver_name, 'Amount');
-    } else if (amount.trim() == '' || parseInt(amount) <= 0) {
-      ToastError(strings.taken_amount, 'Amount');
+    if (amount.trim() == '' || parseInt(amount) <= 0) {
+      ToastError(strings.taken_amount, 'ProFarmer');
     } else if (crop.trim() == '' || parseInt(crop) <= 0) {
-      ToastError(strings.crop, 'Amount');
+      ToastError(strings.crop, 'ProFarmer');
     } else {
       setLoading(true);
       let res = await updateCrop({
@@ -65,38 +64,37 @@ export default function AddCrop() {
         date: currentStamp(date),
       });
       setLoading(false);
-      ToastSuccess('strings.picker_amt_added', 'Amount');
+      ToastSuccess('strings.picker_amt_added', 'ProFarmer');
       goBack();
     }
   };
 
   const AddNew = async () => {
-    if (agent == '') {
-      ToastError(strings.err_picker, 'Amount');
-    } else if (amount.trim() == '' || parseInt(amount) <= 0) {
-      ToastError(strings.taken_amount, 'Amount');
+    if (amount.trim() == '' || parseInt(amount) <= 0) {
+      ToastError(strings.amount, 'ProFarmer');
     } else if (crop.trim() == '' || parseInt(crop) <= 0) {
-      ToastError(strings.crop, 'Amount');
+      ToastError(strings.crop, 'ProFarmer');
+    } else if (interest_rate.trim() == '' || parseInt(interest_rate) <= 0) {
+      ToastError(strings.interest_rate, 'ProFarmer');
     } else {
       setLoading(true);
       let res = await submitCrop({
         ...data,
-        agent: agent.trim(),
         date: currentStamp(date),
       });
       setLoading(false);
-      ToastSuccess('strings.picker_amt_added', 'Amount');
-      let name = agent.trim();
-      if (Array.isArray(givers) && givers.length) {
-        let exist = givers.findIndex(
-          o => o.toUpperCase() === name.toUpperCase(),
-        );
-        if (exist == -1) {
-          setGivers([...givers, name]);
-        }
-      } else {
-        setGivers([name]);
-      }
+      ToastSuccess('strings.picker_amt_added', 'ProFarmer');
+      // let name = agent.trim();
+      // if (Array.isArray(givers) && givers.length) {
+      //   let exist = givers.findIndex(
+      //     o => o.toUpperCase() === name.toUpperCase(),
+      //   );
+      //   if (exist == -1) {
+      //     setGivers([...givers, name]);
+      //   }
+      // } else {
+      //   setGivers([name]);
+      // }
       goBack();
       // }
     }
@@ -144,7 +142,7 @@ export default function AddCrop() {
           <Input
             refs={refAmt}
             placeholder={strings.total_amount}
-            value={amount}
+            value={currencyInput(amount)}
             keyboardType="number-pad"
             setValue={value => onChangeValue('amount', value)}
           />

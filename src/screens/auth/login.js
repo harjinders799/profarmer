@@ -52,13 +52,14 @@ GoogleSignin.configure({
 });
 const Login = ({ navigation }) => {
   const { colors } = useTheme();
-  const { lang } = useLang();
+  const { setAuthenticate } = useLang();
   const [loading, setLoading] = React.useState(false);
   const [state, setState] = React.useState({
     phone: __DEV__ ? '1231231231' : '',
   });
   const [confirm, setConfirm] = React.useState(null);
   useEffect(() => {
+    setAuthenticate(true)
     getOtp()
       .then(p => startOtpListener(message => {
         console.log(message)

@@ -52,6 +52,7 @@ export default function CropDetailAction({ data }) {
   return (
     <View style={[styles.list, { backgroundColor: colors.background }]}>
       <Loader visible={loading} />
+      <Text h2 style={{ textAlign: 'center' }}>{data?.crop}</Text>
       <View style={styles.row}>
         <Text h3 numberOfLines={1}>
           {dateFormat(data?.date)}

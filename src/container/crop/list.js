@@ -23,7 +23,7 @@ export default function List({ data }) {
   //   );
   // }
 
-  // console.log(JSON.stringify(arr), '-------')
+  console.log(JSON.stringify(data), '-------')
   return (
     // <FlatList
     //   style={{ width: '100%' }}

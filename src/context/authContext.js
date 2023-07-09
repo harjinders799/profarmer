@@ -1,6 +1,5 @@
 import React from 'react';
 import { Auth, database } from 'src/service/setup';
-import { getAllUser } from '../service/api';
 import { firestore } from '../service/setup';
 
 const initialState = {

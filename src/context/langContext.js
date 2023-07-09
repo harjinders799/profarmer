@@ -6,6 +6,7 @@ import useLocalStorage from '../utils/useLocalStore';
 const initialState = {
   lang: undefined,
   fingerLock: true,
+  authenticate: false
 };
 
 export const LangContext = React.createContext();
@@ -21,6 +22,11 @@ const LangReducer = (prevState, action) => {
       return {
         ...prevState,
         fingerLock: action.fingerLock,
+      };
+    case 'AUTHENTICATE':
+      return {
+        ...prevState,
+        authenticate: action.authenticate,
       };
   }
 };
@@ -39,6 +45,9 @@ export const LangProvider = props => {
       setFingerLock: async value => {
         await setAsyncStorage('fingerLock', JSON.stringify(value));
         dispatch({ type: 'FINGER', fingerLock: value });
+      },
+      setAuthenticate: async value => {
+        dispatch({ type: 'AUTHENTICATE', authenticate: value });
       },
       getLang: async () => {
         let lang = JSON.parse(await getAsyncStorage('lang'));

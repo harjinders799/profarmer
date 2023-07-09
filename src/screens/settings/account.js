@@ -68,6 +68,11 @@ const styles = StyleSheet.create({
   txt: {
     padding: 10,
   },
+  headericon: {
+    position: 'absolute',
+    right: 20,
+    top: 20
+  },
   row: {
     flexDirection: 'row',
     alignItems: 'flex-start',

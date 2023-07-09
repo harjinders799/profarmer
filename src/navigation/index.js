@@ -24,7 +24,7 @@ const rnBiometrics = new ReactNativeBiometrics();
 const Stack = createNativeStackNavigator();
 
 export default function Navigation() {
-  const { getLang, fingerLock } = useLang();
+  const { getLang, fingerLock, authenticate, setAuthenticate } = useLang();
   const { getUser } = useAuth();
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState();
@@ -50,13 +50,15 @@ export default function Navigation() {
   }, []);
 
   if (initializing) return <Loader visible={initializing} />;
-  if (fingerLock && user && fingerLockAvailable) {
+  if (fingerLock && user && fingerLockAvailable && !authenticate) {
     rnBiometrics
       .simplePrompt({ promptMessage: 'Confirm fingerprint' })
       .then(resultObject => {
         const { success } = resultObject;
         if (!success) {
           BackHandler.exitApp();
+        } else {
+          setAuthenticate(true)
         }
       })
       .catch(() => {
