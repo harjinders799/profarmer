@@ -14,6 +14,8 @@ import Detail from 'src/screens/dashboard/detail';
 import {Auth} from 'src/service/setup';
 import Loader from 'src/components/loader';
 import Tabs from './tab';
+import LoginMethods from '../screens/auth/loginMethods';
+import SignInWithEmail from '../screens/auth/signInWithEmail';
 
 const Stack = createNativeStackNavigator();
 
@@ -43,11 +45,23 @@ export default function Navigation() {
     <NavigationContainer theme={themeLight} ref={navigationRef}>
       <Stack.Navigator>
         {!user ? (
+          <>
+            <Stack.Screen
+              name="LoginMethods"
+              component={LoginMethods}
+              options={{headerShown: false}}
+            />
+              <Stack.Screen
+                  name="SignInWithEmail"
+                  component={SignInWithEmail}
+                  options={{headerShown: false}}
+                />
           <Stack.Screen
             name="Login"
             component={Login}
             options={{headerShown: false}}
           />
+          </>
         ) : (
           <>
             <Stack.Screen

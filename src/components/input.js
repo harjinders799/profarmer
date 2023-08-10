@@ -2,6 +2,7 @@ import {useTheme} from '@react-navigation/native';
 import React from 'react';
 import {StyleSheet, TextInput, View} from 'react-native';
 import {WIDTH} from 'src/utils/constant';
+import Icon from './icon';
 
 const Input = ({
   style,
@@ -12,6 +13,8 @@ const Input = ({
   numberType,
   keyboardType,
   inputStyle,
+  iconName = null,
+  iconType = 'AntDesign',
   multiline = false,
   leftComponent = null,
   placeholder,
@@ -22,6 +25,15 @@ const Input = ({
   return (
     <View style={[styles.container, {borderColor: colors.border}, style]}>
       {leftComponent}
+      {iconName ? (
+      <Icon
+        name={iconName}
+        type={iconType}
+        size={20}
+        // color={iconColor}
+        style={{margin: 10}}
+      />
+    ) : null}
       <TextInput
         ref={refs}
         {...props}
@@ -41,7 +53,7 @@ const Input = ({
 const styles = StyleSheet.create({
   container: {
     // height: 50,
-    width: '100%',
+    width: '90%',
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
@@ -49,7 +61,7 @@ const styles = StyleSheet.create({
     marginVertical: 5,
   },
   input: {
-    paddingHorizontal: 15,
+    paddingHorizontal: 10,
     fontSize: 20,
     width: '100%',
   },

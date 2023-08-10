@@ -35,7 +35,8 @@ export default function App() {
   return (
     <SafeAreaProvider>
       <Modal
-        visible={version?.needsUpdate && visible}
+       visible={false}
+       // visible={version?.needsUpdate && visible}
         setModalVisible={() => setVisible(false)}
         ratioHeight={0.7}>
         <View

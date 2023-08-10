@@ -3,10 +3,28 @@ import {StyleSheet, TouchableOpacity} from 'react-native';
 import {blue, white} from 'src/utils/color';
 import {WIDTH} from 'src/utils/constant';
 import Text from './text';
+import Icon from './icon';
 
-const Button = ({btnStyle, txtStyle, label, onPress}) => (
+const Button = ({
+  btnStyle,
+  txtStyle,
+  iconName = null,
+  iconType = 'AntDesign',
+  iconColor,
+  label,
+  onPress,
+}) => (
   <TouchableOpacity style={[styles.container, btnStyle]} onPress={onPress}>
-    <Text h3 medium white style={txtStyle}>
+    {iconName ? (
+      <Icon
+        name={iconName}
+        type={iconType}
+        size={20}
+        color={iconColor}
+        style={{marginRight: 10}}
+      />
+    ) : null}
+    <Text h4 medium white style={txtStyle}>
       {label}
     </Text>
   </TouchableOpacity>
@@ -17,6 +35,7 @@ const styles = StyleSheet.create({
     height: 40,
     width: WIDTH / 1.2,
     alignSelf: 'center',
+    flexDirection: 'row',
     backgroundColor: blue,
     marginVertical: 20,
     borderRadius: 10,

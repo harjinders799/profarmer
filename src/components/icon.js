@@ -33,9 +33,14 @@ const VectorIcon = {
   Zocial,
 };
 
-export default function Icon(props) {
-  const {type = 'AntDesign', name, color, size, style} = props;
-
+export default function Icon({
+  type = 'AntDesign',
+  name,
+  color,
+  size,
+  style,
+  ...props
+}) {
   let Component = VectorIcon[type];
 
   return (

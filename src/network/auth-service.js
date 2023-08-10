@@ -6,7 +6,19 @@ export const SignUpUser = async (email, password) => {
   try {
     return await Auth().createUserWithEmailAndPassword(email, password);
   } catch (error) {
-    return error;
+    throw error;
+  }
+};
+
+export const SignInWithEmailUser = async (email, password) => {
+  try {
+    return await auth().signInWithEmailAndPassword(email, password);
+  } catch (error) {
+    if (error.code === 'auth/user-not-found') {
+      return SignUpUser(email, password);
+    } else {
+      throw error;
+    }
   }
 };
 
