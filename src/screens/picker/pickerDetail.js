@@ -209,4 +209,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginVertical: 10,
   },
+  icon: {
+    elevation: 1,
+    width: 30,
+    height: 30,
+    textAlign: 'center',
+    textAlignVertical: 'center',
+    borderRadius: 5,
+  },
 });
