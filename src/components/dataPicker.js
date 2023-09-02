@@ -17,7 +17,7 @@ import {red} from 'src/utils/color';
 
 export default function DataPicker(props) {
   const {
-    data,
+    data =[],
     placeholder = 'Select here...',
     displayValue,
     selectedItem,

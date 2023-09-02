@@ -11,6 +11,7 @@ import AnimatedTabBar from './animateTab';
 import {white} from '../utils/color';
 import {strings} from '../translations/locale';
 import {useLang} from '../context/langContext';
+import PickerStack from './pickerStack';
 
 const Tab = createBottomTabNavigator();
 
@@ -41,13 +42,13 @@ export default function Tabs() {
       icon: 'user-secret',
       iconType: 'FontAwesome5',
     },
-    // {
-    //     id: 4,
-    //     name: 'Leader',
-    //     title: 'Leader',
-    //     component: LabourStack,
-    //     icon: "dashboard",
-    // },
+    {
+        id: 4,
+        name: 'Picker',
+        title: 'Picker',
+        component: PickerStack,
+        icon: "dashboard",
+    },
     {
       id: 5,
       name: 'SettingStack',

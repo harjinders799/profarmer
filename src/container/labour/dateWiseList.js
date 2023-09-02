@@ -4,7 +4,7 @@ import {FlatList, StyleSheet, TouchableOpacity, View} from 'react-native';
 import {white} from 'src/utils/color';
 import _, {every, filter, find, groupBy, some, sumBy} from 'lodash';
 import PickerRate from 'src/container/PickerRate';
-import PickerDetail from 'src/container/pickerDetail';
+// import PickerDetail from 'src/container/pickerDetail';
 import {strings} from 'src/translations/locale';
 import {dateFormat} from 'src/utils/dateformat';
 import Icon from 'src/components/icon';

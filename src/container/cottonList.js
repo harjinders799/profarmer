@@ -3,7 +3,6 @@ import React, {useState} from 'react';
 import Text from 'src/components/text';
 import {dateFormat} from 'src/utils/dateformat';
 import {white} from 'src/utils/color';
-import PickerDetail from 'src/components/pickerDetailAction';
 import {navigate} from 'src/navigation/ref';
 
 export default function CottonList({data}) {

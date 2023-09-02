@@ -53,7 +53,7 @@ const Input = ({
 const styles = StyleSheet.create({
   container: {
     // height: 50,
-    width: '90%',
+    width: '100%',
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
