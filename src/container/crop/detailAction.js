@@ -1,20 +1,20 @@
 import { View, StyleSheet, Alert } from 'react-native';
 import React from 'react';
-import Icon from './icon';
-import Text from './text';
+import Icon from 'src/components/icon';
+import Text from 'src/components/text';
 import { orange, red } from 'src/utils/color';
 import { navigate, replace } from 'src/navigation/ref';
 import { strings } from 'src/translations/locale';
 import { ToastError, ToastSuccess } from 'src/utils/toast';
-import Loader from './loader';
+import Loader from 'src/components/loader';
 import { dateFormat } from 'src/utils/dateformat';
 import { useTheme } from '@react-navigation/native';
 import moment from 'moment';
-import { deleteIneterstAmt } from 'src/network/interest-service';
-import { currencyFormat } from '../utils/dateformat';
-import { goBack } from '../navigation/ref';
+import { deleteCrop } from 'src/network/interest-service';
+import { currencyFormat } from 'src/utils/dateformat';
+import { goBack } from 'src/navigation/ref';
 
-export default function GiverDetailAction({ data }) {
+export default function CropDetailAction({ data }) {
   const [loading, setLoading] = React.useState(false);
   const { colors } = useTheme();
   const delteData = async () => {
@@ -26,7 +26,7 @@ export default function GiverDetailAction({ data }) {
           text: 'Yes',
           onPress: async () => {
             setLoading(true);
-            await deleteIneterstAmt(data?.id);
+            await deleteCrop(data?.id);
             setLoading(false);
             ToastSuccess(strings.amount_deleted, strings.amount);
             goBack();
@@ -52,6 +52,7 @@ export default function GiverDetailAction({ data }) {
   return (
     <View style={[styles.list, { backgroundColor: colors.background }]}>
       <Loader visible={loading} />
+      <Text h2 style={{ textAlign: 'center' }}>{data?.crop}</Text>
       <View style={styles.row}>
         <Text h3 numberOfLines={1}>
           {dateFormat(data?.date)}
@@ -61,7 +62,7 @@ export default function GiverDetailAction({ data }) {
         </Text>
       </View>
       <View style={styles.row}>
-        <Text h3>{strings.total_principal}</Text>
+        <Text h3>{strings.crop_total}</Text>
         <Text h3>{currencyFormat(data?.amount)}</Text>
       </View>
       <View style={styles.row}>
@@ -89,7 +90,7 @@ export default function GiverDetailAction({ data }) {
           size={20}
           color={orange}
           style={[styles.icon, { backgroundColor: colors.secondaryBackground }]}
-          onPress={() => replace('AddForm', { data })}
+          onPress={() => replace('AddCrop', { data })}
         />
       </View>
     </View>

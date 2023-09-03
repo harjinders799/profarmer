@@ -1,22 +1,23 @@
 import React from 'react';
 
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {useTheme} from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { useTheme } from '@react-navigation/native';
 import Icon from 'src/components/icon';
 import DashboardStack from './dashboardStack';
 import LabourStack from './labourStack';
 import SettingStack from './settingStack';
 import CottonStack from './cottonStack';
 import AnimatedTabBar from './animateTab';
-import {white} from '../utils/color';
-import {strings} from '../translations/locale';
-import {useLang} from '../context/langContext';
+import { white } from '../utils/color';
+import { strings } from '../translations/locale';
+import { useLang } from '../context/langContext';
+import CropStack from './cropStack';
 
 const Tab = createBottomTabNavigator();
 
 export default function Tabs() {
-  const {colors} = useTheme();
-  const {lang} = useLang();
+  const { colors } = useTheme();
+  const { lang } = useLang();
 
   const bottomTabs = [
     // {
@@ -38,16 +39,17 @@ export default function Tabs() {
       name: 'CottonStack',
       title: strings.aadhtiya,
       component: CottonStack,
-      icon: 'user-secret',
+      icon: 'shopping-store',
+      iconType: 'Fontisto',
+    },
+    {
+      id: 4,
+      name: 'CropStack',
+      title: strings.crop,
+      component: CropStack,
+      icon: 'leaf',
       iconType: 'FontAwesome5',
     },
-    // {
-    //     id: 4,
-    //     name: 'Leader',
-    //     title: 'Leader',
-    //     component: LabourStack,
-    //     icon: "dashboard",
-    // },
     {
       id: 5,
       name: 'SettingStack',

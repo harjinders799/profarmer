@@ -1,6 +1,6 @@
 import auth from '@react-native-firebase/auth';
-import {Auth, firestore} from 'src/service/setup';
-import {ToastSuccess} from 'src/utils/toast';
+import { Auth, firestore } from 'src/service/setup';
+import { ToastSuccess } from 'src/utils/toast';
 
 export const SignUpUser = async (email, password) => {
   try {
@@ -45,7 +45,7 @@ export const submitUser = async data => {
       await firestore().collection('users').doc(id).set({
         name: data?.name,
         phone: data?.phone,
-        profileUrl: url,
+        // profileUrl: url,
         email: data?.email,
         id: id,
       });
@@ -56,15 +56,18 @@ export const submitUser = async data => {
   });
 };
 
-export const UpdateUser = async (uuid, imgSource) => {
+export const UpdateUser = async data => {
   try {
-    return await firebase
-      .database()
-      .ref('users/' + uuid)
+    let id = Auth().currentUser?.uid;
+    return await firestore().collection('users').doc(id)
       .update({
-        profileImg: imgSource,
+        name: data?.name,
+        phone: data?.phone,
+        email: data?.email,
+        id: id,
       });
   } catch (error) {
+    submitUser(data)
     return error;
   }
 };

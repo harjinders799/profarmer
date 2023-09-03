@@ -10,73 +10,92 @@ import Loader from 'src/components/loader';
 import BaseView from 'src/container/base';
 import { ToastError, ToastSuccess } from 'src/utils/toast';
 import { strings } from 'src/translations/locale';
-import { navigate } from 'src/navigation/ref';
+import { useStore } from 'src/context/context';
 import { goBack } from 'src/navigation/ref';
-import {
-  submitLabourLeave,
-  updateLabourLeave,
-} from '../../network/labour-service';
 import Header from '../../components/header';
 import Icon from '../../components/icon';
+import { submitCrop, updateCrop } from '../../network/interest-service';
+import { currencyInput } from '../../utils/dateformat';
 
-export default function AddLabourLeave() {
+export default function AddCrop() {
   const { colors } = useTheme();
   const { params } = useRoute();
-  const editData = params?.item ?? {};
+  const editData = params?.data ?? {};
   const refAmt = React.useRef();
   const [data, setData] = React.useState({
     id: editData?.id ?? '',
-    labour: editData?.labour ?? '',
     detail: editData?.detail ?? '',
-    count: editData?.count ?? '',
+    amount: editData?.amount ?? '',
+    interest_rate: editData?.interest_rate ?? '',
+    crop: editData?.crop ?? '',
     date: editData?.date ? new Date(editData?.date) : new Date(),
   });
   const [showDate, setShowDate] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
+  const { detail, amount, crop, interest_rate, date } = data;
 
-  const { labour, detail, date, count } = data;
 
   const onChangeValue = (key, value) => {
-    setData({
-      ...data,
-      [key]: value,
-    });
-  };
-
+    if (key == 'amount') {
+      setData({
+        ...data,
+        amount: value.replace(/[^0-9]/g, ''),
+      });
+    } else {
+      setData({
+        ...data,
+        [key]: value,
+      });
+    };
+  }
   const onPress = () => {
-    if (editData.edit) updateWt();
+    if (editData.id) updateWt();
     else AddNew();
   };
   const updateWt = async () => {
-    if (labour == '') {
-      ToastError(strings.labour_name, strings.labour);
-    } else if (count.trim() == '' || parseInt(count) <= 0) {
-      ToastError(strings.rate, strings.labour);
+    if (amount.trim() == '' || parseInt(amount) <= 0) {
+      ToastError(strings.taken_amount, 'ProFarmer');
+    } else if (crop.trim() == '' || parseInt(crop) <= 0) {
+      ToastError(strings.crop, 'ProFarmer');
     } else {
       setLoading(true);
-      let res = await updateLabourLeave({
+      let res = await updateCrop({
         ...data,
         date: currentStamp(date),
       });
       setLoading(false);
-      ToastSuccess(strings.labour_leave_added, strings.labour);
-      navigate('Labour');
+      ToastSuccess('strings.picker_amt_added', 'ProFarmer');
+      goBack();
     }
   };
+
   const AddNew = async () => {
-    if (labour == '') {
-      ToastError(strings.err_picker, strings.labour);
-    } else if (count.trim() == '' || parseInt(count) <= 0) {
-      ToastError(strings.count, strings.labour);
+    if (amount.trim() == '' || parseInt(amount) <= 0) {
+      ToastError(strings.amount, 'ProFarmer');
+    } else if (crop.trim() == '' || parseInt(crop) <= 0) {
+      ToastError(strings.crop, 'ProFarmer');
+    } else if (interest_rate.trim() == '' || parseInt(interest_rate) <= 0) {
+      ToastError(strings.interest_rate, 'ProFarmer');
     } else {
       setLoading(true);
-      let res = await submitLabourLeave({
+      let res = await submitCrop({
         ...data,
         date: currentStamp(date),
       });
       setLoading(false);
-      ToastSuccess(strings.labour_leave_added, strings.labour);
-      navigate('Labour');
+      ToastSuccess('strings.picker_amt_added', 'ProFarmer');
+      // let name = agent.trim();
+      // if (Array.isArray(givers) && givers.length) {
+      //   let exist = givers.findIndex(
+      //     o => o.toUpperCase() === name.toUpperCase(),
+      //   );
+      //   if (exist == -1) {
+      //     setGivers([...givers, name]);
+      //   }
+      // } else {
+      //   setGivers([name]);
+      // }
+      goBack();
       // }
     }
   };
@@ -93,18 +112,39 @@ export default function AddLabourLeave() {
             onPress={() => goBack()}
           />
         }
-        centerComponent={<Text h2>{strings.add_labour}</Text>}
+        centerComponent={<Text h2>{strings.crop}</Text>}
         rightComponent={<Text h2> </Text>}
       />
       <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
         <View style={styles.form}>
-          <Input value={labour} editable={false} />
+          <Input
+            placeholder={strings.crop}
+            value={crop}
+            autoCapitalize="words"
+            setValue={value => onChangeValue('crop', value)}
+          />
+          <Input
+            placeholder={strings.interest_rate}
+            value={interest_rate}
+            keyboardType="number-pad"
+            autoCapitalize="words"
+            setValue={value => onChangeValue('interest_rate', value)}
+          />
+          {/* <DataPicker
+          data={givers}
+          // intialVisible={!editData?.agent}
+          placeholder={strings.aadhtiya}
+          selectedItem={agent}
+          setSelectedItem={val => {
+            onChangeValue('agent', val);
+          }}
+        /> */}
           <Input
             refs={refAmt}
-            placeholder={strings.leave_count + ' 1, 2, 3...'}
-            value={count}
+            placeholder={strings.total_amount}
+            value={currencyInput(amount)}
             keyboardType="number-pad"
-            setValue={value => onChangeValue('count', value)}
+            setValue={value => onChangeValue('amount', value)}
           />
           <Input
             placeholder={strings.remark}
@@ -120,6 +160,7 @@ export default function AddLabourLeave() {
               {dateFormat(date)}
             </Text>
           </TouchableOpacity>
+
           <DateTimePick
             show={showDate}
             setShow={setShowDate}
