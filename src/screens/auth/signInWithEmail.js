@@ -8,21 +8,21 @@ import {
   View,
 } from 'react-native';
 import BaseView from 'src/container/base';
-import {WIDTH} from 'src/utils/constant';
+import { WIDTH } from 'src/utils/constant';
 import Input from 'src/components/input';
 import Button from 'src/components/button';
 import auth from '@react-native-firebase/auth';
 import Logo from 'src/container/logo';
 import Text from 'src/components/text';
 import Loader from 'src/components/loader';
-import {useRoute, useTheme} from '@react-navigation/native';
-import {SignInUser} from 'src/network/auth-service';
-import {ToastError, ToastSuccess} from 'src/utils/toast';
+import { useRoute, useTheme } from '@react-navigation/native';
+import { SignInUser } from 'src/network/auth-service';
+import { ToastError, ToastSuccess } from 'src/utils/toast';
 import LanguagePicker from 'src/components/languagePicker';
-import {strings} from 'src/translations/locale';
-import {useLang} from 'src/context/langContext';
+import { strings } from 'src/translations/locale';
+import { useLang } from 'src/context/langContext';
 import Icon from 'src/components/icon';
-import {replace} from 'src/navigation/ref';
+import { replace } from 'src/navigation/ref';
 import {
   LoginButton,
   AccessToken,
@@ -30,11 +30,11 @@ import {
   GraphRequest,
   GraphRequestManager,
 } from 'react-native-fbsdk-next';
-import {SignInWithEmailUser, SignUpUser} from '../../network/auth-service';
+import { SignInWithEmailUser, SignUpUser } from '../../network/auth-service';
 
-const SignInWithEmail = ({navigation}) => {
-  const {colors} = useTheme();
-  const {lang} = useLang();
+const SignInWithEmail = ({ navigation }) => {
+  const { colors } = useTheme();
+  const { lang } = useLang();
   const [loading, setLoading] = React.useState(false);
   const [state, setState] = React.useState({
     email: __DEV__ ? 'aaabbb@gmg.com' : '',
@@ -54,11 +54,11 @@ const SignInWithEmail = ({navigation}) => {
       ToastError('Please fill valid email', 'SignInWithEmail');
       return;
     }
-   if (state.password.length < 6) {
-    ToastError('Password must be at least 6 characters long', 'SignInWithEmail');
-    return;
+    if (state.password.length < 6) {
+      ToastError('Password must be at least 6 characters long', 'SignInWithEmail');
+      return;
     };
-    
+
     try {
       setLoading(true);
       SignInWithEmailUser(state.email, state.password)
@@ -78,31 +78,27 @@ const SignInWithEmail = ({navigation}) => {
   return (
     <BaseView>
       <Loader visible={loading} />
-      <ScrollView
-        contentContainerStyle={{alignItems: 'center'}}
-        keyboardShouldPersistTaps="handled">
-        <Logo />
-        <Text h2>{strings.welcome}</Text>
-        <Input
-          emailType
-          iconName="email"
-          iconType="Zocial"
-          placeholder={strings.email}
-          value={state.email}
-          inputStyle={{}}
-          setValue={text => setState({...state, email: text})}
-        />
-        <Input
-          numberType
-          iconName="locked"
-          iconType="Fontisto"
-          placeholder={strings.password}
-          value={state.password}
-          inputStyle={{}}
-          setValue={text => setState({...state, password: text})}
-        />
-        <Button label="Login or Sign Up" onPress={signIn} />
-      </ScrollView>
+      <Logo />
+      <Text h2>{strings.welcome}</Text>
+      <Input
+        emailType
+        iconName="email"
+        iconType="Zocial"
+        placeholder={strings.email}
+        value={state.email}
+        inputStyle={{}}
+        setValue={text => setState({ ...state, email: text })}
+      />
+      <Input
+        numberType
+        iconName="locked"
+        iconType="Fontisto"
+        placeholder={strings.password}
+        value={state.password}
+        inputStyle={{}}
+        setValue={text => setState({ ...state, password: text })}
+      />
+      <Button label="Sign In/Up" onPress={signIn} />
     </BaseView>
   );
 };

@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, { useEffect } from 'react';
 import {
   ScrollView,
   Image,
@@ -8,22 +8,22 @@ import {
   View,
 } from 'react-native';
 import BaseView from 'src/container/base';
-import {WIDTH} from 'src/utils/constant';
+import { WIDTH } from 'src/utils/constant';
 import Input from 'src/components/input';
 import Button from 'src/components/button';
-import {Auth} from 'src/service/setup';
+import { Auth } from 'src/service/setup';
 import Logo from 'src/container/logo';
 import Text from 'src/components/text';
 import Loader from 'src/components/loader';
-import {useRoute, useTheme} from '@react-navigation/native';
-import {SignInUser} from 'src/network/auth-service';
-import {ToastError, ToastSuccess} from 'src/utils/toast';
+import { useRoute, useTheme } from '@react-navigation/native';
+import { SignInUser } from 'src/network/auth-service';
+import { ToastError, ToastSuccess } from 'src/utils/toast';
 import LanguagePicker from 'src/components/languagePicker';
-import {strings} from 'src/translations/locale';
-import {useLang} from 'src/context/langContext';
+import { strings } from 'src/translations/locale';
+import { useLang } from 'src/context/langContext';
 import OtpInputs from 'react-native-otp-inputs';
 import Icon from 'src/components/icon';
-import {replace} from 'src/navigation/ref';
+import { replace } from 'src/navigation/ref';
 
 import {
   LoginButton,
@@ -37,15 +37,15 @@ import {
   GoogleSigninButton,
   statusCodes,
 } from '@react-native-google-signin/google-signin';
-import {blue} from 'src/utils/color';
+import { blue } from 'src/utils/color';
 
 GoogleSignin.configure({
   webClientId:
     '416058833468-5rn56d49jdg3ar3e0mp2o4e5nio1o65g.apps.googleusercontent.com',
 });
-const Login = ({navigation}) => {
-  const {colors} = useTheme();
-  const {lang} = useLang();
+const Login = ({ navigation }) => {
+  const { colors } = useTheme();
+  const { lang } = useLang();
   const [loading, setLoading] = React.useState(false);
   const [state, setState] = React.useState({
     phone: __DEV__ ? '1231231231' : '',
@@ -132,7 +132,7 @@ const Login = ({navigation}) => {
   const signInG = async () => {
     try {
       await GoogleSignin.hasPlayServices();
-      const {idToken} = await GoogleSignin.signIn();
+      const { idToken } = await GoogleSignin.signIn();
       // Create a Google credential with the token
       const googleCredential = Auth.GoogleAuthProvider.credential(idToken);
 
@@ -227,12 +227,12 @@ const Login = ({navigation}) => {
   return (
     <BaseView>
       <Loader visible={loading} />
-      <LanguagePicker />
+      {/* <LanguagePicker /> */}
       <ScrollView
-        contentContainerStyle={{alignItems: 'center'}}
+        contentContainerStyle={{ alignItems: 'center' }}
         keyboardShouldPersistTaps="handled">
         <Logo />
-        <Text h2>{strings.welcome}</Text>
+        <Text h2 style={{ marginBottom: 50 }}>{strings.welcome}</Text>
         <Input
           numberType
           maxLength={10}
@@ -251,24 +251,25 @@ const Login = ({navigation}) => {
           }
           placeholder={strings.phone}
           value={state.phone}
-          inputStyle={{width: '70%'}}
-          setValue={text => setState({...state, phone: text})}
+          inputStyle={{ width: '70%' }}
+          setValue={text => setState({ ...state, phone: text })}
         />
         {confirm ? (
           <OtpInputs
+            autoFocus
             autofillFromClipboard
             autofillListenerIntervalMS={3000}
             handleChange={handleOtp}
             numberOfInputs={6}
             style={styles.otp}
-            inputContainerStyles={[styles.cell, {borderColor: colors.text}]}
-            inputStyles={[styles.cellTxt, {color: colors.text}]}
+            inputContainerStyles={[styles.cell, { borderColor: colors.text }]}
+            inputStyles={[styles.cellTxt, { color: colors.text }]}
             textBreakStrategy="highQuality"
           />
         ) : (
           <Button label={strings.login} onPress={signIn} />
         )}
-        <Button
+        {/* <Button
           label="Google Sign-In"
           btnStyle={{backgroundColor: '#3b519f'}}
           onPress={signInG}
@@ -277,7 +278,7 @@ const Login = ({navigation}) => {
           label="FaceBook Sign-In"
           btnStyle={{backgroundColor: '#3b5998'}}
           onPress={onFacebookButtonPress}
-        />
+        /> */}
       </ScrollView>
     </BaseView>
   );

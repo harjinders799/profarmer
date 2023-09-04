@@ -1,32 +1,33 @@
 import React from 'react';
 
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {useTheme} from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { useTheme } from '@react-navigation/native';
 import Icon from 'src/components/icon';
 import DashboardStack from './dashboardStack';
 import LabourStack from './labourStack';
 import SettingStack from './settingStack';
 import CottonStack from './cottonStack';
 import AnimatedTabBar from './animateTab';
-import {white} from '../utils/color';
-import {strings} from '../translations/locale';
-import {useLang} from '../context/langContext';
+import { white } from '../utils/color';
+import { strings } from '../translations/locale';
+import { useLang } from '../context/langContext';
 import PickerStack from './pickerStack';
 
 const Tab = createBottomTabNavigator();
 
 export default function Tabs() {
-  const {colors} = useTheme();
-  const {lang} = useLang();
+  const { colors } = useTheme();
+  const { lang } = useLang();
 
   const bottomTabs = [
-    // {
-    //     id: 1,
-    //     name: 'Home',
-    //     title: 'Home',
-    //     component: DashboardStack,
-    //     icon: "home",
-    // },
+    {
+      id: 1,
+      name: 'Picker',
+      title: strings.pickers,
+      component: PickerStack,
+      icon: "flower-poppy",
+      iconType: 'MaterialCommunityIcons',
+    },
     {
       id: 2,
       name: 'LabourStack',
@@ -42,43 +43,12 @@ export default function Tabs() {
       icon: 'user-secret',
       iconType: 'FontAwesome5',
     },
-    {
-        id: 4,
-        name: 'Picker',
-        title: 'Picker',
-        component: PickerStack,
-        icon: "dashboard",
-    },
-    {
-      id: 5,
-      name: 'SettingStack',
-      title: strings.settings,
-      component: SettingStack,
-      icon: 'setting',
-    },
-  ];
-  const bottomTabsEn = [
     // {
-    //     id: 1,
-    //     name: 'Home',
-    //     title: 'Home',
-    //     component: DashboardStack,
-    //     icon: "home",
-    // },
-    {
-      id: 2,
-      name: 'LabourStack',
-      title: strings.labour,
-      component: LabourStack,
-      icon: 'solution1',
-    },
-    // {
-    //     id: 3,
-    //     name: 'CottonStack',
-    //     title: strings.aadhtiya,
-    //     component: CottonStack,
-    //     icon: "user-secret",
-    //     iconType: 'FontAwesome5'
+    //     id: 4,
+    //     name: 'Leader',
+    //     title: 'Leader',
+    //     component: LabourStack,
+    //     icon: "dashboard",
     // },
     {
       id: 5,
@@ -88,6 +58,7 @@ export default function Tabs() {
       icon: 'setting',
     },
   ];
+
 
   return (
     <Tab.Navigator

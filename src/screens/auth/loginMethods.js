@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, { useEffect } from 'react';
 import {
   ScrollView,
   Image,
@@ -8,22 +8,22 @@ import {
   View,
 } from 'react-native';
 import BaseView from 'src/container/base';
-import {WIDTH} from 'src/utils/constant';
+import { WIDTH } from 'src/utils/constant';
 import Input from 'src/components/input';
 import Button from 'src/components/button';
-import {Auth} from 'src/service/setup';
+import { Auth } from 'src/service/setup';
 import Logo from 'src/container/logo';
 import Text from 'src/components/text';
 import Loader from 'src/components/loader';
-import { useRoute, useTheme} from '@react-navigation/native';
-import {SignInUser} from 'src/network/auth-service';
-import {ToastError, ToastSuccess} from 'src/utils/toast';
+import { useRoute, useTheme } from '@react-navigation/native';
+import { SignInUser } from 'src/network/auth-service';
+import { ToastError, ToastSuccess } from 'src/utils/toast';
 import LanguagePicker from 'src/components/languagePicker';
-import {strings} from 'src/translations/locale';
-import {useLang} from 'src/context/langContext';
+import { strings } from 'src/translations/locale';
+import { useLang } from 'src/context/langContext';
 import OtpInputs from 'react-native-otp-inputs';
 import Icon from 'src/components/icon';
-import {replace} from 'src/navigation/ref';
+import { replace } from 'src/navigation/ref';
 
 import {
   LoginButton,
@@ -37,16 +37,16 @@ import {
   GoogleSigninButton,
   statusCodes,
 } from '@react-native-google-signin/google-signin';
-import {blue} from 'src/utils/color';
+import { blue } from 'src/utils/color';
 import { navigate } from '../../navigation/ref';
 
 GoogleSignin.configure({
   webClientId:
     '416058833468-5rn56d49jdg3ar3e0mp2o4e5nio1o65g.apps.googleusercontent.com',
 });
-const LoginMethods = ({navigation}) => {
-  const {colors} = useTheme();
-  const {lang} = useLang();
+const LoginMethods = ({ navigation }) => {
+  const { colors } = useTheme();
+  const { lang } = useLang();
   const [loading, setLoading] = React.useState(false);
   const [state, setState] = React.useState({
     phone: __DEV__ ? '1231231231' : '',
@@ -105,7 +105,7 @@ const LoginMethods = ({navigation}) => {
   const signInG = async () => {
     try {
       await GoogleSignin.hasPlayServices();
-      const {idToken} = await GoogleSignin.signIn();
+      const { idToken } = await GoogleSignin.signIn();
       // Create a Google credential with the token
       const googleCredential = Auth.GoogleAuthProvider.credential(idToken);
 
@@ -202,7 +202,7 @@ const LoginMethods = ({navigation}) => {
       <Loader visible={loading} />
       <LanguagePicker />
       <ScrollView
-        contentContainerStyle={{alignItems: 'center'}}
+        contentContainerStyle={{ alignItems: 'center' }}
         keyboardShouldPersistTaps="handled">
         <Logo />
         <Text h2>{strings.welcome}</Text>
@@ -246,23 +246,25 @@ const LoginMethods = ({navigation}) => {
           iconName="email"
           iconType="Fontisto"
           iconColor={colors.background}
-          btnStyle={{backgroundColor: '#00bfff'}}
+          btnStyle={{ backgroundColor: '#00bfff' }}
           onPress={() =>
             navigate('SignInWithEmail')}
-          
+
         />
         <Button
           label="Sign-In With Phone"
           iconName="screen-smartphone"
           iconType="SimpleLineIcons"
           iconColor={colors.background}
-          btnStyle={{backgroundColor: '#a020f0'}}
+          btnStyle={{ backgroundColor: '#a020f0' }}
+          onPress={() =>
+            navigate('Login')}
         />
         <Button
           label="Sign-In With Google"
           iconName="google"
           iconColor={colors.background}
-          btnStyle={{backgroundColor: '#db4437'}}
+          btnStyle={{ backgroundColor: '#db4437' }}
           onPress={signInG}
         />
         <Button
@@ -270,7 +272,7 @@ const LoginMethods = ({navigation}) => {
           iconName="facebook"
           iconType="FontAwesome"
           iconColor={colors.background}
-          btnStyle={{backgroundColor: '#3b5998'}}
+          btnStyle={{ backgroundColor: '#3b5998' }}
           onPress={onFacebookButtonPress}
         />
       </ScrollView>
