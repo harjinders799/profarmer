@@ -12,6 +12,7 @@ import { white } from '../utils/color';
 import { strings } from '../translations/locale';
 import { useLang } from '../context/langContext';
 import CropStack from './cropStack';
+import PickerStack from './pickerStack';
 
 const Tab = createBottomTabNavigator();
 
@@ -20,13 +21,14 @@ export default function Tabs() {
   const { lang } = useLang();
 
   const bottomTabs = [
-    // {
-    //     id: 1,
-    //     name: 'Home',
-    //     title: 'Home',
-    //     component: DashboardStack,
-    //     icon: "home",
-    // },
+    {
+      id: 1,
+      name: 'Picker',
+      title: strings.pickers,
+      component: PickerStack,
+      icon: "flower-poppy",
+      iconType: 'MaterialCommunityIcons',
+    },
     {
       id: 2,
       name: 'LabourStack',
@@ -58,37 +60,7 @@ export default function Tabs() {
       icon: 'setting',
     },
   ];
-  const bottomTabsEn = [
-    // {
-    //     id: 1,
-    //     name: 'Home',
-    //     title: 'Home',
-    //     component: DashboardStack,
-    //     icon: "home",
-    // },
-    {
-      id: 2,
-      name: 'LabourStack',
-      title: strings.labour,
-      component: LabourStack,
-      icon: 'solution1',
-    },
-    // {
-    //     id: 3,
-    //     name: 'CottonStack',
-    //     title: strings.aadhtiya,
-    //     component: CottonStack,
-    //     icon: "user-secret",
-    //     iconType: 'FontAwesome5'
-    // },
-    {
-      id: 5,
-      name: 'SettingStack',
-      title: strings.settings,
-      component: SettingStack,
-      icon: 'setting',
-    },
-  ];
+
 
   return (
     <Tab.Navigator

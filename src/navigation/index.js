@@ -20,6 +20,8 @@ import ReactNativeBiometrics, { BiometryTypes } from 'react-native-biometrics';
 import { BackHandler } from 'react-native';
 
 const rnBiometrics = new ReactNativeBiometrics();
+import LoginMethods from '../screens/auth/loginMethods';
+import SignInWithEmail from '../screens/auth/signInWithEmail';
 
 const Stack = createNativeStackNavigator();
 
@@ -69,11 +71,23 @@ export default function Navigation() {
     <NavigationContainer theme={themeLight} ref={navigationRef}>
       <Stack.Navigator>
         {!user ? (
-          <Stack.Screen
-            name="Login"
-            component={Login}
-            options={{ headerShown: false }}
-          />
+          <>
+            <Stack.Screen
+              name="LoginMethods"
+              component={LoginMethods}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="SignInWithEmail"
+              component={SignInWithEmail}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="Login"
+              component={Login}
+              options={{ headerShown: false }}
+            />
+          </>
         ) : (
           <>
             <Stack.Screen

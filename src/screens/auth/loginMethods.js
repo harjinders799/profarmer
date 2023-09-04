@@ -38,39 +38,20 @@ import {
   statusCodes,
 } from '@react-native-google-signin/google-signin';
 import { blue } from 'src/utils/color';
-import {
-  getHash,
-  getOtp,
-  removeListener,
-  startOtpListener,
-  useOtpVerify,
-} from 'react-native-otp-verify';
+import { navigate } from '../../navigation/ref';
 
 GoogleSignin.configure({
   webClientId:
     '416058833468-5rn56d49jdg3ar3e0mp2o4e5nio1o65g.apps.googleusercontent.com',
 });
-const Login = ({ navigation }) => {
+const LoginMethods = ({ navigation }) => {
   const { colors } = useTheme();
-  const { setAuthenticate } = useLang();
+  const { lang } = useLang();
   const [loading, setLoading] = React.useState(false);
   const [state, setState] = React.useState({
     phone: __DEV__ ? '1231231231' : '',
   });
   const [confirm, setConfirm] = React.useState(null);
-  useEffect(() => {
-    setAuthenticate(true)
-    getOtp()
-      .then(p => startOtpListener(message => {
-        console.log(message)
-        const otp = /(\d{6})/g.exec(message)[1];
-        handleOtp(otp);
-      }))
-      .catch(p => console.log(p));
-
-    return () => removeListener();
-
-  }, []);
 
   const signIn = async () => {
     if (state.phone.length != 10) {
@@ -219,13 +200,13 @@ const Login = ({ navigation }) => {
   return (
     <BaseView>
       <Loader visible={loading} />
-      {/* <LanguagePicker /> */}
+      <LanguagePicker />
       <ScrollView
         contentContainerStyle={{ alignItems: 'center' }}
         keyboardShouldPersistTaps="handled">
         <Logo />
-        <Text h2 style={{ marginBottom: 50 }}>{strings.welcome}</Text>
-        <Input
+        <Text h2>{strings.welcome}</Text>
+        {/* <Input
           numberType
           maxLength={10}
           leftComponent={
@@ -237,40 +218,63 @@ const Login = ({ navigation }) => {
                 size={20}
               />
               <Text h3 pl={10}>
-                +91
+                +91123
               </Text>
             </View>
           }
           placeholder={strings.phone}
           value={state.phone}
-          inputStyle={{ width: '70%' }}
-          setValue={text => setState({ ...state, phone: text })}
-        />
-        {confirm ? (
+          inputStyle={{width: '70%'}}
+          setValue={text => setState({...state, phone: text})}
+        /> */}
+        {/* {confirm ? (
           <OtpInputs
-            autoFocus
             autofillFromClipboard
             autofillListenerIntervalMS={3000}
             handleChange={handleOtp}
             numberOfInputs={6}
             style={styles.otp}
-            inputContainerStyles={[styles.cell, { borderColor: colors.text }]}
-            inputStyles={[styles.cellTxt, { color: colors.text }]}
+            inputContainerStyles={[styles.cell, {borderColor: colors.text}]}
+            inputStyles={[styles.cellTxt, {color: colors.text}]}
             textBreakStrategy="highQuality"
           />
         ) : (
           <Button label={strings.login} onPress={signIn} />
-        )}
-        {/* <Button
-          label="Google Sign-In"
-          btnStyle={{ backgroundColor: '#3b519f' }}
+        )} */}
+        <Button
+          label="Sign-In With Email"
+          iconName="email"
+          iconType="Fontisto"
+          iconColor={colors.background}
+          btnStyle={{ backgroundColor: '#00bfff' }}
+          onPress={() =>
+            navigate('SignInWithEmail')}
+
+        />
+        <Button
+          label="Sign-In With Phone"
+          iconName="screen-smartphone"
+          iconType="SimpleLineIcons"
+          iconColor={colors.background}
+          btnStyle={{ backgroundColor: '#a020f0' }}
+          onPress={() =>
+            navigate('Login')}
+        />
+        <Button
+          label="Sign-In With Google"
+          iconName="google"
+          iconColor={colors.background}
+          btnStyle={{ backgroundColor: '#db4437' }}
           onPress={signInG}
         />
         <Button
-          label="FaceBook Sign-In"
+          label="Sign-In With FaceBook"
+          iconName="facebook"
+          iconType="FontAwesome"
+          iconColor={colors.background}
           btnStyle={{ backgroundColor: '#3b5998' }}
           onPress={onFacebookButtonPress}
-        /> */}
+        />
       </ScrollView>
     </BaseView>
   );
@@ -310,4 +314,4 @@ const styles = StyleSheet.create({
     textAlignVertical: 'center',
   },
 });
-export default Login;
+export default LoginMethods;

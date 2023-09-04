@@ -234,60 +234,60 @@ export const deleteLabourLeave = async id => {
   });
 };
 
-export const submitPickerExpense = async data => {
-  return new Promise(async function (resolve, reject) {
-    try {
-      let id = Auth().currentUser?.uid;
-      await firestore()
-        .collection('picker_expense')
-        .add({...data, uid: id});
-      resolve('success');
-    } catch (error) {
-      reject(new Error(error));
-    }
-  });
-};
+// export const submitPickerExpense = async data => {
+//   return new Promise(async function (resolve, reject) {
+//     try {
+//       let id = Auth().currentUser?.uid;
+//       await firestore()
+//         .collection('picker_expense')
+//         .add({...data, uid: id});
+//       resolve('success');
+//     } catch (error) {
+//       reject(new Error(error));
+//     }
+//   });
+// };
 
-export const getPickerExpense = async name => {
-  return new Promise(async function (resolve, reject) {
-    try {
-      let userId = Auth().currentUser?.uid;
-      await firestore()
-        .collection('picker_expense')
-        .where('uid', '==', userId)
-        .where('picker', '==', name)
-        .get()
-        .then(querySnapshot => {
-          let arr = [];
-          querySnapshot.forEach(documentSnapshot => {
-            arr.push(documentSnapshot.data());
-          });
-          resolve(arr);
-        });
-      resolve('success');
-    } catch (error) {
-      reject(new Error(error));
-    }
-  });
-};
+// export const getPickerExpense = async name => {
+//   return new Promise(async function (resolve, reject) {
+//     try {
+//       let userId = Auth().currentUser?.uid;
+//       await firestore()
+//         .collection('picker_expense')
+//         .where('uid', '==', userId)
+//         .where('picker', '==', name)
+//         .get()
+//         .then(querySnapshot => {
+//           let arr = [];
+//           querySnapshot.forEach(documentSnapshot => {
+//             arr.push(documentSnapshot.data());
+//           });
+//           resolve(arr);
+//         });
+//       resolve('success');
+//     } catch (error) {
+//       reject(new Error(error));
+//     }
+//   });
+// };
 
-export const getCottonByPicker = search => {
-  return new Promise(async function (resolve, reject) {
-    let userId = Auth().currentUser?.uid;
-    await firestore()
-      .collection('cotton')
-      .where('uid', '==', userId)
-      .where('picker', '==', search)
-      .get()
-      .then(querySnapshot => {
-        let arr = [];
-        querySnapshot.forEach(documentSnapshot => {
-          arr.push(documentSnapshot.data());
-        });
-        resolve(arr);
-      })
-      .catch(error => {
-        reject(new Error(error));
-      });
-  });
-};
+// export const getCottonByPicker = search => {
+//   return new Promise(async function (resolve, reject) {
+//     let userId = Auth().currentUser?.uid;
+//     await firestore()
+//       .collection('cotton')
+//       .where('uid', '==', userId)
+//       .where('picker', '==', search)
+//       .get()
+//       .then(querySnapshot => {
+//         let arr = [];
+//         querySnapshot.forEach(documentSnapshot => {
+//           arr.push(documentSnapshot.data());
+//         });
+//         resolve(arr);
+//       })
+//       .catch(error => {
+//         reject(new Error(error));
+//       });
+//   });
+// };
