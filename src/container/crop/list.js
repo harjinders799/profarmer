@@ -3,11 +3,7 @@ import Text from 'src/components/text';
 import { FlatList, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { white } from 'src/utils/color';
 import { filter, groupBy, sumBy } from 'lodash';
-import PickerRate from 'src/container/PickerRate';
-import PickerDetail from 'src/container/pickerDetail';
 import { strings } from 'src/translations/locale';
-import { dateFormat } from 'src/utils/dateformat';
-import Icon from 'src/components/icon';
 import { navigate } from 'src/navigation/ref';
 import { currencyFormat } from 'src/utils/dateformat';
 
