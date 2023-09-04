@@ -1,24 +1,20 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import Text from 'src/components/text';
-import {FlatList, StyleSheet, TouchableOpacity, View} from 'react-native';
-import {white} from 'src/utils/color';
-import _, {every, filter, find, groupBy, some, sumBy} from 'lodash';
-import PickerRate from 'src/container/PickerRate';
-// import PickerDetail from 'src/container/pickerDetail';
-import {strings} from 'src/translations/locale';
-import {dateFormat} from 'src/utils/dateformat';
-import Icon from 'src/components/icon';
-import {navigate} from 'src/navigation/ref';
+import { FlatList, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { white } from 'src/utils/color';
+import _, { every, filter, find, groupBy, some, sumBy } from 'lodash';
+import { strings } from 'src/translations/locale';
+import { navigate } from 'src/navigation/ref';
 import {
   getAllLabourExpense,
   getLabourExpense,
   getLabourLeave,
 } from '../../network/labour-service';
-import {ToastError} from '../../utils/toast';
-import {green, red} from '../../utils/color';
-import {currencyFormat, dayCount} from '../../utils/dateformat';
+import { ToastError } from '../../utils/toast';
+import { green, red } from '../../utils/color';
+import { currencyFormat, dayCount } from '../../utils/dateformat';
 import Button from '../../components/button';
-import {WIDTH} from '../../utils/constant';
+import { WIDTH } from '../../utils/constant';
 import Animated, {
   BounceInDown,
   FadeIn,
@@ -30,7 +26,7 @@ import Animated, {
   LightSpeedOutLeft,
 } from 'react-native-reanimated';
 
-export default function DateWiseList({data}) {
+export default function DateWiseList({ data }) {
   const [fullData, setFullData] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -109,16 +105,16 @@ export default function DateWiseList({data}) {
           onPress={() =>
             navigate(
               item?.is_regulare ? 'RegularLabourDetail' : 'LabourDetail',
-              {item},
+              { item },
             )
           }>
           {item?.is_regulare ? (
-            <Text numberOfLines={1} style={{color: green}} h4>
+            <Text numberOfLines={1} style={{ color: green }} h4>
               {strings.regular + ' ' + strings.labour}
             </Text>
           ) : null}
           <View style={styles.row}>
-            <Text numberOfLines={1} h3 style={{width: '60%'}}>
+            <Text numberOfLines={1} h3 style={{ width: '60%' }}>
               {item?.labour}
             </Text>
             <Text h5>{strings.view}</Text>
@@ -138,13 +134,13 @@ export default function DateWiseList({data}) {
                   color: loading
                     ? green
                     : tot - (!isNaN(item?.amount) ? item?.amount : 0) > 0
-                    ? green
-                    : red,
+                      ? green
+                      : red,
                 }}>
                 {!loading
                   ? currencyFormat(
-                      tot - (!isNaN(item?.amount) ? item?.amount : 0),
-                    )
+                    tot - (!isNaN(item?.amount) ? item?.amount : 0),
+                  )
                   : '__'}{' '}
               </Text>
             </Animated.View>
@@ -165,20 +161,20 @@ export default function DateWiseList({data}) {
                     color: loading
                       ? green
                       : tot - (!isNaN(item?.amount) ? item?.amount : 0) > 0
-                      ? green
-                      : red,
+                        ? green
+                        : red,
                   }}>
                   {!loading
                     ? currencyFormat(
-                        tot - (!isNaN(item?.amount) ? item?.amount : 0),
-                      )
+                      tot - (!isNaN(item?.amount) ? item?.amount : 0),
+                    )
                     : '__'}{' '}
                 </Text>
               </Animated.View>
               <Button
                 label={strings.add_leave}
-                onPress={() => navigate('AddLabourLeave', {item})}
-                btnStyle={{width: '50%', height: 30, marginVertical: 10}}
+                onPress={() => navigate('AddLabourLeave', { item })}
+                btnStyle={{ width: '50%', height: 30, marginVertical: 10 }}
               />
             </>
           ) : null}
@@ -188,19 +184,19 @@ export default function DateWiseList({data}) {
   };
   return (
     <FlatList
-      style={{width: '100%'}}
-      contentContainerStyle={{paddingBottom: 100}}
+      style={{ width: '100%' }}
+      contentContainerStyle={{ paddingBottom: 100 }}
       data={fullData}
       keyExtractor={item => Math.random().toString()}
       ListEmptyComponent={() => (
-        <Text style={{textAlign: 'center', paddingTop: 30}}>
+        <Text style={{ textAlign: 'center', paddingTop: 30 }}>
           {strings.no_data}
         </Text>
       )}
       extraData={data}
       showsVerticalScrollIndicator={false}
       // ItemSeparatorComponent={() => <View style={styles.line} />}
-      renderItem={({item}) => renderItem(item)}
+      renderItem={({ item }) => renderItem(item)}
     />
   );
 }

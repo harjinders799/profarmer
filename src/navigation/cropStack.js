@@ -1,22 +1,22 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import DashBoard from 'src/screens/dashboard';
-import AddForm from 'src/screens/dashboard/addForm';
-import Detail from 'src/screens/dashboard/detail';
+import Crop from '../screens/crop';
+import AddCrop from '../screens/crop/addCrop';
+import Detail from '../screens/crop/detail';
 
 const Stack = createNativeStackNavigator();
 
-export default function CottonStack() {
+export default function CropStack() {
   return (
     <Stack.Navigator>
       <Stack.Screen
-        name="Cotton"
-        component={DashBoard}
+        name="Crop"
+        component={Crop}
         options={{ headerShown: false }}
       />
       <Stack.Screen
-        name="AddForm"
-        component={AddForm}
+        name="AddCrop"
+        component={AddCrop}
         options={{ headerShown: false }}
       />
       <Stack.Screen

@@ -38,6 +38,13 @@ import {
   statusCodes,
 } from '@react-native-google-signin/google-signin';
 import { blue } from 'src/utils/color';
+import {
+  getHash,
+  getOtp,
+  removeListener,
+  startOtpListener,
+  useOtpVerify,
+} from 'react-native-otp-verify';
 
 GoogleSignin.configure({
   webClientId:
@@ -45,40 +52,25 @@ GoogleSignin.configure({
 });
 const Login = ({ navigation }) => {
   const { colors } = useTheme();
-  const { lang } = useLang();
+  const { setAuthenticate } = useLang();
   const [loading, setLoading] = React.useState(false);
   const [state, setState] = React.useState({
     phone: __DEV__ ? '1231231231' : '',
   });
   const [confirm, setConfirm] = React.useState(null);
+  useEffect(() => {
+    setAuthenticate(true)
+    getOtp()
+      .then(p => startOtpListener(message => {
+        console.log(message)
+        const otp = /(\d{6})/g.exec(message)[1];
+        handleOtp(otp);
+      }))
+      .catch(p => console.log(p));
 
-  // useEffect(() => {
-  //     userAuth();
-  // }, [lang]);
+    return () => removeListener();
 
-  // useEffect(() => {
-  //     const backAction = () => {
-  //         BackHandler.exitApp()
-  //         return true;
-  //     };
-  //     const backHandler = BackHandler.addEventListener(
-  //         "hardwareBackPress",
-  //         backAction
-  //     );
-  //     return () => backHandler.remove();
-  // }, [BackHandler]);
-
-  // const userAuth = async () => {
-  //     try {
-  //         let id = Auth().currentUser?.uid;
-  //         if (id) navigation.replace('Main');
-  //         else return;
-  //         setLoading(false);
-  //     } catch (error) {
-  //         setLoading(false);
-  //         console.log(error)
-  //     }
-  // }
+  }, []);
 
   const signIn = async () => {
     if (state.phone.length != 10) {
@@ -271,12 +263,12 @@ const Login = ({ navigation }) => {
         )}
         {/* <Button
           label="Google Sign-In"
-          btnStyle={{backgroundColor: '#3b519f'}}
+          btnStyle={{ backgroundColor: '#3b519f' }}
           onPress={signInG}
         />
         <Button
           label="FaceBook Sign-In"
-          btnStyle={{backgroundColor: '#3b5998'}}
+          btnStyle={{ backgroundColor: '#3b5998' }}
           onPress={onFacebookButtonPress}
         /> */}
       </ScrollView>

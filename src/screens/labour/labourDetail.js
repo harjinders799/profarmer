@@ -1,14 +1,14 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import BaseView from 'src/container/base';
 import Text from 'src/components/text';
 import Loader from 'src/components/loader';
-import {FlatList, ScrollView, Share, StyleSheet, View} from 'react-native';
-import {green, red, white} from 'src/utils/color';
+import { FlatList, ScrollView, Share, StyleSheet, View } from 'react-native';
+import { green, red, white } from 'src/utils/color';
 import moment from 'moment';
-import {sortBy, sumBy} from 'lodash';
-import {useRoute, useTheme} from '@react-navigation/native';
-import {strings} from 'src/translations/locale';
-import {commonStyle} from 'src/utils/style';
+import { sortBy, sumBy } from 'lodash';
+import { useRoute, useTheme } from '@react-navigation/native';
+import { strings } from 'src/translations/locale';
+import { commonStyle } from 'src/utils/style';
 import LabourDetailAction from '../../container/labour/labourDetailAction';
 import {
   deleteLabour,
@@ -18,13 +18,15 @@ import {
 import LabourExpenseDetail from '../../container/labour/labourExpenseDetail';
 import Header from '../../components/header';
 import Icon from '../../components/icon';
-import {goBack, navigate} from '../../navigation/ref';
+import { goBack, navigate } from '../../navigation/ref';
 import Button from '../../components/button';
-import {currencyFormat} from '../../utils/dateformat';
+import { currencyFormat } from '../../utils/dateformat';
+import RNFS from 'react-native-fs'
+import RNHTMLtoPDF from 'react-native-html-to-pdf';
 
-export default function LabourDetail({navigation}) {
-  const {params} = useRoute();
-  const {colors} = useTheme();
+export default function LabourDetail({ navigation }) {
+  const { params } = useRoute();
+  const { colors } = useTheme();
   const [loading, setLoading] = useState(false);
   const data = params?.item ?? [];
   const [totalLabour, setTotalLabour] = useState(0);
@@ -40,6 +42,26 @@ export default function LabourDetail({navigation}) {
       let res = await getLabourExpense(data?.labour);
       setExpense(res);
       setLoading(false);
+      let html = '<h1>My Firestore Data</h1>';
+      html += '<ul>';
+
+      res.forEach(item => {
+        html += `<li>${item.amount}: ${item.date}</li>`;
+      });
+
+      html += '</ul>';
+      const options = {
+        html: html,
+        fileName: 'my-pdf',
+        directory: 'Documents',
+      };
+
+      const file = await RNHTMLtoPDF.convert(options);
+
+      console.log(file.filePath);
+      const pdfPath = `${RNFS.DocumentDirectoryPath}/users.pdf`;
+      // await RNFS.writeFile(pdfPath, pdfBytes, 'binary');
+
     } catch (error) {
       ToastError(error?.message, 'Labour');
       setLoading(false);
@@ -75,7 +97,7 @@ export default function LabourDetail({navigation}) {
         }
         centerComponent={<Text h2>{data?.labour}</Text>}
         rightComponent={
-          <Text numberOfLines={1} style={{color: green}} h4>
+          <Text numberOfLines={1} style={{ color: green }} h4>
             {data?.is_regulare ? strings.regular : ''}
           </Text>
         }
@@ -84,12 +106,12 @@ export default function LabourDetail({navigation}) {
         leftComponent={
           <Button
             label={strings.add_labour}
-            btnStyle={{width: '40%'}}
+            btnStyle={{ width: '40%' }}
             onPress={() =>
               navigate('AddLabour', {
                 data:
                   Array.isArray(data?.data) && data?.data.length
-                    ? {...data, ...data?.data[0]}
+                    ? { ...data, ...data?.data[0] }
                     : data,
               })
             }
@@ -98,38 +120,38 @@ export default function LabourDetail({navigation}) {
         rightComponent={
           <Button
             label={strings.add_expense}
-            btnStyle={{width: '40%'}}
+            btnStyle={{ width: '40%' }}
             onPress={() =>
-              navigate('AddLabourExpense', {data: {labour: data?.labour}})
+              navigate('AddLabourExpense', { data: { labour: data?.labour } })
             }
           />
         }
       />
       <ScrollView
-        style={{width: '100%'}}
-        contentContainerStyle={{paddingBottom: 150}}
+        style={{ width: '100%' }}
+        contentContainerStyle={{ paddingBottom: 150 }}
         showsVerticalScrollIndicator={false}>
         <View style={[styles.row, styles.underline]}>
           <Text h3>{strings.total_labour}</Text>
-          <Text h3 style={{color: green}}>
+          <Text h3 style={{ color: green }}>
             {data?.total}
           </Text>
         </View>
         <View style={[styles.row, styles.underline]}>
           <Text h3>{strings.labour_amount}</Text>
-          <Text h3 style={{color: green}}>
+          <Text h3 style={{ color: green }}>
             {currencyFormat(totalLabour)}
           </Text>
         </View>
         <View style={[styles.row, styles.underline]}>
           <Text h3>{strings.given_amount}</Text>
-          <Text h3 style={{color: red}}>
+          <Text h3 style={{ color: red }}>
             {currencyFormat(expenseTot)}
           </Text>
         </View>
         <View style={[styles.row, styles.underline]}>
           <Text h3>{strings.final}</Text>
-          <Text h3 style={{color: totalLabour - expenseTot > 0 ? green : red}}>
+          <Text h3 style={{ color: totalLabour - expenseTot > 0 ? green : red }}>
             {currencyFormat(totalLabour - expenseTot)}
           </Text>
         </View>

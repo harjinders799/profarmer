@@ -1,5 +1,5 @@
 import React from 'react';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Picker from '../screens/picker';
 import AddPicker from '../screens/picker/addPicker';
 import AddPickerExpense from '../screens/picker/addPickerExpense';
@@ -13,26 +13,26 @@ export default function PickerStack() {
   return (
     <Stack.Navigator>
       <Stack.Screen
-        name="Picker"
+        name="Cotton"
         component={Picker}
-        options={{headerShown: false}}
+        options={{ headerShown: false }}
       />
       <Stack.Screen
         name="AddPicker"
         component={AddPicker}
-        options={{headerShown: false}}
+        options={{ headerShown: false }}
       />
       <Stack.Screen
         name="AddPickerExpense"
         component={AddPickerExpense}
-        options={{headerShown: false}}
+        options={{ headerShown: false }}
       />
-       <Stack.Screen
-      name="PickerDetail"
-      component={PickerDetail}
-      options={{headerShown: false}}
-    />
+      <Stack.Screen
+        name="PickerDetail"
+        component={PickerDetail}
+        options={{ headerShown: false }}
+      />
 
-      </Stack.Navigator>
+    </Stack.Navigator>
   );
 }

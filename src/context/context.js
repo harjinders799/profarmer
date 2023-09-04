@@ -1,15 +1,8 @@
 import React from 'react';
 import {
   clearAsyncStorage,
-  keys,
   setAsyncStorage,
 } from '../network/AsyncStorage';
-import {createCat} from '../network/catApi';
-import {createNote} from '../network/noteApi';
-import {completedTask, createTask} from '../network/taskApi';
-import {completedEvent, createEvent} from '../network/eventApi';
-import {createKhrach} from '../network/khrachApi';
-import useLocalStorage from 'src/utils/useLocalStore';
 import auth from '@react-native-firebase/auth';
 
 const initialState = {
@@ -48,22 +41,22 @@ export const StoreProvider = props => {
       ...state,
       setGivers: async value => {
         await setAsyncStorage('givers', JSON.stringify(value));
-        dispatch({type: 'SET_GIVERS', givers: value});
+        dispatch({ type: 'SET_GIVERS', givers: value });
       },
       setLabours: async value => {
         await setAsyncStorage('labours', JSON.stringify(value));
-        dispatch({type: 'SET_LABOURS', labours: value});
+        dispatch({ type: 'SET_LABOURS', labours: value });
       },
       setInterstRate: async value => {
         await setAsyncStorage('rate', value);
-        dispatch({type: 'SET_INTEREST_RATE', interest_rate: value});
+        dispatch({ type: 'SET_INTEREST_RATE', interest_rate: value });
       },
       resetGivers: async () => {
         if (auth()?.currentUser?.uid) {
           auth()
             .signOut()
             .then(async () => {
-              dispatch({type: 'RESET'});
+              dispatch({ type: 'RESET' });
               await clearAsyncStorage('givers');
               replace('Login');
             });
@@ -74,7 +67,7 @@ export const StoreProvider = props => {
   );
 
   return (
-    <BaseContext.Provider value={{...value}}>
+    <BaseContext.Provider value={{ ...value }}>
       {props.children}
     </BaseContext.Provider>
   );

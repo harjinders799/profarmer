@@ -11,6 +11,7 @@ import AnimatedTabBar from './animateTab';
 import { white } from '../utils/color';
 import { strings } from '../translations/locale';
 import { useLang } from '../context/langContext';
+import CropStack from './cropStack';
 import PickerStack from './pickerStack';
 
 const Tab = createBottomTabNavigator();
@@ -40,16 +41,17 @@ export default function Tabs() {
       name: 'CottonStack',
       title: strings.aadhtiya,
       component: CottonStack,
-      icon: 'user-secret',
+      icon: 'shopping-store',
+      iconType: 'Fontisto',
+    },
+    {
+      id: 4,
+      name: 'CropStack',
+      title: strings.crop,
+      component: CropStack,
+      icon: 'leaf',
       iconType: 'FontAwesome5',
     },
-    // {
-    //     id: 4,
-    //     name: 'Leader',
-    //     title: 'Leader',
-    //     component: LabourStack,
-    //     icon: "dashboard",
-    // },
     {
       id: 5,
       name: 'SettingStack',

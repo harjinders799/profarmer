@@ -1,17 +1,12 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import Text from 'src/components/text';
-import {FlatList, StyleSheet, TouchableOpacity, View} from 'react-native';
-import {white} from 'src/utils/color';
-import {filter, groupBy, sumBy} from 'lodash';
-import PickerRate from 'src/container/PickerRate';
-// import PickerDetail from 'src/container/pickerDetail';
-import {strings} from 'src/translations/locale';
-import {dateFormat} from 'src/utils/dateformat';
-import Icon from 'src/components/icon';
-import {navigate} from 'src/navigation/ref';
-import {currencyFormat} from '../utils/dateformat';
+import { FlatList, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { filter, groupBy, sumBy } from 'lodash';
+import { strings } from 'src/translations/locale';
+import { navigate } from 'src/navigation/ref';
+import { currencyFormat } from '../utils/dateformat';
 
-export default function List({data}) {
+export default function List({ data }) {
   const [rate, setRate] = useState();
   let arr = [];
 
@@ -28,28 +23,27 @@ export default function List({data}) {
 
   return (
     <FlatList
-      style={{width: '100%'}}
-      contentContainerStyle={{paddingBottom: 100}}
+      style={{ width: '100%' }}
+      contentContainerStyle={{ paddingBottom: 100 }}
       data={arr}
       keyExtractor={item => Math.random().toString()}
       ListEmptyComponent={() => (
-        <Text style={{textAlign: 'center', paddingTop: 30}}>
+        <Text style={{ textAlign: 'center', paddingTop: 30 }}>
           {strings.no_data}
         </Text>
       )}
       extraData={data}
       showsVerticalScrollIndicator={false}
       ItemSeparatorComponent={() => <View style={styles.line} />}
-      renderItem={({item}) => {
+      renderItem={({ item }) => {
         return (
           <View style={styles.list}>
-            <TouchableOpacity onPress={() => navigate('Detail', {item})}>
+            <TouchableOpacity onPress={() => navigate('Detail', { item })}>
               <View style={styles.row}>
-                <Text numberOfLines={1} h3 style={{width: '80%'}}>
+                <Text numberOfLines={1} h3 style={{ width: '80%' }}>
                   {item?.giver}
                 </Text>
                 <Text h5>{strings.view}</Text>
-                {/* <Icon name="more-horizontal" type="Feather" size={20} /> */}
               </View>
               <View style={styles.row}>
                 <Text numberOfLines={1} h4>
