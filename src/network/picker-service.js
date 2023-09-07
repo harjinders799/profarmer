@@ -1,4 +1,4 @@
-import {Auth, firestore, storage} from 'src/service/setup';
+import { Auth, firestore, storage } from 'src/service/setup';
 
 export const submitPicker = async data => {
   return new Promise(async function (resolve, reject) {
@@ -6,7 +6,7 @@ export const submitPicker = async data => {
       let id = Auth().currentUser?.uid;
       await firestore()
         .collection('picker')
-        .add({...data, uid: id});
+        .add({ ...data, uid: id });
       resolve('success');
     } catch (error) {
       reject(new Error(error));
@@ -24,7 +24,7 @@ export const getPickerData = () => {
       .then(querySnapshot => {
         let arr = [];
         querySnapshot.forEach(documentSnapshot => {
-          arr.push({...documentSnapshot.data(), id: documentSnapshot.id});
+          arr.push({ ...documentSnapshot.data(), id: documentSnapshot.id });
         });
         resolve(arr);
       })
@@ -45,7 +45,7 @@ export const getPickerByName = name => {
       .then(querySnapshot => {
         let arr = [];
         querySnapshot.forEach(documentSnapshot => {
-          arr.push({...documentSnapshot.data(), id: documentSnapshot.id});
+          arr.push({ ...documentSnapshot.data(), id: documentSnapshot.id });
         });
         resolve(arr);
       })
@@ -66,7 +66,7 @@ export const getAllPickerExpense = async name => {
         .then(querySnapshot => {
           let arr = [];
           querySnapshot.forEach(documentSnapshot => {
-            arr.push({...documentSnapshot.data(), id: documentSnapshot.id});
+            arr.push({ ...documentSnapshot.data(), id: documentSnapshot.id });
           });
           resolve(arr);
         });
@@ -125,7 +125,7 @@ export const submitPickerExpense = async data => {
       let id = Auth().currentUser?.uid;
       await firestore()
         .collection('picker_expense')
-        .add({...data, uid: id});
+        .add({ ...data, uid: id });
       resolve('success');
     } catch (error) {
       reject(new Error(error));
@@ -145,7 +145,8 @@ export const getPickerExpense = async name => {
         .then(querySnapshot => {
           let arr = [];
           querySnapshot.forEach(documentSnapshot => {
-            arr.push(documentSnapshot.data());
+            arr.push({ ...documentSnapshot.data(), id: documentSnapshot.id });
+
           });
           resolve(arr);
         });
@@ -167,7 +168,7 @@ export const getCottonByPicker = search => {
       .then(querySnapshot => {
         let arr = [];
         querySnapshot.forEach(documentSnapshot => {
-          arr.push(documentSnapshot.data());
+          arr.push({ ...documentSnapshot.data(), id: documentSnapshot.id });
         });
         resolve(arr);
       })

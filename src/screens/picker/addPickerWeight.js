@@ -18,16 +18,14 @@ import { goBack } from 'src/navigation/ref';
 import { updateIneterstAmt } from 'src/network/interest-service';
 import Checkbox from '../../components/checkbox';
 import {
-  getPickerByName,
   submitPicker,
   updatePicker,
 } from '../../network/picker-service';
 import Header from '../../components/header';
 import Icon from '../../components/icon';
-import { currencyInput } from '../../utils/dateformat';
 import { useCotton } from '../../context/cottonContext';
 
-export default function AddPicker() {
+export default function AddPickerWeight() {
   const { colors } = useTheme();
   const { setPicker, pickers } = useCotton();
   const { params } = useRoute();
@@ -38,7 +36,7 @@ export default function AddPicker() {
     picker: editData?.picker ?? '',
     detail: editData?.detail ?? '',
     rate: editData?.rate ?? '',
-    weight: editData?.weight ?? '0',
+    weight: editData?.weight ?? '',
     date: editData?.date ? new Date(editData?.date) : new Date(),
   });
   const [showDate, setShowDate] = React.useState(false);
@@ -63,7 +61,7 @@ export default function AddPicker() {
   };
 
   const onPress = () => {
-    if (editData?.edit) updateWt();
+    if (editData?.id) updateWt();
     else AddNew();
   };
   const updateWt = async () => {
@@ -81,7 +79,7 @@ export default function AddPicker() {
       });
       setLoading(false);
       ToastSuccess(strings.picker_added, strings.picker);
-      navigate('Picker');
+      goBack();
     }
   };
   const AddNew = async () => {
@@ -89,22 +87,15 @@ export default function AddPicker() {
       console.log('-----here 1')
       if (picker == '') {
         console.log('-----here 2')
-        ToastError(strings.picker_name);
+        ToastError(strings.picker_name, strings.pickers);
       } else if (rate.trim() == '' || parseInt(rate) <= 0) {
         console.log('-----here 3')
-        ToastError(strings.enter_rate);
-        // } else if (weight.trim() == '' || parseInt(weight) <= 0) {
-        //   ToastError(strings.picker_weight, strings.picker);
+        ToastError(strings.rate, strings.picker);
+      } else if (weight.trim() == '' || parseInt(weight) <= 0) {
+        ToastError(strings.picker_weight, strings.picker);
       } else {
         console.log('-----here 4')
         setLoading(true);
-        let isExist = await getPickerByName(picker.trim())
-        console.log("is exist", picker, isExist)
-        if (Array.isArray(isExist) && isExist.length) {
-          setLoading(false);
-          ToastError(strings.picker_exist);
-          return;
-        }
         await submitPicker({
           ...data,
           picker: picker.trim(),
@@ -112,7 +103,7 @@ export default function AddPicker() {
         });
         setLoading(false);
         console.log('-----here 5')
-        ToastSuccess(strings.picker_added);
+        ToastSuccess(strings.picker_added, strings.picker);
         console.log('-----here 6')
         let name = picker.trim();
         console.log('-----here 7')
@@ -130,7 +121,7 @@ export default function AddPicker() {
           setPicker([name]);
         }
         console.log('-----here 9')
-        goBack()
+        goBack();
         // }
       }
     } catch (error) {
@@ -151,56 +142,42 @@ export default function AddPicker() {
             onPress={() => goBack()}
           />
         }
-        centerComponent={<Text h2>{strings.add_picker}</Text>}
+        centerComponent={<Text h2>{picker}</Text>}
         rightComponent={<Text h2> </Text>}
       />
       <View style={styles.form}>
-        {/* <DataPicker
-          data={pickers}
-          intialVisible={!editData?.picker}
-          placeholder={strings.picker_name}
-          selectedItem={picker}
-          setSelectedItem={val => {
-            onChangeValue('picker', val);
-          }}
-        /> */}
-        {/* <Input
-          refs={refAmt}
-          placeholder={strings.picker_count + ' 1, 2, 3...'}
-          value={count}
-          keyboardType="number-pad"
-          setValue={value => onChangeValue('count', value)}
-        /> */}
-        {/* <View style={{ flexDirection: "row", width: "100%", justifyContent: "space-between" }}> */}
+        {/* <Text h2 style={{ textAlign: 'center', marginBottom: 20 }}>{picker}</Text> */}
+        <View style={{ flexDirection: "row", width: "100%", justifyContent: "space-between" }}>
+          <Input
+            placeholder={strings.weight + '(kg)'}
+            value={weight}
+            autoFocus
+            setValue={value => onChangeValue('weight', value)}
+            style={{ width: "45%" }}
+            keyboardType="numeric"
+          />
+          <Input
+            placeholder={strings.enter_rate + '(Rs)'}
+            value={rate}
+            setValue={value => onChangeValue('rate', value)}
+            style={{ width: "45%" }}
+            keyboardType="numeric"
+          />
+        </View>
         <Input
-          placeholder={strings.name}
-          value={picker}
-          setValue={value => onChangeValue('picker', value)}
-        // style={{ width: "45%" }}
-        // keyboardType="numeric"
-        />
-        <Input
-          placeholder={strings.enter_rate + '(Rs)'}
-          value={rate}
-          setValue={value => onChangeValue('rate', value)}
-          // style={{ width: "45%" }}
-          keyboardType="numeric"
-        />
-        {/* </View> */}
-        {/* <Input
           placeholder={strings.remark}
           multiline
           autoCapitalize="words"
           value={detail}
           setValue={value => onChangeValue('detail', value)}
-        /> */}
-        {/* <TouchableOpacity
+        />
+        <TouchableOpacity
           style={[styles.date, { borderColor: colors.border }]}
           onPress={() => setShowDate(true)}>
           <Text h3 medium>
             {dateFormat(date)}
           </Text>
-        </TouchableOpacity> */}
+        </TouchableOpacity>
         {/* <Checkbox
           isChecked={is_regulare}
           onPress={() => onChangeValue('is_regulare', !is_regulare)}

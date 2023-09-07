@@ -4,6 +4,7 @@ import Picker from '../screens/picker';
 import AddPicker from '../screens/picker/addPicker';
 import AddPickerExpense from '../screens/picker/addPickerExpense';
 import PickerDetail from '../screens/picker/pickerDetail';
+import AddPickerWeight from '../screens/picker/addPickerWeight';
 // import PickerDetail from '../screens/picker/pickerDetail';
 
 
@@ -25,6 +26,11 @@ export default function PickerStack() {
       <Stack.Screen
         name="AddPickerExpense"
         component={AddPickerExpense}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="AddPickerWeight"
+        component={AddPickerWeight}
         options={{ headerShown: false }}
       />
       <Stack.Screen

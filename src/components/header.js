@@ -1,6 +1,6 @@
-import {View, Text} from 'react-native';
+import { View, Text } from 'react-native';
 import React from 'react';
-import {commonStyle} from 'src/utils/style';
+import { commonStyle } from 'src/utils/style';
 
 export default function Header({
   style,

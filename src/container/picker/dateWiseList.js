@@ -3,14 +3,14 @@ import Text from 'src/components/text';
 import { FlatList, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { white } from 'src/utils/color';
 import _, { every, filter, find, groupBy, some, sumBy } from 'lodash';
-import { strings } from 'src/translations/locale';
+import { strings } from '../../translations/locale';
 import { navigate } from 'src/navigation/ref';
 import {
   getAllPickerExpense,
   getPickerExpense,
 } from '../../network/picker-service';
 import { ToastError } from '../../utils/toast';
-import { green, red } from '../../utils/color';
+import { green, red, yellow, black, orange, navy } from '../../utils/color';
 import { currencyFormat, kg } from '../../utils/dateformat';
 import Button from '../../components/button';
 import { WIDTH } from '../../utils/constant';
@@ -24,6 +24,8 @@ import Animated, {
   LightSpeedInRight,
   LightSpeedOutLeft,
 } from 'react-native-reanimated';
+import Icon from '../../components/icon';
+import Loader from '../../components/loader';
 
 export default function DateWiseList({ data }) {
   const [fullData, setFullData] = useState([]);
@@ -37,23 +39,27 @@ export default function DateWiseList({ data }) {
   const getExpense = async () => {
     setLoading(true);
     let grpPicker = groupBy(data, v => v.picker);
-    console.log(grpPicker, '----0------')
+    console.log(grpPicker, '----0------');
     try {
       let result = [];
       await Promise.all(
         Object.keys(grpPicker).map(async v => {
           let res = await getPickerExpense(v);
           let grpExpense = groupBy(res, v => v.picker);
-          console.log(grpExpense, '----02------')
+          console.log(grpExpense, '----02------');
           result.push({
             picker: v,
-            amount: sumBy(grpPicker[v], o => parseFloat(o.weight) * parseFloat(o?.rate)) - sumBy(grpExpense[v], o => parseFloat(o.amount)),
+            amount:
+              sumBy(
+                grpPicker[v],
+                o => parseFloat(o.weight) * parseFloat(o?.rate),
+              ) - sumBy(grpExpense[v], o => parseFloat(o.amount)),
             data: {
               expense: grpExpense[v],
-              income: grpPicker[v]
-            }
-          })
-        })
+              income: grpPicker[v],
+            },
+          });
+        }),
       );
       setFullData(result);
       setLoading(false);
@@ -67,39 +73,94 @@ export default function DateWiseList({ data }) {
     return (
       <Animated.View style={[styles.list, styles.line]}>
         <TouchableOpacity
+          disabled={loading}
           onPress={() =>
             navigate(
               // item?.is_regulare ? 'RegularPickerDetail' : 'PickerDetail',
-              'PickerDetail', { item }
+              'PickerDetail',
+              { item },
             )
           }>
-          <View style={styles.row}>
+          <Animated.View
+            style={styles.row}
+          // entering={LightSpeedInRight}
+          // layout={Layout.easing}
+          >
             <Text numberOfLines={1} h3 style={{ width: '60%' }}>
               {item?.picker}
             </Text>
-            <Text h5>{strings.view}</Text>
-          </View>
+            {!loading ? (
+              <Text
+                numberOfLines={1}
+                h3
+                style={{
+                  color: loading
+                    ? green
+                    : (!isNaN(item?.amount) ? item?.amount : 0) >= 0
+                      ? green
+                      : red,
+                }}>
+                {!loading
+                  ? currencyFormat(!isNaN(item?.amount) ? item?.amount : 0)
+                  : '__'}{' '}
+              </Text>
+            ) : (
+              <Loader size={15} small visible={loading} />
+            )}
+          </Animated.View>
           <Animated.View
             style={styles.row}
-            entering={FadeInUp}
-            layout={Layout.springify}>
-            <Text numberOfLines={1} h4>
-              {strings.final}
-            </Text>
+          // entering={FadeIn}
+          // layout={Layout.}
+          >
+            <View style={{ flexDirection: 'row' }}>
+              <Button
+                label={strings.add_weight}
+                btnStyle={{
+                  marginRight: 10,
+                  width: 80,
+                  height: 25,
+                  borderRadius: 5,
+                  marginVertical: 0,
+                }}
+                onPress={() =>
+                  navigate('AddPickerWeight', {
+                    data: {
+                      picker: item?.picker,
+                      rate: item.data.income[item.data.income.length - 1]?.rate,
+                    },
+                  })
+                }
+              />
+              <Button
+                label={strings.add_expense}
+                btnStyle={{
+                  backgroundColor: navy,
+                  marginRight: 10,
+                  width: 80,
+                  height: 25,
+                  borderRadius: 5,
+                  marginVertical: 0,
+                }}
+                onPress={() =>
+                  navigate('AddPickerExpense', { data: { picker: item?.picker } })
+                }
+              />
+            </View>
             <Text
               numberOfLines={1}
               h3
               style={{
                 color: loading
                   ? green
-                  : (!isNaN(item?.amount) ? item?.amount : 0) > 0
+                  : (!isNaN(item?.amount) ? item?.amount : 0) >= 0
                     ? green
                     : red,
               }}>
               {!loading
-                ? currencyFormat(
-                  (!isNaN(item?.amount) ? item?.amount : 0),
-                )
+                ? (!isNaN(item?.amount) ? item?.amount : 0) >= 0
+                  ? 'Give'
+                  : 'Receive'
                 : '__'}{' '}
             </Text>
           </Animated.View>

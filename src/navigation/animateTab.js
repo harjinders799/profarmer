@@ -1,14 +1,14 @@
-import React, {useEffect, useState} from 'react';
-import {View, StyleSheet, Dimensions, Keyboard} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, StyleSheet, Dimensions, Keyboard } from 'react-native';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withSpring,
 } from 'react-native-reanimated';
-import {green, red, white} from '../utils/color';
+import { green, darkOrange, red, white } from '../utils/color';
 import TabItem from './tabItem';
 
-const {width} = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
 const AnimatedTabBar = ({
   state,
@@ -22,8 +22,8 @@ const AnimatedTabBar = ({
     borderRadius: 10,
   },
   contentContainerStyle = {
-    backgroundColor: green,
-    borderRadius: 14,
+    backgroundColor: darkOrange,
+    // borderRadius: 14,
     elevation: 3,
   },
   itemLabelStyle,
@@ -93,8 +93,8 @@ const AnimatedTabBar = ({
   return !isKeyboardVisible ? (
     <View
       style={[
-        {...contentContainerStyle},
-        {margin},
+        { ...contentContainerStyle },
+        // { margin },
         {
           flexDirection: 'row',
           position: 'absolute',
@@ -104,7 +104,7 @@ const AnimatedTabBar = ({
         },
       ]}>
       <Animated.View
-        style={[s.mover, {width: itemWidth}, {padding: moverPadding}, sz]}>
+        style={[s.mover, { width: itemWidth }, { padding: moverPadding }, sz]}>
         <View
           style={[
             moverStyle,

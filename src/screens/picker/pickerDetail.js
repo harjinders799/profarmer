@@ -63,13 +63,8 @@ export default function PickerDetail({ navigation }) {
     <BaseView>
       <Loader visible={loading} />
       <Header
-        leftComponent={
-          <Icon
-            name="back"
-            size={28}
-            onPress={() => goBack()}
-          />
-        }
+        style={{ marginTop: 10 }}
+        leftComponent={<Icon name="back" size={28} onPress={() => goBack()} />}
         centerComponent={<Text h2>{data?.picker}</Text>}
         rightComponent={
           <Text numberOfLines={1} h4>
@@ -106,48 +101,68 @@ export default function PickerDetail({ navigation }) {
         <View style={[styles.row, styles.underline]}>
           <Text h3>{strings.avg_rate}</Text>
           <Text h3 style={{ color: green }}>
-            {currencyFormat(sumBy(data?.data?.income, o => parseFloat(o.weight) * parseFloat(o.rate)) / sumBy(data?.data?.income, o => parseFloat(o.weight)))}
+            {currencyFormat(
+              sumBy(
+                data?.data?.income,
+                o => parseFloat(o.weight) * parseFloat(o.rate),
+              ) /
+              sumBy(data?.data?.income, o =>
+                o.weight != '0' ? parseFloat(o.weight) : 1,
+              ),
+            )}
           </Text>
         </View>
         <View style={[styles.row, styles.underline]}>
           <Text h3>{strings.total_amount}</Text>
           <Text h3 style={{ color: green }}>
-            {currencyFormat(sumBy(data?.data?.income, o => parseFloat(o.weight) * parseFloat(o.rate)))}
+            {currencyFormat(
+              sumBy(
+                data?.data?.income,
+                o => parseFloat(o.weight) * parseFloat(o.rate),
+              ),
+            )}
           </Text>
         </View>
         <View style={[styles.row, styles.underline]}>
           <Text h3>{strings.given_amount}</Text>
           <Text h3 style={{ color: red }}>
-            -- {currencyFormat(sumBy(data?.data?.expense, o => parseFloat(o.amount)))}
+            --{' '}
+            {currencyFormat(
+              sumBy(data?.data?.expense, o => parseFloat(o.amount)),
+            )}
           </Text>
         </View>
         <View style={[styles.row, styles.underline]}>
           <Text h3>{strings.final}</Text>
-          <Text h3 style={{
-            color: (!isNaN(data?.amount) ? data?.amount : 0) > 0
-              ? green
-              : red
-          }}>
-            {(!isNaN(data?.amount) ? data?.amount : 0) > 0 ? '+' : '--'} {currencyFormat(
-              (!isNaN(data?.amount) ? data?.amount : 0),
-            )}
+          <Text
+            h3
+            style={{
+              color:
+                (!isNaN(data?.amount) ? data?.amount : 0) > 0 ? green : red,
+            }}>
+            {(!isNaN(data?.amount) ? data?.amount : 0) > 0 ? '+' : '--'}{' '}
+            {currencyFormat(!isNaN(data?.amount) ? data?.amount : 0)}
           </Text>
         </View>
         <View style={styles.wt}>
           <Text h4 style={styles.underline}>
             {strings.picker_record}
           </Text>
-          {Array.isArray(data?.data?.income) && data?.data?.income.length && !data?.data?.income.every(o => o?.weight == '0' || !o?.weight) && data?.picker ? (
-            sortBy(data.data.income, (a, b) => moment(b?.date) - moment(a?.date)).map(
-              (v, i) => (
-                <PickerDetailAction
-                  key={i}
-                  data={v}
-                  totalExpense={data?.data?.expense.length}
-                  totalPicker={data?.total}
-                />
-              ),
-            )
+          {Array.isArray(data?.data?.income) &&
+            data?.data?.income.length &&
+            !data?.data?.income.every(o => o?.weight == '0' || !o?.weight) &&
+            data?.picker ? (
+            sortBy(
+              data.data.income,
+              (a, b) => moment(b?.date) - moment(a?.date),
+            ).map((v, i) => (
+              <PickerDetailAction
+                key={i}
+                data={v}
+                totalExpense={data?.data?.expense.length}
+                totalPicker={data?.total}
+              />
+            ))
           ) : (
             <Text>No Record</Text>
           )}
@@ -156,24 +171,27 @@ export default function PickerDetail({ navigation }) {
           <Text h4 style={styles.underline}>
             {strings.amount}
           </Text>
-          {Array.isArray(data?.data?.expense) && data?.data?.expense.length && data?.picker ? (
-            sortBy(data?.data?.expense, (a, b) => moment(b?.date) - moment(a?.date)).map(
-              (v, i) => (
-                <PickerExpenseDetail
-                  key={i}
-                  data={v}
-                  onPress={async () => {
-                    if (
-                      !data?.total &&
-                      Array.isArray(data?.data?.income) &&
-                      data?.data?.income.length &&
-                      data?.data?.expense.length == 1
-                    )
-                      await deletePicker(data?.data?.income[0]?.id);
-                  }}
-                />
-              ),
-            )
+          {Array.isArray(data?.data?.expense) &&
+            data?.data?.expense.length &&
+            data?.picker ? (
+            sortBy(
+              data?.data?.expense,
+              (a, b) => moment(b?.date) - moment(a?.date),
+            ).map((v, i) => (
+              <PickerExpenseDetail
+                key={i}
+                data={v}
+                onPress={async () => {
+                  if (
+                    !data?.total &&
+                    Array.isArray(data?.data?.income) &&
+                    data?.data?.income.length &&
+                    data?.data?.expense.length == 1
+                  )
+                    await deletePicker(data?.data?.income[0]?.id);
+                }}
+              />
+            ))
           ) : (
             <Text>No Record</Text>
           )}

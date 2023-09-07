@@ -17,13 +17,14 @@ export const currencyFormat = value => {
 };
 
 export const currencyInput = value => {
+  console.log(value)
   if (!value) return '';
   const formatter = new Intl.NumberFormat('en-IN', {
     style: 'currency',
     currency: 'INR',
     minimumFractionDigits: 0,
   });
-  return formatter.format(value.replace(/[^0-9]/g, ''));
+  return formatter.format(value ? value.replace(/[^0-9]/g, '') : 0);
 };
 
 export const dayCount = value => {

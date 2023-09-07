@@ -27,6 +27,7 @@
     "react-native": "0.70.4",
     "react-native-biometrics": "^3.0.1",
     "react-native-check-version": "^1.0.20",
+    "react-native-cheerio": "^1.0.0-rc.4",
     "react-native-device-info": "^10.3.0",
     "react-native-fbsdk-next": "^11.0.0",
     "react-native-flash-message": "^0.3.1",

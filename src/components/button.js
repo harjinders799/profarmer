@@ -1,9 +1,9 @@
 import React from 'react';
-import {StyleSheet, TouchableOpacity} from 'react-native';
-import {blue, white} from 'src/utils/color';
-import {WIDTH} from 'src/utils/constant';
+import { StyleSheet, TouchableOpacity } from 'react-native';
+import { WIDTH } from 'src/utils/constant';
 import Text from './text';
 import Icon from './icon';
+import { green } from '../utils/color';
 
 const Button = ({
   btnStyle,
@@ -21,7 +21,7 @@ const Button = ({
         type={iconType}
         size={20}
         color={iconColor}
-        style={{marginRight: 10}}
+        style={{ marginRight: 10 }}
       />
     ) : null}
     <Text h4 medium white style={txtStyle}>
@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
     width: WIDTH / 1.2,
     alignSelf: 'center',
     flexDirection: 'row',
-    backgroundColor: blue,
+    backgroundColor: green,
     marginVertical: 20,
     borderRadius: 10,
     justifyContent: 'center',

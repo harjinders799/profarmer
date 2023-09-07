@@ -1,7 +1,7 @@
-import {showMessage as showMessageRNFM} from 'react-native-flash-message';
-import {white, red, green, blue, yellow} from 'src/utils/color';
+import { showMessage as showMessageRNFM } from 'react-native-flash-message';
+import { white, red, green, blue, yellow } from 'src/utils/color';
 
-export let ToastError = (message, title = ' ') => {
+export let ToastError = (message, title = 'ProFarmer') => {
   const backgroundColor = red;
   showMessageRNFM({
     backgroundColor,
@@ -13,7 +13,7 @@ export let ToastError = (message, title = ' ') => {
   });
 };
 
-export let ToastSuccess = (message, title = ' ') => {
+export let ToastSuccess = (message, title = 'ProFarmer') => {
   const backgroundColor = green;
   showMessageRNFM({
     backgroundColor,
