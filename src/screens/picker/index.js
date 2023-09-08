@@ -55,7 +55,7 @@ export default function Picker() {
         iconName='plus'
         iconColor={white}
         label={strings.add_picker}
-        btnStyle={{ width: '40%', position: 'absolute', bottom: 50, right: 30 }}
+        btnStyle={{ width: '40%', position: 'absolute', bottom: 50, right: 30, zIndex: 999 }}
         onPress={() => navigate('AddPicker')}
       />
     </BaseView>

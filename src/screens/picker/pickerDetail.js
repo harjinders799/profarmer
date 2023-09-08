@@ -39,6 +39,8 @@ export default function PickerDetail({ navigation }) {
   const data = params?.item ?? [];
   const { pickerWeight, pickerExpense, getPickerWeight, getPickerExpense } =
     useCotton();
+  let pickerData = pickerWeight.filter(o => data?.picker === o.picker)
+  let pickerExpenseData = pickerExpense.filter(o => data?.picker === o.picker)
 
   useFocusEffect(
     useCallback(() => {
@@ -46,7 +48,10 @@ export default function PickerDetail({ navigation }) {
       getPickerExpense();
     }, []),
   );
-
+  let amount = sumBy(
+    pickerData,
+    o => parseFloat(o.weight) * parseFloat(o?.rate),
+  ) - sumBy(pickerExpenseData, o => parseFloat(o.amount))
   return (
     <BaseView>
       <Loader visible={loading} />
@@ -76,7 +81,7 @@ export default function PickerDetail({ navigation }) {
         <View style={[styles.row, styles.underline]}>
           <Text h3>{strings.total_weight}</Text>
           <Text h3 style={{ color: green }}>
-            {sumBy(pickerWeight, o => parseFloat(o.weight))} Kg
+            {sumBy(pickerData, o => parseFloat(o.weight))} Kg
           </Text>
         </View>
         {/* <View style={[styles.row, styles.underline]}>
@@ -84,10 +89,10 @@ export default function PickerDetail({ navigation }) {
           <Text h3 style={{ color: green }}>
             {currencyFormat(
               sumBy(
-                pickerWeight,
+                pickerData,
                 o => parseFloat(o.weight) * parseFloat(o.rate),
               ) /
-              sumBy(pickerWeight, o =>
+              sumBy(pickerData, o =>
                 o.weight != '0' ? parseFloat(o.weight) : 1,
               )
             )}
@@ -98,7 +103,7 @@ export default function PickerDetail({ navigation }) {
           <Text h3 style={{ color: green }}>
             {currencyFormat(
               sumBy(
-                pickerWeight,
+                pickerData,
                 o => parseFloat(o.weight) * parseFloat(o.rate),
               ),
             )}
@@ -107,7 +112,7 @@ export default function PickerDetail({ navigation }) {
         <View style={[styles.row, styles.underline]}>
           <Text h3>{strings.given_amount}</Text>
           <Text h3 style={{ color: red }}>
-            -- {currencyFormat(sumBy(pickerExpense, o => parseFloat(o.amount)))}
+            -- {currencyFormat(sumBy(pickerExpenseData, o => parseFloat(o.amount)))}
           </Text>
         </View>
         <View style={[styles.row, styles.underline]}>
@@ -116,22 +121,22 @@ export default function PickerDetail({ navigation }) {
             h3
             style={{
               color:
-                (!isNaN(data?.amount) ? data?.amount : 0) > 0 ? green : red,
+                (!isNaN(amount) ? amount : 0) > 0 ? green : red,
             }}>
-            {(!isNaN(data?.amount) ? data?.amount : 0) > 0 ? '+' : '--'}{' '}
-            {currencyFormat(!isNaN(data?.amount) ? data?.amount : 0)}
+            {(!isNaN(amount) ? amount : 0) > 0 ? '+' : '--'}{' '}
+            {currencyFormat(!isNaN(amount) ? amount : 0)}
           </Text>
         </View>
         <View style={styles.wt}>
           <Text h4 style={styles.underline}>
             {strings.picker_record}
           </Text>
-          {Array.isArray(pickerWeight) &&
-            pickerWeight.length &&
-            !pickerWeight.every(o => o?.weight == '0' || !o?.weight) &&
+          {Array.isArray(pickerData) &&
+            pickerData.length &&
+            !pickerData.every(o => o?.weight == '0' || !o?.weight) &&
             data?.picker ? (
             sortBy(
-              pickerWeight,
+              pickerData,
               (a, b) => moment(b?.date) - moment(a?.date),
             ).map((v, i) => <PickerDetailAction key={i} data={v} />)
           ) : (
@@ -142,11 +147,11 @@ export default function PickerDetail({ navigation }) {
           <Text h4 style={styles.underline}>
             {strings.amount}
           </Text>
-          {Array.isArray(pickerExpense) &&
-            pickerExpense.length &&
+          {Array.isArray(pickerExpenseData) &&
+            pickerExpenseData.length &&
             data?.picker ? (
             sortBy(
-              pickerExpense,
+              pickerExpenseData,
               (a, b) => moment(b?.date) - moment(a?.date),
             ).map((v, i) => (
               <PickerExpenseDetail
@@ -155,11 +160,11 @@ export default function PickerDetail({ navigation }) {
               // onPress={async () => {
               //   if (
               //     !data?.total &&
-              //     Array.isArray(pickerWeight) &&
-              //     pickerWeight.length &&
-              //     pickerExpense.length == 1
+              //     Array.isArray(pickerData) &&
+              //     pickerData.length &&
+              //     pickerExpenseData.length == 1
               //   )
-              //     await deletePicker(pickerWeight[0]?.id);
+              //     await deletePicker(pickerData[0]?.id);
               // }}
               />
             ))
@@ -177,7 +182,7 @@ export default function PickerDetail({ navigation }) {
               navigate('AddPickerWeight', {
                 data: {
                   picker: data?.picker,
-                  rate: pickerWeight[pickerWeight.length - 1]?.rate,
+                  rate: pickerData[pickerData.length - 1]?.rate,
                 },
               })
             }

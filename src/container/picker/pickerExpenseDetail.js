@@ -41,7 +41,7 @@ export default function PickerExpenseDetail({ data, onPress }) {
             if (data?.fid) await deletePickerExpense(data?.fid);
             // onPress();
             setLoading(false);
-            ToastSuccess(strings.picker_expense_deleted, strings.picker);
+            ToastSuccess(strings.expense_deleted);
             // goBack();
           },
         },
