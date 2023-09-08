@@ -8,6 +8,7 @@ import {
 import React, { useEffect, useState } from 'react';
 import { load } from 'react-native-cheerio';
 import Text from '../../components/text';
+import { strings } from 'src/translations/locale';
 import { green, red, white } from '../../utils/color';
 import Icon from '../../components/icon';
 import { useCotton } from '../../context/cottonContext';
@@ -57,8 +58,8 @@ const MandiPrice = () => {
     }, []);
     return (Array.isArray(cottonPrice) && cottonPrice.length ?
         <View style={[styles.list]}>
-            <Text h3 style={styles.header}>
-                Cotton Price
+            <Text h3 style={styles.header}>{strings.cotton_price}
+                {/* Cotton Price */}
             </Text>
             <TouchableOpacity
                 style={styles.share}

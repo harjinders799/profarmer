@@ -45,6 +45,7 @@ const SalectLanguage = props => {
                     style={[styles.main]}
                     onPress={() => {
                         setLang(v);
+                        goBack();
                     }}>
                     <Text h3 black style={[styles.txt]}>
                         {strings[v?.label]}

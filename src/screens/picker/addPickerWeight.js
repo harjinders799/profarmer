@@ -77,7 +77,7 @@ export default function AddPickerWeight() {
           date: currentStamp(date),
         })
         setLoading(false);
-        ToastSuccess(strings.picker_added);
+        ToastSuccess(strings.weight_update);
         goBack();
       }
     } catch (error) {
@@ -116,7 +116,7 @@ export default function AddPickerWeight() {
         //   date: currentStamp(date),
         // });
         setLoading(false);
-        ToastSuccess(strings.picker_added, strings.picker);
+        ToastSuccess(strings.new_weight_added, strings.picker);
         goBack();
         // }
       }
