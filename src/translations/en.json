@@ -98,5 +98,8 @@
   "taken_amount_from_aadhtiya": "Taken Amount From Aadhtiya",
   "amount_added": "Amount Added!",
   "amount_deleted": "Amount Deleted!",
-  "in_progress":"In Progress"
+  "in_progress":"In Progress",
+  "resend_otp":"Resend OTP",
+  "offline_warning":"You have offline data, please connect to internet to save it"
+
 }

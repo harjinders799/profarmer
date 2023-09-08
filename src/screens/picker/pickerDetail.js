@@ -22,7 +22,14 @@ import {
 } from '../../network/picker-service';
 import { ScrollView } from 'react-native-gesture-handler';
 import Strings from 'react-native-localization';
-import { green, darkOrange, red } from '../../utils/color';
+import {
+  green,
+  darkOrange,
+  red,
+  yellow,
+  blue,
+  greenDark,
+} from '../../utils/color';
 import { currencyFormat } from '../../utils/dateformat';
 import PickerDetailAction from '../../container/picker/pickerDetailAction';
 import PickerExpenseDetail from '../../container/picker/pickerExpenseDetail';
@@ -133,54 +140,52 @@ export default function PickerDetail({ navigation }) {
         style={{ width: '100%' }}
         contentContainerStyle={{ paddingBottom: 150, paddingHorizontal: 20 }}
         showsVerticalScrollIndicator={false}>
-        <View style={[styles.row, styles.underline]}>
-          <Text h3>{strings.total_weight}</Text>
-          <Text h3 style={{ color: green }}>
-            {sumBy(pickerData, o => parseFloat(o.weight))} Kg
-          </Text>
+        <View style={[styles.row]}>
+          {/* <View style={{ width: '45%' }}> */}
+          <View style={[styles.card, { backgroundColor: '#bbdffc' }]}>
+            <Text h2 style={{ fontWeight: 'bold' }}>
+              {sumBy(pickerData, o => parseFloat(o.weight))} Kg
+            </Text>
+            <Text h3>{strings.total_weight}</Text>
+          </View>
+          <View style={[styles.card, { backgroundColor: '#ffccaa' }]}>
+            <Text h2 style={{ fontWeight: 'bold' }}>
+              {currencyFormat(
+                sumBy(
+                  pickerData,
+                  o => parseFloat(o.weight) * parseFloat(o.rate),
+                ),
+              )}
+            </Text>
+            <Text h3>{strings.total_amount}</Text>
+          </View>
+          <View style={[styles.card, { backgroundColor: '#bee8ba' }]}>
+            <Text h2 style={{ fontWeight: 'bold' }}>
+              -{' '}
+              {currencyFormat(
+                sumBy(pickerExpenseData, o => parseFloat(o.amount)),
+              )}
+            </Text>
+            <Text h3>{strings.given_amount}</Text>
+          </View>
+          {/* </View> */}
+          {/* <View style={{ width: '45%', justifyContent: 'flex-end', alignSelf: 'flex-end' }}>
+            <Text h3>{'Baki dene hai '}</Text> */}
+          <View style={[styles.card, { backgroundColor: '#e5e5e5' }]}>
+            <Text
+              h2
+              style={{
+                fontWeight: 'bold',
+                color: (!isNaN(amount) ? amount : 0) > 0 ? greenDark : red,
+              }}>
+              {(!isNaN(amount) ? amount : 0) > 0 ? '+' : ''}
+              {currencyFormat(!isNaN(amount) ? amount : 0)}
+            </Text>
+            <Text h3>{strings.final}</Text>
+          </View>
+          {/* </View> */}
         </View>
-        {/* <View style={[styles.row, styles.underline]}>
-          <Text h3>{strings.avg_rate}</Text>
-          <Text h3 style={{ color: green }}>
-            {currencyFormat(
-              sumBy(
-                pickerData,
-                o => parseFloat(o.weight) * parseFloat(o.rate),
-              ) /
-              sumBy(pickerData, o =>
-                o.weight != '0' ? parseFloat(o.weight) : 1,
-              )
-            )}
-          </Text>
-        </View> */}
-        <View style={[styles.row, styles.underline]}>
-          <Text h3>{strings.total_amount}</Text>
-          <Text h3 style={{ color: green }}>
-            {currencyFormat(
-              sumBy(pickerData, o => parseFloat(o.weight) * parseFloat(o.rate)),
-            )}
-          </Text>
-        </View>
-        <View style={[styles.row, styles.underline]}>
-          <Text h3>{strings.given_amount}</Text>
-          <Text h3 style={{ color: red }}>
-            --{' '}
-            {currencyFormat(
-              sumBy(pickerExpenseData, o => parseFloat(o.amount)),
-            )}
-          </Text>
-        </View>
-        <View style={[styles.row, styles.underline]}>
-          <Text h3>{strings.final}</Text>
-          <Text
-            h3
-            style={{
-              color: (!isNaN(amount) ? amount : 0) > 0 ? green : red,
-            }}>
-            {(!isNaN(amount) ? amount : 0) > 0 ? '+' : '--'}{' '}
-            {currencyFormat(!isNaN(amount) ? amount : 0)}
-          </Text>
-        </View>
+
         <View style={styles.wt}>
           <Text h4 style={styles.underline}>
             {strings.picker_record}
@@ -280,9 +285,20 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     width: '100%',
     marginVertical: 5,
+    flexWrap: 'wrap',
+    // elevation: 5
+  },
+  card: {
+    elevation: 5,
+    backgroundColor: white,
+    width: '48%',
+    marginVertical: 5,
+    padding: 10,
+    borderRadius: 10,
+    alignItems: 'center',
   },
   underline: {
-    borderBottomWidth: 1,
+    // borderBottomWidth: 1,
     paddingVertical: 10,
     borderStyle: 'dotted',
   },

@@ -32,7 +32,7 @@ export const savePickerData = async (db, items) => {
         items
             .map(
                 (i) =>
-                    `(${i?.id}, '${i?.fid}', '${i?.uid}', '${i?.rate}', '${i?.picker}', '${i?.weight}', '${i?.detail}', ${i?.date},'${i?.sync ? i?.sync : 'pending'}')`
+                    `(${i?.id}, '${i?.fid}', '${i?.uid}', '${i?.rate}', '${i?.picker}', '${i?.weight}', '${i?.detail}', ${i?.date},'${i?.fid ? 'done' : 'pending'}')`
             )
             .join(",");
     return db.executeSql(insertQuery);
@@ -73,7 +73,7 @@ export const savePickerExpenseData = async (db, items) => {
         items
             .map(
                 (i) =>
-                    `('${i?.id}', '${i?.fid}', '${i?.uid}', '${i?.amount}', '${i?.picker}', '${i?.detail}', ${i?.date},'${i?.sync ? i?.sync : 'pending'}')`
+                    `('${i?.id}', '${i?.fid}', '${i?.uid}', '${i?.amount}', '${i?.picker}', '${i?.detail}', ${i?.date},'${i?.fid ? 'done' : 'pending'}')`
             )
             .join(",");
     return db.executeSql(insertQuery);

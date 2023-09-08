@@ -15,7 +15,7 @@ import { Auth } from 'src/service/setup';
 import Logo from 'src/container/logo';
 import Text from 'src/components/text';
 import Loader from 'src/components/loader';
-import { useRoute, useTheme } from '@react-navigation/native';
+import { useIsFocused, useRoute, useTheme } from '@react-navigation/native';
 import { SignInUser } from 'src/network/auth-service';
 import { ToastError, ToastSuccess } from 'src/utils/toast';
 import LanguagePicker from 'src/components/languagePicker';
@@ -39,6 +39,8 @@ import {
 } from '@react-native-google-signin/google-signin';
 import { blue } from 'src/utils/color';
 import { navigate } from '../../navigation/ref';
+import { createCottonPriceTable, createPickerExpenseTable, createPickerTable } from '../../sql';
+import { useCotton } from '../../context/cottonContext';
 
 GoogleSignin.configure({
   webClientId:
@@ -47,8 +49,16 @@ GoogleSignin.configure({
 const LoginMethods = ({ navigation }) => {
   const { colors } = useTheme();
   const { lang } = useLang();
+  const { db } = useCotton()
+  const isFocused = useIsFocused();
   const [loading, setLoading] = React.useState(false);
-
+  useEffect(() => {
+    (async () => {
+      await createPickerTable(db);
+      await createPickerExpenseTable(db);
+      await createCottonPriceTable(db);
+    })
+  }, [isFocused])
 
   const signInG = async () => {
     try {

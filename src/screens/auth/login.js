@@ -19,44 +19,18 @@ import Loader from 'src/components/loader';
 import { useRoute, useTheme } from '@react-navigation/native';
 import { SignInUser } from 'src/network/auth-service';
 import { ToastError, ToastSuccess } from 'src/utils/toast';
-import LanguagePicker from 'src/components/languagePicker';
 import { strings } from 'src/translations/locale';
 import { useLang } from 'src/context/langContext';
 import OtpInputs from 'react-native-otp-inputs';
 import Icon from 'src/components/icon';
-import { replace } from 'src/navigation/ref';
+import { green } from '../../utils/color';
 
-import {
-  LoginButton,
-  AccessToken,
-  LoginManager,
-  GraphRequest,
-  GraphRequestManager,
-} from 'react-native-fbsdk-next';
-import {
-  GoogleSignin,
-  GoogleSigninButton,
-  statusCodes,
-} from '@react-native-google-signin/google-signin';
-import { blue } from 'src/utils/color';
-import {
-  getHash,
-  getOtp,
-  removeListener,
-  startOtpListener,
-  useOtpVerify,
-} from 'react-native-otp-verify';
-import deviceInfo from 'react-native-device-info';
-
-GoogleSignin.configure({
-  webClientId:
-    '416058833468-5rn56d49jdg3ar3e0mp2o4e5nio1o65g.apps.googleusercontent.com',
-});
 const Login = ({ navigation }) => {
   const { colors } = useTheme();
   const { setAuthenticate } = useLang();
   const [loading, setLoading] = React.useState(false);
   const [canResendOtp, setCanResendOtp] = useState(false);
+  const [time, setTime] = useState(30);
   const [state, setState] = React.useState({
     phone: __DEV__ ? '1231231231' : '',
   });
@@ -65,11 +39,12 @@ const Login = ({ navigation }) => {
   useEffect(() => {
     setAuthenticate(true);
     const timer = setTimeout(() => {
-      setCanResendOtp(true);
-    }, 1000 * 30);
+      if (time > 0) setTime(prev => prev - 1);
+      if (time == 0) setCanResendOtp(true);
+    }, 1000);
     return () => clearTimeout(timer);
-  }, [canResendOtp]);
-
+  }, [canResendOtp, time]);
+  console.log(time);
   // useEffect(() => {
   // try {
   //   getOtp()
@@ -97,7 +72,6 @@ const Login = ({ navigation }) => {
   // };
 
   const signIn = async () => {
-
     if (state.phone.length != 10) {
       ToastError('Please fill valid Phone Number', 'Login');
       return;
@@ -108,6 +82,7 @@ const Login = ({ navigation }) => {
         .then(data => {
           setConfirm(data);
           setLoading(false);
+          setTime(30);
           setCanResendOtp(false);
         })
         .catch(error => {
@@ -116,11 +91,10 @@ const Login = ({ navigation }) => {
         });
     } catch (error) {
       setLoading(false);
-      console.log(error)
+      console.log(error);
       ToastError(error?.message, 'Login');
     }
   };
-
 
   const handleOtp = code => {
     if (code.length == 6) {
@@ -198,14 +172,21 @@ const Login = ({ navigation }) => {
         ) : (
           <Button label={strings.login} onPress={signIn} />
         )}
-        {!canResendOtp ? (
-          <Button
-            label={'Resend OTP'}
-            btnStyle={styles.btn}
-            onPress={signIn}
-          />
-        ) : null}
-
+        <Text>{time >= 30 || time <= 0 ? '' : `00:${time}`}</Text>
+        <Button
+          label={
+            strings.resend_otp
+          }
+          disabled={!canResendOtp}
+          btnStyle={[
+            styles.btn,
+            {
+              opacity: !canResendOtp ? 0.7 : 1,
+              backgroundColor: !canResendOtp ? colors.border : green,
+            },
+          ]}
+          onPress={signIn}
+        />
       </ScrollView>
     </BaseView>
   );

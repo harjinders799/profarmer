@@ -19,22 +19,103 @@ import { green, black } from '../../utils/color';
 import { strings } from '../../translations/locale';
 import ReactNativeBiometrics, { BiometryTypes } from 'react-native-biometrics';
 import { useAuth } from '../../context/authContext';
+import NetInfo from '@react-native-community/netinfo';
+import { ToastError } from '../../utils/toast';
+import { getAllItems, updatePickerExpenseId, updatePickerId } from '../../sql';
+import { PCIKER_TABLE, PICKER_EXPENSE_TABLE } from '../../sql/tabels';
+import { submitPicker, submitPickerExpense, updatePicker, updatePickerExpense } from '../../network/picker-service';
+import Loader from '../../components/loader';
+
 
 const rnBiometrics = new ReactNativeBiometrics();
 
 export default function Setting({ navigation }) {
-  // const { reset } = useAuth();
   const { lang, setFingerLock, fingerLock } = useLang();
   const [isBiometry, setIsBiometry] = useState(false);
+  const { db, getPickerWeight, pickerWeight, pickerExpense, getPickerExpense, resetPicker } = useCotton();
   const { user, reset } = useAuth();
+  const [loading, setLoading] = useState(false)
+
   useEffect(() => {
     (async () => {
       const { available } = await rnBiometrics.isSensorAvailable();
       setIsBiometry(available);
     })();
   }, [lang]);
+
+  const onLogOut = async () => {
+    let existWt = pickerWeight.some(o => o?.sync == 'pending')
+    let existEx = pickerExpense.some(o => o?.sync == 'pending')
+    if (existWt || existEx) {
+      NetInfo.fetch().then(state => {
+        if (state.isConnected && state.isInternetReachable) fetchData()
+        else ToastError(strings.offline_warning)
+      })
+      return
+    }
+    else {
+      resetPicker();
+      reset();
+    }
+  }
+
+  const fetchData = async () => {
+    try {
+      setLoading(true)
+      if (Array.isArray(pickerWeight) && pickerWeight.length) {
+        let unsyncData = await getAllItems(
+          db,
+          PCIKER_TABLE,
+          `WHERE sync='pending'`,
+        );
+        let promise = unsyncData.map(async (item, index) => {
+          delete item.sync;
+          let api = item?.fid && item?.fid != '' ? updatePicker : submitPicker
+          let res = await api(item);
+          console.log(res, '--------pick wt');
+          if (res) {
+            await updatePickerId(db, {
+              ...item,
+              fid: res,
+            });
+          }
+        });
+        await Promise.all(promise);
+        getPickerWeight();
+      }
+      if (Array.isArray(pickerExpense) && pickerExpense.length) {
+        let unsyncData = await getAllItems(
+          db,
+          PICKER_EXPENSE_TABLE,
+          `WHERE sync='pending'`,
+        );
+        // console.log(unsyncData.length, '-------exp');
+        let promise = unsyncData.map(async (item, index) => {
+          delete item.sync;
+          let api = item?.fid && item?.fid != '' ? updatePickerExpense : submitPickerExpense
+          let res = await api(item);
+          // console.log(res, '--------pick wt');
+          if (res) {
+            await updatePickerExpenseId(db, {
+              ...item,
+              fid: res,
+            });
+          }
+        });
+        await Promise.all(promise);
+        getPickerExpense();
+      }
+      resetPicker()
+      reset();
+      setLoading(false)
+    } catch (error) {
+      setLoading(false)
+      console.log(error, '--------');
+    }
+  };
   return (
     <BaseView>
+      <Loader visible={loading} />
       <ScrollView
         style={{ width: '100%' }}
         showsVerticalScrollIndicator={false}
@@ -60,6 +141,13 @@ export default function Setting({ navigation }) {
             <Text style={styles.txt}>About Us</Text>
             <Icon name="chevron-right" type="Entypo" size={25} />
           </TouchableOpacity>
+          {/* <TouchableOpacity
+            style={styles.row}
+            onPress={() => navigation.navigate('AboutUs')}
+          >
+            <Text style={styles.txt}>Sync To Server</Text>
+            <Icon name="cloudupload" size={25} />
+          </TouchableOpacity> */}
           <TouchableOpacity
             style={styles.row}
             onPress={() =>
@@ -85,7 +173,7 @@ https://play.google.com/store/apps/details?id=com.profarmer
             <Text style={styles.txt}>Share</Text>
             <Icon name="share" type="Entypo" size={25} />
           </TouchableOpacity>
-          {isBiometry ? (
+          {/* {isBiometry ? (
             <TouchableOpacity
               style={styles.row}
               onPress={() => navigation.navigate('AboutUs')}>
@@ -97,21 +185,15 @@ https://play.google.com/store/apps/details?id=com.profarmer
                 onValueChange={() => setFingerLock(!fingerLock)}
               />
             </TouchableOpacity>
-          ) : null}
+          ) : null} */}
 
           <TouchableOpacity
             style={styles.row}
-            onPress={async () => {
-              reset();
-            }}>
+            onPress={onLogOut}>
             <Text style={styles.txt}>Log Out</Text>
             <Icon name="chevron-right" type="Entypo" size={25} />
           </TouchableOpacity>
         </View>
-        {/* <View style={{flexDirection:'row',justifyContent:"space-between",backgroundColor:"green"}}>
-<Entypo name='old-phone'size={50} />
-<FontAwesome name='whatsapp'size={50} /> */}
-        {/* </View> */}
       </ScrollView>
     </BaseView>
   );

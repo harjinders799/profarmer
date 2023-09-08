@@ -30,10 +30,11 @@ const Stack = createNativeStackNavigator();
 export default function Navigation() {
   const { getLang, fingerLock, authenticate, setAuthenticate } = useLang();
   const { getUser } = useAuth();
-  const { db } = useCotton();
+  const { db, getDB } = useCotton();
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState();
   const [fingerLockAvailable, setFingerLockAvailable] = useState(false);
+
   useEffect(() => {
     getLang();
     getUser();
@@ -42,9 +43,18 @@ export default function Navigation() {
       setFingerLockAvailable(available);
     })();
   }, []);
+  useEffect(() => {
+    if (db)
+      async () => {
+        await createPickerTable(db);
+        await createPickerExpenseTable(db);
+        await createCottonPriceTable(db);
+      };
+  }, [db]);
 
   // Handle user state changes
   function onAuthStateChanged(user) {
+    getDB();
     if (user) {
       setUser(user);
       getUser();
@@ -57,22 +67,22 @@ export default function Navigation() {
     return subscriber; // unsubscribe on unmount
   }, []);
 
-  if (initializing || !db) return <Loader visible={initializing} />;
-  if (fingerLock && user && fingerLockAvailable && !authenticate) {
-    rnBiometrics
-      .simplePrompt({ promptMessage: 'Confirm fingerprint' })
-      .then(resultObject => {
-        const { success } = resultObject;
-        if (!success) {
-          BackHandler.exitApp();
-        } else {
-          setAuthenticate(true);
-        }
-      })
-      .catch(() => {
-        console.log('biometrics failed');
-      });
-  }
+  if (initializing || !db) return <Loader visible={initializing || !db} />;
+  // if (fingerLock && user && fingerLockAvailable && !authenticate) {
+  //   rnBiometrics
+  //     .simplePrompt({ promptMessage: 'Confirm fingerprint' })
+  //     .then(resultObject => {
+  //       const { success } = resultObject;
+  //       if (!success) {
+  //         BackHandler.exitApp();
+  //       } else {
+  //         setAuthenticate(true);
+  //       }
+  //     })
+  //     .catch(() => {
+  //       console.log('biometrics failed');
+  //     });
+  // }
   return (
     <NavigationContainer theme={themeLight} ref={navigationRef}>
       {!user ? (

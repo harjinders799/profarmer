@@ -66,7 +66,7 @@ export default function AddPickerExpense() {
   };
 
   const onPress = () => {
-    if (editData.edit) updateWt();
+    if (editData && editData?.fid) updateWt();
     else AddNew();
   };
   const updateWt = async () => {

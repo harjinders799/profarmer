@@ -64,7 +64,6 @@ export default function Stacks() {
         });
         await Promise.all(promise);
         getPickerWeight();
-        updatePickerExpenseId
       }
       if (Array.isArray(pickerExpense) && pickerExpense.length) {
         let unsyncData = await getAllItems(
@@ -72,12 +71,12 @@ export default function Stacks() {
           PICKER_EXPENSE_TABLE,
           `WHERE sync='pending'`,
         );
-        console.log(unsyncData.length, '-------exp');
+        // console.log(unsyncData.length, '-------exp');
         let promise = unsyncData.map(async (item, index) => {
           delete item.sync;
           let api = item?.fid && item?.fid != '' ? updatePickerExpense : submitPickerExpense
           let res = await api(item);
-          console.log(res, '--------pick wt');
+          // console.log(res, '--------pick wt');
           if (res) {
             await updatePickerExpenseId(db, {
               ...item,

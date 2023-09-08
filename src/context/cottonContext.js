@@ -42,7 +42,10 @@ const CottonReducer = (prevState, action) => {
       };
     case 'RESET':
       return {
-        pickers: [],
+        ...prevState,
+        db: undefined,
+        pickerWeight: undefined,
+        pickerExpense: undefined
       };
   }
 };
@@ -57,9 +60,9 @@ export const CottonProvider = props => {
   React.useEffect(() => {
     if (state.db) {
       (async () => {
-        await createCottonPriceTable(state.db);
         await createPickerTable(state.db);
         await createPickerExpenseTable(state.db);
+        await createCottonPriceTable(state.db);
         await value.getCottonPrice();
         await value.getPickerWeight();
         await value.getPickerExpense();
@@ -97,13 +100,7 @@ export const CottonProvider = props => {
       },
 
       resetPicker: async () => {
-        auth()
-          .signOut()
-          .then(async () => {
-            dispatch({ type: 'RESET' });
-            await clearAsyncStorage();
-            // replace("Login")
-          });
+        dispatch({ type: 'RESET' });
       },
     }),
     [state],

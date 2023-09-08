@@ -25,7 +25,7 @@ export const getPickerData = () => {
       .then(querySnapshot => {
         let arr = [];
         querySnapshot.forEach(documentSnapshot => {
-          arr.push({ ...documentSnapshot.data(), id: documentSnapshot.id });
+          arr.push({ ...documentSnapshot.data(), fid: documentSnapshot.id });
         });
         resolve(arr);
       })
@@ -67,7 +67,7 @@ export const getAllPickerExpense = async name => {
         .then(querySnapshot => {
           let arr = [];
           querySnapshot.forEach(documentSnapshot => {
-            arr.push({ ...documentSnapshot.data(), id: documentSnapshot.id });
+            arr.push({ ...documentSnapshot.data(), fid: documentSnapshot.id });
           });
           resolve(arr);
         });
