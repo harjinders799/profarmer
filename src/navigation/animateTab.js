@@ -24,7 +24,7 @@ const AnimatedTabBar = ({
   contentContainerStyle = {
     backgroundColor: darkOrange,
     // borderRadius: 14,
-    elevation: 3,
+    // elevation: 3,
   },
   itemLabelStyle,
 }) => {
@@ -104,7 +104,7 @@ const AnimatedTabBar = ({
         },
       ]}>
       <Animated.View
-        style={[s.mover, { width: itemWidth }, { padding: moverPadding }, sz]}>
+        style={[s.mover, { width: itemWidth }, { paddingVertical: moverPadding }, sz]}>
         <View
           style={[
             moverStyle,

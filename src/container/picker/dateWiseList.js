@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import Text from 'src/components/text';
 import { FlatList, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { white } from 'src/utils/color';
@@ -26,27 +26,34 @@ import Animated, {
 } from 'react-native-reanimated';
 import Icon from '../../components/icon';
 import Loader from '../../components/loader';
+import { useCotton } from '../../context/cottonContext';
+import { useFocusEffect } from '@react-navigation/native';
 
-export default function DateWiseList({ data }) {
+export default function DateWiseList() {
   const [fullData, setFullData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { pickerWeight, pickerExpense, getPickerWeight, getPickerExpense } = useCotton();
+
+  useFocusEffect(
+    useCallback(() => {
+      getPickerWeight()
+      getPickerExpense()
+    }, []),
+  );
 
   useEffect(() => {
-    if (data.length) getExpense();
+    if (Array.isArray(pickerWeight) && pickerWeight.length) getExpense();
     else setFullData([]);
-  }, [data]);
+  }, [pickerWeight]);
 
   const getExpense = async () => {
     setLoading(true);
-    let grpPicker = groupBy(data, v => v.picker);
-    console.log(grpPicker, '----0------');
+    let grpPicker = groupBy(pickerWeight, v => v.picker);
     try {
       let result = [];
       await Promise.all(
         Object.keys(grpPicker).map(async v => {
-          let res = await getPickerExpense(v);
-          let grpExpense = groupBy(res, v => v.picker);
-          console.log(grpExpense, '----02------');
+          let grpExpense = groupBy(pickerExpense, v => v.picker);
           result.push({
             picker: v,
             amount:
@@ -118,7 +125,8 @@ export default function DateWiseList({ data }) {
                 label={strings.add_weight}
                 btnStyle={{
                   marginRight: 10,
-                  width: 80,
+                  width: 'auto',
+                  paddingHorizontal: 8,
                   height: 25,
                   borderRadius: 5,
                   marginVertical: 0,
@@ -137,7 +145,8 @@ export default function DateWiseList({ data }) {
                 btnStyle={{
                   backgroundColor: navy,
                   marginRight: 10,
-                  width: 80,
+                  width: 'auto',
+                  paddingHorizontal: 8,
                   height: 25,
                   borderRadius: 5,
                   marginVertical: 0,
@@ -179,7 +188,7 @@ export default function DateWiseList({ data }) {
           {strings.no_data}
         </Text>
       )}
-      extraData={data}
+      extraData={pickerWeight}
       showsVerticalScrollIndicator={false}
       // ItemSeparatorComponent={() => <View style={styles.line} />}
       renderItem={({ item }) => renderItem(item)}
@@ -189,7 +198,7 @@ export default function DateWiseList({ data }) {
 const styles = StyleSheet.create({
   list: {
     borderRadius: 10,
-    marginTop: 20,
+    marginVertical: 10,
     width: '100%',
     alignSelf: 'center',
   },

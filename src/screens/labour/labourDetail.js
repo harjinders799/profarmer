@@ -58,7 +58,6 @@ export default function LabourDetail({ navigation }) {
 
       const file = await RNHTMLtoPDF.convert(options);
 
-      console.log(file.filePath);
       const pdfPath = `${RNFS.DocumentDirectoryPath}/users.pdf`;
       // await RNFS.writeFile(pdfPath, pdfBytes, 'binary');
 

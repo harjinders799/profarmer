@@ -18,26 +18,6 @@ export default function PickerStack() {
         component={Picker}
         options={{ headerShown: false }}
       />
-      <Stack.Screen
-        name="AddPicker"
-        component={AddPicker}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name="AddPickerExpense"
-        component={AddPickerExpense}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name="AddPickerWeight"
-        component={AddPickerWeight}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name="PickerDetail"
-        component={PickerDetail}
-        options={{ headerShown: false }}
-      />
 
     </Stack.Navigator>
   );

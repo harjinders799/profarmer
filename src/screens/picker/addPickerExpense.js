@@ -1,5 +1,5 @@
-import { StyleSheet, View } from 'react-native'
-import React from 'react'
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import React from 'react';
 import { useRoute, useTheme } from '@react-navigation/native';
 import Button from 'src/components/button';
 import Input from 'src/components/input';
@@ -24,22 +24,25 @@ import {
 import Header from '../../components/header';
 import Icon from '../../components/icon';
 import { currencyFormat, currencyInput } from '../../utils/dateformat';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 import { useCotton } from '../../context/cottonContext';
 import Text from '../../components/text';
+import { savePickerExpenseData, updatePickerExpenseData } from '../../sql';
+import auth from '@react-native-firebase/auth';
 
 export default function AddPickerExpense() {
   const { colors } = useTheme();
-  const { setPicker, pickers } = useCotton();
+  const { db, pickerExpense } = useCotton();
   const { params } = useRoute();
   const editData = params?.data ?? {};
   const refAmt = React.useRef();
   const [data, setData] = React.useState({
     id: editData?.id ?? '',
+    uid: auth().currentUser?.uid,
+    fid: editData?.fid ?? '',
     picker: editData?.picker ?? '',
     detail: editData?.detail ?? '',
     amount: editData?.amount ?? '',
-    date: editData?.date ? new Date(editData?.date) : new Date(),
+    date: editData?.date ? new Date(parseInt(editData?.date)) : new Date(),
   });
   const [showDate, setShowDate] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
@@ -67,75 +70,67 @@ export default function AddPickerExpense() {
     else AddNew();
   };
   const updateWt = async () => {
-    if (picker == '') {
-      ToastError(strings.picker_name, strings.picker);
-    } else if (amount.trim() == '' || amount < 0) {
-      ToastError(strings.given_amount_to_picker, strings.picker);
-    } else {
-      setLoading(true);
-      let res = await updatePickerExpense({
-        ...data,
-        amount: amount,
-        date: currentStamp(date),
-      });
+    try {
+      if (amount.trim() == '' || amount < 0) {
+        ToastError(strings.given_amount_to_picker, strings.picker);
+      } else {
+        setLoading(true);
+        await updatePickerExpenseData(db, {
+          ...data,
+          amount: amount,
+          date: currentStamp(date),
+        })
+        // let res = await updatePickerExpense({
+        //   ...data,
+        //   amount: amount,
+        //   date: currentStamp(date),
+        // });
+        setLoading(false);
+        ToastSuccess(strings.picker_expense_added, strings.picker);
+        goBack();
+      }
+    } catch (error) {
       setLoading(false);
-      ToastSuccess(strings.picker_expense_added, strings.picker);
-      goBack();
+      ToastError(error?.message);
+      console.log(error, '----addpickerExpense');
     }
   };
   const AddNew = async () => {
     try {
-      console.log('-----here 1')
       if (picker == '') {
-        console.log('-----here 2')
         ToastError(strings.picker_name, strings.picker);
       } else if (amount.trim() == '' || amount <= 0) {
-        console.log('-----here 3')
         ToastError(strings.given_amount_to_picker, strings.picker);
       } else {
-        console.log('-----here 4')
         setLoading(true);
-        await submitPickerExpense({
-          ...data,
-          picker: picker.trim(),
-          amount: amount,
-          date: currentStamp(date),
-        });
-        let exist = await getPickerByName(picker.trim());
-        if (Array.isArray(exist) && !exist.length) {
-          console.log('-----here 5')
-          await submitPicker({
-            weight: 0,
-            rate: 0,
+        await savePickerExpenseData(db, [
+          {
+            ...data,
             picker: picker.trim(),
             date: currentStamp(date),
-          });
-          console.log('-----here 6')
-        }
+            id:
+              Array.isArray(pickerExpense) && pickerExpense.length
+                ? pickerExpense.reduce((acc, cur) => {
+                  if (cur.id > acc.id) return cur;
+                  return acc;
+                }).id + 1
+                : 1,
+          },
+        ]);
+        // await submitPickerExpense({
+        //   ...data,
+        //   picker: picker.trim(),
+        //   amount: amount,
+        //   date: currentStamp(date),
+        // });
         setLoading(false);
-        console.log('-----here 7')
         ToastSuccess(strings.picker_expense_added, strings.picker);
-        let name = picker.trim();
-        console.log('-----here 8')
-        if (Array.isArray(pickers) && pickers.length) {
-          console.log('-----here 9')
-          let exist = pickers.findIndex(
-            o => o.toUpperCase() === name.toUpperCase(),
-          );
-          console.log('-----here 10')
-          if (exist == -1) {
-            console.log('-----here 11')
-            setPicker([...pickers, name]);
-          }
-        } else {
-          console.log('-----here 12')
-          setPicker([name]);
-        }
-        console.log('-----here 13')
         goBack();
       }
     } catch (error) {
-      console.log(error, '----addpickerExpense')
+      setLoading(false);
+      ToastError(error?.message);
+      console.log(error, '----addpickerExpense');
     }
   };
 
@@ -152,7 +147,7 @@ export default function AddPickerExpense() {
             onPress={() => goBack()}
           />
         }
-        centerComponent={<Text h2 >{picker}</Text>}
+        centerComponent={<Text h2>{picker}</Text>}
         rightComponent={<Text h2> </Text>}
       />
       <View style={styles.form}>

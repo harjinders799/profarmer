@@ -19,10 +19,13 @@ import {
 import { goBack } from '../../navigation/ref';
 import { currencyFormat } from '../../utils/dateformat';
 import { gray2 } from '../../utils/color';
+import { deletePickerExpenseData } from '../../sql';
+import { useCotton } from '../../context/cottonContext';
 
 export default function PickerExpenseDetail({ data, onPress }) {
   const [loading, setLoading] = React.useState(false);
   const { colors } = useTheme();
+  const { db, getPickerExpense } = useCotton();
 
   const delteData = async () => {
     Alert.alert(
@@ -33,11 +36,13 @@ export default function PickerExpenseDetail({ data, onPress }) {
           text: 'Yes',
           onPress: async () => {
             setLoading(true);
-            await deletePickerExpense(data?.id);
-            onPress();
+            await deletePickerExpenseData(db, data)
+            getPickerExpense();
+            if (data?.fid) await deletePickerExpense(data?.fid);
+            // onPress();
             setLoading(false);
             ToastSuccess(strings.picker_expense_deleted, strings.picker);
-            goBack();
+            // goBack();
           },
         },
         {
@@ -52,10 +57,10 @@ export default function PickerExpenseDetail({ data, onPress }) {
       <View style={styles.top}>
         <Loader visible={loading} />
         <View style={styles.row}>
-          <Text h4 numberOfLines={1}>
+          <Text h4 numberOfLines={1} style={{ width: '50%' }}>
             {dateFormat(data?.date)}
           </Text>
-          <Text h4 numberOfLines={1}>
+          <Text h4 numberOfLines={1} style={{ width: '40%' }}>
             {currencyFormat(data?.amount)}
           </Text>
         </View>
@@ -66,7 +71,7 @@ export default function PickerExpenseDetail({ data, onPress }) {
             color={orange}
             style={[styles.icon, { backgroundColor: colors.card }]}
             onPress={() =>
-              replace('AddPickerExpense', { data: { ...data, edit: true } })
+              navigate('AddPickerExpense', { data: { ...data, edit: true } })
             }
           />
           <Icon
@@ -92,7 +97,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   list: {
-    paddingVertical: 10,
+    paddingVertical: 15,
     width: '98%',
     borderBottomWidth: 0.3,
     borderBottomColor: gray2

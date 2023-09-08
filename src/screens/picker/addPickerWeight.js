@@ -17,38 +17,38 @@ import { useStore } from 'src/context/context';
 import { goBack } from 'src/navigation/ref';
 import { updateIneterstAmt } from 'src/network/interest-service';
 import Checkbox from '../../components/checkbox';
-import {
-  submitPicker,
-  updatePicker,
-} from '../../network/picker-service';
+import { submitPicker, updatePicker } from '../../network/picker-service';
 import Header from '../../components/header';
 import Icon from '../../components/icon';
 import { useCotton } from '../../context/cottonContext';
+import { savePickerData, updatePickerData } from '../../sql';
+import auth from '@react-native-firebase/auth';
 
 export default function AddPickerWeight() {
   const { colors } = useTheme();
-  const { setPicker, pickers } = useCotton();
+  const { db, pickerWeight } = useCotton();
   const { params } = useRoute();
   const editData = params?.data ?? {};
   const refAmt = React.useRef();
   const [data, setData] = React.useState({
     id: editData?.id ?? '',
     picker: editData?.picker ?? '',
+    uid: auth().currentUser?.uid,
+    fid: editData?.fid ?? '',
     detail: editData?.detail ?? '',
     rate: editData?.rate ?? '',
     weight: editData?.weight ?? '',
-    date: editData?.date ? new Date(editData?.date) : new Date(),
+    date: editData?.date ? new Date(parseInt(editData?.date)) : new Date(),
   });
   const [showDate, setShowDate] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
-
   const { picker, detail, date, rate, weight } = data;
 
   const onChangeValue = (key, value) => {
     if (key == 'rate') {
       setData({
         ...data,
-        rate: value.replace(/[^0-9]/g, ''),
+        rate: value.replace(/[^0-9.]+|(\..*\.)/g, ''),
       });
     } else {
       setData({
@@ -65,67 +65,65 @@ export default function AddPickerWeight() {
     else AddNew();
   };
   const updateWt = async () => {
-    if (picker == '') {
-      ToastError(strings.picker_name, strings.picker);
-    } else if (rate.trim() == '' || parseInt(rate) <= 0) {
-      ToastError(strings.rate, strings.picker);
-      // } else if (count.trim() == '' || parseInt(count) <= 0) {
-      //   ToastError(strings.picker_count, strings.picker);
-    } else {
-      setLoading(true);
-      let res = await updatePicker({
-        ...data,
-        date: currentStamp(date),
-      });
+    try {
+      if (parseInt(rate) <= 0) {
+        ToastError(strings.rate);
+      } else if (parseInt(weight) <= 0) {
+        ToastError(strings.picker_weight);
+      } else {
+        setLoading(true);
+        await updatePickerData(db, {
+          ...data,
+          date: currentStamp(date),
+        })
+        setLoading(false);
+        ToastSuccess(strings.picker_added);
+        goBack();
+      }
+    } catch (error) {
       setLoading(false);
-      ToastSuccess(strings.picker_added, strings.picker);
-      goBack();
+      ToastError(error?.message);
+      console.log(error, '----addpicker');
     }
   };
   const AddNew = async () => {
     try {
-      console.log('-----here 1')
       if (picker == '') {
-        console.log('-----here 2')
         ToastError(strings.picker_name, strings.pickers);
       } else if (rate.trim() == '' || parseInt(rate) <= 0) {
-        console.log('-----here 3')
         ToastError(strings.rate, strings.picker);
       } else if (weight.trim() == '' || parseInt(weight) <= 0) {
         ToastError(strings.picker_weight, strings.picker);
       } else {
-        console.log('-----here 4')
         setLoading(true);
-        await submitPicker({
-          ...data,
-          picker: picker.trim(),
-          date: currentStamp(date),
-        });
+        await savePickerData(db, [
+          {
+            ...data,
+            picker: picker.trim(),
+            date: currentStamp(date),
+            id:
+              Array.isArray(pickerWeight) && pickerWeight.length
+                ? pickerWeight.reduce((acc, cur) => {
+                  if (cur.id > acc.id) return cur;
+                  return acc;
+                }).id + 1
+                : 1,
+          },
+        ]);
+        // await submitPicker(12{
+        //   ...data,
+        //   picker: picker.trim(),
+        //   date: currentStamp(date),
+        // });
         setLoading(false);
-        console.log('-----here 5')
         ToastSuccess(strings.picker_added, strings.picker);
-        console.log('-----here 6')
-        let name = picker.trim();
-        console.log('-----here 7')
-        if (Array.isArray(pickers) && pickers.length) {
-          let exist = pickers.findIndex(
-            o => o.toUpperCase() === name.toUpperCase(),
-          );
-          console.log('-----here 8')
-          if (exist == -1) {
-            console.log('-----here 12')
-            setPicker([...pickers, name]);
-          }
-        } else {
-          console.log('-----here 11')
-          setPicker([name]);
-        }
-        console.log('-----here 9')
         goBack();
         // }
       }
     } catch (error) {
-      console.log(error, '----addpicker')
+      setLoading(false);
+      ToastError(error?.message);
+      console.log(error, '----addpicker');
     }
   };
 
@@ -147,20 +145,25 @@ export default function AddPickerWeight() {
       />
       <View style={styles.form}>
         {/* <Text h2 style={{ textAlign: 'center', marginBottom: 20 }}>{picker}</Text> */}
-        <View style={{ flexDirection: "row", width: "100%", justifyContent: "space-between" }}>
+        <View
+          style={{
+            flexDirection: 'row',
+            width: '100%',
+            justifyContent: 'space-between',
+          }}>
           <Input
             placeholder={strings.weight + '(kg)'}
             value={weight}
             autoFocus
             setValue={value => onChangeValue('weight', value)}
-            style={{ width: "45%" }}
+            style={{ width: '45%' }}
             keyboardType="numeric"
           />
           <Input
             placeholder={strings.enter_rate + '(Rs)'}
             value={rate}
             setValue={value => onChangeValue('rate', value)}
-            style={{ width: "45%" }}
+            style={{ width: '45%' }}
             keyboardType="numeric"
           />
         </View>

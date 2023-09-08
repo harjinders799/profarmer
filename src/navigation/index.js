@@ -22,12 +22,15 @@ import { BackHandler } from 'react-native';
 const rnBiometrics = new ReactNativeBiometrics();
 import LoginMethods from '../screens/auth/loginMethods';
 import SignInWithEmail from '../screens/auth/signInWithEmail';
+import { useCotton } from '../context/cottonContext';
+import Stacks from './stacks';
 
 const Stack = createNativeStackNavigator();
 
 export default function Navigation() {
   const { getLang, fingerLock, authenticate, setAuthenticate } = useLang();
   const { getUser } = useAuth();
+  const { db } = useCotton();
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState();
   const [fingerLockAvailable, setFingerLockAvailable] = useState(false);
@@ -51,7 +54,7 @@ export default function Navigation() {
     return subscriber; // unsubscribe on unmount
   }, []);
 
-  if (initializing) return <Loader visible={initializing} />;
+  if (initializing || !db) return <Loader visible={initializing} />;
   if (fingerLock && user && fingerLockAvailable && !authenticate) {
     rnBiometrics
       .simplePrompt({ promptMessage: 'Confirm fingerprint' })
@@ -60,7 +63,7 @@ export default function Navigation() {
         if (!success) {
           BackHandler.exitApp();
         } else {
-          setAuthenticate(true)
+          setAuthenticate(true);
         }
       })
       .catch(() => {
@@ -69,50 +72,27 @@ export default function Navigation() {
   }
   return (
     <NavigationContainer theme={themeLight} ref={navigationRef}>
-      <Stack.Navigator>
-        {!user ? (
-          <>
-            <Stack.Screen
-              name="LoginMethods"
-              component={LoginMethods}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="SignInWithEmail"
-              component={SignInWithEmail}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="Login"
-              component={Login}
-              options={{ headerShown: false }}
-            />
-          </>
-        ) : (
-          <>
-            <Stack.Screen
-              name="Main"
-              component={Tabs}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="Setting"
-              component={Setting}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="AddForm"
-              component={AddForm}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="Detail"
-              component={Detail}
-              options={{ headerShown: false }}
-            />
-          </>
-        )}
-      </Stack.Navigator>
+      {!user ? (
+        <Stack.Navigator>
+          <Stack.Screen
+            name="LoginMethods"
+            component={LoginMethods}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="SignInWithEmail"
+            component={SignInWithEmail}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="Login"
+            component={Login}
+            options={{ headerShown: false }}
+          />
+        </Stack.Navigator>
+      ) : (
+        <Stacks />
+      )}
       {/* <AdBanner /> */}
     </NavigationContainer>
   );

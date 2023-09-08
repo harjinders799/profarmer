@@ -15,52 +15,21 @@ import { ToastError } from '../../utils/toast';
 import Loader from '../../components/loader';
 import MandiPrice from '../../container/picker/mandiPrice';
 import { white } from '../../utils/color';
+import { useCotton } from '../../context/cottonContext';
+import { deleteDBConnectionDB } from '../../sql';
 
 export default function Picker() {
   const { lang } = useLang();
-  const { pickers, setPickers } = useStore();
-  const [loading, setLoading] = useState(true);
-  const [data, setData] = useState([]);
+  const { getPickerWeight, getPickerExpense } = useCotton();
 
   useFocusEffect(
     useCallback(() => {
-      getData();
+      getPickerWeight()
+      getPickerExpense()
     }, [lang]),
   );
-
-  const getData = async () => {
-    try {
-      let res = await getPickerData();
-      if (Array.isArray(res) && res.length) {
-        setData(res);
-      } else setData([]);
-      setLoading(false);
-    } catch (error) {
-      console.log(error, '--------pickerdata')
-      ToastError(error?.message, 'Picker');
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (
-      Auth()?.currentUser?.uid &&
-      Array.isArray(pickers) &&
-      pickers.length < 1 &&
-      Array.isArray(data) &&
-      data.length
-    ) {
-      let pick = [];
-      data.map(v => {
-        if (pick.indexOf(v?.picker) === -1) pick.push(v?.picker);
-      });
-      setPickers(pick);
-    }
-  }, [data]);
-
   return (
     <BaseView>
-      <Loader visible={loading} />
       {/* <Header
         leftComponent={
           <Button
@@ -78,8 +47,10 @@ export default function Picker() {
         }
       /> */}
       <MandiPrice />
-      <Text h2>{strings.picker_record}</Text>
-      <DateWiseList data={data} />
+      <Text h3
+      // onPress={async () => await deleteDBConnectionDB()}
+      >{strings.picker_record}</Text>
+      <DateWiseList />
       <Button
         iconName='plus'
         iconColor={white}

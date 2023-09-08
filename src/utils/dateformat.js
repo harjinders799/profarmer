@@ -13,11 +13,10 @@ export const currencyFormat = value => {
     currency: 'INR',
     minimumFractionDigits: 0,
   });
-  return `${formatter.format(parseInt(value))} /-`;
+  return `${formatter.format(parseFloat(value))} /-`;
 };
 
 export const currencyInput = value => {
-  console.log(value)
   if (!value) return '';
   const formatter = new Intl.NumberFormat('en-IN', {
     style: 'currency',

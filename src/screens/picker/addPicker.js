@@ -1,22 +1,17 @@
 import React from 'react';
-import { View, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { useRoute, useTheme } from '@react-navigation/native';
 import Button from 'src/components/button';
 import Input from 'src/components/input';
 import Text from 'src/components/text';
 import DateTimePick from 'src/components/DateTime';
-import { currentStamp, dateFormat } from 'src/utils/dateformat';
-import { submitInterestAmount } from 'src/network/interest-service';
+import { currentStamp } from 'src/utils/dateformat';
 import Loader from 'src/components/loader';
 import BaseView from 'src/container/base';
 import { ToastError, ToastSuccess } from 'src/utils/toast';
-import DataPicker from 'src/components/dataPicker';
 import { strings } from 'src/translations/locale';
 import { navigate } from 'src/navigation/ref';
-import { useStore } from 'src/context/context';
 import { goBack } from 'src/navigation/ref';
-import { updateIneterstAmt } from 'src/network/interest-service';
-import Checkbox from '../../components/checkbox';
 import {
   getPickerByName,
   submitPicker,
@@ -24,17 +19,19 @@ import {
 } from '../../network/picker-service';
 import Header from '../../components/header';
 import Icon from '../../components/icon';
-import { currencyInput } from '../../utils/dateformat';
 import { useCotton } from '../../context/cottonContext';
+import { savePickerData } from '../../sql';
+import auth from '@react-native-firebase/auth';
 
 export default function AddPicker() {
   const { colors } = useTheme();
-  const { setPicker, pickers } = useCotton();
+  const { db, pickerWeight } = useCotton();
   const { params } = useRoute();
   const editData = params?.data ?? {};
-  const refAmt = React.useRef();
   const [data, setData] = React.useState({
-    id: editData?.id ?? '',
+    id: editData?.id ?? 0,
+    uid: auth().currentUser?.uid,
+    fid: '',
     picker: editData?.picker ?? '',
     detail: editData?.detail ?? '',
     rate: editData?.rate ?? '',
@@ -44,13 +41,13 @@ export default function AddPicker() {
   const [showDate, setShowDate] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
 
-  const { picker, detail, date, rate, weight } = data;
+  const { picker, date, rate } = data;
 
   const onChangeValue = (key, value) => {
     if (key == 'rate') {
       setData({
         ...data,
-        rate: value.replace(/[^0-9]/g, ''),
+        rate: value.replace(/[^0-9.]+|(\..*\.)/g, ''),
       });
     } else {
       setData({
@@ -58,8 +55,6 @@ export default function AddPicker() {
         [key]: value,
       });
     }
-    // if (key == 'picker' && Array.isArray(pickers) && pickers.length)
-    // refAmt.current.focus();
   };
 
   const onPress = () => {
@@ -86,54 +81,56 @@ export default function AddPicker() {
   };
   const AddNew = async () => {
     try {
-      console.log('-----here 1')
       if (picker == '') {
-        console.log('-----here 2')
         ToastError(strings.picker_name);
       } else if (rate.trim() == '' || parseInt(rate) <= 0) {
-        console.log('-----here 3')
         ToastError(strings.enter_rate);
         // } else if (weight.trim() == '' || parseInt(weight) <= 0) {
         //   ToastError(strings.picker_weight, strings.picker);
       } else {
-        console.log('-----here 4')
         setLoading(true);
         let isExist = await getPickerByName(picker.trim())
-        console.log("is exist", picker, isExist)
         if (Array.isArray(isExist) && isExist.length) {
           setLoading(false);
           ToastError(strings.picker_exist);
           return;
         }
-        await submitPicker({
+        await savePickerData(db, [{
           ...data,
           picker: picker.trim(),
           date: currentStamp(date),
-        });
+          id:
+            Array.isArray(pickerWeight) && pickerWeight.length
+              ? pickerWeight.reduce((acc, cur) => {
+                if (cur.id > acc.id) return cur;
+                return acc;
+              }).id + 1
+              : 1,
+        }]);
+        // await submitPicker({
+        //   ...data,
+        //   picker: picker.trim(),
+        //   date: currentStamp(date),
+        // });
         setLoading(false);
-        console.log('-----here 5')
         ToastSuccess(strings.picker_added);
-        console.log('-----here 6')
-        let name = picker.trim();
-        console.log('-----here 7')
-        if (Array.isArray(pickers) && pickers.length) {
-          let exist = pickers.findIndex(
-            o => o.toUpperCase() === name.toUpperCase(),
-          );
-          console.log('-----here 8')
-          if (exist == -1) {
-            console.log('-----here 12')
-            setPicker([...pickers, name]);
-          }
-        } else {
-          console.log('-----here 11')
-          setPicker([name]);
-        }
-        console.log('-----here 9')
+        // let name = picker.trim();
+        // if (Array.isArray(pickers) && pickers.length) {
+        //   let exist = pickers.findIndex(
+        //     o => o.toUpperCase() === name.toUpperCase(),
+        //   );
+        //   if (exist == -1) {
+        //     setPicker([...pickers, name]);
+        //   }
+        // } else {
+        //   setPicker([name]);
+        // }
         goBack()
         // }
       }
     } catch (error) {
+      setLoading(false);
+      ToastError(error?.message)
       console.log(error, '----addpicker')
     }
   };

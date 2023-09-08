@@ -42,9 +42,7 @@ export default function EditProfile({ navigation }) {
             try {
                 setLoading(true);
                 await UpdateUser(user);
-                console.log('---------------');
                 ToastSuccess('Successfully updated!', 'Profile');
-                console.log('-----save------');
                 getUser();
                 navigation.goBack();
                 setLoading(false);

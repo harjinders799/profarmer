@@ -32,7 +32,6 @@ export default function App() {
   const update = () => {
     if (version?.url) Linking.openURL(version?.url);
   };
-  console.log(version?.needsUpdate ? true : false && visible, version?.needsUpdate ? true : false, visible)
   return (
     <SafeAreaProvider>
       <Modal

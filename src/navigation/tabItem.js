@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -57,7 +57,7 @@ const TabItem = ({
       ],
     };
   });
-  const {options} = descriptors[route.key];
+  const { options } = descriptors[route.key];
 
   const renderIcon = () => {
     if (options.tabBarIcon) {
@@ -70,9 +70,9 @@ const TabItem = ({
     <TouchableOpacity
       onPress={() => onTabPress(route, index)}
       onLongPress={() => onTabLongPress(route)}
-      style={{...s.tabItem, ...{width: itemWidth}}}>
+      style={{ ...s.tabItem, ...{ width: itemWidth } }}>
       <Animated.View style={[s.icon, iconZ]}>{renderIcon()}</Animated.View>
-      <Animated.Text style={[s.text, {...itemLabelStyle, color}, textZ]}>
+      <Animated.Text style={[s.text, { ...itemLabelStyle, color }, textZ]}>
         {options?.title ?? route.name}
       </Animated.Text>
     </TouchableOpacity>
@@ -81,7 +81,7 @@ const TabItem = ({
 
 const s = StyleSheet.create({
   tabItem: {
-    paddingVertical: 14,
+    paddingVertical: 15,
     alignItems: 'center',
     justifyContent: 'center',
     flexDirection: 'row',

@@ -1,13 +1,14 @@
-import { Auth, firestore, storage } from 'src/service/setup';
+import { Auth, storage } from 'src/service/setup';
+import firestore from '@react-native-firebase/firestore';
 
 export const submitPicker = async data => {
   return new Promise(async function (resolve, reject) {
     try {
       let id = Auth().currentUser?.uid;
-      await firestore()
+      firestore()
         .collection('picker')
-        .add({ ...data, uid: id });
-      resolve('success');
+        .add({ ...data, uid: id })
+        .then(res => resolve(res?.id));
     } catch (error) {
       reject(new Error(error));
     }
@@ -90,8 +91,8 @@ export const deletePickerExpense = async id => {
 export const updatePicker = async data => {
   return new Promise(async function (resolve, reject) {
     try {
-      await firestore().collection('picker').doc(data?.id).update(data);
-      resolve('success');
+      await firestore().collection('picker').doc(data?.fid).update(data);
+      resolve(data?.fid);
     } catch (error) {
       reject(new Error(error));
     }
@@ -101,13 +102,17 @@ export const updatePicker = async data => {
 export const updatePickerExpense = async data => {
   return new Promise(async function (resolve, reject) {
     try {
-      await firestore().collection('picker_expense').doc(data?.id).update(data);
-      resolve('success');
+      await firestore()
+        .collection('picker_expense')
+        .doc(data?.fid)
+        .update(data);
+      resolve(data?.fid);
     } catch (error) {
       reject(new Error(error));
     }
   });
 };
+
 export const deletePicker = async id => {
   return new Promise(async function (resolve, reject) {
     try {
@@ -123,10 +128,10 @@ export const submitPickerExpense = async data => {
   return new Promise(async function (resolve, reject) {
     try {
       let id = Auth().currentUser?.uid;
-      await firestore()
+      firestore()
         .collection('picker_expense')
-        .add({ ...data, uid: id });
-      resolve('success');
+        .add({ ...data, uid: id })
+        .then(res => resolve(res?.id));
     } catch (error) {
       reject(new Error(error));
     }
@@ -146,7 +151,6 @@ export const getPickerExpense = async name => {
           let arr = [];
           querySnapshot.forEach(documentSnapshot => {
             arr.push({ ...documentSnapshot.data(), id: documentSnapshot.id });
-
           });
           resolve(arr);
         });
@@ -175,5 +179,37 @@ export const getCottonByPicker = search => {
       .catch(error => {
         reject(new Error(error));
       });
+  });
+};
+
+
+export const deletePickerCollection = async name => {
+  return new Promise(async function (resolve, reject) {
+    try {
+      let userId = Auth().currentUser?.uid;
+      await firestore()
+        .collection('picker')
+        .where('uid', '==', userId)
+        .where('picker', '==', name)
+        .get()
+        .then(querySnapshot => {
+          querySnapshot.forEach(documentSnapshot => {
+            console.log(documentSnapshot.ref.delete())
+          });
+        });
+      await firestore()
+        .collection('picker_expense')
+        .where('uid', '==', userId)
+        .where('picker', '==', name)
+        .get()
+        .then(querySnapshot => {
+          querySnapshot.forEach(documentSnapshot => {
+            console.log(documentSnapshot.ref.delete())
+          });
+          resolve();
+        })
+    } catch (error) {
+      reject(new Error(error));
+    }
   });
 };

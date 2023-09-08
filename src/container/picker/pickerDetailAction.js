@@ -1,5 +1,5 @@
 import { View, StyleSheet, Alert } from 'react-native';
-import React from 'react';
+import React, { useContext } from 'react';
 import Icon from 'src/components/icon';
 import { orange, red } from 'src/utils/color';
 import { navigate, replace } from 'src/navigation/ref';
@@ -11,9 +11,13 @@ import Text from '../../components/text';
 import { deletePicker } from '../../network/picker-service';
 import { goBack } from '../../navigation/ref';
 import { gray1, gray2 } from '../../utils/color';
+import { currencyFormat } from '../../utils/dateformat';
+import { deletePickerData } from '../../sql';
+import { useCotton } from '../../context/cottonContext';
 
 export default function PickerDetailAction({ data, picker }) {
   const [loading, setLoading] = React.useState(false);
+  const { db, getPickerWeight } = useCotton();
 
   const delteData = async () => {
     Alert.alert(
@@ -24,10 +28,12 @@ export default function PickerDetailAction({ data, picker }) {
           text: 'Yes',
           onPress: async () => {
             setLoading(true);
-            await deletePicker(data?.id);
+            await deletePickerData(db, data)
+            if (data?.fid) await deletePicker(data?.fid);
+            getPickerWeight();
             setLoading(false);
             ToastSuccess(strings.weight_delete, 'Weight');
-            goBack()
+            // goBack()
           },
         },
         {
@@ -37,6 +43,7 @@ export default function PickerDetailAction({ data, picker }) {
       { cancelable: true },
     );
   };
+
   return (
     <View style={[styles.list, { display: data?.weight != 0 ? 'flex' : 'none' }]}>
       <View style={styles.top}>
@@ -47,7 +54,7 @@ export default function PickerDetailAction({ data, picker }) {
             {/* {picker ? dateFormat(data?.date) : data?.picker} */}
           </Text>
           <Text h4 numberOfLines={1} style={styles.wt}>
-            {data?.rate}Rs
+            {currencyFormat(data?.rate)}
           </Text>
           <Text h4 numberOfLines={1} style={styles.wt}>
             {data?.weight}kg
@@ -58,7 +65,7 @@ export default function PickerDetailAction({ data, picker }) {
             name="edit"
             size={20}
             color={orange}
-            onPress={() => replace('AddPickerWeight', { data })}
+            onPress={() => navigate('AddPickerWeight', { data })}
           />
           <Icon name="delete" size={20} color={red} onPress={delteData} />
         </View>
@@ -77,7 +84,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   list: {
-    marginVertical: 10,
+    marginVertical: 15,
     width: '98%',
     borderBottomWidth: 0.3,
     borderBottomColor: gray2
@@ -97,13 +104,13 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   picker: {
-    width: '55%',
+    width: '40%',
   },
   farm: {
     textAlign: 'left',
   },
   wt: {
-    width: '25%',
+    width: '30%',
     textAlign: 'right',
   },
 });
