@@ -171,6 +171,8 @@ export default function DateWiseList() {
                   ? strings.give
                   : strings.receive
                 : '__'}{' '}
+            
+                
             </Text>
           </Animated.View>
         </TouchableOpacity>

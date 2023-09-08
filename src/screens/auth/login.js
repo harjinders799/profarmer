@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, {useEffect} from 'react';
 import {
   ScrollView,
   Image,
@@ -6,24 +6,25 @@ import {
   BackHandler,
   Alert,
   View,
+  PermissionsAndroid,
 } from 'react-native';
 import BaseView from 'src/container/base';
-import { WIDTH } from 'src/utils/constant';
+import {WIDTH} from 'src/utils/constant';
 import Input from 'src/components/input';
 import Button from 'src/components/button';
-import { Auth } from 'src/service/setup';
+import {Auth} from 'src/service/setup';
 import Logo from 'src/container/logo';
 import Text from 'src/components/text';
 import Loader from 'src/components/loader';
-import { useRoute, useTheme } from '@react-navigation/native';
-import { SignInUser } from 'src/network/auth-service';
-import { ToastError, ToastSuccess } from 'src/utils/toast';
+import {useRoute, useTheme} from '@react-navigation/native';
+import {SignInUser} from 'src/network/auth-service';
+import {ToastError, ToastSuccess} from 'src/utils/toast';
 import LanguagePicker from 'src/components/languagePicker';
-import { strings } from 'src/translations/locale';
-import { useLang } from 'src/context/langContext';
+import {strings} from 'src/translations/locale';
+import {useLang} from 'src/context/langContext';
 import OtpInputs from 'react-native-otp-inputs';
 import Icon from 'src/components/icon';
-import { replace } from 'src/navigation/ref';
+import {replace} from 'src/navigation/ref';
 
 import {
   LoginButton,
@@ -37,7 +38,7 @@ import {
   GoogleSigninButton,
   statusCodes,
 } from '@react-native-google-signin/google-signin';
-import { blue } from 'src/utils/color';
+import {blue} from 'src/utils/color';
 import {
   getHash,
   getOtp,
@@ -45,34 +46,46 @@ import {
   startOtpListener,
   useOtpVerify,
 } from 'react-native-otp-verify';
+import deviceInfo from 'react-native-device-info';
 
 GoogleSignin.configure({
   webClientId:
     '416058833468-5rn56d49jdg3ar3e0mp2o4e5nio1o65g.apps.googleusercontent.com',
 });
-const Login = ({ navigation }) => {
-  const { colors } = useTheme();
-  const { setAuthenticate } = useLang();
+const Login = ({navigation}) => {
+  const {colors} = useTheme();
+  const {setAuthenticate} = useLang();
   const [loading, setLoading] = React.useState(false);
   const [state, setState] = React.useState({
-    phone: __DEV__ ? '1231231231' : '',
+    phone: __DEV__ ? '9928185712' : '',
   });
   const [confirm, setConfirm] = React.useState(null);
+
   useEffect(() => {
-    setAuthenticate(true)
-    getOtp()
-      .then(p => startOtpListener(message => {
-        console.log(message)
-        const otp = /(\d{6})/g.exec(message)[1];
-        handleOtp(otp);
-      }))
-      .catch(p => console.log(p));
-
+    setAuthenticate(true);
+    try {
+      getOtp()
+        .then(p =>
+          startOtpListener(message => {
+            console.log(message);
+            if (message) {
+              const otp = /(\d{6})/g.exec(message)[1];
+              handleOtp(otp);
+            }
+          }),
+        )
+        .catch(p => console.log(p));
+    } catch (error) {
+      console.log(error, '----');
+    }
     return () => removeListener();
-
   }, []);
 
   const signIn = async () => {
+    // PermissionsAndroid.PERMISSIONS.READ_PHONE_NUMBERS;
+    // let phoneNumber = await deviceInfo.getPhoneNumber();
+    // console.log(phoneNumber, '--------');
+
     if (state.phone.length != 10) {
       ToastError('Please fill valid Phone Number', 'Login');
       return;
@@ -90,6 +103,7 @@ const Login = ({ navigation }) => {
         });
     } catch (error) {
       setLoading(false);
+      console.log(error)
       ToastError(error?.message, 'Login');
     }
   };
@@ -121,112 +135,21 @@ const Login = ({ navigation }) => {
       }
     }
   };
-  const signInG = async () => {
-    try {
-      await GoogleSignin.hasPlayServices();
-      const { idToken } = await GoogleSignin.signIn();
-      // Create a Google credential with the token
-      const googleCredential = Auth.GoogleAuthProvider.credential(idToken);
-
-      // Sign-in the user with the credential
-      Auth().signInWithCredential(googleCredential);
-      // replace('Main');
-      // this.setState({ userInfo });
-    } catch (error) {
-      console.log(error);
-      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
-        // user cancelled the login flow
-      } else if (error.code === statusCodes.IN_PROGRESS) {
-        // operation (e.g. sign in) is in progress already
-      } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
-        // play services not available or outdated
-      } else {
-        ToastError(error?.message, 'Login');
-      }
-    }
-  };
-
-  const getFacebookEmail = () =>
-    new Promise(resolve => {
-      const infoRequest = new GraphRequest(
-        '/me?fields=email',
-        null,
-        (error, result) => {
-          if (error) {
-            resolve(null);
-            return;
-          }
-
-          resolve(result.email);
-        },
-      );
-      new GraphRequestManager().addRequest(infoRequest).start();
-    });
-
-  async function onFacebookButtonPress() {
-    // Attempt login with permissions
-    const result = await LoginManager.logInWithPermissions([
-      'public_profile',
-      'email',
-    ]);
-
-    // Once signed in, get the users AccesToken
-    const data = await AccessToken.getCurrentAccessToken();
-
-    if (!data) {
-      ToastError('Something went wrong obtaining access token', 'Login');
-    }
-
-    // Create a Firebase credential with the AccessToken
-    const facebookCredential = Auth.FacebookAuthProvider.credential(
-      data.accessToken,
-    );
-
-    // Sign-in the user with the credential
-    await Auth()
-      .signInWithCredential(facebookCredential)
-      .then(res => {
-        ToastSuccess(`Yay! Success`, 'Login');
-      })
-      .catch(async error => {
-        if (
-          error.code &&
-          error.code === 'auth/account-exists-with-different-credential'
-        ) {
-          const email = await getFacebookEmail();
-          if (email) {
-            let provider = await Auth().fetchSignInMethodsForEmail(email);
-            if (provider[0] == 'google.com') {
-              ToastError(
-                `You have already used "${email}". Please continue with Google login.`,
-                'Facebook',
-              );
-              signInG();
-              return;
-            }
-            if (provider[0]) {
-              signInG();
-              ToastError(
-                `You have already used "${email}". Please continue with Email and Password or Try with Google Login.`,
-                'Facebook',
-              );
-            }
-          }
-        }
-      });
-    // replace('Main');
-  }
+  
   return (
     <BaseView>
       <Loader visible={loading} />
       {/* <LanguagePicker /> */}
       <ScrollView
-        contentContainerStyle={{ alignItems: 'center' }}
+        contentContainerStyle={{alignItems: 'center'}}
         keyboardShouldPersistTaps="handled">
         <Logo />
-        <Text h2 style={{ marginBottom: 50 }}>{strings.welcome}</Text>
+        <Text h2 style={{marginBottom: 50}}>
+          {strings.welcome}
+        </Text>
         <Input
           numberType
+          autoFocus
           maxLength={10}
           leftComponent={
             <View style={styles.row}>
@@ -243,8 +166,8 @@ const Login = ({ navigation }) => {
           }
           placeholder={strings.phone}
           value={state.phone}
-          inputStyle={{ width: '70%' }}
-          setValue={text => setState({ ...state, phone: text })}
+          inputStyle={{width: '70%'}}
+          setValue={text => setState({...state, phone: text})}
         />
         {confirm ? (
           <OtpInputs
@@ -254,23 +177,14 @@ const Login = ({ navigation }) => {
             handleChange={handleOtp}
             numberOfInputs={6}
             style={styles.otp}
-            inputContainerStyles={[styles.cell, { borderColor: colors.text }]}
-            inputStyles={[styles.cellTxt, { color: colors.text }]}
+            inputContainerStyles={[styles.cell, {borderColor: colors.text}]}
+            inputStyles={[styles.cellTxt, {color: colors.text}]}
             textBreakStrategy="highQuality"
           />
         ) : (
           <Button label={strings.login} onPress={signIn} />
         )}
-        {/* <Button
-          label="Google Sign-In"
-          btnStyle={{ backgroundColor: '#3b519f' }}
-          onPress={signInG}
-        />
-        <Button
-          label="FaceBook Sign-In"
-          btnStyle={{ backgroundColor: '#3b5998' }}
-          onPress={onFacebookButtonPress}
-        /> */}
+        
       </ScrollView>
     </BaseView>
   );

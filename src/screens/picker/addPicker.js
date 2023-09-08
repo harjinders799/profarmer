@@ -63,11 +63,11 @@ export default function AddPicker() {
   };
   const updateWt = async () => {
     if (picker == '') {
-      ToastError(strings.picker_name, strings.picker);
+      ToastError(strings.picker_name);
     } else if (rate.trim() == '' || parseInt(rate) <= 0) {
-      ToastError(strings.rate, strings.picker);
+      ToastError(strings.rate);
       // } else if (count.trim() == '' || parseInt(count) <= 0) {
-      //   ToastError(strings.picker_count, strings.picker);
+      //   ToastError(strings.picker_count);
     } else {
       setLoading(true);
       let res = await updatePicker({
@@ -75,7 +75,7 @@ export default function AddPicker() {
         date: currentStamp(date),
       });
       setLoading(false);
-      ToastSuccess(strings.picker_added, strings.picker);
+      ToastSuccess(strings.picker_added);
       navigate('Picker');
     }
   };
@@ -86,27 +86,31 @@ export default function AddPicker() {
       } else if (rate.trim() == '' || parseInt(rate) <= 0) {
         ToastError(strings.enter_rate);
         // } else if (weight.trim() == '' || parseInt(weight) <= 0) {
-        //   ToastError(strings.picker_weight, strings.picker);
+        //   ToastError(strings.picker_weight);
       } else {
         setLoading(true);
-        let isExist = await getPickerByName(picker.trim())
-        if (Array.isArray(isExist) && isExist.length) {
+        let isExist = Array.isArray(pickerWeight)
+          ? pickerWeight.some(o => o?.picker == picker)
+          : false;
+        if (isExist) {
           setLoading(false);
           ToastError(strings.picker_exist);
           return;
         }
-        await savePickerData(db, [{
-          ...data,
-          picker: picker.trim(),
-          date: currentStamp(date),
-          id:
-            Array.isArray(pickerWeight) && pickerWeight.length
-              ? pickerWeight.reduce((acc, cur) => {
-                if (cur.id > acc.id) return cur;
-                return acc;
-              }).id + 1
-              : 1,
-        }]);
+        await savePickerData(db, [
+          {
+            ...data,
+            picker: picker.trim(),
+            date: currentStamp(date),
+            id:
+              Array.isArray(pickerWeight) && pickerWeight.length
+                ? pickerWeight.reduce((acc, cur) => {
+                  if (cur.id > acc.id) return cur;
+                  return acc;
+                }).id + 1
+                : 1,
+          },
+        ]);
         // await submitPicker({
         //   ...data,
         //   picker: picker.trim(),
@@ -125,13 +129,13 @@ export default function AddPicker() {
         // } else {
         //   setPicker([name]);
         // }
-        goBack()
+        goBack();
         // }
       }
     } catch (error) {
       setLoading(false);
-      ToastError(error?.message)
-      console.log(error, '----addpicker')
+      ToastError(error?.message);
+      console.log(error, '----addpicker');
     }
   };
 

@@ -45,7 +45,10 @@ export default function Navigation() {
 
   // Handle user state changes
   function onAuthStateChanged(user) {
-    if (user) getUser();
+    if (user) {
+      setUser(user);
+      getUser();
+    }
     setUser(user);
     if (initializing) setInitializing(false);
   }

@@ -90,7 +90,6 @@ const SignInWithEmail = ({ navigation }) => {
         setValue={text => setState({ ...state, email: text })}
       />
       <Input
-        numberType
         iconName="locked"
         iconType="Fontisto"
         placeholder={strings.password}

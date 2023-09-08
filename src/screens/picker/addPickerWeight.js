@@ -91,9 +91,9 @@ export default function AddPickerWeight() {
       if (picker == '') {
         ToastError(strings.picker_name, strings.pickers);
       } else if (rate.trim() == '' || parseInt(rate) <= 0) {
-        ToastError(strings.rate, strings.picker);
+        ToastError(strings.rate);
       } else if (weight.trim() == '' || parseInt(weight) <= 0) {
-        ToastError(strings.picker_weight, strings.picker);
+        ToastError(strings.picker_weight);
       } else {
         setLoading(true);
         await savePickerData(db, [
