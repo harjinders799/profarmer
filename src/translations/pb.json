@@ -20,6 +20,8 @@
   "select_picker": "ਚੋਗਾਰਾ ਚੁਣੋ",
   "weight": "ਵਜ਼ਨ",
   "remark": "ਟਿੱਪਣੀ",
+  "give":"ਦੇਨੇ  ਹੈ",
+   "receive":"ਲੈਨੇ ਹੈ",
   "err_picker": "ਚੋਗਾਰਾ ਚੁਣੋ",
   "weight_added": "ਨਰਮੇ ਦਾ ਭਾਰ ਜੋੜਿਆ ਗਿਆ!",
   "weight_delete": "ਨਰਮੇ ਦਾ ਭਾਰ ਹਟਾਇਆ ਗਿਆ!",
@@ -33,7 +35,7 @@
   "contact": "ਸੰਪਰਕ ਕਰੋ",
   "picker_expense": "ਚੋਗਾਰਾ ਨਕਦ ਖਰਚ",
   "picker_pay": "ਚੋਗਾਰੇ ਨੂੰ ਭੁਗਤਾਨ",
-  "picker_added": "ਚੋਗਾਰਾ ਜੋੜਿਆ ਗਿਆ!",
+  "picker_added": "ਭਾਰ ਜੋੜਿਆ ਗਿਆ!",
   "picker_exist": "ਚੋਗਾਰਾ ਪਹਿਲਾਂ ਹੀ ਮੌਜੂਦ ਹੈ!",
   "picker_record": "ਚੋਗਾਰਾ ਰਿਕਾਰਡ",
   "given_amount_to_picker": "ਚੋਗਾਰੇ ਨੂੰ ਦਿੱਤੀ ਗਈ ਰਕਮ",
@@ -87,8 +89,10 @@
   "labour_leave_added": "ਮਜ਼ਦੂਰ ਛੁੱਟੀ ਨੂੰ ਜੋੜਿਆ ਗਿਆ!",
   "labour_leave_deleted": "ਮਜ਼ਦੂਰ ਛੁੱਟੀ ਨੂੰ ਹਟਾਇਆ ਗਿਆ!",
   "labour_expense_deleted": "ਮਜ਼ਦੂਰ ਖਰਚ ਨੂੰ ਹਟਾਇਆ ਗਿਆ!",
-
+  "picker_expense_deleted": "ਚੋਗਾਰਾ ਖਰਚ ਨੂੰ ਹਟਾਇਆ ਗਿਆ!",
   "taken_amount_from_aadhtiya": "ਆੜ੍ਹਤੀਏ ਤੋਂ ਲਈ ਗਈ ਰਕਮ",
   "amount_added": "ਰਕਮ ਨੂੰ ਜੋੜਿਆ ਗਿਆ!",
+  "no_record": "ਕੋਈ ਰਿਕਾਰਡ ਨਹੀਂ",
+  "picker_weight": "ਭਾਰ ਜੋੜਿਆ ਗਿਆ!",
   "amount_deleted": "ਰਕਮ ਨੂੰ ਹਟਾਇਆ ਗਿਆ!"
 }

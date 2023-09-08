@@ -168,9 +168,11 @@ export default function DateWiseList() {
               }}>
               {!loading
                 ? (!isNaN(item?.amount) ? item?.amount : 0) >= 0
-                  ? 'Give'
-                  : 'Receive'
+                  ? strings.give
+                  : strings.receive
                 : '__'}{' '}
+            
+                
             </Text>
           </Animated.View>
         </TouchableOpacity>

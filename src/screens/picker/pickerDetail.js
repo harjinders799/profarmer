@@ -135,7 +135,8 @@ export default function PickerDetail({ navigation }) {
               (a, b) => moment(b?.date) - moment(a?.date),
             ).map((v, i) => <PickerDetailAction key={i} data={v} />)
           ) : (
-            <Text>No Record</Text>
+            <Text h4 style={styles.underline}>
+            {strings.no_record}</Text>
           )}
         </View>
         <View style={styles.wt}>
