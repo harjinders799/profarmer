@@ -170,7 +170,7 @@ export default function LabourDetail({ navigation }) {
               ),
             )
           ) : (
-            <Text>No Record</Text>
+            <Text>{strings.no_record}</Text>
           )}
         </View>
         <View style={styles.wt}>
@@ -196,7 +196,7 @@ export default function LabourDetail({ navigation }) {
               ),
             )
           ) : (
-            <Text>No Record</Text>
+            <Text>{strings.no_record}</Text>
           )}
         </View>
       </ScrollView>

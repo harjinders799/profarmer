@@ -45,9 +45,7 @@
   "given_amount_to_picker": "Given Amount to Picker",
   "picker_expense_added": "Picker Expence Added!",
   "amount": "Amount",
-  "no_record": "No_Record",
-  "give":"Give",
-  "receive":"Receive",
+  "no_record": "No Record",
   "final": "Final Amount",
   "delete_wt": "Do you want to delete?",
   "new_version": "New version available on play sotre",
@@ -96,8 +94,9 @@
   "labour_leave_added": "Labour Leave Added!",
   "labour_leave_deleted": "Labour Leave Deleted!",
   "labour_expense_deleted": "Labour Expence Deleted!",
-"picker_expense_deleted":"picker_expense_deleted",
+  "picker_expense_deleted":"Picker Expense Deleted!",
   "taken_amount_from_aadhtiya": "Taken Amount From Aadhtiya",
   "amount_added": "Amount Added!",
-  "amount_deleted": "Amount Deleted!"
+  "amount_deleted": "Amount Deleted!",
+  "in_progress":"In Progress"
 }

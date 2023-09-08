@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   ScrollView,
   Image,
@@ -9,22 +9,22 @@ import {
   PermissionsAndroid,
 } from 'react-native';
 import BaseView from 'src/container/base';
-import {WIDTH} from 'src/utils/constant';
+import { WIDTH } from 'src/utils/constant';
 import Input from 'src/components/input';
 import Button from 'src/components/button';
-import {Auth} from 'src/service/setup';
+import { Auth } from 'src/service/setup';
 import Logo from 'src/container/logo';
 import Text from 'src/components/text';
 import Loader from 'src/components/loader';
-import {useRoute, useTheme} from '@react-navigation/native';
-import {SignInUser} from 'src/network/auth-service';
-import {ToastError, ToastSuccess} from 'src/utils/toast';
+import { useRoute, useTheme } from '@react-navigation/native';
+import { SignInUser } from 'src/network/auth-service';
+import { ToastError, ToastSuccess } from 'src/utils/toast';
 import LanguagePicker from 'src/components/languagePicker';
-import {strings} from 'src/translations/locale';
-import {useLang} from 'src/context/langContext';
+import { strings } from 'src/translations/locale';
+import { useLang } from 'src/context/langContext';
 import OtpInputs from 'react-native-otp-inputs';
 import Icon from 'src/components/icon';
-import {replace} from 'src/navigation/ref';
+import { replace } from 'src/navigation/ref';
 
 import {
   LoginButton,
@@ -38,7 +38,7 @@ import {
   GoogleSigninButton,
   statusCodes,
 } from '@react-native-google-signin/google-signin';
-import {blue} from 'src/utils/color';
+import { blue } from 'src/utils/color';
 import {
   getHash,
   getOtp,
@@ -52,39 +52,51 @@ GoogleSignin.configure({
   webClientId:
     '416058833468-5rn56d49jdg3ar3e0mp2o4e5nio1o65g.apps.googleusercontent.com',
 });
-const Login = ({navigation}) => {
-  const {colors} = useTheme();
-  const {setAuthenticate} = useLang();
+const Login = ({ navigation }) => {
+  const { colors } = useTheme();
+  const { setAuthenticate } = useLang();
   const [loading, setLoading] = React.useState(false);
+  const [canResendOtp, setCanResendOtp] = useState(false);
   const [state, setState] = React.useState({
-    phone: __DEV__ ? '9928185712' : '',
+    phone: __DEV__ ? '1231231231' : '',
   });
   const [confirm, setConfirm] = React.useState(null);
 
   useEffect(() => {
     setAuthenticate(true);
-    try {
-      getOtp()
-        .then(p =>
-          startOtpListener(message => {
-            console.log(message);
-            if (message) {
-              const otp = /(\d{6})/g.exec(message)[1];
-              handleOtp(otp);
-            }
-          }),
-        )
-        .catch(p => console.log(p));
-    } catch (error) {
-      console.log(error, '----');
-    }
-    return () => removeListener();
-  }, []);
+    const timer = setTimeout(() => {
+      setCanResendOtp(true);
+    }, 1000 * 30);
+    return () => clearTimeout(timer);
+  }, [canResendOtp]);
+
+  // useEffect(() => {
+  // try {
+  //   getOtp()
+  //     .then(p =>
+  //       startOtpListener(message => {
+  //         console.log(message, '-------message');
+  //         if (message) {
+  //           const otp = /(\d{6})/g.exec(message)[1];
+  //           handleOtp(otp);
+  //         }
+  //       }),
+  //     )
+  //     .catch(p => console.log(p));
+  // } catch (error) {
+  //   console.log(error, '----');
+  // }
+  // return () => removeListener();
+  // }, []);
+  // const getPermissions = async () => {
+  //   let granted = await PermissionsAndroid.requestMultiple([PermissionsAndroid.PERMISSIONS.READ_PHONE_STATE, PermissionsAndroid.PERMISSIONS.READ_PHONE_NUMBERS]);
+  //   if (granted == PermissionsAndroid.RESULTS.GRANTED) {
+  //     let phoneNumber = await deviceInfo.getPhoneNumber();
+  //     console.log(phoneNumber, '--------');
+  //   }
+  // };
 
   const signIn = async () => {
-    // PermissionsAndroid.PERMISSIONS.READ_PHONE_NUMBERS;
-    // let phoneNumber = await deviceInfo.getPhoneNumber();
-    // console.log(phoneNumber, '--------');
 
     if (state.phone.length != 10) {
       ToastError('Please fill valid Phone Number', 'Login');
@@ -96,6 +108,7 @@ const Login = ({navigation}) => {
         .then(data => {
           setConfirm(data);
           setLoading(false);
+          setCanResendOtp(false);
         })
         .catch(error => {
           setLoading(false);
@@ -107,6 +120,7 @@ const Login = ({navigation}) => {
       ToastError(error?.message, 'Login');
     }
   };
+
 
   const handleOtp = code => {
     if (code.length == 6) {
@@ -135,16 +149,16 @@ const Login = ({navigation}) => {
       }
     }
   };
-  
+
   return (
     <BaseView>
       <Loader visible={loading} />
       {/* <LanguagePicker /> */}
       <ScrollView
-        contentContainerStyle={{alignItems: 'center'}}
+        contentContainerStyle={{ alignItems: 'center' }}
         keyboardShouldPersistTaps="handled">
         <Logo />
-        <Text h2 style={{marginBottom: 50}}>
+        <Text h2 style={{ marginBottom: 50 }}>
           {strings.welcome}
         </Text>
         <Input
@@ -166,8 +180,8 @@ const Login = ({navigation}) => {
           }
           placeholder={strings.phone}
           value={state.phone}
-          inputStyle={{width: '70%'}}
-          setValue={text => setState({...state, phone: text})}
+          inputStyle={{ width: '70%' }}
+          setValue={text => setState({ ...state, phone: text })}
         />
         {confirm ? (
           <OtpInputs
@@ -177,14 +191,21 @@ const Login = ({navigation}) => {
             handleChange={handleOtp}
             numberOfInputs={6}
             style={styles.otp}
-            inputContainerStyles={[styles.cell, {borderColor: colors.text}]}
-            inputStyles={[styles.cellTxt, {color: colors.text}]}
+            inputContainerStyles={[styles.cell, { borderColor: colors.text }]}
+            inputStyles={[styles.cellTxt, { color: colors.text }]}
             textBreakStrategy="highQuality"
           />
         ) : (
           <Button label={strings.login} onPress={signIn} />
         )}
-        
+        {!canResendOtp ? (
+          <Button
+            label={'Resend OTP'}
+            btnStyle={styles.btn}
+            onPress={signIn}
+          />
+        ) : null}
+
       </ScrollView>
     </BaseView>
   );

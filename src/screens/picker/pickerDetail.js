@@ -14,7 +14,7 @@ import Icon from '../../components/icon';
 import { goBack } from '../../navigation/ref';
 import Loader from 'src/components/loader';
 import { strings } from 'src/translations/locale';
-import { ToastError } from '../../utils/toast';
+import { ToastError, ToastProgress } from '../../utils/toast';
 import {
   deletePicker,
   deletePickerCollection,
@@ -22,7 +22,7 @@ import {
 } from '../../network/picker-service';
 import { ScrollView } from 'react-native-gesture-handler';
 import Strings from 'react-native-localization';
-import { green, red } from '../../utils/color';
+import { green, darkOrange, red } from '../../utils/color';
 import { currencyFormat } from '../../utils/dateformat';
 import PickerDetailAction from '../../container/picker/pickerDetailAction';
 import PickerExpenseDetail from '../../container/picker/pickerExpenseDetail';
@@ -39,8 +39,8 @@ export default function PickerDetail({ navigation }) {
   const data = params?.item ?? [];
   const { pickerWeight, pickerExpense, getPickerWeight, getPickerExpense } =
     useCotton();
-  let pickerData = pickerWeight.filter(o => data?.picker === o.picker)
-  let pickerExpenseData = pickerExpense.filter(o => data?.picker === o.picker)
+  let pickerData = pickerWeight.filter(o => data?.picker === o.picker);
+  let pickerExpenseData = pickerExpense.filter(o => data?.picker === o.picker);
 
   useFocusEffect(
     useCallback(() => {
@@ -48,14 +48,69 @@ export default function PickerDetail({ navigation }) {
       getPickerExpense();
     }, []),
   );
-  let amount = sumBy(
-    pickerData,
-    o => parseFloat(o.weight) * parseFloat(o?.rate),
-  ) - sumBy(pickerExpenseData, o => parseFloat(o.amount))
+  let amount =
+    sumBy(pickerData, o => parseFloat(o.weight) * parseFloat(o?.rate)) -
+    sumBy(pickerExpenseData, o => parseFloat(o.amount));
   return (
-    <BaseView>
+    <BaseView style={{ paddingHorizontal: 0 }}>
       <Loader visible={loading} />
       <Header
+        style={styles.header}
+        leftComponent={
+          <View style={{ flexDirection: 'row' }}>
+            <Icon
+              name="back"
+              size={28}
+              style={{ color: white, marginRight: 5 }}
+              onPress={() => goBack()}
+            />
+            {/* <Icon
+              name="user-circle"
+              size={28}
+              style={{ color: white }}
+              onPress={() => goBack()}
+              type="FontAwesome"
+            /> */}
+          </View>
+        }
+        centerComponent={
+          <Text h2 style={{ marginLeft: 10, color: white }}>
+            {data?.picker}
+          </Text>
+        }
+        rightComponent={
+          <View style={{ flexDirection: 'row' }}>
+            <Icon
+              name="search1"
+              color={white}
+              size={28}
+              style={{ marginRight: 15 }}
+              onPress={() => ToastProgress(strings.in_progress)}
+            />
+            <Icon
+              name="pdffile1"
+              size={28}
+              color={white}
+              onPress={() => ToastProgress(strings.in_progress)}
+            />
+            {/* <Icon
+              name="dots-vertical"
+              size={28}
+              style={{ color: white }}
+              // onPress={delteData}
+              type="MaterialCommunityIcons"
+            /> */}
+          </View>
+          //    <Icon
+          //   name="delete"
+          //   size={20}
+          //   color={red}
+          //   style={[styles.icon, {backgroundColor: colors.card}]}
+          //   onPress={delteData}
+          // />
+        }
+      />
+      {/* <Header
         style={{ marginTop: 10 }}
         leftComponent={<Icon name="back" size={28} onPress={() => goBack()} />}
         centerComponent={<Text h2>{data?.picker}</Text>}
@@ -72,11 +127,11 @@ export default function PickerDetail({ navigation }) {
           </Text>
           // )
         }
-      />
+      /> */}
 
       <ScrollView
         style={{ width: '100%' }}
-        contentContainerStyle={{ paddingBottom: 150 }}
+        contentContainerStyle={{ paddingBottom: 150, paddingHorizontal: 20 }}
         showsVerticalScrollIndicator={false}>
         <View style={[styles.row, styles.underline]}>
           <Text h3>{strings.total_weight}</Text>
@@ -102,17 +157,17 @@ export default function PickerDetail({ navigation }) {
           <Text h3>{strings.total_amount}</Text>
           <Text h3 style={{ color: green }}>
             {currencyFormat(
-              sumBy(
-                pickerData,
-                o => parseFloat(o.weight) * parseFloat(o.rate),
-              ),
+              sumBy(pickerData, o => parseFloat(o.weight) * parseFloat(o.rate)),
             )}
           </Text>
         </View>
         <View style={[styles.row, styles.underline]}>
           <Text h3>{strings.given_amount}</Text>
           <Text h3 style={{ color: red }}>
-            -- {currencyFormat(sumBy(pickerExpenseData, o => parseFloat(o.amount)))}
+            --{' '}
+            {currencyFormat(
+              sumBy(pickerExpenseData, o => parseFloat(o.amount)),
+            )}
           </Text>
         </View>
         <View style={[styles.row, styles.underline]}>
@@ -120,8 +175,7 @@ export default function PickerDetail({ navigation }) {
           <Text
             h3
             style={{
-              color:
-                (!isNaN(amount) ? amount : 0) > 0 ? green : red,
+              color: (!isNaN(amount) ? amount : 0) > 0 ? green : red,
             }}>
             {(!isNaN(amount) ? amount : 0) > 0 ? '+' : '--'}{' '}
             {currencyFormat(!isNaN(amount) ? amount : 0)}
@@ -135,13 +189,13 @@ export default function PickerDetail({ navigation }) {
             pickerData.length &&
             !pickerData.every(o => o?.weight == '0' || !o?.weight) &&
             data?.picker ? (
-            sortBy(
-              pickerData,
-              (a, b) => moment(b?.date) - moment(a?.date),
-            ).map((v, i) => <PickerDetailAction key={i} data={v} />)
+            sortBy(pickerData, (a, b) => moment(b?.date) - moment(a?.date)).map(
+              (v, i) => <PickerDetailAction key={i} data={v} />,
+            )
           ) : (
             <Text h4 style={styles.underline}>
-            {strings.no_record}</Text>
+              {strings.no_record}
+            </Text>
           )}
         </View>
         <View style={styles.wt}>
@@ -170,11 +224,12 @@ export default function PickerDetail({ navigation }) {
               />
             ))
           ) : (
-            <Text>No Record</Text>
+            <Text>{strings.no_record}</Text>
           )}
         </View>
       </ScrollView>
       <Header
+        style={{ paddingHorizontal: 20 }}
         leftComponent={
           <Button
             label={strings.add_weight}
@@ -203,6 +258,13 @@ export default function PickerDetail({ navigation }) {
   );
 }
 const styles = StyleSheet.create({
+  header: {
+    backgroundColor: darkOrange,
+    marginHorizontal: -20,
+    paddingHorizontal: 10,
+    paddingVertical: 20,
+    elevation: 5,
+  },
   list: {
     borderRadius: 10,
     elevation: 3,

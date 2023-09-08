@@ -48,62 +48,11 @@ const LoginMethods = ({ navigation }) => {
   const { colors } = useTheme();
   const { lang } = useLang();
   const [loading, setLoading] = React.useState(false);
-  const [state, setState] = React.useState({
-    phone: __DEV__ ? '1231231231' : '',
-  });
-  const [confirm, setConfirm] = React.useState(null);
 
-  const signIn = async () => {
-    if (state.phone.length != 10) {
-      ToastError('Please fill valid Phone Number', 'Login');
-      return;
-    }
-    try {
-      setLoading(true);
-      SignInUser(state.phone)
-        .then(data => {
-          setConfirm(data);
-          setLoading(false);
-        })
-        .catch(error => {
-          setLoading(false);
-          ToastError(error?.message, 'Login');
-        });
-    } catch (error) {
-      setLoading(false);
-      ToastError(error?.message, 'Login');
-    }
-  };
 
-  const handleOtp = code => {
-    if (code.length == 6) {
-      try {
-        setLoading(true);
-        // await confirm.confirm(code);
-        const phoneCredentials = Auth.PhoneAuthProvider.credential(
-          confirm.verificationId,
-          code,
-        );
-        // Try to sign in with the phone credentials
-        Auth()
-          .signInWithCredential(phoneCredentials)
-          .then(userCredentials => {
-            setLoading(false);
-            // replace('Main');
-            ToastSuccess('Successfully Logged In!', 'OTP');
-          })
-          .catch(error => {
-            setLoading(false);
-            ToastError(error?.message, 'OTP');
-          });
-      } catch (error) {
-        setLoading(false);
-        ToastError(error?.message, 'OTP');
-      }
-    }
-  };
   const signInG = async () => {
     try {
+      setLoading(true)
       await GoogleSignin.hasPlayServices();
       const { idToken } = await GoogleSignin.signIn();
       // Create a Google credential with the token
@@ -113,7 +62,9 @@ const LoginMethods = ({ navigation }) => {
       Auth().signInWithCredential(googleCredential);
       // replace('Main');
       // this.setState({ userInfo });
+      setLoading(false)
     } catch (error) {
+      setLoading(false)
       console.log(error);
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
         // user cancelled the login flow

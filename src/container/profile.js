@@ -1,10 +1,10 @@
 import React from 'react';
-import {Image, View, Text, StyleSheet, TouchableOpacity} from 'react-native';
+import { Image, View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import {black, blue, white} from '../utils/color';
-import {WIDTH} from '../utils/constant';
-import {useTheme} from '@react-navigation/native';
-import {Auth} from 'src/service/setup';
+import { black, blue, white } from '../utils/color';
+import { WIDTH } from '../utils/constant';
+import { useTheme } from '@react-navigation/native';
+import { Auth } from 'src/service/setup';
 
 export default ({
   small,
@@ -14,18 +14,18 @@ export default ({
   onImgTap,
   imgEdit,
 }) => {
-  const {colors} = useTheme();
+  const { colors } = useTheme();
 
-  const onEditImgTap = () => {};
+  const onEditImgTap = () => { };
   return (
     <View style={[styles.container, small && styles.small, style]}>
       <View style={styles.imgContainer}>
         <TouchableOpacity onPress={onImgTap} activeOpacity={0.8}>
           {img ? (
-            <Image source={{uri: img}} style={styles.img} resizeMode="cover" />
+            <Image source={{ uri: img }} style={styles.img} resizeMode="cover" />
           ) : (
-            <View style={[styles.img, {backgroundColor: colors.border}]}>
-              <Text style={[styles.name, small && {fontSize: 30}]}>
+            <View style={[styles.img, { backgroundColor: colors.border }]}>
+              <Text style={[styles.name, small && { fontSize: 30 }]}>
                 {name ? name.charAt(0) : '😊'}
               </Text>
             </View>
@@ -51,8 +51,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 10,
-    width: WIDTH / 2,
-    height: WIDTH / 2,
+    width: WIDTH / 3,
+    height: WIDTH / 3,
   },
   small: {
     padding: 1,

@@ -19,7 +19,7 @@ import { strings } from '../../translations/locale';
 const Account = ({ }) => {
   const navigation = useNavigation()
   const { user } = useAuth();
-
+  console.log(user)
   let userData = [
     {
       icon: 'user',

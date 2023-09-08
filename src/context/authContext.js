@@ -40,7 +40,19 @@ export const AuthProvider = (props) => {
                             .doc(id).get();
                         if (user.exists) {
                             dispatch({ type: 'USER', user: user.data() });
-                        } else dispatch({ type: 'RESET' });
+                        } else {
+                            console.log(Auth().currentUser)
+                            let data = {
+                                name: Auth().currentUser?.displayName,
+                                phone: Auth().currentUser?.phoneNumber,
+                                email: Auth().currentUser?.email,
+                                id: Auth().currentUser?.uid,
+                            }
+                            await firestore()
+                                .collection('users')
+                                .doc(id).set(data);
+                            dispatch({ type: 'USER', user: data });
+                        };
                     }
                 } catch (error) {
                     console.log(error, '------auth user')

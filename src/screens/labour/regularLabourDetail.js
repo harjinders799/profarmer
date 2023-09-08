@@ -210,7 +210,7 @@ export default function RegularLabourDetail() {
             ),
           )
         ) : (
-          <Text>No Record</Text>
+          <Text>{strings.no_record}</Text>
         )}
         <Text h3 style={styles.subhead}>
           {strings.amount}

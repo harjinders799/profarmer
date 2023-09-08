@@ -44,7 +44,7 @@ export default function App() {
             padding: 20,
             backgroundColor: orange,
           }}>
-          <Text>{strings.new_version}</Text>
+          <Text h3>{strings.new_version}</Text>
           <Button label="Update" onPress={update} />
         </View>
       </Modal>
