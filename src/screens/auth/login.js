@@ -45,6 +45,7 @@ import {
   startOtpListener,
   useOtpVerify,
 } from 'react-native-otp-verify';
+import deviceInfo from 'react-native-device-info';
 
 GoogleSignin.configure({
   webClientId:
@@ -55,16 +56,23 @@ const Login = ({ navigation }) => {
   const { setAuthenticate } = useLang();
   const [loading, setLoading] = React.useState(false);
   const [state, setState] = React.useState({
-    phone: __DEV__ ? '1231231231' : '',
+    phone: __DEV__ ? '9928185712' : '',
   });
   const [confirm, setConfirm] = React.useState(null);
+
   useEffect(() => {
+    console.log(deviceInfo.getPhoneNumber().then((phoneNumber) => {
+      console.log(phoneNumber, '--------')
+      // Android: null return: no permission, empty string: unprogrammed or empty SIM1, e.g. "+15555215558": normal return value
+    }))
     setAuthenticate(true)
     getOtp()
       .then(p => startOtpListener(message => {
         console.log(message)
-        const otp = /(\d{6})/g.exec(message)[1];
-        handleOtp(otp);
+        if (message) {
+          const otp = /(\d{6})/g.exec(message)[1];
+          handleOtp(otp);
+        }
       }))
       .catch(p => console.log(p));
 
@@ -90,6 +98,7 @@ const Login = ({ navigation }) => {
         });
     } catch (error) {
       setLoading(false);
+      console.log(error)
       ToastError(error?.message, 'Login');
     }
   };

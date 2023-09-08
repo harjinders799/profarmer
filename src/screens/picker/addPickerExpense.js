@@ -72,7 +72,7 @@ export default function AddPickerExpense() {
   const updateWt = async () => {
     try {
       if (amount.trim() == '' || amount < 0) {
-        ToastError(strings.given_amount_to_picker, strings.picker);
+        ToastError(strings.given_amount_to_picker);
       } else {
         setLoading(true);
         await updatePickerExpenseData(db, {
@@ -86,7 +86,7 @@ export default function AddPickerExpense() {
         //   date: currentStamp(date),
         // });
         setLoading(false);
-        ToastSuccess(strings.picker_expense_added, strings.picker);
+        ToastSuccess(strings.picker_expense_added);
         goBack();
       }
     } catch (error) {
@@ -98,9 +98,9 @@ export default function AddPickerExpense() {
   const AddNew = async () => {
     try {
       if (picker == '') {
-        ToastError(strings.picker_name, strings.picker);
+        ToastError(strings.picker_name);
       } else if (amount.trim() == '' || amount <= 0) {
-        ToastError(strings.given_amount_to_picker, strings.picker);
+        ToastError(strings.given_amount_to_picker);
       } else {
         setLoading(true);
         await savePickerExpenseData(db, [
@@ -124,7 +124,7 @@ export default function AddPickerExpense() {
         //   date: currentStamp(date),
         // });
         setLoading(false);
-        ToastSuccess(strings.picker_expense_added, strings.picker);
+        ToastSuccess(strings.picker_expense_added);
         goBack();
       }
     } catch (error) {

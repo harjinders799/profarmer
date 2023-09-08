@@ -18,14 +18,15 @@ import Icon from '../../components/icon';
 import { green, black } from '../../utils/color';
 import { strings } from '../../translations/locale';
 import ReactNativeBiometrics, { BiometryTypes } from 'react-native-biometrics';
+import { useAuth } from '../../context/authContext';
 
 const rnBiometrics = new ReactNativeBiometrics();
 
 export default function Setting({ navigation }) {
-  const { resetPicker } = useCotton();
+  // const { reset } = useAuth();
   const { lang, setFingerLock, fingerLock } = useLang();
   const [isBiometry, setIsBiometry] = useState(false);
-  // const { user, reset } = useAuth();
+  const { user, reset } = useAuth();
   useEffect(() => {
     (async () => {
       const { available } = await rnBiometrics.isSensorAvailable();
@@ -101,7 +102,7 @@ https://play.google.com/store/apps/details?id=com.profarmer
           <TouchableOpacity
             style={styles.row}
             onPress={async () => {
-              resetPicker();
+              reset();
             }}>
             <Text style={styles.txt}>Log Out</Text>
             <Icon name="chevron-right" type="Entypo" size={25} />

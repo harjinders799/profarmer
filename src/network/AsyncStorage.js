@@ -34,10 +34,10 @@ const getAsyncStorage = async key => {
 
 const clearAsyncStorage = async key => {
   try {
-    await AsyncStorage.removeItem(key);
+    await AsyncStorage.clear(key);
   } catch (error) {
     console.log(error);
   }
 };
 
-export {setAsyncStorage, getAsyncStorage, clearAsyncStorage};
+export { setAsyncStorage, getAsyncStorage, clearAsyncStorage };

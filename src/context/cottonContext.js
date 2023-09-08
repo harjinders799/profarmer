@@ -97,15 +97,13 @@ export const CottonProvider = props => {
       },
 
       resetPicker: async () => {
-        if (auth()?.currentUser?.uid) {
-          auth()
-            .signOut()
-            .then(async () => {
-              dispatch({ type: 'RESET' });
-              await clearAsyncStorage('pickers');
-              // replace("Login")
-            });
-        }
+        auth()
+          .signOut()
+          .then(async () => {
+            dispatch({ type: 'RESET' });
+            await clearAsyncStorage();
+            // replace("Login")
+          });
       },
     }),
     [state],

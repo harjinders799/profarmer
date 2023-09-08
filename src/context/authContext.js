@@ -1,6 +1,8 @@
 import React from 'react';
 import { Auth, database } from 'src/service/setup';
 import { firestore } from '../service/setup';
+import auth from '@react-native-firebase/auth';
+import { clearAsyncStorage } from '../network/AsyncStorage';
 
 const initialState = {
     user: undefined,
@@ -32,18 +34,26 @@ export const AuthProvider = (props) => {
             getUser: async () => {
                 try {
                     let id = Auth().currentUser?.uid;
-                    let user = await firestore()
-                        .collection('users')
-                        .doc(id).get();
-                    if (user.exists) {
-                        dispatch({ type: 'USER', user: user.data() });
-                    } else dispatch({ type: 'RESET' });
+                    if (id) {
+                        let user = await firestore()
+                            .collection('users')
+                            .doc(id).get();
+                        if (user.exists) {
+                            dispatch({ type: 'USER', user: user.data() });
+                        } else dispatch({ type: 'RESET' });
+                    }
                 } catch (error) {
                     console.log(error, '------auth user')
                 }
             },
             reset: async () => {
-                dispatch({ type: 'RESET' });
+                auth()
+                    .signOut()
+                    .then(async () => {
+                        dispatch({ type: 'RESET' });
+                        // await clearAsyncStorage();
+                        // replace("Login")
+                    });
             },
         }),
         [state],
