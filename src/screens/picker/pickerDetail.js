@@ -55,17 +55,17 @@ export default function PickerDetail({ navigation }) {
         leftComponent={<Icon name="back" size={28} onPress={() => goBack()} />}
         centerComponent={<Text h2>{data?.picker}</Text>}
         rightComponent={
-          __DEV__ ? (
-            <Icon
-              name={'delete'}
-              size={20}
-              onPress={async () => await deletePickerCollection(data?.picker)}
-            />
-          ) : (
-            <Text numberOfLines={1} h4>
-              {data?.picker ? strings.picker : ''}
-            </Text>
-          )
+          // __DEV__ ? (
+          //   <Icon
+          //     name={'delete'}
+          //     size={20}
+          //     onPress={async () => await deletePickerCollection(data?.picker)}
+          //   />
+          // ) : (
+          <Text numberOfLines={1} h4>
+            {data?.picker ? strings.picker : ''}
+          </Text>
+          // )
         }
       />
 
