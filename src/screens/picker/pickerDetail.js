@@ -1,4 +1,4 @@
-import { View, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Modal } from 'react-native';
 import React, { useCallback, useEffect, useState } from 'react';
 import BaseView from 'src/container/base';
 import Text from 'src/components/text';
@@ -29,6 +29,8 @@ import {
   yellow,
   blue,
   greenDark,
+  cyan,
+  orange,
 } from '../../utils/color';
 import { currencyFormat } from '../../utils/dateformat';
 import PickerDetailAction from '../../container/picker/pickerDetailAction';
@@ -40,7 +42,7 @@ import moment from 'moment';
 import { useCotton } from '../../context/cottonContext';
 import { deletePickerNameWise } from '../../sql';
 import auth from '@react-native-firebase/auth';
-
+const transparent = 'rgba(0,0,0,0.5)';
 export default function PickerDetail({ navigation }) {
   const { params } = useRoute();
   const { colors } = useTheme();
@@ -60,6 +62,66 @@ export default function PickerDetail({ navigation }) {
   let amount =
     sumBy(pickerData, o => parseFloat(o.weight) * parseFloat(o?.rate)) -
     sumBy(pickerExpenseData, o => parseFloat(o.amount));
+
+  const [openModal, setopenModal] = useState(false);
+
+  function renderModal() {
+    return (
+      <Modal visible={openModal} animationType='slide' transparent={true}>
+        <View
+          style={styles.modal}
+        >
+          <View style={{
+            backgroundColor: "white",
+            padding: 20,
+            width: "90%",
+            borderRadius: 10,
+            // height:110,
+          }}>
+            <Text h2>{strings.are_you_sure}</Text>
+            <Text
+              style={{
+                fontSize: 20,
+                marginTop: 10
+              }}
+            // onPress={() => navigate('Picker')}
+            >
+              {data?.picker}
+              {strings.alert}
+            </Text>
+
+            <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 10 }}>
+              <Loader visible={loading} />
+              <Button
+                label={strings.delete}
+                btnStyle={{ width: '40%', backgroundColor: red }}
+                size={30}
+                style={{ color: red, display: __DEV__ ? 'flex' : 'none', }}
+                onPress={async () => {
+                  await deletePickerNameWise(db, {
+                    ...data,
+                    uid: auth().currentUser?.uid,
+                  });
+                  await deletePickerCollection(data?.picker);
+                  getPickerWeight();
+                  getPickerExpense();
+                  goBack();
+                }}
+              // type="MaterialCommunityIcons"
+              />
+              <Button
+                label={strings.cancel}
+                btnStyle={{ width: '40%' }}
+                size={30}
+                onPress={() => setopenModal(false)}
+              />
+            </View>
+          </View>
+        </View>
+      </Modal>
+    );
+  }
+
   return (
     <BaseView style={{ paddingHorizontal: 0 }}>
       <Loader visible={loading} />
@@ -103,7 +165,19 @@ export default function PickerDetail({ navigation }) {
               style={{ marginRight: 15 }}
               onPress={() => ToastProgress(strings.in_progress)}
             />
-            <Icon
+
+            <TouchableOpacity
+              onPress={() => {
+                setopenModal(true);
+              }}>
+              <Text>
+                <Icon
+                  name="delete"
+                  size={30}
+                  color={white}
+                  type="MaterialCommunityIcons"
+                />
+                {/* <Icon
               name="delete"
               size={30}
               style={{ color: red, display: __DEV__ ? 'flex' : 'none' }}
@@ -117,7 +191,10 @@ export default function PickerDetail({ navigation }) {
                 getPickerExpense();
               }}
               type="MaterialCommunityIcons"
-            />
+            /> */}
+              </Text>
+            </TouchableOpacity>
+            {renderModal()}
           </View>
           //    <Icon
           //   name="delete"
@@ -324,5 +401,11 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     textAlignVertical: 'center',
     borderRadius: 5,
+  },
+  modal: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: transparent,
   },
 });
