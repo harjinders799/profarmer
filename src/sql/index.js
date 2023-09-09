@@ -115,6 +115,7 @@ export const saveCottonPriceData = async (db, items) => {
                     `('${i?.market}', '${i?.maxPrice}', '${i?.minPrice}', '${i?.district}', '${i?.arrivalDate}')`
             )
             .join(",");
+    console.log(insertQuery)
     return db.executeSql(insertQuery);
 };
 
@@ -134,5 +135,17 @@ export const getAllItems = async (db, tableName, params = '') => {
     } catch (error) {
         console.error(error);
         throw Error("Failed to get Items !!!");
+    }
+};
+
+export const deletePickerNameWise = async (db, i) => {
+    try {
+        const deleteWtQuery = `DELETE from ${PCIKER_TABLE} where picker = '${i?.picker}' AND uid='${i?.uid}' `;
+        await db.executeSql(deleteWtQuery);
+        const deleteExQuery = `DELETE from ${PICKER_EXPENSE_TABLE} where picker = '${i?.picker}' AND uid='${i?.uid}' `;
+        await db.executeSql(deleteExQuery);
+    } catch (error) {
+        console.log(error)
+        throw Error(error);
     }
 };

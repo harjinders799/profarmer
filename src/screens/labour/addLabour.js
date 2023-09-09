@@ -25,6 +25,7 @@ import {
 import Header from '../../components/header';
 import Icon from '../../components/icon';
 import { currencyInput } from '../../utils/dateformat';
+import { gray3 } from '../../utils/color';
 
 export default function AddLabour() {
   const { colors } = useTheme();
@@ -163,7 +164,7 @@ export default function AddLabour() {
             setValue={value => onChangeValue('detail', value)}
           />
           <TouchableOpacity
-            style={[styles.date, { borderColor: colors.border }]}
+            style={[styles.date, { borderColor: gray3 }]}
             onPress={() => setShowDate(true)}>
             <Text h3 medium>
               {dateFormat(date)}

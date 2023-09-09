@@ -18,6 +18,7 @@ import {
 } from '../../network/labour-service';
 import Header from '../../components/header';
 import Icon from '../../components/icon';
+import { gray3 } from '../../utils/color';
 
 export default function AddLabourLeave() {
   const { colors } = useTheme();
@@ -114,7 +115,7 @@ export default function AddLabourLeave() {
             setValue={value => onChangeValue('detail', value)}
           />
           <TouchableOpacity
-            style={[styles.date, { borderColor: colors.border }]}
+            style={[styles.date, { borderColor: gray3 }]}
             onPress={() => setShowDate(true)}>
             <Text h3 medium>
               {dateFormat(date)}

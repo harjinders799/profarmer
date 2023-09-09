@@ -47,18 +47,20 @@ const MandiPrice = () => {
     const { cottonPrice, db, getCottonPrice } = useCotton();
 
     useEffect(() => {
-        if (cottonPrice == undefined || (Array.isArray(cottonPrice) && cottonPrice.length == 0))
-            (async () => {
-                let res = await getPrice();
-                if (Array.isArray(res)) {
-                    await saveCottonPriceData(db, res);
-                    await getCottonPrice()
-                }
-            })();
+        getCottonPrice();
+        (async () => {
+            let res = await getPrice();
+            if (Array.isArray(res)) {
+                await saveCottonPriceData(db, res.reverse());
+                getCottonPrice();
+            }
+        })();
     }, []);
-    return (Array.isArray(cottonPrice) && cottonPrice.length ?
+
+    return Array.isArray(cottonPrice) && cottonPrice.length ? (
         <View style={[styles.list]}>
-            <Text h3 style={styles.header}>{strings.cotton_price}
+            <Text h3 style={styles.header}>
+                {strings.cotton_price}
                 {/* Cotton Price */}
             </Text>
             <TouchableOpacity
@@ -104,8 +106,7 @@ https://play.google.com/store/apps/details?id=com.profarmer
                 </ScrollView>
             </View>
         </View>
-        : null
-    );
+    ) : null;
 };
 
 export default MandiPrice;

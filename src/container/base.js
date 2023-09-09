@@ -5,7 +5,7 @@ import AdBanner from 'src/components/adBanner';
 import Icon from 'src/components/icon';
 import { orange } from 'src/utils/color';
 import { commonStyle } from 'src/utils/style';
-import { darkOrange } from '../utils/color';
+import { darkOrange, green, white } from '../utils/color';
 
 const BaseView = ({ style, addBtn, onPress, children }) => {
   const { colors } = useTheme();
@@ -15,10 +15,10 @@ const BaseView = ({ style, addBtn, onPress, children }) => {
         commonStyle.centerAligned,
         commonStyle.p_h_20,
         styles.base,
-        { backgroundColor: colors.background },
+        { backgroundColor: white },
         style,
       ]}>
-      <StatusBar backgroundColor={darkOrange} barStyle="light-content" />
+      <StatusBar backgroundColor={green} barStyle="light-content" />
       {children}
       {addBtn ? (
         <TouchableOpacity
@@ -31,7 +31,7 @@ const BaseView = ({ style, addBtn, onPress, children }) => {
           <Icon
             name="plus"
             size={30}
-            color={colors.background}
+            color={white}
             onPress={onPress}
           />
         </TouchableOpacity>

@@ -13,8 +13,9 @@ const Button = ({
   iconColor,
   label,
   onPress,
+  ...props
 }) => (
-  <TouchableOpacity style={[styles.container, btnStyle]} onPress={onPress}>
+  <TouchableOpacity {...props} style={[styles.container, btnStyle]} onPress={onPress}>
     {iconName ? (
       <Icon
         name={iconName}

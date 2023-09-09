@@ -1,12 +1,13 @@
-import {TouchableOpacity, View} from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import React from 'react';
 import Text from './text';
-import {commonStyle} from '../utils/style';
-import {useTheme} from '@react-navigation/native';
+import { commonStyle } from '../utils/style';
+import { useTheme } from '@react-navigation/native';
 import Icon from './icon';
+import { gray3 } from '../utils/color';
 
-export default function Checkbox({isChecked, onPress, label}) {
-  const {colors} = useTheme();
+export default function Checkbox({ isChecked, onPress, label }) {
+  const { colors } = useTheme();
   return (
     <TouchableOpacity
       activeOpacity={0.8}
@@ -15,7 +16,7 @@ export default function Checkbox({isChecked, onPress, label}) {
       <View
         style={{
           borderWidth: 1,
-          borderColor: colors.border,
+          borderColor: gray3,
           padding: 2,
           width: 25,
           height: 25,

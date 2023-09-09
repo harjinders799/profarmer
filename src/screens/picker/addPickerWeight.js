@@ -23,6 +23,7 @@ import Icon from '../../components/icon';
 import { useCotton } from '../../context/cottonContext';
 import { savePickerData, updatePickerData } from '../../sql';
 import auth from '@react-native-firebase/auth';
+import { gray3 } from '../../utils/color';
 
 export default function AddPickerWeight() {
   const { colors } = useTheme();
@@ -175,7 +176,7 @@ export default function AddPickerWeight() {
           setValue={value => onChangeValue('detail', value)}
         />
         <TouchableOpacity
-          style={[styles.date, { borderColor: colors.border }]}
+          style={[styles.date, { borderColor: gray3 }]}
           onPress={() => setShowDate(true)}>
           <Text h3 medium>
             {dateFormat(date)}

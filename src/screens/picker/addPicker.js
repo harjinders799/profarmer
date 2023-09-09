@@ -174,6 +174,7 @@ export default function AddPicker() {
         /> */}
         {/* <View style={{ flexDirection: "row", width: "100%", justifyContent: "space-between" }}> */}
         <Input
+          autoFocus
           placeholder={strings.name}
           value={picker}
           setValue={value => onChangeValue('picker', value)}

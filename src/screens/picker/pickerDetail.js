@@ -38,13 +38,15 @@ import Button from '../../components/button';
 import { mean, sortBy, sumBy } from 'lodash';
 import moment from 'moment';
 import { useCotton } from '../../context/cottonContext';
+import { deletePickerNameWise } from '../../sql';
+import auth from '@react-native-firebase/auth';
 
 export default function PickerDetail({ navigation }) {
   const { params } = useRoute();
   const { colors } = useTheme();
   const [loading, setLoading] = useState(false);
   const data = params?.item ?? [];
-  const { pickerWeight, pickerExpense, getPickerWeight, getPickerExpense } =
+  const { db, pickerWeight, pickerExpense, getPickerWeight, getPickerExpense } =
     useCotton();
   let pickerData = pickerWeight.filter(o => data?.picker === o.picker);
   let pickerExpenseData = pickerExpense.filter(o => data?.picker === o.picker);
@@ -81,7 +83,7 @@ export default function PickerDetail({ navigation }) {
           </View>
         }
         centerComponent={
-          <Text h2 style={{ marginLeft: 10, color: white }}>
+          <Text h2 numberOfLines={1} style={{ width: '50%', color: white }}>
             {data?.picker}
           </Text>
         }
@@ -90,23 +92,32 @@ export default function PickerDetail({ navigation }) {
             <Icon
               name="search1"
               color={white}
-              size={28}
+              size={25}
               style={{ marginRight: 15 }}
               onPress={() => ToastProgress(strings.in_progress)}
             />
             <Icon
               name="pdffile1"
-              size={28}
+              size={25}
               color={white}
+              style={{ marginRight: 15 }}
               onPress={() => ToastProgress(strings.in_progress)}
             />
-            {/* <Icon
-              name="dots-vertical"
-              size={28}
-              style={{ color: white }}
-              // onPress={delteData}
+            <Icon
+              name="delete"
+              size={30}
+              style={{ color: red, display: __DEV__ ? 'flex' : 'none' }}
+              onPress={async () => {
+                await deletePickerNameWise(db, {
+                  ...data,
+                  uid: auth().currentUser?.uid,
+                });
+                await deletePickerCollection(data?.picker);
+                getPickerWeight();
+                getPickerExpense();
+              }}
               type="MaterialCommunityIcons"
-            /> */}
+            />
           </View>
           //    <Icon
           //   name="delete"
@@ -264,11 +275,10 @@ export default function PickerDetail({ navigation }) {
 }
 const styles = StyleSheet.create({
   header: {
-    backgroundColor: darkOrange,
-    marginHorizontal: -20,
-    paddingHorizontal: 10,
-    paddingVertical: 20,
-    elevation: 5,
+    backgroundColor: green,
+    paddingHorizontal: 15,
+    paddingVertical: 15,
+    elevation: 15,
   },
   list: {
     borderRadius: 10,

@@ -13,6 +13,7 @@ import moment from 'moment';
 import { deleteIneterstAmt } from 'src/network/interest-service';
 import { currencyFormat } from '../utils/dateformat';
 import { goBack } from '../navigation/ref';
+import { gray3, white } from '../utils/color';
 
 export default function GiverDetailAction({ data }) {
   const [loading, setLoading] = React.useState(false);
@@ -50,7 +51,7 @@ export default function GiverDetailAction({ data }) {
   ).toFixed(2);
   let final_amount = parseFloat(data?.amount) + parseFloat(interest);
   return (
-    <View style={[styles.list, { backgroundColor: colors.background }]}>
+    <View style={[styles.list, { backgroundColor: white }]}>
       <Loader visible={loading} />
       <View style={styles.row}>
         <Text h3 numberOfLines={1}>
@@ -81,14 +82,14 @@ export default function GiverDetailAction({ data }) {
           name="delete"
           size={20}
           color={red}
-          style={[styles.icon, { backgroundColor: colors.secondaryBackground }]}
+          style={[styles.icon, { backgroundColor: gray3 }]}
           onPress={delteData}
         />
         <Icon
           name="edit"
           size={20}
           color={orange}
-          style={[styles.icon, { backgroundColor: colors.secondaryBackground }]}
+          style={[styles.icon, { backgroundColor: gray3 }]}
           onPress={() => replace('AddForm', { data })}
         />
       </View>

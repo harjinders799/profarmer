@@ -1,30 +1,31 @@
 import * as React from 'react';
-import {FlatList, View, StyleSheet, TouchableOpacity} from 'react-native';
-import {findIndex, flatten, includes} from 'lodash';
-import {useTheme} from '@react-navigation/native';
-import {useAuth} from 'src/context/context';
+import { FlatList, View, StyleSheet, TouchableOpacity } from 'react-native';
+import { findIndex, flatten, includes } from 'lodash';
+import { useTheme } from '@react-navigation/native';
+import { useAuth } from 'src/context/context';
 import Text from 'src/components/text';
 import Icon from 'src/components/icon';
 import Modal from 'src/components/Modal';
 import Input from 'src/components/input';
 import Button from 'src/components/button';
 import Header from 'src/components/header';
-import {HEIGHT} from 'src/utils/constant';
-import {strings} from 'src/translations/locale';
-import {commonStyle} from 'src/utils/style';
-import {useStore} from 'src/context/context';
-import {red} from 'src/utils/color';
+import { HEIGHT } from 'src/utils/constant';
+import { strings } from 'src/translations/locale';
+import { commonStyle } from 'src/utils/style';
+import { useStore } from 'src/context/context';
+import { red } from 'src/utils/color';
+import { gray1 } from '../utils/color';
 
 export default function DataPicker(props) {
   const {
-    data =[],
+    data = [],
     placeholder = 'Select here...',
     displayValue,
     selectedItem,
     setSelectedItem,
     intialVisible,
   } = props;
-  const {colors} = useTheme();
+  const { colors } = useTheme();
   const [modalVisible, setModalVisible] = React.useState(
     intialVisible ?? false,
   );
@@ -49,13 +50,13 @@ export default function DataPicker(props) {
           if (data.length) setSearchKey(v);
           else setSelectedItem(v);
         }}
-        style={{marginBottom: 10, height: 50}}
+        style={{ marginBottom: 10, height: 50 }}
       />
       {modalVisible &&
-      data.length &&
-      (selectedItem != searchKey || !selectedItem) ? (
+        data.length &&
+        (selectedItem != searchKey || !selectedItem) ? (
         <View
-          style={[styles.modal, {backgroundColor: colors.secondaryBackground}]}>
+          style={[styles.modal, { backgroundColor: gray1 }]}>
           <Text h2 style={commonStyle.p_v_10}>
             {placeholder}
           </Text>
@@ -66,7 +67,7 @@ export default function DataPicker(props) {
                 setSelectedItem(searchKey);
                 setModalVisible(false);
               }}
-              style={{borderBottomWidth: StyleSheet.hairlineWidth}}>
+              style={{ borderBottomWidth: StyleSheet.hairlineWidth }}>
               {searchKey}
             </Text>
           ) : null}
@@ -74,10 +75,10 @@ export default function DataPicker(props) {
             data={data}
             keyboardShouldPersistTaps="always"
             keyExtractor={item => Math.random().toString(6).substr(2)}
-            contentContainerStyle={{paddingBottom: 10}}
+            contentContainerStyle={{ paddingBottom: 10 }}
             showsVerticalScrollIndicator={false}
             ListEmptyComponent={<Text>No Record Found</Text>}
-            renderItem={({item}) => (
+            renderItem={({ item }) => (
               <TouchableOpacity
                 style={styles.list}
                 onPress={() => {
@@ -108,7 +109,7 @@ export default function DataPicker(props) {
               </TouchableOpacity>
             )}
             ItemSeparatorComponent={() => (
-              <View style={{borderBottomWidth: StyleSheet.hairlineWidth}} />
+              <View style={{ borderBottomWidth: StyleSheet.hairlineWidth }} />
             )}
           />
         </View>

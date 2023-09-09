@@ -23,28 +23,29 @@ import { strings } from 'src/translations/locale';
 import { useLang } from 'src/context/langContext';
 import OtpInputs from 'react-native-otp-inputs';
 import Icon from 'src/components/icon';
-import { green } from '../../utils/color';
+import { black, gray3, green } from '../../utils/color';
 
 const Login = ({ navigation }) => {
   const { colors } = useTheme();
   const { setAuthenticate } = useLang();
   const [loading, setLoading] = React.useState(false);
   const [canResendOtp, setCanResendOtp] = useState(false);
-  const [time, setTime] = useState(30);
+  const [time, setTime] = useState(undefined);
   const [state, setState] = React.useState({
     phone: __DEV__ ? '1231231231' : '',
   });
+  const [code, setCode] = useState();
   const [confirm, setConfirm] = React.useState(null);
 
   useEffect(() => {
     setAuthenticate(true);
     const timer = setTimeout(() => {
       if (time > 0) setTime(prev => prev - 1);
-      if (time == 0) setCanResendOtp(true);
+      // if (time == -1) setCanResendOtp(true);
     }, 1000);
     return () => clearTimeout(timer);
   }, [canResendOtp, time]);
-  console.log(time);
+  console.log(time, time > 0);
   // useEffect(() => {
   // try {
   //   getOtp()
@@ -96,14 +97,16 @@ const Login = ({ navigation }) => {
     }
   };
 
-  const handleOtp = code => {
-    if (code.length == 6) {
+  const handleOtp = otp => {
+    let otpCode = !isNaN(otp) ? otp : code;
+    setCode(otpCode);
+    if (otpCode.length == 6) {
       try {
         setLoading(true);
-        // await confirm.confirm(code);
+        // await confirm.confirm(otpCode);
         const phoneCredentials = Auth.PhoneAuthProvider.credential(
           confirm.verificationId,
-          code,
+          otpCode,
         );
         // Try to sign in with the phone credentials
         Auth()
@@ -165,27 +168,33 @@ const Login = ({ navigation }) => {
             handleChange={handleOtp}
             numberOfInputs={6}
             style={styles.otp}
-            inputContainerStyles={[styles.cell, { borderColor: colors.text }]}
-            inputStyles={[styles.cellTxt, { color: colors.text }]}
+            inputContainerStyles={[styles.cell, { borderColor: gray3 }]}
+            inputStyles={[styles.cellTxt, { color: black }]}
             textBreakStrategy="highQuality"
           />
         ) : (
           <Button label={strings.login} onPress={signIn} />
         )}
-        <Text>{time >= 30 || time <= 0 ? '' : `00:${time}`}</Text>
         <Button
-          label={
-            strings.resend_otp
-          }
-          disabled={!canResendOtp}
+          label={'Verify'}
+          disabled={code ? code.length != 6 : true}
+          btnStyle={{ display: confirm ? 'flex' : 'none', marginTop: -20 }}
+          onPress={handleOtp}
+        />
+        <Text>
+          {time >= 30 || time <= 0 || time == undefined ? '' : `00:${time}`}
+        </Text>
+        <Button
+          label={strings.resend_otp}
+          disabled={time > 0 || time == undefined}
           btnStyle={[
             styles.btn,
             {
-              opacity: !canResendOtp ? 0.7 : 1,
-              backgroundColor: !canResendOtp ? colors.border : green,
+              opacity: time > 0 || time == undefined ? 0.7 : 1,
+              backgroundColor: time > 0 || time == undefined ? gray3 : green,
             },
           ]}
-          onPress={signIn}
+        // onPress={signIn}
         />
       </ScrollView>
     </BaseView>

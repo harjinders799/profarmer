@@ -1,5 +1,5 @@
-import {useTheme} from '@react-navigation/native';
-import React, {useEffect, useState} from 'react';
+import { useTheme } from '@react-navigation/native';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Modal as ModalRN,
@@ -9,8 +9,9 @@ import {
   Dimensions,
 } from 'react-native';
 import Icon from './icon';
+import { gray1, white } from '../utils/color';
 
-const {height: heightWindow} = Dimensions.get('window');
+const { height: heightWindow } = Dimensions.get('window');
 
 const getHeightView = (heightFull = heightWindow, ratio = 0.5) => {
   const getRatio = ratio < 0.3 ? 0.3 : ratio > 1 ? 0.9 : ratio;
@@ -18,7 +19,7 @@ const getHeightView = (heightFull = heightWindow, ratio = 0.5) => {
 };
 
 function Modal(props) {
-  const {colors} = useTheme();
+  const { colors } = useTheme();
   const {
     topLeftElement,
     topRightElement,
@@ -34,7 +35,7 @@ function Modal(props) {
     getHeightView(heightWindow, props.ratioHeight),
   );
 
-  const animation = (type = 'open', cb = () => {}) => {
+  const animation = (type = 'open', cb = () => { }) => {
     const toValue = type === 'open' ? 0.5 : 0;
     const duration = 350;
     Animated.timing(opacity, {
@@ -90,14 +91,14 @@ function Modal(props) {
       <View
         style={styles.flex}
         onLayout={event => {
-          let {height: heightFull} = event.nativeEvent.layout;
+          let { height: heightFull } = event.nativeEvent.layout;
           setHeight(getHeightView(heightFull, ratioHeight));
         }}>
         <Animated.View
           style={[
             styles.flex,
             {
-              backgroundColor: colors.background,
+              backgroundColor: white,
               opacity: opacity,
             },
           ]}>
@@ -111,7 +112,7 @@ function Modal(props) {
             styles.modal,
             {
               height: height,
-              backgroundColor: colors.secondaryBackground,
+              backgroundColor: gray1,
               bottom: bottom,
             },
           ]}>
