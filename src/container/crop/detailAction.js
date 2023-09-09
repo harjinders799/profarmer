@@ -13,6 +13,7 @@ import moment from 'moment';
 import { deleteCrop } from 'src/network/interest-service';
 import { currencyFormat } from 'src/utils/dateformat';
 import { goBack } from 'src/navigation/ref';
+import { gray2, white } from '../../utils/color';
 
 export default function CropDetailAction({ data }) {
   const [loading, setLoading] = React.useState(false);
@@ -50,7 +51,7 @@ export default function CropDetailAction({ data }) {
   ).toFixed(2);
   let final_amount = parseFloat(data?.amount) + parseFloat(interest);
   return (
-    <View style={[styles.list, { backgroundColor: colors.background }]}>
+    <View style={[styles.list, { backgroundColor: white }]}>
       <Loader visible={loading} />
       <Text h2 style={{ textAlign: 'center' }}>{data?.crop}</Text>
       <View style={styles.row}>
@@ -82,14 +83,14 @@ export default function CropDetailAction({ data }) {
           name="delete"
           size={20}
           color={red}
-          style={[styles.icon, { backgroundColor: colors.secondaryBackground }]}
+          style={[styles.icon, { backgroundColor: gray2 }]}
           onPress={delteData}
         />
         <Icon
           name="edit"
           size={20}
           color={orange}
-          style={[styles.icon, { backgroundColor: colors.secondaryBackground }]}
+          style={[styles.icon, { backgroundColor: gray2 }]}
           onPress={() => replace('AddCrop', { data })}
         />
       </View>

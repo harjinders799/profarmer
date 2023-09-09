@@ -1,19 +1,20 @@
-import {View, StyleSheet, Alert} from 'react-native';
-import React, {useEffect} from 'react';
+import { View, StyleSheet, Alert } from 'react-native';
+import React, { useEffect } from 'react';
 import Icon from 'src/components/icon';
 import Text from 'src/components/text';
-import {orange, red} from 'src/utils/color';
-import {navigate, replace} from 'src/navigation/ref';
-import {strings} from 'src/translations/locale';
-import {ToastError, ToastSuccess} from 'src/utils/toast';
+import { orange, red } from 'src/utils/color';
+import { navigate, replace } from 'src/navigation/ref';
+import { strings } from 'src/translations/locale';
+import { ToastError, ToastSuccess } from 'src/utils/toast';
 import Loader from 'src/components/loader';
-import {dateFormat} from 'src/utils/dateformat';
-import {useTheme} from '@react-navigation/native';
-import {deleteLabourLeave} from '../../network/labour-service';
+import { dateFormat } from 'src/utils/dateformat';
+import { useTheme } from '@react-navigation/native';
+import { deleteLabourLeave } from '../../network/labour-service';
+import { gray2, white } from '../../utils/color';
 
-export default function LabourLeaveDetail({data}) {
+export default function LabourLeaveDetail({ data }) {
   const [loading, setLoading] = React.useState(false);
-  const {colors} = useTheme();
+  const { colors } = useTheme();
   const delteData = async () => {
     Alert.alert(
       `${data?.count} ${strings.labour}`,
@@ -33,11 +34,11 @@ export default function LabourLeaveDetail({data}) {
           text: 'No',
         },
       ],
-      {cancelable: true},
+      { cancelable: true },
     );
   };
   return (
-    <View style={[styles.list, {backgroundColor: colors.background}]}>
+    <View style={[styles.list, { backgroundColor: white }]}>
       <Loader visible={loading} />
       <View style={styles.row}>
         <Text h3 numberOfLines={1}>
@@ -48,7 +49,7 @@ export default function LabourLeaveDetail({data}) {
           {' ' + strings.leave}
         </Text>
       </View>
-      <Text h4 style={{textAlign: 'center', paddingTop: 20}}>
+      <Text h4 style={{ textAlign: 'center', paddingTop: 20 }}>
         {strings.remark}
       </Text>
       <Text h4>{data?.detail}</Text>
@@ -57,16 +58,16 @@ export default function LabourLeaveDetail({data}) {
           name="delete"
           size={20}
           color={red}
-          style={[styles.icon, {backgroundColor: colors.card}]}
+          style={[styles.icon, { backgroundColor: gray2 }]}
           onPress={delteData}
         />
         <Icon
           name="edit"
           size={20}
           color={orange}
-          style={[styles.icon, {backgroundColor: colors.card}]}
+          style={[styles.icon, { backgroundColor: gray2 }]}
           onPress={() =>
-            navigate('AddLabourLeave', {item: {...data, edit: true}})
+            navigate('AddLabourLeave', { item: { ...data, edit: true } })
           }
         />
       </View>

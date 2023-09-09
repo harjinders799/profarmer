@@ -1,8 +1,9 @@
-import {useTheme} from '@react-navigation/native';
+import { useTheme } from '@react-navigation/native';
 import React from 'react';
-import {StyleSheet, TextInput, View} from 'react-native';
-import {WIDTH} from 'src/utils/constant';
+import { StyleSheet, TextInput, View } from 'react-native';
+import { WIDTH } from 'src/utils/constant';
 import Icon from './icon';
+import { black, gray3 } from '../utils/color';
 
 const Input = ({
   style,
@@ -21,31 +22,31 @@ const Input = ({
   placeholderColor,
   ...props
 }) => {
-  const {colors} = useTheme();
+  const { colors } = useTheme();
   return (
-    <View style={[styles.container, {borderColor: colors.border}, style]}>
+    <View style={[styles.container, { borderColor: gray3 }, style]}>
       {leftComponent}
       {iconName ? (
-      <Icon
-        name={iconName}
-        type={iconType}
-        size={20}
-        // color={iconColor}
-        style={{margin: 10}}
-      />
-    ) : null}
+        <Icon
+          name={iconName}
+          type={iconType}
+          size={20}
+          // color={iconColor}
+          style={{ margin: 10 }}
+        />
+      ) : null}
       <TextInput
         ref={refs}
         {...props}
         multiline={multiline}
-        style={[styles.input, {color: colors.text}, inputStyle]}
+        style={[styles.input, { color: black }, inputStyle]}
         value={value}
         onChangeText={text => setValue(text)}
         placeholder={placeholder}
         keyboardType={
           emailType ? 'email-address' : numberType ? 'phone-pad' : keyboardType
         }
-        placeholderTextColor={placeholderColor ?? colors.border}
+        placeholderTextColor={placeholderColor ?? gray3}
       />
     </View>
   );

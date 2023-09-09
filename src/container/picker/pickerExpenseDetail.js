@@ -69,7 +69,7 @@ export default function PickerExpenseDetail({ data, onPress }) {
             name="edit"
             size={20}
             color={orange}
-            style={[styles.icon, { backgroundColor: colors.card }]}
+            style={[styles.icon, { backgroundColor: gray2 }]}
             onPress={() =>
               navigate('AddPickerExpense', { data: { ...data, edit: true } })
             }
@@ -78,7 +78,7 @@ export default function PickerExpenseDetail({ data, onPress }) {
             name="delete"
             size={20}
             color={red}
-            style={[styles.icon, { backgroundColor: colors.card }]}
+            style={[styles.icon, { backgroundColor: gray2 }]}
             onPress={delteData}
           />
         </View>

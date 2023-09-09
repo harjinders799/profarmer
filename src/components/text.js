@@ -1,10 +1,11 @@
 import React from 'react';
-import {useTheme} from '@react-navigation/native';
-import {StyleSheet, Text as TextRN} from 'react-native';
-import {fonts, sizes} from 'src/utils/typograpy';
+import { useTheme } from '@react-navigation/native';
+import { StyleSheet, Text as TextRN } from 'react-native';
+import { fonts, sizes } from 'src/utils/typograpy';
+import { gray4, black as backRN, white as whiteRN, gray3 } from '../utils/color';
 
 const Text = props => {
-  const {colors} = useTheme();
+  const { colors } = useTheme();
   const {
     style,
     children,
@@ -29,16 +30,16 @@ const Text = props => {
     <TextRN
       {...rest}
       style={StyleSheet.flatten([
-        StyleSheet.flatten([styles.text(colors.text), style]),
+        StyleSheet.flatten([styles.text(backRN), style]),
         medium && styles.medium,
         bold && styles.bold,
-        secondary && styles.color(colors.secondaryText),
-        secondaryTitle && styles.color(colors.secondaryTab),
-        black && styles.color(colors.text),
-        white && styles.color(colors.background),
+        secondary && styles.color(gray4),
+        secondaryTitle && styles.color(gray4),
+        black && styles.color(backRN),
+        white && styles.color(whiteRN),
         pl && styles.paddingLeft(pl),
         pr && styles.paddingRight(pr),
-        third && styles.color(colors.thirdText),
+        third && styles.color(gray3),
         h5 && StyleSheet.flatten([styles.h5, style]),
         h1 && StyleSheet.flatten([styles.h1, style]),
         h2 && StyleSheet.flatten([styles.h2, style]),

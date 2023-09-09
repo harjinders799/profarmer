@@ -1,21 +1,21 @@
-import {View, StyleSheet, Alert} from 'react-native';
-import React, {useEffect} from 'react';
+import { View, StyleSheet, Alert } from 'react-native';
+import React, { useEffect } from 'react';
 import Icon from 'src/components/icon';
 import Text from 'src/components/text';
-import {orange, red} from 'src/utils/color';
-import {navigate, replace} from 'src/navigation/ref';
-import {strings} from 'src/translations/locale';
-import {ToastError, ToastSuccess} from 'src/utils/toast';
+import { orange, red } from 'src/utils/color';
+import { navigate, replace } from 'src/navigation/ref';
+import { strings } from 'src/translations/locale';
+import { ToastError, ToastSuccess } from 'src/utils/toast';
 import Loader from 'src/components/loader';
-import {dateFormat} from 'src/utils/dateformat';
-import {useTheme} from '@react-navigation/native';
-import {deleteLabour, getLabourExpense} from '../../network/labour-service';
-import {green} from '../../utils/color';
-import {currencyFormat} from '../../utils/dateformat';
+import { dateFormat } from 'src/utils/dateformat';
+import { useTheme } from '@react-navigation/native';
+import { deleteLabour, getLabourExpense } from '../../network/labour-service';
+import { gray2, green, white } from '../../utils/color';
+import { currencyFormat } from '../../utils/dateformat';
 
-export default function LabourDetailAction({data, totalExpense, totalLabour}) {
+export default function LabourDetailAction({ data, totalExpense, totalLabour }) {
   const [loading, setLoading] = React.useState(false);
-  const {colors} = useTheme();
+  const { colors } = useTheme();
   const delteData = async () => {
     Alert.alert(
       `${data.count} ${strings.labour}`,
@@ -35,11 +35,11 @@ export default function LabourDetailAction({data, totalExpense, totalLabour}) {
           text: 'No',
         },
       ],
-      {cancelable: true},
+      { cancelable: true },
     );
   };
   return (
-    <View style={[styles.list, {backgroundColor: colors.background}]}>
+    <View style={[styles.list, { backgroundColor: white }]}>
       <Loader visible={loading} />
       <View style={styles.row}>
         <Text h3 numberOfLines={1}>
@@ -62,7 +62,7 @@ export default function LabourDetailAction({data, totalExpense, totalLabour}) {
           </Text>
         </View>
       ) : null}
-      <Text h4 style={{textAlign: 'center', paddingTop: 20}}>
+      <Text h4 style={{ textAlign: 'center', paddingTop: 20 }}>
         {strings.remark}
       </Text>
       <Text h4>{data?.detail}</Text>
@@ -71,11 +71,11 @@ export default function LabourDetailAction({data, totalExpense, totalLabour}) {
           name="edit"
           size={20}
           color={orange}
-          style={[styles.icon, {backgroundColor: colors.card}]}
-          onPress={() => navigate('AddLabour', {data: {...data, edit: true}})}
+          style={[styles.icon, { backgroundColor: gray2 }]}
+          onPress={() => navigate('AddLabour', { data: { ...data, edit: true } })}
         />
         {data?.is_regulare ? (
-          <Text h3 style={{color: green, marginTop: 15}}>
+          <Text h3 style={{ color: green, marginTop: 15 }}>
             {strings.regular}
           </Text>
         ) : null}
@@ -84,7 +84,7 @@ export default function LabourDetailAction({data, totalExpense, totalLabour}) {
             name="delete"
             size={20}
             color={red}
-            style={[styles.icon, {backgroundColor: colors.card}]}
+            style={[styles.icon, { backgroundColor: gray2 }]}
             onPress={delteData}
           />
         ) : null}
