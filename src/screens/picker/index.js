@@ -16,19 +16,26 @@ import Loader from '../../components/loader';
 import MandiPrice from '../../container/picker/mandiPrice';
 import { white } from '../../utils/color';
 import { useCotton } from '../../context/cottonContext';
-import { createCottonPriceTable, createPickerExpenseTable, createPickerTable, deleteDBConnectionDB, savePickerData, savePickerExpenseData } from '../../sql';
+import {
+  createCottonPriceTable,
+  createPickerExpenseTable,
+  createPickerTable,
+  deleteDBConnectionDB,
+  savePickerData,
+  savePickerExpenseData,
+} from '../../sql';
 
 export default function Picker() {
   const { lang } = useLang();
   const { db, getPickerWeight, pickerWeight, getPickerExpense } = useCotton();
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
   const isFocused = useIsFocused();
 
   useFocusEffect(
     useCallback(() => {
       getData();
-      getPickerWeight()
-      getPickerExpense()
+      getPickerWeight();
+      getPickerExpense();
     }, [lang, isFocused]),
   );
 
@@ -39,24 +46,27 @@ export default function Picker() {
       await createPickerTable(db);
       await createPickerExpenseTable(db);
       // console.log(pickerWeight, '-=-=-=-=-=-=-=-=-=----')
-      if (pickerWeight == undefined || (Array.isArray(pickerWeight) && pickerWeight.length == 0)) {
-        setLoading(true)
+      if (
+        pickerWeight == undefined ||
+        (Array.isArray(pickerWeight) && pickerWeight.length == 0)
+      ) {
+        setLoading(true);
       }
       let wt = await getPickerData();
       if (Array.isArray(wt) && wt.length) {
-        wt.map((o, i) => ({ ...o, id: i + 1 }))
+        wt.map((o, i) => ({ ...o, id: i + 1 }));
         await savePickerData(db, wt);
       }
       let ex = await getAllPickerExpense();
       if (Array.isArray(ex) && ex.length) {
-        ex.map((o, i) => ({ ...o, id: i + 1 }))
+        ex.map((o, i) => ({ ...o, id: i + 1 }));
         await savePickerExpenseData(db, ex);
       }
-      await getPickerWeight()
-      await getPickerExpense()
-      setLoading(false)
+      await getPickerWeight();
+      await getPickerExpense();
+      setLoading(false);
     } catch (error) {
-      setLoading(false)
+      setLoading(false);
     }
   };
 
@@ -64,15 +74,25 @@ export default function Picker() {
     <BaseView>
       <Loader visible={loading} />
       <MandiPrice />
-      <Text h3
+      <Text
+        h3
+        style={{ marginTop: 15 }}
       // onPress={async () => await deleteDBConnectionDB()}
-      >{strings.picker_record}</Text>
+      >
+        {strings.picker_record}
+      </Text>
       <DateWiseList />
       <Button
-        iconName='plus'
+        iconName="plus"
         iconColor={white}
         label={strings.add_picker}
-        btnStyle={{ width: '40%', position: 'absolute', bottom: 50, right: 30, zIndex: 999 }}
+        btnStyle={{
+          width: '40%',
+          position: 'absolute',
+          bottom: 50,
+          right: 30,
+          zIndex: 999,
+        }}
         onPress={() => navigate('AddPicker')}
       />
     </BaseView>

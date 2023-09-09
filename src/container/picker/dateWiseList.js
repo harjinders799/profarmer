@@ -32,12 +32,13 @@ import { useFocusEffect } from '@react-navigation/native';
 export default function DateWiseList() {
   const [fullData, setFullData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const { pickerWeight, pickerExpense, getPickerWeight, getPickerExpense } = useCotton();
+  const { pickerWeight, pickerExpense, getPickerWeight, getPickerExpense } =
+    useCotton();
 
   useFocusEffect(
     useCallback(() => {
-      getPickerWeight()
-      getPickerExpense()
+      getPickerWeight();
+      getPickerExpense();
     }, []),
   );
 
@@ -122,6 +123,7 @@ export default function DateWiseList() {
           >
             <View style={{ flexDirection: 'row' }}>
               <Button
+                hitSlop={10}
                 label={strings.add_weight}
                 btnStyle={{
                   marginRight: 10,
@@ -141,6 +143,7 @@ export default function DateWiseList() {
                 }
               />
               <Button
+                hitSlop={10}
                 label={strings.add_expense}
                 btnStyle={{
                   backgroundColor: navy,
@@ -171,8 +174,6 @@ export default function DateWiseList() {
                   ? strings.give
                   : strings.receive
                 : '__'}{' '}
-            
-                
             </Text>
           </Animated.View>
         </TouchableOpacity>

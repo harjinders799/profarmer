@@ -22,16 +22,7 @@ import {
 } from '../../network/picker-service';
 import { ScrollView } from 'react-native-gesture-handler';
 import Strings from 'react-native-localization';
-import {
-  green,
-  darkOrange,
-  red,
-  yellow,
-  blue,
-  greenDark,
-  cyan,
-  orange,
-} from '../../utils/color';
+import { green, red, greenDark, gray4 } from '../../utils/color';
 import { currencyFormat } from '../../utils/dateformat';
 import PickerDetailAction from '../../container/picker/pickerDetailAction';
 import PickerExpenseDetail from '../../container/picker/pickerExpenseDetail';
@@ -67,51 +58,74 @@ export default function PickerDetail({ navigation }) {
 
   function renderModal() {
     return (
-      <Modal visible={openModal} animationType='slide' transparent={true}>
-        <View
-          style={styles.modal}
-        >
-          <View style={{
-            backgroundColor: "white",
-            padding: 20,
-            width: "90%",
-            borderRadius: 10,
-            // height:110,
-          }}>
-            <Text h2>{strings.are_you_sure}</Text>
+      <Modal visible={openModal} animationType="slide" transparent={true}>
+        <View style={styles.modal}>
+          <View
+            style={{
+              backgroundColor: 'white',
+              padding: 20,
+              width: '90%',
+              borderRadius: 10,
+              // height:110,
+            }}>
             <Text
+              h2
               style={{
-                fontSize: 20,
-                marginTop: 10
-              }}
-            // onPress={() => navigate('Picker')}
-            >
-              {data?.picker}
+                fontWeight: '700',
+              }}>
+              {strings.are_you_sure}
+            </Text>
+            <Text
+              h3
+              style={{
+                marginTop: 10,
+              }}>
+              <Text
+                h2
+                style={{
+                  fontWeight: '700',
+                  color: red,
+                }}>
+                {data?.picker}
+              </Text>
               {strings.alert}
             </Text>
 
-            <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 10 }}>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                marginTop: 10,
+              }}>
               <Loader visible={loading} />
               <Button
                 label={strings.delete}
                 btnStyle={{ width: '40%', backgroundColor: red }}
                 size={30}
-                style={{ color: red, display: __DEV__ ? 'flex' : 'none', }}
+                style={{ color: red, display: __DEV__ ? 'flex' : 'none' }}
                 onPress={async () => {
-                  await deletePickerNameWise(db, {
-                    ...data,
-                    uid: auth().currentUser?.uid,
-                  });
-                  await deletePickerCollection(data?.picker);
-                  getPickerWeight();
-                  getPickerExpense();
-                  goBack();
+                  try {
+                    setLoading(true);
+                    await deletePickerNameWise(db, {
+                      ...data,
+                      uid: auth().currentUser?.uid,
+                    });
+                    await deletePickerCollection(data?.picker);
+                    setopenModal(false)
+                    getPickerWeight();
+                    getPickerExpense();
+                    setLoading(false);
+                    goBack();
+                  } catch (error) {
+                    setLoading(false);
+                    ToastError(error?.message);
+                  }
                 }}
               // type="MaterialCommunityIcons"
               />
               <Button
                 label={strings.cancel}
-                btnStyle={{ width: '40%' }}
+                btnStyle={{ width: '40%', backgroundColor: gray4 }}
                 size={30}
                 onPress={() => setopenModal(false)}
               />
@@ -170,14 +184,13 @@ export default function PickerDetail({ navigation }) {
               onPress={() => {
                 setopenModal(true);
               }}>
-              <Text>
-                <Icon
-                  name="delete"
-                  size={30}
-                  color={white}
-                  type="MaterialCommunityIcons"
-                />
-                {/* <Icon
+              <Icon
+                name="delete"
+                size={30}
+                color={white}
+                type="MaterialCommunityIcons"
+              />
+              {/* <Icon
               name="delete"
               size={30}
               style={{ color: red, display: __DEV__ ? 'flex' : 'none' }}
@@ -192,7 +205,6 @@ export default function PickerDetail({ navigation }) {
               }}
               type="MaterialCommunityIcons"
             /> */}
-              </Text>
             </TouchableOpacity>
             {renderModal()}
           </View>
@@ -404,8 +416,8 @@ const styles = StyleSheet.create({
   },
   modal: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     backgroundColor: transparent,
   },
 });

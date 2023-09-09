@@ -13,56 +13,49 @@ import { green, red, white } from '../../utils/color';
 import Icon from '../../components/icon';
 import { useCotton } from '../../context/cottonContext';
 import { saveCottonPriceData } from '../../sql';
-const baseUrl = 'https://www.commodityonline.com/mandiprices/cotton/rajasthan';
+import { sortBy } from 'lodash';
+import moment from 'moment';
+import { deletePrice, getPriceData } from '../../network/price-service';
+import { currencyFormat, dateFormat } from '../../utils/dateformat';
+import auth from '@react-native-firebase/auth';
+import { navigate } from '../../navigation/ref';
+import { useIsFocused } from '@react-navigation/native';
+import Loader from '../../components/loader';
 
-export const getPrice = async () => {
-    try {
-        const res = await fetch(baseUrl);
-        const html = await res.text();
-        const $ = load(html);
-        const dataArray = [];
-        $('#main-table2 tbody tr').each((index, element) => {
-            const columns = $(element).find('td');
-            const arrivalDate = $(columns[1]).text().trim();
-            const district = $(columns[4]).text().trim();
-            const market = $(columns[5]).text().trim();
-            const minPrice = $(columns[6]).text().trim();
-            const maxPrice = $(columns[7]).text().trim();
-
-            // Create an object with extracted data and push it to the array
-            dataArray.push({
-                arrivalDate,
-                district,
-                market,
-                minPrice,
-                maxPrice,
-            });
-        });
-        return dataArray;
-    } catch (error) {
-        console.log(error, '---error-------');
-    }
-};
 const MandiPrice = () => {
-    const { cottonPrice, db, getCottonPrice } = useCotton();
-
+    const [data, setData] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const isFocused = useIsFocused();
     useEffect(() => {
-        getCottonPrice();
-        (async () => {
-            let res = await getPrice();
-            if (Array.isArray(res)) {
-                await saveCottonPriceData(db, res.reverse());
-                getCottonPrice();
-            }
-        })();
-    }, []);
+        getData();
+    }, [isFocused]);
 
-    return Array.isArray(cottonPrice) && cottonPrice.length ? (
+    const getData = async () => {
+        try {
+            let res = await getPriceData();
+            setData(res);
+            setLoading(false);
+        } catch (error) {
+            setLoading(false);
+        }
+    };
+
+    if (loading) return <Loader visible={loading} small style={{ margin: 50 }} />;
+
+    return Array.isArray(data) && data.length ? (
         <View style={[styles.list]}>
             <Text h3 style={styles.header}>
                 {strings.cotton_price}
                 {/* Cotton Price */}
             </Text>
+            {auth().currentUser?.uid === 'R40vMQnd92hukjoMcAL5Srfodcb2' ? (
+                <Icon
+                    name={'plus'}
+                    size={25}
+                    style={[styles.share, { left: 10 }]}
+                    onPress={() => navigate('AddPrice')}
+                />
+            ) : null}
             <TouchableOpacity
                 style={styles.share}
                 onPress={() =>
@@ -89,18 +82,38 @@ https://play.google.com/store/apps/details?id=com.profarmer
             </TouchableOpacity>
             <View style={{ flexDirection: 'row' }}>
                 <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                    {cottonPrice.map((item, index) => (
+                    {sortBy(data, d => moment(d.date)).map((item, index) => (
                         <View key={index} style={styles.card}>
-                            <Text h4>
-                                {item?.market}({item?.district})
+                            {auth().currentUser?.uid === 'R40vMQnd92hukjoMcAL5Srfodcb2' ? (
+                                <>
+                                    <Icon
+                                        name={'delete'}
+                                        size={20}
+                                        style={[styles.share, { left: -5, top: -5, zIndex: 999 }]}
+                                        onPress={async () => {
+                                            await deletePrice(item?.id);
+                                            getData;
+                                        }}
+                                    />
+                                    <Icon
+                                        name={'edit'}
+                                        size={20}
+                                        style={[styles.share, { right: -5, top: -5, zIndex: 999 }]}
+                                        onPress={() => navigate('AddPrice', { data: item })}
+                                    />
+                                </>
+                            ) : null}
+
+                            <Text h3 style={{ color: green }}>
+                                {currencyFormat(item?.maxPrice)} Max
                             </Text>
-                            <Text h4 style={{ color: green }}>
-                                {item?.maxPrice.replace('/ Quintal', 'max')}
+                            <Text h3 style={{ color: red }}>
+                                {currencyFormat(item?.minPrice)} Min
                             </Text>
-                            <Text h4 style={{ color: red }}>
-                                {item?.minPrice.replace('/ Quintal', 'min')}
+                            <Text h4>{item?.market.trim()}</Text>
+                            <Text h5 style={{ marginTop: 4 }}>
+                                {dateFormat(item?.date)}
                             </Text>
-                            <Text h5>{item?.arrivalDate}</Text>
                         </View>
                     ))}
                 </ScrollView>
@@ -121,9 +134,9 @@ const styles = StyleSheet.create({
     list: {
         marginHorizontal: -5,
         marginVertical: 5,
+        width: '100%',
     },
     card: {
-        height: 100,
         margin: 5,
         elevation: 5,
         backgroundColor: white,

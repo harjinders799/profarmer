@@ -100,7 +100,7 @@ export const createCottonPriceTable = async (db) => {
         market TEXT PRIMARY KEY,
         maxPrice TEXT,
         minPrice TEXT,
-        district TEXT,
+        aavak TEXT,
         arrivalDate TEXT
     )`;
     await db.executeSql(query);
@@ -108,14 +108,13 @@ export const createCottonPriceTable = async (db) => {
 
 export const saveCottonPriceData = async (db, items) => {
     const insertQuery =
-        `INSERT OR REPLACE INTO ${COTTON_PRICE_TABLE}( market, maxPrice, minPrice, district, arrivalDate ) values` +
+        `INSERT OR REPLACE INTO ${COTTON_PRICE_TABLE}( market, maxPrice, minPrice, aavak, arrivalDate ) values` +
         items
             .map(
                 (i) =>
-                    `('${i?.market}', '${i?.maxPrice}', '${i?.minPrice}', '${i?.district}', '${i?.arrivalDate}')`
+                    `('${i?.market}', '${i?.maxPrice}', '${i?.minPrice}', '${i?.aavak ? i?.aavak : ' '}', '${i?.arrivalDate}')`
             )
             .join(",");
-    console.log(insertQuery)
     return db.executeSql(insertQuery);
 };
 

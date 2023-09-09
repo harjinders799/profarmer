@@ -156,36 +156,16 @@ export default function AddPicker() {
         rightComponent={<Text h2> </Text>}
       />
       <View style={styles.form}>
-        {/* <DataPicker
-          data={pickers}
-          intialVisible={!editData?.picker}
-          placeholder={strings.picker_name}
-          selectedItem={picker}
-          setSelectedItem={val => {
-            onChangeValue('picker', val);
-          }}
-        /> */}
-        {/* <Input
-          refs={refAmt}
-          placeholder={strings.picker_count + ' 1, 2, 3...'}
-          value={count}
-          keyboardType="number-pad"
-          setValue={value => onChangeValue('count', value)}
-        /> */}
-        {/* <View style={{ flexDirection: "row", width: "100%", justifyContent: "space-between" }}> */}
         <Input
           autoFocus
           placeholder={strings.name}
           value={picker}
           setValue={value => onChangeValue('picker', value)}
-        // style={{ width: "45%" }}
-        // keyboardType="numeric"
         />
         <Input
-          placeholder={strings.enter_rate + '(Rs)'}
+          placeholder={strings.enter_rate + '(Rs) 10/10.25/10.50/11...'}
           value={rate}
           setValue={value => onChangeValue('rate', value)}
-          // style={{ width: "45%" }}
           keyboardType="numeric"
         />
         {/* </View> */}
