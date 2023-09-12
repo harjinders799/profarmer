@@ -14,36 +14,37 @@ import { gray1, gray2 } from '../../utils/color';
 import { currencyFormat } from '../../utils/dateformat';
 import { deletePickerData } from '../../sql';
 import { useCotton } from '../../context/cottonContext';
+import { sumBy } from 'lodash';
 
-export default function PickerDetailAction({ data, picker }) {
+export default function PickerDetailAction({ data,rate,pickerData, picker }) {
   const [loading, setLoading] = React.useState(false);
   const { db, getPickerWeight } = useCotton();
-
-  // const delteData = async () => {
-  //   Alert.alert(
-  //     strings.weight,
-  //     `${strings.delete_wt} ${data?.weight}Kg`,
-  //     [
-  //       {
-  //         text: 'Yes',
-  //         onPress: async () => {
-  //           setLoading(true);
-  //           await deletePickerData(db, data)
-  //           if (data?.fid) await deletePicker(data?.fid);
-  //           getPickerWeight();
-  //           setLoading(false);
-  //           ToastSuccess(strings.weight_delete, 'Weight');
-  //           // goBack()
-  //         },
-  //       },
-  //       {
-  //         text: 'No',
-  //       },
-  //     ],
-  //     { cancelable: true },
-  //   );
-  // };
-
+  
+  const delteData = async () => {
+    Alert.alert(
+      strings.weight,
+      `${strings.delete_wt} ${data,rate?.weight}Kg`,
+      [
+        {
+          text: 'Yes',
+          onPress: async () => {
+            setLoading(true);
+            await deletePickerData(db, data,rate)
+            if (data,rate?.fid) await deletePicker(data,rate?.fid);
+            getPickerWeight();
+            setLoading(false);
+            ToastSuccess(strings.weight_delete, 'Weight');
+            // goBack()
+          },
+        },
+        {
+          text: 'No',
+        },
+      ],
+      { cancelable: true },
+    );
+  };
+  
   return (
     <View style={[styles.list, { display: data?.weight != 0 ? 'flex' : 'none' }]}>
       <View style={styles.top}>
@@ -54,7 +55,12 @@ export default function PickerDetailAction({ data, picker }) {
             {/* {picker ? dateFormat(data?.date) : data?.picker} */}
           </Text>
           <Text h4 numberOfLines={1} style={styles.wt}>
-            {currencyFormat(data?.rate)}
+            {currencyFormat(rate?rate:data?.rate)}
+            {/* {currencyFormat(
+            sumBy(
+                  pickerData,
+                  o => (rate ? rate : parseFloat(o.rate)),
+                ),)} */}
           </Text>
           <Text h4 numberOfLines={1} style={styles.wt}>
             {data?.weight}kg
