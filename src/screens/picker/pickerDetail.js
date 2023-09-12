@@ -14,7 +14,7 @@ import Icon from '../../components/icon';
 import { goBack } from '../../navigation/ref';
 import Loader from 'src/components/loader';
 import { strings } from 'src/translations/locale';
-import { ToastError, ToastProgress } from '../../utils/toast';
+import { ToastError, ToastProgress, ToastSuccess } from '../../utils/toast';
 import {
   deletePicker,
   deletePickerCollection,
@@ -23,15 +23,16 @@ import {
 import { ScrollView } from 'react-native-gesture-handler';
 import Strings from 'react-native-localization';
 import { green, red, greenDark, gray4 } from '../../utils/color';
-import { currencyFormat } from '../../utils/dateformat';
+import { currencyFormat, currentStamp } from '../../utils/dateformat';
 import PickerDetailAction from '../../container/picker/pickerDetailAction';
 import PickerExpenseDetail from '../../container/picker/pickerExpenseDetail';
 import { navigate } from '../../navigation/ref';
 import Button from '../../components/button';
+import Input from 'src/components/input';
 import { mean, sortBy, sumBy } from 'lodash';
 import moment from 'moment';
 import { useCotton } from '../../context/cottonContext';
-import { deletePickerNameWise } from '../../sql';
+import { deletePickerNameWise, savePickerData, updatePickerData } from '../../sql';
 import auth from '@react-native-firebase/auth';
 const transparent = 'rgba(0,0,0,0.5)';
 export default function PickerDetail({ navigation }) {
@@ -39,8 +40,10 @@ export default function PickerDetail({ navigation }) {
   const { colors } = useTheme();
   const [loading, setLoading] = useState(false);
   const data = params?.item ?? [];
+  const [rate, setRate] = useState()
   const { db, pickerWeight, pickerExpense, getPickerWeight, getPickerExpense } =
     useCotton();
+
   let pickerData = pickerWeight.filter(o => data?.picker === o.picker);
   let pickerExpenseData = pickerExpense.filter(o => data?.picker === o.picker);
 
@@ -48,10 +51,14 @@ export default function PickerDetail({ navigation }) {
     useCallback(() => {
       getPickerWeight();
       getPickerExpense();
+      let baseRate = pickerData[pickerData.length - 1].rate
+      let pRate = pickerData.every(o => baseRate == o.rate || o.weight == '0');
+      if (pRate) setRate(baseRate);
     }, []),
   );
+
   let amount =
-    sumBy(pickerData, o => parseFloat(o.weight) * parseFloat(o?.rate)) -
+    sumBy(pickerData, o => parseFloat(o.weight) * (rate ? parseFloat(rate) : parseFloat(o.rate))) -
     sumBy(pickerExpenseData, o => parseFloat(o.amount));
 
   const [openModal, setopenModal] = useState(false);
@@ -165,13 +172,13 @@ export default function PickerDetail({ navigation }) {
         }
         rightComponent={
           <View style={{ flexDirection: 'row' }}>
-            <Icon
+            {/* <Icon
               name="search1"
               color={white}
               size={25}
               style={{ marginRight: 15 }}
               onPress={() => ToastProgress(strings.in_progress)}
-            />
+            /> */}
             <Icon
               name="pdffile1"
               size={25}
@@ -208,34 +215,8 @@ export default function PickerDetail({ navigation }) {
             </TouchableOpacity>
             {renderModal()}
           </View>
-          //    <Icon
-          //   name="delete"
-          //   size={20}
-          //   color={red}
-          //   style={[styles.icon, {backgroundColor: colors.card}]}
-          //   onPress={delteData}
-          // />
         }
       />
-      {/* <Header
-        style={{ marginTop: 10 }}
-        leftComponent={<Icon name="back" size={28} onPress={() => goBack()} />}
-        centerComponent={<Text h2>{data?.picker}</Text>}
-        rightComponent={
-          // __DEV__ ? (
-          //   <Icon
-          //     name={'delete'}
-          //     size={20}
-          //     onPress={async () => await deletePickerCollection(data?.picker)}
-          //   />
-          // ) : (
-          <Text numberOfLines={1} h4>
-            {data?.picker ? strings.picker : ''}
-          </Text>
-          // )
-        }
-      /> */}
-
       <ScrollView
         style={{ width: '100%' }}
         contentContainerStyle={{ paddingBottom: 150, paddingHorizontal: 20 }}
@@ -253,7 +234,7 @@ export default function PickerDetail({ navigation }) {
               {currencyFormat(
                 sumBy(
                   pickerData,
-                  o => parseFloat(o.weight) * parseFloat(o.rate),
+                  o => parseFloat(o.weight) * (rate ? rate : parseFloat(o.rate)),
                 ),
               )}
             </Text>
@@ -283,6 +264,43 @@ export default function PickerDetail({ navigation }) {
             </Text>
             <Text h3>{strings.final}</Text>
           </View>
+          <Text h4 style={styles.discription}>{strings.discription}</Text>
+          <View style={styles.input}>
+            {/* {Array.isArray(pRate) &&
+            pRate.length &&
+            !pRate.every(o => o?.rate == '0' || !o?.rate) &&
+            data?.picker ? (
+            sortBy(pRate, (a, b) => moment(b?.date) - moment(a?.date)).map(
+              (v, i) => <PickerDetailAction key={i} data={v} />,
+            )
+          ) : (
+            <Text h4 style={styles.underline}>
+              {strings.no_record}
+            </Text>
+          )} */}
+            <Input
+              placeholder={strings.enter_rate + '(Rs)'}
+              value={rate}
+              setValue={(v) => {
+                if (!isNaN(v)) setRate(v)
+              }}
+              style={{ width: '50%', height: 40, marginTop: 10 }}
+              inputStyle={{ padding: 5 }}
+              keyboardType="numeric"
+            />
+            <Button
+              label={strings.apply}
+              btnStyle={{ width: '30%' }}
+              size={30}
+              
+            />
+            {/* <Button
+              label={strings.undo}
+              btnStyle={{ width: '30%' }}
+              size={30}
+            // onPress={() => setopenModal(false)}
+            /> */}
+          </View>
           {/* </View> */}
         </View>
 
@@ -295,7 +313,7 @@ export default function PickerDetail({ navigation }) {
             !pickerData.every(o => o?.weight == '0' || !o?.weight) &&
             data?.picker ? (
             sortBy(pickerData, (a, b) => moment(b?.date) - moment(a?.date)).map(
-              (v, i) => <PickerDetailAction key={i} data={v} />,
+              (v, i) => <PickerDetailAction key={i} data={v} rate={rate} />
             )
           ) : (
             <Text h4 style={styles.underline}>
@@ -377,6 +395,16 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     width: '98%',
     alignSelf: 'center',
+  },
+  discription: {
+    marginTop: 15,
+    width: "100%"
+  },
+  input: {
+    flexDirection: "row",
+    width: "100%",
+    justifyContent: "space-between",
+    height: 60
   },
   row: {
     flexDirection: 'row',
