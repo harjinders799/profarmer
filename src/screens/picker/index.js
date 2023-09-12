@@ -85,8 +85,12 @@ export default function Picker({navigation}) {
       <Button
         label={strings.mandi_price}
         btnStyle={{
-          width: '40%',
-          // position: 'absolute',
+          width: '50%',
+          height: "8%",
+          position: 'absolute',
+          bottom: 50,
+          right: 30,
+          zIndex: 999,
           alignSelf: 'flex-end',
         }}
         onPress={() => navigate('AddPrice')}
