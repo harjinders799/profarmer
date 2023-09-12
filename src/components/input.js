@@ -18,6 +18,7 @@ const Input = ({
   iconType = 'AntDesign',
   multiline = false,
   leftComponent = null,
+  rightComponent=null,
   placeholder,
   placeholderColor,
   ...props
@@ -48,6 +49,7 @@ const Input = ({
         }
         placeholderTextColor={placeholderColor ?? gray3}
       />
+       {rightComponent}
     </View>
   );
 };

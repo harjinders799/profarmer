@@ -197,26 +197,13 @@ export default function PickerDetail({ navigation }) {
                 color={white}
                 type="MaterialCommunityIcons"
               />
-              {/* <Icon
-              name="delete"
-              size={30}
-              style={{ color: red, display: __DEV__ ? 'flex' : 'none' }}
-              onPress={async () => {
-                await deletePickerNameWise(db, {
-                  ...data,
-                  uid: auth().currentUser?.uid,
-                });
-                await deletePickerCollection(data?.picker);
-                getPickerWeight();
-                getPickerExpense();
-              }}
-              type="MaterialCommunityIcons"
-            /> */}
+           
             </TouchableOpacity>
             {renderModal()}
-          </View>
+          </View> 
         }
       />
+
       <ScrollView
         style={{ width: '100%' }}
         contentContainerStyle={{ paddingBottom: 150, paddingHorizontal: 20 }}

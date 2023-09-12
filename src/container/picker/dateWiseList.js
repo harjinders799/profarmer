@@ -1,19 +1,27 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import Text from 'src/components/text';
-import { FlatList, StyleSheet, TouchableOpacity, View } from 'react-native';
-import { white } from 'src/utils/color';
-import _, { every, filter, find, groupBy, some, sumBy } from 'lodash';
-import { strings } from '../../translations/locale';
-import { navigate } from 'src/navigation/ref';
+import {FlatList, StyleSheet, TouchableOpacity, View} from 'react-native';
+import {white} from 'src/utils/color';
+import _, {every, filter, find, groupBy, some, sumBy} from 'lodash';
+import {strings} from '../../translations/locale';
+import {navigate} from 'src/navigation/ref';
 import {
   getAllPickerExpense,
   getPickerExpense,
 } from '../../network/picker-service';
-import { ToastError } from '../../utils/toast';
-import { green, red, yellow, black, orange, navy } from '../../utils/color';
-import { currencyFormat, kg } from '../../utils/dateformat';
+import {ToastError} from '../../utils/toast';
+import {
+  green,
+  red,
+  yellow,
+  black,
+  orange,
+  navy,
+  greenDark,
+} from '../../utils/color';
+import {currencyFormat, kg} from '../../utils/dateformat';
 import Button from '../../components/button';
-import { WIDTH } from '../../utils/constant';
+import {WIDTH} from '../../utils/constant';
 import Animated, {
   BounceInDown,
   FadeIn,
@@ -26,13 +34,13 @@ import Animated, {
 } from 'react-native-reanimated';
 import Icon from '../../components/icon';
 import Loader from '../../components/loader';
-import { useCotton } from '../../context/cottonContext';
-import { useFocusEffect } from '@react-navigation/native';
+import {useCotton} from '../../context/cottonContext';
+import {useFocusEffect} from '@react-navigation/native';
 
 export default function DateWiseList() {
   const [fullData, setFullData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const { pickerWeight, pickerExpense, getPickerWeight, getPickerExpense } =
+  const {pickerWeight, pickerExpense, getPickerWeight, getPickerExpense} =
     useCotton();
 
   useFocusEffect(
@@ -86,15 +94,15 @@ export default function DateWiseList() {
             navigate(
               // item?.is_regulare ? 'RegularPickerDetail' : 'PickerDetail',
               'PickerDetail',
-              { item },
+              {item},
             )
           }>
           <Animated.View
             style={styles.row}
-          // entering={LightSpeedInRight}
-          // layout={Layout.easing}
+            // entering={LightSpeedInRight}
+            // layout={Layout.easing}
           >
-            <Text numberOfLines={1} h3 style={{ width: '60%' }}>
+            <Text numberOfLines={1} h3 style={{width: '60%'}}>
               {item?.picker}
             </Text>
             {!loading ? (
@@ -103,10 +111,10 @@ export default function DateWiseList() {
                 h3
                 style={{
                   color: loading
-                    ? green
+                    ? greenDark
                     : (!isNaN(item?.amount) ? item?.amount : 0) >= 0
-                      ? green
-                      : red,
+                    ? greenDark
+                    : red,
                 }}>
                 {!loading
                   ? currencyFormat(!isNaN(item?.amount) ? item?.amount : 0)
@@ -118,10 +126,10 @@ export default function DateWiseList() {
           </Animated.View>
           <Animated.View
             style={styles.row}
-          // entering={FadeIn}
-          // layout={Layout.}
+            // entering={FadeIn}
+            // layout={Layout.}
           >
-            <View style={{ flexDirection: 'row' }}>
+            <View style={{flexDirection: 'row'}}>
               <Button
                 hitSlop={10}
                 label={strings.add_weight}
@@ -155,7 +163,7 @@ export default function DateWiseList() {
                   marginVertical: 0,
                 }}
                 onPress={() =>
-                  navigate('AddPickerExpense', { data: { picker: item?.picker } })
+                  navigate('AddPickerExpense', {data: {picker: item?.picker}})
                 }
               />
             </View>
@@ -166,8 +174,8 @@ export default function DateWiseList() {
                 color: loading
                   ? green
                   : (!isNaN(item?.amount) ? item?.amount : 0) >= 0
-                    ? green
-                    : red,
+                  ? green
+                  : red,
               }}>
               {!loading
                 ? (!isNaN(item?.amount) ? item?.amount : 0) >= 0
@@ -182,19 +190,19 @@ export default function DateWiseList() {
   };
   return (
     <FlatList
-      style={{ width: '100%' }}
-      contentContainerStyle={{ paddingBottom: 100 }}
+      style={{width: '100%'}}
+      contentContainerStyle={{paddingBottom: 100}}
       data={fullData}
       keyExtractor={item => Math.random().toString()}
       ListEmptyComponent={() => (
-        <Text style={{ textAlign: 'center', paddingTop: 30 }}>
+        <Text style={{textAlign: 'center', paddingTop: 30}}>
           {strings.no_data}
         </Text>
       )}
       extraData={pickerWeight}
       showsVerticalScrollIndicator={false}
       // ItemSeparatorComponent={() => <View style={styles.line} />}
-      renderItem={({ item }) => renderItem(item)}
+      renderItem={({item}) => renderItem(item)}
     />
   );
 }
