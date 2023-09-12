@@ -190,51 +190,15 @@ export default function PickerDetail({ navigation }) {
                 color={white}
                 type="MaterialCommunityIcons"
               />
-              {/* <Icon
-              name="delete"
-              size={30}
-              style={{ color: red, display: __DEV__ ? 'flex' : 'none' }}
-              onPress={async () => {
-                await deletePickerNameWise(db, {
-                  ...data,
-                  uid: auth().currentUser?.uid,
-                });
-                await deletePickerCollection(data?.picker);
-                getPickerWeight();
-                getPickerExpense();
-              }}
-              type="MaterialCommunityIcons"
-            /> */}
+           
             </TouchableOpacity>
             {renderModal()}
           </View>
-          //    <Icon
-          //   name="delete"
-          //   size={20}
-          //   color={red}
-          //   style={[styles.icon, {backgroundColor: colors.card}]}
-          //   onPress={delteData}
-          // />
+       
+          
         }
       />
-      {/* <Header
-        style={{ marginTop: 10 }}
-        leftComponent={<Icon name="back" size={28} onPress={() => goBack()} />}
-        centerComponent={<Text h2>{data?.picker}</Text>}
-        rightComponent={
-          // __DEV__ ? (
-          //   <Icon
-          //     name={'delete'}
-          //     size={20}
-          //     onPress={async () => await deletePickerCollection(data?.picker)}
-          //   />
-          // ) : (
-          <Text numberOfLines={1} h4>
-            {data?.picker ? strings.picker : ''}
-          </Text>
-          // )
-        }
-      /> */}
+
 
       <ScrollView
         style={{ width: '100%' }}
