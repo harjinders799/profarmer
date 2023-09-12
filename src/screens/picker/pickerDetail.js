@@ -177,7 +177,9 @@ export default function PickerDetail({ navigation }) {
               size={25}
               color={white}
               style={{ marginRight: 15 }}
-              onPress={() => ToastProgress(strings.in_progress)}
+              onPress={() =>
+                navigate('PdfScreen')
+              }
             />
 
             <TouchableOpacity

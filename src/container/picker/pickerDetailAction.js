@@ -1,4 +1,4 @@
-import { View, StyleSheet, Alert } from 'react-native';
+import { View, StyleSheet, Alert, TouchableOpacity } from 'react-native';
 import React, { useContext } from 'react';
 import Icon from 'src/components/icon';
 import { orange, red } from 'src/utils/color';
@@ -19,36 +19,36 @@ export default function PickerDetailAction({ data, picker }) {
   const [loading, setLoading] = React.useState(false);
   const { db, getPickerWeight } = useCotton();
 
-  const delteData = async () => {
-    Alert.alert(
-      strings.weight,
-      `${strings.delete_wt} ${data?.weight}Kg`,
-      [
-        {
-          text: 'Yes',
-          onPress: async () => {
-            setLoading(true);
-            await deletePickerData(db, data)
-            if (data?.fid) await deletePicker(data?.fid);
-            getPickerWeight();
-            setLoading(false);
-            ToastSuccess(strings.weight_delete, 'Weight');
-            // goBack()
-          },
-        },
-        {
-          text: 'No',
-        },
-      ],
-      { cancelable: true },
-    );
-  };
+  // const delteData = async () => {
+  //   Alert.alert(
+  //     strings.weight,
+  //     `${strings.delete_wt} ${data?.weight}Kg`,
+  //     [
+  //       {
+  //         text: 'Yes',
+  //         onPress: async () => {
+  //           setLoading(true);
+  //           await deletePickerData(db, data)
+  //           if (data?.fid) await deletePicker(data?.fid);
+  //           getPickerWeight();
+  //           setLoading(false);
+  //           ToastSuccess(strings.weight_delete, 'Weight');
+  //           // goBack()
+  //         },
+  //       },
+  //       {
+  //         text: 'No',
+  //       },
+  //     ],
+  //     { cancelable: true },
+  //   );
+  // };
 
   return (
     <View style={[styles.list, { display: data?.weight != 0 ? 'flex' : 'none' }]}>
       <View style={styles.top}>
         <Loader visible={loading} />
-        <View style={styles.row}>
+        <TouchableOpacity style={styles.row} onPress={() => navigate('PickerUpdate', { data })}>
           <Text h4 numberOfLines={1} style={styles.picker}>
             {dateFormat(data?.date)}
             {/* {picker ? dateFormat(data?.date) : data?.picker} */}
@@ -59,15 +59,20 @@ export default function PickerDetailAction({ data, picker }) {
           <Text h4 numberOfLines={1} style={styles.wt}>
             {data?.weight}kg
           </Text>
-        </View>
+        </TouchableOpacity>
         <View style={styles.icons}>
-          <Icon
+          <Text h4>
+            {currencyFormat(
+              parseFloat(data.weight) * parseFloat(data.rate)
+            )}
+          </Text>
+          {/* <Icon
             name="edit"
             size={20}
             color={orange}
             onPress={() => navigate('AddPickerWeight', { data })}
-          />
-          <Icon name="delete" size={20} color={red} onPress={delteData} />
+          /> */}
+          {/* <Icon name="delete" size={20} color={red} onPress={delteData} />/ */}
         </View>
       </View>
       {data?.detail ?

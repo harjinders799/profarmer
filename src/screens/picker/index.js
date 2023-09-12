@@ -87,7 +87,8 @@ export default function Picker() {
         iconColor={white}
         label={strings.add_picker}
         btnStyle={{
-          width: '40%',
+          width: '50%',
+          height: "8%",
           position: 'absolute',
           bottom: 50,
           right: 30,
