@@ -15,10 +15,6 @@ export default function SettingStack() {
         component={Setting}
 
       />
-      <Stack.Screen name="AboutUs" component={AboutUs} />
-      <Stack.Screen name="ContactUs" component={ContactUs} />
-      <Stack.Screen name='SalectLanguage' component={SalectLanguage} />
-      <Stack.Screen name='EditProfile' component={EditProfile} />
 
 
 

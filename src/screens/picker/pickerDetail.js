@@ -27,6 +27,7 @@ import auth from '@react-native-firebase/auth';
 import RNFS from 'react-native-fs';
 import RNHTMLtoPDF from 'react-native-html-to-pdf';
 import { useAuth } from '../../context/authContext';
+import {useLang} from 'src/context/langContext';
 import Share from 'react-native-share';
 
 const transparent = 'rgba(0,0,0,0.5)';
@@ -38,6 +39,14 @@ export default function PickerDetail({ navigation }) {
   const [loading, setLoading] = useState(false);
   const data = params?.item ?? [];
   const [rate, setRate] = useState();
+  const {lang, setLang} = useLang();
+  const [show, setShow] = useState(false);
+
+  const langs = [
+    {code: 'pb', label: 'punjabi'},
+    {code: 'hi', label: 'hindi'},
+    {code: 'en', label: 'english'},
+  ];
   const {
     db,
     pickerWeight = [],
@@ -56,7 +65,8 @@ export default function PickerDetail({ navigation }) {
       let baseRate = pickerData[pickerData.length - 1].rate;
       let pRate = pickerData.every(o => baseRate == o.rate || o.weight == '0');
       if (pRate) setRate(baseRate);
-    }, []),
+      if (!lang?.code) setShow(true);
+    }, [lang]),
   );
 
   let amount =
@@ -172,28 +182,28 @@ td {
       <div style="display: flex; flex-direction:column; align-items:center">
           <div style="display: flex; justify-content: space-between; width:100%">
           <div>    
-          <h2>Farmer Name: ${user?.name}</h2>
+          <h2>${strings.farmer_name}: ${user?.name}</h2>
           <p>${user?.phone}</p>
           <p>${user?.email}</p>
           </div>
           <div>
           <a href="https://play.google.com/store/apps/details?id=com.profarmer">Pro Farmer</a>
-              <p>Time: ${moment().format('lll')}</p>
+              <p>${moment().format('lll')}</p>
           </div>
           </div>
-          <h2>Picker Name: ${data?.picker}</h2>
+          <h2>${strings.picker_name}: ${data?.picker}</h2>
       </div>
       <div style="display: flex; justify-content: space-between;">
           <div>
-              <h3>Total Weight: ${sumBy(pickerData, o =>
+              <h3>${strings.total_weight}: ${sumBy(pickerData, o =>
       parseFloat(o.weight),
     )} Kg</h3>
-    <h3>Given Amount: ${currencyFormat(
+    <h3>${strings.given_amount}: ${currencyFormat(
       sumBy(pickerExpenseData, o => parseFloat(o.amount)),
     )}</h3>
       </div>
       <div>
-      <h3>Total Amount (Weight x Rate):  ${currencyFormat(
+      <h3>${strings.total_amount} ${strings.weight}*${strings.enter_rate}:  ${currencyFormat(
       sumBy(
         pickerData,
         o =>
@@ -201,22 +211,22 @@ td {
           (rate ? parseFloat(rate) : parseFloat(o.rate)),
       ),
     )}</h3>
-              <h3>Final Amount: ${currencyFormat(
+              <h3>${strings.final}: ${currencyFormat(
       !isNaN(amount) ? amount : 0,
     )}</h3>
           </div>
       </div>
 
 
-      <h2>Pickers Weight</h2>
+      <h2>${strings.pickers_weight}</h2>
       <table style="width:100%">
           <tr>
-              <th style="width:15%">Date</th>
-              <th style="width:15%">Picker</th>
-              <th style="width:10%">Rate</th>
-              <th style="width:10%">Weight</th>
-              <th style="width:15%">Amount</th>
-              <th style="width:30%">Remark</th>
+              <th style="width:15%">${strings.date}</th>
+              <th style="width:15%">${strings.picker}</th>
+              <th style="width:10%">${strings.enter_rate}</th>
+              <th style="width:10%">${strings.weight}</th>
+              <th style="width:15%">${strings.amount}</th>
+              <th style="width:30%">${strings.remark}</th>
           </tr>
          ${pickerData.map(record =>
       record?.weight == '0'
@@ -236,13 +246,13 @@ td {
     )}
       </table>
 
-      <h2>Pickers Amounts</h2>
+      <h2>${strings.pickers_amounts}</h2>
       <table style="width:100%">
           <tr>
-              <th id="date">Date</th>
-              <th>Picker</th>
-              <th>Amount</th>
-              <th>Remark</th>
+              <th id="date">${strings.date}</th>
+              <th>${strings.picker}</th>
+              <th>${strings.amount}</th>
+              <th>${strings.remark}</th>
           </tr>
           ${pickerExpenseData.map(
       amount =>
@@ -322,8 +332,43 @@ td {
                 marginRight: 15,
                 display: pickerData.length > 1 ? 'flex' : 'none',
               }}
-              onPress={onShare}
+              onPress={() => {setShow()}}
+              // onPress={onShare}
             />
+             <Modal visible={show} setModalVisible={setShow} ratioHeight={0.3}>
+             <View style={[styles.menu]}>
+             <Header
+                leftComponent={
+                    <Icon
+                        name="back"
+                        size={28}
+                        color={colors.text}
+                        onPress={() => goBack()}
+                    />
+                }
+                centerComponent={<Text h2>{strings.lang}</Text>}
+                rightComponent={<Text h2> </Text>}
+            />
+          {langs.map((v, i) => (
+            <TouchableOpacity
+              key={i}
+              style={[styles.main]}
+              onPress={() => {
+                setLang(v);
+                setShow();
+                onShare();
+              }}>
+              <Text h3 black style={[styles.txt]}>
+                {strings[v?.label]}
+              </Text>
+              {strings.getLanguage() === v.code ? (
+                <Icon name="check" size={25} color={colors.primary}
+                 />
+              ) : null}
+            </TouchableOpacity>
+          ))}
+        </View>
+             </Modal>
 
             <TouchableOpacity
               onPress={() => {
@@ -564,5 +609,19 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: transparent,
+  },
+  main: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '80%',
+    alignSelf: 'center',
+  },
+  txt: {
+    marginVertical: 5,
+  },
+  menu: {
+    borderRadius: 5,
+    marginVertical: 5,
   },
 });
