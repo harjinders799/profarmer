@@ -26,6 +26,7 @@ import { View } from 'react-native';
 import Icon from '../../components/icon';
 import Search from '../../components/search';
 import SyncLocal from '../../container/picker/syncLocal';
+import { ToastProgress } from '../../utils/toast';
 
 export default function Picker({ navigation }) {
   const { lang } = useLang();
@@ -49,7 +50,7 @@ export default function Picker({ navigation }) {
   );
   const getData = async () => {
     try {
-      // console.log(pickerWeight, '-=-=-=-=-=-=-=-=-=----')
+      console.log(pickerWeight.length, '-=-=-=-=-=-=-=-=-=----')
       await createCottonPriceTable(db);
       await createPickerTable(db);
       await createPickerExpenseTable(db);
@@ -91,13 +92,16 @@ export default function Picker({ navigation }) {
           alignItem: 'center',
         }}>
         <Icon
-          name="bars"
+          name="options"
+          type='Ionicons'
           style={{
             position: 'absolute',
             display: pickerWeight.length ? 'flex' : 'none',
+            zIndex: 999
           }}
           size={25}
           color={gray10}
+          onPress={() => ToastProgress(strings.in_progress)}
         />
 
         <Text

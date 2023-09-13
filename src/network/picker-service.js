@@ -182,34 +182,38 @@ export const getCottonByPicker = search => {
   });
 };
 
+export const deletePickerCollection = async (name) => {
+  try {
+    const userId = Auth().currentUser?.uid;
 
-export const deletePickerCollection = async name => {
-  return new Promise(async function (resolve, reject) {
-    try {
-      let userId = Auth().currentUser?.uid;
-      await firestore()
-        .collection('picker')
-        .where('uid', '==', userId)
-        .where('picker', '==', name)
-        .get()
-        .then(querySnapshot => {
-          querySnapshot.forEach(documentSnapshot => {
-            console.log(documentSnapshot.ref.delete())
-          });
+    const deletePicker = firestore()
+      .collection('picker')
+      .where('uid', '==', userId)
+      .where('picker', '==', name)
+      .get()
+      .then((querySnapshot) => {
+        const deletePromises = [];
+        querySnapshot.forEach((documentSnapshot) => {
+          deletePromises.push(documentSnapshot.ref.delete());
         });
-      await firestore()
-        .collection('picker_expense')
-        .where('uid', '==', userId)
-        .where('picker', '==', name)
-        .get()
-        .then(querySnapshot => {
-          querySnapshot.forEach(documentSnapshot => {
-            console.log(documentSnapshot.ref.delete())
-          });
-          resolve();
-        })
-    } catch (error) {
-      reject(new Error(error));
-    }
-  });
+        return Promise.all(deletePromises);
+      });
+
+    const deletePickerExpense = firestore()
+      .collection('picker_expense')
+      .where('uid', '==', userId)
+      .where('picker', '==', name)
+      .get()
+      .then((querySnapshot) => {
+        const deletePromises = [];
+        querySnapshot.forEach((documentSnapshot) => {
+          deletePromises.push(documentSnapshot.ref.delete());
+        });
+        return Promise.all(deletePromises);
+      });
+
+    await Promise.all([deletePicker, deletePickerExpense]);
+  } catch (error) {
+    throw new Error(error);
+  }
 };

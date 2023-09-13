@@ -401,7 +401,7 @@ td {
                   setValue={v => {
                     if (!isNaN(v)) setRate(v);
                   }}
-                  style={{ width: '50%', height: 40, marginTop: 10 }}
+                  style={{ width: '60%', height: 40, marginTop: 10 }}
                   inputStyle={{ padding: 5 }}
                   keyboardType="numeric"
                 />

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FlatList, View, StyleSheet, TouchableOpacity } from 'react-native';
 import { findIndex, flatten, includes } from 'lodash';
 import { useTheme } from '@react-navigation/native';
@@ -23,12 +23,14 @@ import _, { groupBy, some, sumBy } from 'lodash';
 
 export default function Search({ isSearchActive, setSearchActive }) {
   const { pickerWeight = [] } = useCotton();
-  const { colors } = useTheme();
+  let grpPicker = groupBy(pickerWeight, v => v.picker);
+
   const [searchKey, setSearchKey] = React.useState();
   const [filteredData, setFilteredData] = React.useState([]);
 
-  let grpPicker = groupBy(pickerWeight, v => v.picker);
-
+  useEffect(() => {
+    setFilteredData(Object.keys(grpPicker))
+  }, [isSearchActive])
   const onFilter = v => {
     setFilteredData(
       Object.keys(grpPicker).filter(item =>
@@ -81,7 +83,7 @@ export default function Search({ isSearchActive, setSearchActive }) {
                 btnStyle={{
                   width: '40%',
                   marginVertical: 0,
-                  marginLeft: 5,
+                  marginLeft: 10,
                 }}
                 onPress={goBack}
               />
