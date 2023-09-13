@@ -5,21 +5,21 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
-import {load} from 'react-native-cheerio';
+import React, { useEffect, useState } from 'react';
+import { load } from 'react-native-cheerio';
 import Text from '../../components/text';
-import {strings} from 'src/translations/locale';
-import {green, red, white} from '../../utils/color';
+import { strings } from 'src/translations/locale';
+import { green, red, white } from '../../utils/color';
 import Icon from '../../components/icon';
-import {useCotton} from '../../context/cottonContext';
-import {saveCottonPriceData} from '../../sql';
-import {sortBy} from 'lodash';
+import { useCotton } from '../../context/cottonContext';
+import { saveCottonPriceData } from '../../sql';
+import { sortBy } from 'lodash';
 import moment from 'moment';
-import {deletePrice, getPriceData} from '../../network/price-service';
-import {currencyFormat, dateFormat} from '../../utils/dateformat';
+import { deletePrice, getPriceData } from '../../network/price-service';
+import { currencyFormat, dateFormat } from '../../utils/dateformat';
 import auth from '@react-native-firebase/auth';
-import {navigate} from '../../navigation/ref';
-import {useIsFocused} from '@react-navigation/native';
+import { navigate } from '../../navigation/ref';
+import { useIsFocused } from '@react-navigation/native';
 import Loader from '../../components/loader';
 
 const MandiPrice = () => {
@@ -40,7 +40,7 @@ const MandiPrice = () => {
     }
   };
 
-  if (loading) return <Loader visible={loading} small style={{margin: 50}} />;
+  if (loading) return <Loader visible={loading} small style={{ margin: 50 }} />;
 
   return Array.isArray(data) && data.length ? (
     <View style={[styles.list]}>
@@ -52,7 +52,7 @@ const MandiPrice = () => {
         <Icon
           name={'plus'}
           size={25}
-          style={[styles.share, {left: 10}]}
+          style={[styles.share, { left: 10 }]}
           onPress={() => navigate('AddPrice')}
         />
       ) : null}
@@ -80,7 +80,7 @@ https://play.google.com/store/apps/details?id=com.profarmer
         }>
         <Icon name="share" type="Entypo" size={25} />
       </TouchableOpacity>
-      <View style={{flexDirection: 'row'}}>
+      <View style={{ flexDirection: 'row' }}>
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           {sortBy(data, d => moment(d.date)).map((item, index) => (
             <View key={index} style={styles.card}>
@@ -89,7 +89,7 @@ https://play.google.com/store/apps/details?id=com.profarmer
                   <Icon
                     name={'delete'}
                     size={20}
-                    style={[styles.share, {left: -5, top: -5, zIndex: 999}]}
+                    style={[styles.share, { left: -5, top: -5, zIndex: 999 }]}
                     onPress={async () => {
                       await deletePrice(item?.id);
                       getData;
@@ -98,21 +98,24 @@ https://play.google.com/store/apps/details?id=com.profarmer
                   <Icon
                     name={'edit'}
                     size={20}
-                    style={[styles.share, {right: -5, top: -5, zIndex: 999}]}
-                    onPress={() => navigate('AddPrice', {data: item})}
+                    style={[styles.share, { right: -5, top: -5, zIndex: 999 }]}
+                    onPress={() => navigate('AddPrice', { data: item })}
                   />
                 </>
               ) : null}
 
-              <Text h3 style={{color: green}}>
-                {currencyFormat(item?.maxPrice)} Max
+              <Text h4 style={{ color: green }}>
+                {currencyFormat(item?.maxPrice)} Max{'  '}
+                <Text h4 style={{ color: red }}>
+                  {currencyFormat(item?.minPrice)} Min
+                </Text>
               </Text>
-              <Text h3 style={{color: red}}>
-                {currencyFormat(item?.minPrice)} Min
-              </Text>
-              <Text h4>{item?.market.trim()}</Text>
-              <Text h5 style={{marginTop: 4}}>
-                {dateFormat(item?.date)}
+
+              <Text h4>
+                {item?.market.trim()}{'   '}
+                <Text h5>
+                  {dateFormat(item?.date)}
+                </Text>
               </Text>
             </View>
           ))}

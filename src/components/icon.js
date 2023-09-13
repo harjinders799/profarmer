@@ -14,6 +14,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Octicons from 'react-native-vector-icons/Octicons';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import Zocial from 'react-native-vector-icons/Zocial';
+import { gray3, gray4 } from '../utils/color';
 
 const VectorIcon = {
   AntDesign,
@@ -36,7 +37,7 @@ const VectorIcon = {
 export default function Icon({
   type = 'AntDesign',
   name,
-  color,
+  color = gray4,
   size,
   style,
   ...props

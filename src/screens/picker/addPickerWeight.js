@@ -145,7 +145,6 @@ export default function AddPickerWeight() {
         rightComponent={<Text h2> </Text>}
       />
       <View style={styles.form}>
-        {/* <Text h2 style={{ textAlign: 'center', marginBottom: 20 }}>{picker}</Text> */}
         <View
           style={{
             flexDirection: 'row',
