@@ -1,21 +1,19 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import Text from 'src/components/text';
 import BaseView from 'src/container/base';
-import {Auth} from 'src/service/setup';
-import {useLang} from 'src/context/langContext';
-import Header from 'src/components/header';
-import {useFocusEffect, useIsFocused} from '@react-navigation/native';
-import {strings} from 'src/translations/locale';
-import {useStore} from 'src/context/context';
+import { useLang } from 'src/context/langContext';
+import { useFocusEffect, useIsFocused } from '@react-navigation/native';
+import { strings } from 'src/translations/locale';
 import Button from '../../components/button';
-import {navigate} from '../../navigation/ref';
-import {getAllPickerExpense, getPickerData} from '../../network/picker-service';
+import { navigate } from '../../navigation/ref';
+import {
+  getAllPickerExpense,
+  getPickerData,
+} from '../../network/picker-service';
 import DateWiseList from '../../container/picker/dateWiseList';
-import {ToastError} from '../../utils/toast';
 import Loader from '../../components/loader';
-import MandiPrice from '../../container/picker/mandiPrice';
-import {gray10, red, white} from '../../utils/color';
-import {useCotton} from '../../context/cottonContext';
+import { gray10, red, white } from '../../utils/color';
+import { useCotton } from '../../context/cottonContext';
 import {
   createCottonPriceTable,
   createPickerExpenseTable,
@@ -24,13 +22,19 @@ import {
   savePickerData,
   savePickerExpenseData,
 } from '../../sql';
-import {TouchableOpacity, View} from 'react-native';
+import { View } from 'react-native';
 import Icon from '../../components/icon';
 import Search from '../../components/search';
+import SyncLocal from '../../container/picker/syncLocal';
 
-export default function Picker({navigation}) {
-  const {lang} = useLang();
-  const {db, getPickerWeight, pickerWeight, getPickerExpense} = useCotton();
+export default function Picker({ navigation }) {
+  const { lang } = useLang();
+  const {
+    db,
+    getPickerWeight,
+    pickerWeight = [],
+    getPickerExpense,
+  } = useCotton();
   const [loading, setLoading] = useState(false);
   const isFocused = useIsFocused();
 
@@ -43,7 +47,6 @@ export default function Picker({navigation}) {
       getPickerExpense();
     }, [lang, isFocused]),
   );
-
   const getData = async () => {
     try {
       // console.log(pickerWeight, '-=-=-=-=-=-=-=-=-=----')
@@ -59,12 +62,12 @@ export default function Picker({navigation}) {
       }
       let wt = await getPickerData();
       if (Array.isArray(wt) && wt.length) {
-        wt.map((o, i) => ({...o, id: i + 1}));
+        wt.map((o, i) => ({ ...o, id: i + 1 }));
         await savePickerData(db, wt);
       }
       let ex = await getAllPickerExpense();
       if (Array.isArray(ex) && ex.length) {
-        ex.map((o, i) => ({...o, id: i + 1}));
+        ex.map((o, i) => ({ ...o, id: i + 1 }));
         await savePickerExpenseData(db, ex);
       }
       await getPickerWeight();
@@ -75,55 +78,43 @@ export default function Picker({navigation}) {
     }
   };
 
-  const toggleSearch = () => {
-    setSearchActive(!isSearchActive);
-  };
   return (
     <BaseView>
       <Loader visible={loading} />
       {/* <MandiPrice /> */}
-      <Button
-        label={strings.mandi_price}
-        btnStyle={{
-          width: '50%',
-          height: "8%",
-          position: 'absolute',
-          bottom: 50,
-          right: 30,
-          zIndex: 999,
-          alignSelf: 'flex-end',
-        }}
-        onPress={() => navigate('AddPrice')}
-      />
+      <SyncLocal />
       <View
         style={{
-          // flexDirection: 'row',
+          marginTop: 20,
           width: '100%',
           justifyContent: 'space-between',
-          alignItem:"center"
+          alignItem: 'center',
         }}>
-        <Icon name="bars" style={{position:"absolute"}} size={25} color={gray10} />
+        <Icon
+          name="bars"
+          style={{
+            position: 'absolute',
+            display: pickerWeight.length ? 'flex' : 'none',
+          }}
+          size={25}
+          color={gray10}
+        />
 
         <Text
           h3
-          style={{ paddingBottom: 10,textAlign:"center"}}
-          // onPress={async () => await deleteDBConnectionDB()}
+          style={{ paddingBottom: 10, textAlign: 'center' }}
+        // onPress={async () => await deleteDBConnectionDB()}
         >
           {strings.picker_record}
         </Text>
-        {/* <Icon name='search1' size={25} color={gray10} style={{marginTop: 15}}  onPress={toggleSearch} /> */}
-        <Search isSearchActive={isSearchActive} setSearchActive={setSearchActive} />
+        <Search
+          isSearchActive={isSearchActive}
+          setSearchActive={setSearchActive}
+        />
       </View>
 
       {!isSearchActive && (
         <>
-          {/* <Button
-            label="cancle"
-            btnStyle={{
-              width: '40%',
-            }}
-            onPress={() => toggleSearch()}
-          /> */}
           <DateWiseList />
           <Button
             iconName="plus"
@@ -131,8 +122,9 @@ export default function Picker({navigation}) {
             label={strings.add_picker}
             btnStyle={{
               width: '40%',
+              height: 50,
               position: 'absolute',
-              bottom: 50,
+              bottom: 20,
               right: 30,
               zIndex: 999,
             }}
