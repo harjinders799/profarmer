@@ -8,6 +8,7 @@ import Button from '../../components/button';
 import Text from '../../components/text';
 import { strings } from '../../translations/locale';
 import { submitPicker, submitPickerExpense, updatePicker, updatePickerExpense } from '../../network/picker-service';
+import { orange, yellow } from '../../utils/color';
 
 const SyncLocal = () => {
     const {
@@ -89,18 +90,7 @@ const SyncLocal = () => {
                     alignItem: 'center',
                     marginTop: 20,
                 }} >
-                <Text h4>You have {localEntries} Local Entries</Text>
-                <Button
-                    label={strings.add_picker}
-                    btnStyle={{
-                        width: 'auto',
-                        paddingHorizontal: 10,
-                        paddingVertical: 5,
-                        height: 'auto',
-                        marginVertical: 0,
-                    }}
-                // onPress={() => navigate('AddPicker')}
-                />
+                <Text h4 style={{ color: orange }}>{strings.offline_warning}</Text>
             </View >
         ) : null
     )
