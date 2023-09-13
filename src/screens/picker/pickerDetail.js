@@ -1,4 +1,4 @@
-import { View, StyleSheet, TouchableOpacity, Modal, Share } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Modal } from 'react-native';
 import React, { useCallback, useEffect, useState } from 'react';
 import BaseView from 'src/container/base';
 import Text from 'src/components/text';
@@ -27,6 +27,7 @@ import auth from '@react-native-firebase/auth';
 import RNFS from 'react-native-fs';
 import RNHTMLtoPDF from 'react-native-html-to-pdf';
 import { useAuth } from '../../context/authContext';
+import Share from 'react-native-share';
 
 const transparent = 'rgba(0,0,0,0.5)';
 
@@ -175,7 +176,10 @@ td {
           <p>${user?.phone}</p>
           <p>${user?.email}</p>
           </div>
+          <div>
+          <a href="https://play.google.com/store/apps/details?id=com.profarmer">Pro Farmer</a>
               <p>Time: ${moment().format('lll')}</p>
+          </div>
           </div>
           <h2>Picker Name: ${data?.picker}</h2>
       </div>
@@ -257,15 +261,21 @@ td {
     const options = {
       html: html,
       base64: true,
-      fileName: 'my-l',
+      fileName: data?.picker,
       directory: 'Documents',
     };
 
     const file = await RNHTMLtoPDF.convert(options);
-    Share.share(
-      { url: `data:image/jpeg;base64,${file?.base64}`, title: data?.picker },
-      { dialogTitle: data?.picker },
-    );
+    Share.open({
+      url: `data:application/pdf;base64,${file?.base64}`,
+      type: 'application/pdf',
+      title: data?.picker,
+      saveToFiles: true,
+      showAppsToView: true,
+      filename: data?.picker,
+    })
+      .then(res => console.log(res, '---res'))
+      .catch(err => console.log(err, '----err'));
   };
 
   return (
