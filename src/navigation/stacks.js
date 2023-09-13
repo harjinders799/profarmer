@@ -15,6 +15,7 @@ import { PCIKER_TABLE, PICKER_EXPENSE_TABLE } from '../sql/tabels';
 import { submitPicker, submitPickerExpense, updatePicker, updatePickerExpense } from '../network/picker-service';
 import AddPrice from '../screens/picker/addPrice';
 import PickerUpdate from '../screens/picker/pickerUpdate';
+import Filter from '../components/filter';
 
 const Stack = createNativeStackNavigator();
 
@@ -145,6 +146,11 @@ export default function Stacks() {
         component={AddPrice}
         options={{ headerShown: false }}
       />
+      <Stack.Screen
+      name="Filter"
+      component={Filter}
+      options={{ headerShown: false }}
+    />
     </Stack.Navigator>
   );
 }
