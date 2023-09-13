@@ -58,7 +58,7 @@
   "no_record": "No Record",
   "final": "Final Amount",
   "delete_wt": "Do you want to delete?",
-  "new_version": "New version available on play sotre",
+  "new_version": "Dear valued farmers,\n\nNew version available on play sotre \nWe're thrilled to introduce the latest update for Pro Farmer that promises to revolutionize your farming journey! 🌱📱\nThank you for being a part of our farming community. We're here to support you every step of the way. If you have any questions or need assistance, please reach out to our dedicated support team.\n\nHappy farming!\n\nWarm regards,\n\nPro Farmer",
   "giver_name": "Aadhtiya's Name",
   "view": "View Detail",
   "givers_list": "Aadhtiya's List",
@@ -110,6 +110,6 @@
   "amount_deleted": "Amount Deleted!",
   "in_progress":"In Progress",
   "resend_otp":"Resend OTP",
-  "offline_warning":"You have offline data, please connect to internet to save it"
+  "offline_warning":"You have offline data, Please connect to internet to save it"
 
 }
