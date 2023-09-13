@@ -16,21 +16,21 @@ import { deletePickerData } from '../../sql';
 import { useCotton } from '../../context/cottonContext';
 import { sumBy } from 'lodash';
 
-export default function PickerDetailAction({ data,rate,pickerData, picker }) {
+export default function PickerDetailAction({ data, rate, pickerData, picker }) {
   const [loading, setLoading] = React.useState(false);
   const { db, getPickerWeight } = useCotton();
-  
+
   const delteData = async () => {
     Alert.alert(
       strings.weight,
-      `${strings.delete_wt} ${data,rate?.weight}Kg`,
+      `${strings.delete_wt} ${(data, rate?.weight)}Kg`,
       [
         {
           text: 'Yes',
           onPress: async () => {
             setLoading(true);
-            await deletePickerData(db, data,rate)
-            if (data,rate?.fid) await deletePicker(data,rate?.fid);
+            await deletePickerData(db, data, rate);
+            if ((data, rate?.fid)) await deletePicker(data, rate?.fid);
             getPickerWeight();
             setLoading(false);
             ToastSuccess(strings.weight_delete, 'Weight');
@@ -44,18 +44,20 @@ export default function PickerDetailAction({ data,rate,pickerData, picker }) {
       { cancelable: true },
     );
   };
-  
+
   return (
     <View style={[styles.list, { display: data?.weight != 0 ? 'flex' : 'none' }]}>
-      <View style={styles.top}>
+      <TouchableOpacity
+        style={styles.top}
+        onPress={() => navigate('PickerUpdate', { data })}>
         <Loader visible={loading} />
-        <TouchableOpacity style={styles.row} onPress={() => navigate('PickerUpdate', { data })}>
+        <View style={styles.row}>
           <Text h4 numberOfLines={1} style={styles.picker}>
             {dateFormat(data?.date)}
             {/* {picker ? dateFormat(data?.date) : data?.picker} */}
           </Text>
           <Text h4 numberOfLines={1} style={styles.wt}>
-            {currencyFormat(rate?rate:data?.rate)}
+            {currencyFormat(rate ? rate : data?.rate)}
             {/* {currencyFormat(
             sumBy(
                   pickerData,
@@ -65,11 +67,11 @@ export default function PickerDetailAction({ data,rate,pickerData, picker }) {
           <Text h4 numberOfLines={1} style={styles.wt}>
             {data?.weight}kg
           </Text>
-        </TouchableOpacity>
+        </View>
         <View style={styles.icons}>
           <Text h4>
             {currencyFormat(
-              parseFloat(data.weight) * parseFloat(data.rate)
+              parseFloat(data.weight) * (rate ? rate : parseFloat(data.rate)),
             )}
           </Text>
           {/* <Icon
@@ -80,11 +82,9 @@ export default function PickerDetailAction({ data,rate,pickerData, picker }) {
           /> */}
           {/* <Icon name="delete" size={20} color={red} onPress={delteData} />/ */}
         </View>
-      </View>
-      {data?.detail ?
-        <Text h4>{data?.detail}</Text>
-        : null}
-    </View >
+      </TouchableOpacity>
+      {data?.detail ? <Text h4>{data?.detail}</Text> : null}
+    </View>
   );
 }
 const styles = StyleSheet.create({
@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
     marginVertical: 15,
     width: '98%',
     borderBottomWidth: 0.3,
-    borderBottomColor: gray2
+    borderBottomColor: gray2,
   },
   row: {
     width: '70%',
@@ -109,10 +109,9 @@ const styles = StyleSheet.create({
     marginVertical: 5,
   },
   icons: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    width: '20%',
-    justifyContent: 'space-between',
+    alignItems: 'flex-end',
+    // width: '20%',
+    // justifyContent: 'space-between',
   },
   picker: {
     width: '40%',

@@ -1,29 +1,29 @@
-import React, {useState} from 'react';
-import {FlatList, View, StyleSheet, TouchableOpacity} from 'react-native';
-import {findIndex, flatten, includes} from 'lodash';
-import {useTheme} from '@react-navigation/native';
-import {useAuth} from 'src/context/context';
+import React, { useState } from 'react';
+import { FlatList, View, StyleSheet, TouchableOpacity } from 'react-native';
+import { findIndex, flatten, includes } from 'lodash';
+import { useTheme } from '@react-navigation/native';
+import { useAuth } from 'src/context/context';
 import Text from 'src/components/text';
 import Icon from 'src/components/icon';
 import Modal from 'src/components/Modal';
 import Input from 'src/components/input';
 import Button from 'src/components/button';
 import Header from 'src/components/header';
-import {HEIGHT} from 'src/utils/constant';
-import {strings} from 'src/translations/locale';
-import {commonStyle} from 'src/utils/style';
-import {useStore} from 'src/context/context';
-import {red} from 'src/utils/color';
-import {gray1, gray10, navy} from '../utils/color';
-import {SafeAreaView} from 'react-native-safe-area-context';
+import { HEIGHT } from 'src/utils/constant';
+import { strings } from 'src/translations/locale';
+import { commonStyle } from 'src/utils/style';
+import { useStore } from 'src/context/context';
+import { red } from 'src/utils/color';
+import { gray1, gray10, navy } from '../utils/color';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import DateWiseList from '../container/picker/dateWiseList';
-import {useCotton} from '../context/cottonContext';
-import {goBack, navigate} from '../navigation/ref';
-import _, {groupBy, some, sumBy} from 'lodash';
+import { useCotton } from '../context/cottonContext';
+import { goBack, navigate } from '../navigation/ref';
+import _, { groupBy, some, sumBy } from 'lodash';
 
-export default function Search({isSearchActive, setSearchActive}) {
-  const {pickerWeight = []} = useCotton();
-  const {colors} = useTheme();
+export default function Search({ isSearchActive, setSearchActive }) {
+  const { pickerWeight = [] } = useCotton();
+  const { colors } = useTheme();
   const [searchKey, setSearchKey] = React.useState();
   const [filteredData, setFilteredData] = React.useState([]);
 
@@ -71,8 +71,10 @@ export default function Search({isSearchActive, setSearchActive}) {
               setSearchKey(v);
               onFilter(v);
             }}
-            style={{width: '70%', height: 40}}
-            inputStyle={{height: 40, paddingTop: 2}}
+            style={{ width: '70%', height: 40 }}
+            // inputStyle={{ height: 40, paddingBottom: 5 }}
+            // style={{ width: '50%', height: 40, marginTop: 10 }}
+            inputStyle={{ padding: 5 }}
             rightComponent={
               <Button
                 label={strings.cancel}
@@ -89,24 +91,23 @@ export default function Search({isSearchActive, setSearchActive}) {
             data={filteredData}
             keyboardShouldPersistTaps="always"
             keyExtractor={item => Math.random().toString(6).substr(2)}
-            contentContainerStyle={{paddingBottom: 10}}
+            automaticallyAdjustKeyboardInsets
+            contentContainerStyle={{ paddingBottom: 10 }}
             showsVerticalScrollIndicator={false}
             ListEmptyComponent={
-              <Text style={{marginTop: 20, textAlign: 'center'}}>
+              <Text style={{ marginTop: 20, textAlign: 'center' }}>
                 {strings.no_record_found}
               </Text>
             }
-            renderItem={({item}) => (
-              <View
+            renderItem={({ item }) => (
+              <TouchableOpacity
                 style={styles.list}
-                onPress={() => {
-                  setSelectedItem(item);
-                  setSearchKey(item);
-                  setModalVisible(false);
-                }}>
+                onPress={() =>
+                  navigate('PickerDetail', { item: { picker: item } })
+                }>
                 <Text h3> {item} </Text>
 
-                <View style={{flexDirection: 'row'}}>
+                <View style={{ flexDirection: 'row' }}>
                   <Button
                     hitSlop={10}
                     label={strings.add_weight}
@@ -142,15 +143,15 @@ export default function Search({isSearchActive, setSearchActive}) {
                     }}
                     onPress={() =>
                       navigate('AddPickerExpense', {
-                        data: {picker: item},
+                        data: { picker: item },
                       })
                     }
                   />
                 </View>
-              </View>
+              </TouchableOpacity>
             )}
             ItemSeparatorComponent={() => (
-              <View style={{borderBottomWidth: StyleSheet.hairlineWidth}} />
+              <View style={{ borderBottomWidth: StyleSheet.hairlineWidth }} />
             )}
           />
         </>
