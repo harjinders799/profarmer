@@ -26,6 +26,9 @@ import { View } from 'react-native';
 import Icon from '../../components/icon';
 import Search from '../../components/search';
 import SyncLocal from '../../container/picker/syncLocal';
+import { sortBy, sumBy } from 'lodash';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+
 
 export default function Picker({ navigation }) {
   const { lang } = useLang();
@@ -39,6 +42,8 @@ export default function Picker({ navigation }) {
   const isFocused = useIsFocused();
 
   const [isSearchActive, setSearchActive] = useState(false);
+
+  const [isTextVisible,setTextVisible] = useState(false);
 
   useFocusEffect(
     useCallback(() => {
@@ -77,7 +82,7 @@ export default function Picker({ navigation }) {
       setLoading(false);
     }
   };
-
+  
   return (
     <BaseView>
       <Loader visible={loading} />
@@ -89,29 +94,40 @@ export default function Picker({ navigation }) {
           width: '100%',
           justifyContent: 'space-between',
           alignItem: 'center',
+          backgroundColor:"red"
         }}>
         <Icon
-          name="bars"
-          style={{
-            position: 'absolute',
-            display: pickerWeight.length ? 'flex' : 'none',
-          }}
+          name= "eye-slash" 
+          type='FontAwesome'
           size={25}
           color={gray10}
+          onPress={() => setTextVisible (!isTextVisible)}
         />
+
 
         <Text
           h3
           style={{ paddingBottom: 10, textAlign: 'center' }}
         // onPress={async () => await deleteDBConnectionDB()}
-        >
+ >
           {strings.picker_record}
         </Text>
         <Search
           isSearchActive={isSearchActive}
           setSearchActive={setSearchActive}
         />
+        {isTextVisible &&
+        <>
+          <View style={{backgroundColor: '#bbdffc',width:"100%", flexDirection: 'row',    justifyContent: 'space-between',}}>
+            <Text h2 style={{fontWeight: 'bold'}}>
+              {sumBy(pickerWeight, o => parseFloat(o.weight))} Kg
+            </Text>
+            <Text h3>{strings.total_weight}</Text>
+          </View>
+          </>
+          }
       </View>
+    
 
       {!isSearchActive && (
         <>
