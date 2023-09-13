@@ -16,7 +16,7 @@ import { AuthProvider } from './src/context/authContext';
 
 export default function App() {
   const [version, setVersion] = useState();
-  const [visible, setVisible] = useState(false);
+  const [visible, setVisible] = useState(true);
   useEffect(() => {
     (async () => {
       const res = await checkVersion({
@@ -35,14 +35,13 @@ export default function App() {
   return (
     <SafeAreaProvider>
       <Modal
-        visible={version?.needsUpdate ? true : false && visible}
+        visible={(version?.needsUpdate ? true : false) && visible}
         setModalVisible={() => setVisible(false)}
-        ratioHeight={0.7}>
+        ratioHeight={0.9}>
         <View
           style={{
             alignItems: 'center',
             padding: 20,
-            backgroundColor: orange,
           }}>
           <Text h3>{strings.new_version}</Text>
           <Button label="Update" onPress={update} />
