@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import Text from 'src/components/text';
 import { FlatList, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { white } from 'src/utils/color';
-import _, { every, filter, find, groupBy, some, sumBy } from 'lodash';
+import _, { every, filter, find, groupBy, some, sortBy, sumBy } from 'lodash';
 import { strings } from '../../translations/locale';
 import { navigate } from 'src/navigation/ref';
 import {
@@ -10,7 +10,15 @@ import {
   getPickerExpense,
 } from '../../network/picker-service';
 import { ToastError } from '../../utils/toast';
-import { green, red, yellow, black, orange, navy } from '../../utils/color';
+import {
+  green,
+  red,
+  yellow,
+  black,
+  orange,
+  navy,
+  greenDark,
+} from '../../utils/color';
 import { currencyFormat, kg } from '../../utils/dateformat';
 import Button from '../../components/button';
 import { WIDTH } from '../../utils/constant';
@@ -103,9 +111,9 @@ export default function DateWiseList() {
                 h3
                 style={{
                   color: loading
-                    ? green
+                    ? greenDark
                     : (!isNaN(item?.amount) ? item?.amount : 0) >= 0
-                      ? green
+                      ? greenDark
                       : red,
                 }}>
                 {!loading
@@ -180,11 +188,12 @@ export default function DateWiseList() {
       </Animated.View>
     );
   };
+
   return (
     <FlatList
       style={{ width: '100%' }}
-      contentContainerStyle={{ paddingBottom: 100 }}
-      data={fullData}
+      contentContainerStyle={{ paddingBottom: 150 }}
+      data={sortBy(fullData, o => o?.picker)}
       keyExtractor={item => Math.random().toString()}
       ListEmptyComponent={() => (
         <Text style={{ textAlign: 'center', paddingTop: 30 }}>

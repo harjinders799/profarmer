@@ -8,7 +8,7 @@ import LabourStack from './labourStack';
 import SettingStack from './settingStack';
 import CottonStack from './cottonStack';
 import AnimatedTabBar from './animateTab';
-import { white } from '../utils/color';
+import { darkOrange, greenDark, white } from '../utils/color';
 import { strings } from '../translations/locale';
 import { useLang } from '../context/langContext';
 import CropStack from './cropStack';
@@ -64,14 +64,23 @@ export default function Tabs() {
 
   return (
     <Tab.Navigator
-      tabBar={props => <AnimatedTabBar {...props} />}
+      // tabBar={props => <AnimatedTabBar {...props} />}
       screenOptions={{
-        tabBarActiveTintColor: colors.primary,
-        tabBarInactiveTintColor: colors.primary + 60,
+        tabBarActiveTintColor: greenDark,
+        tabBarInactiveTintColor: white,
         headerShown: false,
         tabBarHideOnKeyboard: true,
         unmountOnBlur: true,
-      }}>
+        tabBarStyle: {
+          backgroundColor: darkOrange,
+          height: 50,
+        },
+        tabBarLabelStyle: {
+          fontSize: 18
+        }
+      }}
+
+    >
       {bottomTabs.map(value => {
         return (
           <Tab.Screen
@@ -80,13 +89,13 @@ export default function Tabs() {
             component={value.component}
             options={{
               title: value?.title,
-              tabBarIcon: () => {
+              tabBarIcon: ({ color }) => {
                 return (
                   <Icon
                     type={value?.iconType}
                     name={value.icon}
-                    color={white}
-                    size={30}
+                    color={color}
+                    size={22}
                   />
                 );
               },

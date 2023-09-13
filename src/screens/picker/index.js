@@ -1,20 +1,18 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import Text from 'src/components/text';
 import BaseView from 'src/container/base';
-import { Auth } from 'src/service/setup';
 import { useLang } from 'src/context/langContext';
-import Header from 'src/components/header';
 import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 import { strings } from 'src/translations/locale';
-import { useStore } from 'src/context/context';
 import Button from '../../components/button';
 import { navigate } from '../../navigation/ref';
-import { getAllPickerExpense, getPickerData } from '../../network/picker-service';
+import {
+  getAllPickerExpense,
+  getPickerData,
+} from '../../network/picker-service';
 import DateWiseList from '../../container/picker/dateWiseList';
-import { ToastError } from '../../utils/toast';
 import Loader from '../../components/loader';
-import MandiPrice from '../../container/picker/mandiPrice';
-import { white } from '../../utils/color';
+import { gray10, red, white } from '../../utils/color';
 import { useCotton } from '../../context/cottonContext';
 import {
   createCottonPriceTable,
@@ -24,12 +22,23 @@ import {
   savePickerData,
   savePickerExpenseData,
 } from '../../sql';
+import { View } from 'react-native';
+import Icon from '../../components/icon';
+import Search from '../../components/search';
+import SyncLocal from '../../container/picker/syncLocal';
 
-export default function Picker() {
+export default function Picker({ navigation }) {
   const { lang } = useLang();
-  const { db, getPickerWeight, pickerWeight, getPickerExpense } = useCotton();
+  const {
+    db,
+    getPickerWeight,
+    pickerWeight = [],
+    getPickerExpense,
+  } = useCotton();
   const [loading, setLoading] = useState(false);
   const isFocused = useIsFocused();
+
+  const [isSearchActive, setSearchActive] = useState(false);
 
   useFocusEffect(
     useCallback(() => {
@@ -38,7 +47,6 @@ export default function Picker() {
       getPickerExpense();
     }, [lang, isFocused]),
   );
-
   const getData = async () => {
     try {
       // console.log(pickerWeight, '-=-=-=-=-=-=-=-=-=----')
@@ -73,28 +81,57 @@ export default function Picker() {
   return (
     <BaseView>
       <Loader visible={loading} />
-      <MandiPrice />
-      <Text
-        h3
-        style={{ marginTop: 15 }}
-      // onPress={async () => await deleteDBConnectionDB()}
-      >
-        {strings.picker_record}
-      </Text>
-      <DateWiseList />
-      <Button
-        iconName="plus"
-        iconColor={white}
-        label={strings.add_picker}
-        btnStyle={{
-          width: '40%',
-          position: 'absolute',
-          bottom: 50,
-          right: 30,
-          zIndex: 999,
-        }}
-        onPress={() => navigate('AddPicker')}
-      />
+      {/* <MandiPrice /> */}
+      <SyncLocal />
+      <View
+        style={{
+          marginTop: 20,
+          width: '100%',
+          justifyContent: 'space-between',
+          alignItem: 'center',
+        }}>
+        <Icon
+          name="bars"
+          style={{
+            position: 'absolute',
+            display: pickerWeight.length ? 'flex' : 'none',
+          }}
+          size={25}
+          color={gray10}
+        />
+
+        <Text
+          h3
+          style={{ paddingBottom: 10, textAlign: 'center' }}
+        // onPress={async () => await deleteDBConnectionDB()}
+        >
+          {strings.picker_record}
+        </Text>
+        <Search
+          isSearchActive={isSearchActive}
+          setSearchActive={setSearchActive}
+        />
+      </View>
+
+      {!isSearchActive && (
+        <>
+          <DateWiseList />
+          <Button
+            iconName="plus"
+            iconColor={white}
+            label={strings.add_picker}
+            btnStyle={{
+              width: '40%',
+              height: 50,
+              position: 'absolute',
+              bottom: 20,
+              right: 30,
+              zIndex: 999,
+            }}
+            onPress={() => navigate('AddPicker')}
+          />
+        </>
+      )}
     </BaseView>
   );
 }

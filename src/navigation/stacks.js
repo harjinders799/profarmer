@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Setting from 'src/screens/settings';
-// import AdBanner from "src/components/adBanner";
 import AddForm from 'src/screens/dashboard/addForm';
 import Detail from 'src/screens/dashboard/detail';
 import Tabs from './tab';
@@ -15,6 +14,7 @@ import { getAllItems, updatePickerExpenseId, updatePickerId } from '../sql';
 import { PCIKER_TABLE, PICKER_EXPENSE_TABLE } from '../sql/tabels';
 import { submitPicker, submitPickerExpense, updatePicker, updatePickerExpense } from '../network/picker-service';
 import AddPrice from '../screens/picker/addPrice';
+import PickerUpdate from '../screens/picker/pickerUpdate';
 
 const Stack = createNativeStackNavigator();
 
@@ -133,6 +133,11 @@ export default function Stacks() {
       <Stack.Screen
         name="PickerDetail"
         component={PickerDetail}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="PickerUpdate"
+        component={PickerUpdate}
         options={{ headerShown: false }}
       />
       <Stack.Screen

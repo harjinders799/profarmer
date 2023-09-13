@@ -20,6 +20,7 @@ export const getPriceData = () => {
     let userId = Auth().currentUser?.uid;
     await firestore()
       .collection('prices')
+      .orderBy('date', 'desc')
       .get()
       .then(querySnapshot => {
         let arr = [];
