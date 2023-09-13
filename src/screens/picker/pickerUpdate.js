@@ -10,7 +10,7 @@ import { useCotton } from '../../context/cottonContext';
 import { deletePicker } from '../../network/picker-service';
 import Loader from '../../components/loader';
 import { useFocusEffect, useRoute, useTheme } from '@react-navigation/native';
-import { goBack, navigate } from '../../navigation/ref';
+import { goBack, navigate, replace } from '../../navigation/ref';
 import Text from '../../components/text';
 import { currencyFormat, currentStamp, dateFormat } from '../../utils/dateformat';
 import Header from '../../components/header';
@@ -125,7 +125,7 @@ export default function PickerUpdate() {
                         btnStyle={{
                             width: '40%',
                         }}
-                        onPress={() => navigate('AddPickerWeight', { data })}
+                        onPress={() => replace('AddPickerWeight', { data })}
                     />
                     <Button
                         iconName="delete"

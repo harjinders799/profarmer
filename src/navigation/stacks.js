@@ -15,6 +15,10 @@ import { PCIKER_TABLE, PICKER_EXPENSE_TABLE } from '../sql/tabels';
 import { submitPicker, submitPickerExpense, updatePicker, updatePickerExpense } from '../network/picker-service';
 import AddPrice from '../screens/picker/addPrice';
 import PickerUpdate from '../screens/picker/pickerUpdate';
+import AboutUs from '../screens/settings/aboutUs';
+import ContactUs from '../screens/settings/contactUs';
+import SalectLanguage from '../screens/settings/salectLanguage';
+import EditProfile from '../screens/settings/editprofile';
 
 const Stack = createNativeStackNavigator();
 
@@ -98,57 +102,51 @@ export default function Stacks() {
   };
 
   return (
-    <Stack.Navigator>
+    <Stack.Navigator screenOptions={{headerShown:false}}>
       <Stack.Screen
         name="Main"
         component={Tabs}
-        options={{ headerShown: false }}
       />
       <Stack.Screen
         name="Setting"
         component={Setting}
-        options={{ headerShown: false }}
       />
       <Stack.Screen
         name="AddForm"
         component={AddForm}
-        options={{ headerShown: false }}
       />
       <Stack.Screen
         name="Detail"
         component={Detail}
-        options={{ headerShown: false }}
       />
       <Stack.Screen
         name="AddPicker"
         component={AddPicker}
-        options={{ headerShown: false }}
       />
       <Stack.Screen
         name="AddPickerExpense"
         component={AddPickerExpense}
-        options={{ headerShown: false }}
       />
       <Stack.Screen
         name="AddPickerWeight"
         component={AddPickerWeight}
-        options={{ headerShown: false }}
       />
       <Stack.Screen
         name="PickerDetail"
         component={PickerDetail}
-        options={{ headerShown: false }}
       />
       <Stack.Screen
         name="PickerUpdate"
         component={PickerUpdate}
-        options={{ headerShown: false }}
       />
       <Stack.Screen
         name="AddPrice"
         component={AddPrice}
-        options={{ headerShown: false }}
       />
+      <Stack.Screen name="AboutUs" component={AboutUs} />
+      <Stack.Screen name="ContactUs" component={ContactUs} />
+      <Stack.Screen name='SalectLanguage' component={SalectLanguage} />
+      <Stack.Screen name='EditProfile' component={EditProfile} />
     </Stack.Navigator>
   );
 }
