@@ -5,7 +5,7 @@ import Loader from 'src/components/loader';
 import { FlatList, ScrollView, Share, StyleSheet, View } from 'react-native';
 import { green, red, white } from 'src/utils/color';
 import moment from 'moment';
-import { sortBy, sumBy } from 'lodash';
+import { sortBy, sumBy, update } from 'lodash';
 import { useRoute, useTheme } from '@react-navigation/native';
 import { strings } from 'src/translations/locale';
 import { commonStyle } from 'src/utils/style';
@@ -80,7 +80,7 @@ export default function LabourDetail({ navigation }) {
     Array.isArray(expense) && expense.length
       ? sumBy(expense, o => parseFloat(o?.amount))
       : 0;
-
+console.log("+++++++++++++++==",data)
   return (
     <BaseView>
       <Loader visible={loading} />

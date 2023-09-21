@@ -16,7 +16,7 @@ import Header from '../../components/header';
 import Icon from '../../components/icon';
 import { submitCrop, updateCrop } from '../../network/interest-service';
 import { currencyInput } from '../../utils/dateformat';
-import { gray3 } from '../../utils/color';
+import { black, gray3, green, white } from '../../utils/color';
 
 export default function AddCrop() {
   const { colors } = useTheme();
@@ -113,49 +113,58 @@ export default function AddCrop() {
             onPress={() => goBack()}
           />
         }
-        centerComponent={<Text h2>{strings.crop}</Text>}
+        centerComponent={<Text h2>{strings.add_crop}</Text>}
         rightComponent={<Text h2> </Text>}
       />
       <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-        <View style={styles.form}>
-          <Input
-            placeholder={strings.crop}
-            value={crop}
-            autoCapitalize="words"
-            setValue={value => onChangeValue('crop', value)}
-          />
-          <Input
-            placeholder={strings.interest_rate}
-            value={interest_rate}
-            keyboardType="number-pad"
-            autoCapitalize="words"
-            setValue={value => onChangeValue('interest_rate', value)}
-          />
-          {/* <DataPicker
-          data={givers}
-          // intialVisible={!editData?.agent}
-          placeholder={strings.aadhtiya}
-          selectedItem={agent}
-          setSelectedItem={val => {
-            onChangeValue('agent', val);
-          }}
-        /> */}
-          <Input
-            refs={refAmt}
-            placeholder={strings.total_amount}
-            value={currencyInput(amount)}
-            keyboardType="number-pad"
-            setValue={value => onChangeValue('amount', value)}
-          />
-          <Input
-            placeholder={strings.remark}
-            multiline
-            autoCapitalize="words"
-            value={detail}
-            setValue={value => onChangeValue('detail', value)}
-          />
+        <View style={styles.row}>
+            <Text h3 >{strings.crop}</Text>
+            <Input
+              placeholder={strings.crop}
+              value={crop}
+              style={{ borderColor: green, borderWidth: 1, backgroundColor: '#d3f5e9' }}
+              autoCapitalize="words"
+              setValue={value => onChangeValue('crop', value)}
+              rightComponent
+            />
+            <Text h3 >{strings.total_interest}</Text>
+            <Input
+              placeholder={strings.interest_rate}
+              value={interest_rate}
+              style={{ borderColor: green, borderWidth: 1, backgroundColor: '#d3f5e9' }}
+              keyboardType="number-pad"
+              autoCapitalize="words"
+              setValue={value => onChangeValue('interest_rate', value)}
+            />
+            <Text h3>{strings.total_amount}</Text>
+            <Input
+              refs={refAmt}
+              placeholder={strings.total_amount}
+              style={{ borderColor: green, borderWidth: 1, backgroundColor: '#d3f5e9' }}
+              value={currencyInput(amount)}
+              keyboardType="number-pad"
+              setValue={value => onChangeValue('amount', value)}
+              />
+            <Text h3 >{strings.remark}</Text>
+            <Input
+              placeholder={strings.remark}
+              style={{ borderColor: green, borderWidth: 1, backgroundColor: '#d3f5e9' }}
+              multiline
+              autoCapitalize="words"
+              value={detail}
+              setValue={value => onChangeValue('detail', value)}
+              />
+              {/* <DataPicker
+              data={givers}
+              // intialVisible={!editData?.agent}
+              placeholder={strings.aadhtiya}
+              selectedItem={agent}
+              setSelectedItem={val => {
+                onChangeValue('agent', val);
+              }}
+            /> */}
           <TouchableOpacity
-            style={[styles.date, { borderColor: gray3 }]}
+            style={[styles.date]}
             onPress={() => setShowDate(true)}>
             <Text h3 medium>
               {dateFormat(date)}
@@ -187,13 +196,14 @@ const styles = StyleSheet.create({
     height: 50,
     width: '100%',
     borderRadius: 10,
-    marginVertical: 5,
-    marginBottom: 30,
+    marginVertical:15,
     justifyContent: 'center',
     paddingHorizontal: 10,
+    backgroundColor: '#d3f5e9',
+    borderColor: green
   },
-  form: {
-    paddingVertical: 25,
+  row: {
     width: '100%',
+    paddingVertical: 35,
   },
 });

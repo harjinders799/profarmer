@@ -15,6 +15,7 @@ import { PCIKER_TABLE, PICKER_EXPENSE_TABLE } from '../sql/tabels';
 import { submitPicker, submitPickerExpense, updatePicker, updatePickerExpense } from '../network/picker-service';
 import AddPrice from '../screens/picker/addPrice';
 import PickerUpdate from '../screens/picker/pickerUpdate';
+import CropUpdate from '../screens/crop/cropUpdate';
 
 const Stack = createNativeStackNavigator();
 
@@ -138,6 +139,11 @@ export default function Stacks() {
       <Stack.Screen
         name="PickerUpdate"
         component={PickerUpdate}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="CropUpdate"
+        component={CropUpdate}
         options={{ headerShown: false }}
       />
       <Stack.Screen
