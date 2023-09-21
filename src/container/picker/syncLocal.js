@@ -28,7 +28,7 @@ const SyncLocal = () => {
 
     useFocusEffect(
         useCallback(() => {
-            console.log('-------sync------');
+            // console.log('-------sync------');
 
             const fetchDataTimeout = setTimeout(() => {
                 fetchData();
@@ -41,20 +41,20 @@ const SyncLocal = () => {
         }, [isFocused && pickerWeight.length]),
     );
     const fetchData = async () => {
-        console.log('----inside call----------');
+        // console.log('----inside call----------');
         try {
             let totWtEntry = 0;
             let unsyncData = await checkLocal(PCIKER_TABLE);
             totWtEntry = unsyncData.length;
             setLocalEntries(totWtEntry);
-            console.log(unsyncData.length, '--inside-----wt');
+            // console.log(unsyncData.length, '--inside-----wt');
             if (unsyncData.length) {
                 let promise = unsyncData.map(async (item, index) => {
                     delete item.sync;
                     let api =
                         item?.fid && item?.fid != '' ? updatePicker : submitPicker;
                     let res = await api(item);
-                    console.log(res, '----inside----pick wt');
+                    // console.log(res, '----inside----pick wt');
                     if (res) {
                         await updatePickerId(db, {
                             ...item,
@@ -66,7 +66,7 @@ const SyncLocal = () => {
                 await getPickerWeight();
                 unsyncData = await checkLocal(PCIKER_TABLE);
                 totWtEntry = unsyncData.length;
-                console.log('-------toat wt', unsyncData.length)
+                // console.log('-------toat wt', unsyncData.length)
                 setLocalEntries(totWtEntry);
             }
             if (Array.isArray(pickerExpense) && pickerExpense.length) {
@@ -74,7 +74,7 @@ const SyncLocal = () => {
                 let unsyncExData = await checkLocal(PICKER_EXPENSE_TABLE);
                 totExEntry = unsyncExData.length;
                 setLocalEntries(totWtEntry + totExEntry);
-                console.log(unsyncExData.length, '---inside----exp');
+                // console.log(unsyncExData.length, '---inside----exp');
                 if (unsyncExData.length) {
                     let promise = unsyncExData.map(async (item, index) => {
                         delete item.sync;
@@ -95,7 +95,7 @@ const SyncLocal = () => {
                     await getPickerExpense();
                     unsyncExData = await checkLocal(PICKER_EXPENSE_TABLE);
                     totExEntry = unsyncExData.length;
-                    console.log('-------toat ex', unsyncData.length)
+                    // console.log('-------toat ex', unsyncData.length)
                     setLocalEntries(totWtEntry + totExEntry);
                 }
             }

@@ -27,7 +27,7 @@ export const SignInUser = phone => {
     return auth()
       .verifyPhoneNumber('+91' + phone)
       .on('state_changed', phoneAuthSnapshot => {
-        console.log(phoneAuthSnapshot, '-------phoneAuthSnapshot-----')
+        // console.log(phoneAuthSnapshot, '-------phoneAuthSnapshot-----')
         switch (phoneAuthSnapshot.state) {
           case auth.PhoneAuthState.CODE_SENT: // or 'sent'
             ToastSuccess('OTP Sent', 'Login');

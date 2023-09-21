@@ -78,7 +78,7 @@ const Input = ({
 };
 const styles = StyleSheet.create({
   container: {
-    // height: 50,
+    height: 50,
     width: '100%',
 
     marginVertical: 5,

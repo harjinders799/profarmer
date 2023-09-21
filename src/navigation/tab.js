@@ -13,6 +13,7 @@ import { strings } from '../translations/locale';
 import { useLang } from '../context/langContext';
 import CropStack from './cropStack';
 import PickerStack from './pickerStack';
+import { isIOS } from '../utils/constant';
 
 const Tab = createBottomTabNavigator();
 
@@ -73,7 +74,7 @@ export default function Tabs() {
         unmountOnBlur: true,
         tabBarStyle: {
           backgroundColor: darkOrange,
-          height: 50,
+          height: isIOS ? 90 : 50,
         },
         tabBarLabelStyle: {
           fontSize: 18

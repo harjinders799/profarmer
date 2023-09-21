@@ -29,7 +29,7 @@ export default function Stacks() {
   const [isConnected, setisConnected] = useState(false);
 
   useEffect(() => {
-    console.log('Netinfo api');
+    // console.log('Netinfo api');
     const unsubscribe = NetInfo.addEventListener(state => {
       if (state.isConnected && state.isInternetReachable && db) {
         setTimeout(() => {
@@ -43,7 +43,7 @@ export default function Stacks() {
   }, [db, pickerExpense.length == 0, pickerWeight.length == 0]);
 
   useEffect(() => {
-    console.log(isConnected);
+    // console.log(isConnected);
     if (isConnected) fetchData();
   }, [isConnected]);
 
@@ -55,13 +55,13 @@ export default function Stacks() {
           PCIKER_TABLE,
           `WHERE sync='pending'`,
         );
-        console.log(unsyncData.length, '-------wt');
+        // console.log(unsyncData.length, '-------wt');
         if (unsyncData.length) {
           let promise = unsyncData.map(async (item, index) => {
             delete item.sync;
             let api = item?.fid && item?.fid != '' ? updatePicker : submitPicker
             let res = await api(item);
-            console.log(res, '--------pick wt');
+            // console.log(res, '--------pick wt');
             if (res) {
               await updatePickerId(db, {
                 ...item,
@@ -103,7 +103,7 @@ export default function Stacks() {
   };
 
   return (
-    <Stack.Navigator screenOptions={{headerShown:false}}>
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen
         name="Main"
         component={Tabs}
