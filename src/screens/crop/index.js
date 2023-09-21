@@ -19,6 +19,8 @@ import { ToastError } from '../../utils/toast';
 import Button from '../../components/button';
 import { navigate } from '../../navigation/ref';
 import { getCrops } from '../../network/interest-service';
+import { currencyFormat } from '../../utils/dateformat';
+import { navy } from '../../utils/color';
 
 export default function Crop({ navigation }) {
   const { lang } = useLang();
@@ -44,7 +46,7 @@ export default function Crop({ navigation }) {
       setLoading(false);
     }
   };
-
+console.log("+++++++++",data)
   if (data.length) {
     let grp = groupBy(data, v => moment(v.date).format('YYYY/MM/DD'));
     Object.keys(grp).map(v =>
@@ -75,14 +77,13 @@ export default function Crop({ navigation }) {
     <BaseView>
       <Loader visible={loading} />
       <Header
-        centerComponent={
-          <Button
+      />
+     
+            <Button
             label={strings.add_crop}
             btnStyle={{ width: '100%' }}
             onPress={() => navigate('AddCrop')}
           />
-        }
-      />
       <Text
         h2
         style={[

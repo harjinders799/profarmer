@@ -15,6 +15,7 @@ import { PCIKER_TABLE, PICKER_EXPENSE_TABLE } from '../sql/tabels';
 import { submitPicker, submitPickerExpense, updatePicker, updatePickerExpense } from '../network/picker-service';
 import AddPrice from '../screens/picker/addPrice';
 import PickerUpdate from '../screens/picker/pickerUpdate';
+import CropUpdate from '../screens/crop/cropUpdate';
 import AboutUs from '../screens/settings/aboutUs';
 import ContactUs from '../screens/settings/contactUs';
 import SalectLanguage from '../screens/settings/salectLanguage';
@@ -174,6 +175,11 @@ export default function Stacks() {
        <Stack.Screen
         name="LabourUpdate"
         component={LabourUpdate}
+      />
+      <Stack.Screen
+        name="CropUpdate"
+        component={CropUpdate}
+        options={{ headerShown: false }}
       />
       <Stack.Screen
         name="AddPrice"

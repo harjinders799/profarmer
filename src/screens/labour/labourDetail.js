@@ -6,7 +6,7 @@ import Loader from 'src/components/loader';
 // import { FlatList, Modal, ScrollView, Share, StyleSheet, View } from 'react-native';
 import { green, red, white, gray4, greenDark } from '../../utils/color';
 import moment from 'moment';
-import { sortBy, sumBy } from 'lodash';
+import { sortBy, sumBy, update } from 'lodash';
 import { useRoute, useTheme } from '@react-navigation/native';
 import { strings } from 'src/translations/locale';
 import { commonStyle } from 'src/utils/style';

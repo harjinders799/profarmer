@@ -13,8 +13,6 @@ import { strings } from 'src/translations/locale';
 import { navigate } from 'src/navigation/ref';
 import { goBack } from 'src/navigation/ref';
 import {
-  getPickerByName,
-  submitPicker,
   updatePicker,
 } from '../../network/picker-service';
 import Header from '../../components/header';
@@ -85,8 +83,6 @@ export default function AddPicker() {
         ToastError(strings.picker_name);
       } else if (rate.trim() == '' || parseInt(rate) <= 0) {
         ToastError(strings.enter_rate);
-        // } else if (weight.trim() == '' || parseInt(weight) <= 0) {
-        //   ToastError(strings.picker_weight);
       } else {
         setLoading(true);
         let isExist = Array.isArray(pickerWeight)
@@ -111,24 +107,8 @@ export default function AddPicker() {
                 : 1,
           },
         ]);
-        // await submitPicker({
-        //   ...data,
-        //   picker: picker.trim(),
-        //   date: currentStamp(date),
-        // });
         setLoading(false);
         ToastSuccess(strings.picker_added);
-        // let name = picker.trim();
-        // if (Array.isArray(pickers) && pickers.length) {
-        //   let exist = pickers.findIndex(
-        //     o => o.toUpperCase() === name.toUpperCase(),
-        //   );
-        //   if (exist == -1) {
-        //     setPicker([...pickers, name]);
-        //   }
-        // } else {
-        //   setPicker([name]);
-        // }
         goBack();
         // }
       }

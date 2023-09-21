@@ -1,4 +1,4 @@
-import {Auth, firestore} from 'src/service/setup';
+import { Auth, firestore } from 'src/service/setup';
 
 export const submitInterestAmount = async data => {
   return new Promise(async function (resolve, reject) {
@@ -6,7 +6,7 @@ export const submitInterestAmount = async data => {
       let id = Auth().currentUser?.uid;
       await firestore()
         .collection('interest_amount')
-        .add({...data, uid: id});
+        .add({ ...data, uid: id });
       resolve('success');
     } catch (error) {
       reject(new Error(error));
@@ -48,7 +48,7 @@ export const getInterstAmount = () => {
       .then(querySnapshot => {
         let arr = [];
         querySnapshot.forEach(documentSnapshot => {
-          arr.push({...documentSnapshot.data(), id: documentSnapshot.id});
+          arr.push({ ...documentSnapshot.data(), id: documentSnapshot.id });
         });
         resolve(arr);
       })
@@ -64,7 +64,7 @@ export const submitCrop = async data => {
       let id = Auth().currentUser?.uid;
       await firestore()
         .collection('crop')
-        .add({...data, uid: id});
+        .add({ ...data, uid: id });
       resolve('success');
     } catch (error) {
       reject(new Error(error));
@@ -92,7 +92,6 @@ export const deleteCrop = async id => {
     }
   });
 };
-
 export const getCrops = () => {
   return new Promise(async function (resolve, reject) {
     let userId = Auth().currentUser?.uid;
@@ -103,7 +102,7 @@ export const getCrops = () => {
       .then(querySnapshot => {
         let arr = [];
         querySnapshot.forEach(documentSnapshot => {
-          arr.push({...documentSnapshot.data(), id: documentSnapshot.id});
+          arr.push({ ...documentSnapshot.data(), id: documentSnapshot.id });
         });
         resolve(arr);
       })
@@ -112,6 +111,24 @@ export const getCrops = () => {
       });
   });
 };
+export const deleteCropCollection = async name => {
+  return new Promise(async function (resolve, reject) {
+    try {
+      let userId = Auth().currentUser?.uid;
+      await firestore()
+        .collection('crop')
+        .where('uid', '==', userId)
+        .get()
+        .then(querySnapshot => {
+          querySnapshot.forEach(documentSnapshot => {
+            console.log(documentSnapshot.ref.delete())
+          });
+        });
+        resolve();
+    } catch (error) {
+      reject(new Error(error));
+    }
+  });
 
 export const deleteGiverCollection = async (name) => {
   try {
