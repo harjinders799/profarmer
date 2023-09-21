@@ -3,7 +3,7 @@ import Text from 'src/components/text';
 import { FlatList, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { white } from 'src/utils/color';
 import _, { every, filter, find, groupBy, some, sumBy } from 'lodash';
-import { strings } from 'src/translations/locale';
+import { strings } from '../../translations/locale';
 import { navigate } from 'src/navigation/ref';
 import {
   getAllLabourExpense,
@@ -11,7 +11,7 @@ import {
   getLabourLeave,
 } from '../../network/labour-service';
 import { ToastError } from '../../utils/toast';
-import { green, red } from '../../utils/color';
+import { green, greenDark, navy, red } from '../../utils/color';
 import { currencyFormat, dayCount } from '../../utils/dateformat';
 import Button from '../../components/button';
 import { WIDTH } from '../../utils/constant';
@@ -117,16 +117,56 @@ export default function DateWiseList({ data }) {
             <Text numberOfLines={1} h3 style={{ width: '60%' }}>
               {item?.labour}
             </Text>
-            <Text h5>{strings.view}</Text>
+            <Text
+                numberOfLines={1}
+                h3
+                style={{
+                  color: loading
+                    ? greenDark
+                    : tot - (!isNaN(item?.amount) ? item?.amount : 0) > 0
+                      ? greenDark
+                      : red,
+                }}>
+                {!loading
+                  ? currencyFormat(
+                    tot - (!isNaN(item?.amount) ? item?.amount : 0),
+                  )
+                  : '__'}{' '}
+                   {/* {!loading
+                    ? (!isNaN(item?.amount) ? item?.amount : 0) >= 0
+                      ? strings.give
+                      : strings.receive
+                    : '__'}{' '} */}
+              </Text>
+            {/* <Text h5>{strings.view}</Text> */}
           </View>
           {!item?.is_regulare ? (
             <Animated.View
               style={styles.row}
-              entering={FadeInUp}
-              layout={Layout.springify}>
-              <Text numberOfLines={1} h4>
+            >
+              {/* // entering={FadeInUp}
+              // layout={Layout.springify}> */}
+              {/* <Text numberOfLines={1} h4>
                 {strings.final}
-              </Text>
+              </Text> */}
+               <View style={{ flexDirection: 'row' }}>
+              <Button
+                hitSlop={10}
+                label={strings.add_expense}
+                btnStyle={{
+                  backgroundColor: navy,
+                  marginRight: 10,
+                  width: 'auto',
+                  paddingHorizontal: 8,
+                  height: 25,
+                  borderRadius: 5,
+                  marginVertical: 0,
+                }}
+                onPress={() =>
+                  navigate('AddLabourExpense', { data: { picker: item?.picker } })
+                }
+              />
+              </View>
               <Text
                 numberOfLines={1}
                 h3
@@ -137,11 +177,16 @@ export default function DateWiseList({ data }) {
                       ? green
                       : red,
                 }}>
-                {!loading
+                {/* {!loading
                   ? currencyFormat(
                     tot - (!isNaN(item?.amount) ? item?.amount : 0),
                   )
-                  : '__'}{' '}
+                  : '__'}{' '} */}
+                   {!loading
+                    ? tot - (!isNaN(item?.amount) ? item?.amount : 0) > 0
+                      ? strings.give
+                      : strings.receive
+                    : '__'}{' '}
               </Text>
             </Animated.View>
           ) : null}
@@ -149,11 +194,51 @@ export default function DateWiseList({ data }) {
             <>
               <Animated.View
                 style={styles.row}
-                entering={FadeInUp}
-                layout={Layout.damping}>
-                <Text numberOfLines={1} h4>
+              >
+                {/* // entering={FadeInUp}
+                // layout={Layout.damping}> */}
+                {/* <Text numberOfLines={1} h4>
                   {strings.final}
-                </Text>
+                </Text> */}
+                <View style={{ flexDirection: 'row' }}>
+                  <Button
+                    label={strings.add_leave}
+                    hitSlop={10}
+                    btnStyle={{
+                      marginRight: 10,
+                      width: 'auto',
+                      paddingHorizontal: 8,
+                      height: 25,
+                      borderRadius: 5,
+                      marginVertical: 0,
+                    }}
+                    onPress={() => navigate('AddLabourLeave', { item })}
+                  // onPress={() =>
+                  //   navigate('AddPickerWeight', {
+                  //     data: {
+                  //       picker: item?.picker,
+                  //       rate: item.data.income[item.data.income.length - 1]?.rate,
+                  //     },
+                  //   })
+                  // }
+                  />
+                  <Button
+                    hitSlop={10}
+                    label={strings.add_expense}
+                    btnStyle={{
+                      backgroundColor: navy,
+                      marginRight: 10,
+                      width: 'auto',
+                      paddingHorizontal: 8,
+                      height: 25,
+                      borderRadius: 5,
+                      marginVertical: 0,
+                    }}
+                    onPress={() =>
+                      navigate('AddLabourExpense', { data: { picker: item?.picker } })
+                    }
+                  />
+                </View>
                 <Text
                   numberOfLines={1}
                   h3
@@ -164,18 +249,23 @@ export default function DateWiseList({ data }) {
                         ? green
                         : red,
                   }}>
-                  {!loading
+                  {/* {!loading
                     ? currencyFormat(
                       tot - (!isNaN(item?.amount) ? item?.amount : 0),
                     )
+                    : '__'}{' '} */}
+                  {!loading
+                    ?  tot - (!isNaN(item?.amount) ? item?.amount : 0) > 0
+                      ? strings.give
+                      : strings.receive
                     : '__'}{' '}
                 </Text>
               </Animated.View>
-              <Button
+              {/* <Button
                 label={strings.add_leave}
                 onPress={() => navigate('AddLabourLeave', { item })}
                 btnStyle={{ width: '50%', height: 30, marginVertical: 10 }}
-              />
+              /> */}
             </>
           ) : null}
         </TouchableOpacity>

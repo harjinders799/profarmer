@@ -19,6 +19,12 @@ import AboutUs from '../screens/settings/aboutUs';
 import ContactUs from '../screens/settings/contactUs';
 import SalectLanguage from '../screens/settings/salectLanguage';
 import EditProfile from '../screens/settings/editprofile';
+import AddLabourExpense from '../screens/labour/addLabourExpense';
+import AddLabourLeave from '../screens/labour/addLabourLeave';
+import LabourDetail from '../screens/labour/labourDetail';
+import AddLabour from '../screens/labour/addLabour';
+import RegularLabourDetail from '../screens/labour/regularLabourDetail';
+import LabourUpdate from '../screens/labour/labourUpdate';
 
 const Stack = createNativeStackNavigator();
 
@@ -135,9 +141,38 @@ export default function Stacks() {
         name="PickerDetail"
         component={PickerDetail}
       />
+       <Stack.Screen
+        name="AddLabour"
+        component={AddLabour}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="AddLabourExpense"
+        component={AddLabourExpense}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="AddLabourLeave"
+        component={AddLabourLeave}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="LabourDetail"
+        component={LabourDetail}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="RegularLabourDetail"
+        component={RegularLabourDetail}
+        options={{headerShown: false}}
+      />
       <Stack.Screen
         name="PickerUpdate"
         component={PickerUpdate}
+      />
+       <Stack.Screen
+        name="LabourUpdate"
+        component={LabourUpdate}
       />
       <Stack.Screen
         name="AddPrice"

@@ -1,4 +1,4 @@
-import { View, StyleSheet, TouchableOpacity, Modal, ScrollView } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Modal } from 'react-native';
 import React, { useCallback, useEffect, useState } from 'react';
 import BaseView from 'src/container/base';
 import Text from 'src/components/text';
@@ -11,6 +11,7 @@ import Loader from 'src/components/loader';
 import { strings } from 'src/translations/locale';
 import { ToastError } from '../../utils/toast';
 import { deletePickerCollection } from '../../network/picker-service';
+import { ScrollView } from 'react-native-gesture-handler';
 import { green, red, greenDark, gray4 } from '../../utils/color';
 import { currencyFormat, dateFormat } from '../../utils/dateformat';
 import PickerDetailAction from '../../container/picker/pickerDetailAction';
@@ -26,7 +27,7 @@ import auth from '@react-native-firebase/auth';
 import RNFS from 'react-native-fs';
 import RNHTMLtoPDF from 'react-native-html-to-pdf';
 import { useAuth } from '../../context/authContext';
-import { useLang } from 'src/context/langContext';
+import {useLang} from 'src/context/langContext';
 import Share from 'react-native-share';
 
 const transparent = 'rgba(0,0,0,0.5)';
@@ -38,8 +39,14 @@ export default function PickerDetail({ navigation }) {
   const [loading, setLoading] = useState(false);
   const data = params?.item ?? [];
   const [rate, setRate] = useState();
-  const { lang } = useLang();
+  const {lang, setLang} = useLang();
+  const [show, setShow] = useState(false);
 
+  const langs = [
+    {code: 'pb', label: 'punjabi'},
+    {code: 'hi', label: 'hindi'},
+    {code: 'en', label: 'english'},
+  ];
   const {
     db,
     pickerWeight = [],
@@ -58,6 +65,7 @@ export default function PickerDetail({ navigation }) {
       let baseRate = pickerData[pickerData.length - 1].rate;
       let pRate = pickerData.every(o => baseRate == o.rate || o.weight == '0');
       if (pRate) setRate(baseRate);
+      if (!lang?.code) setShow(true);
     }, [lang]),
   );
 
@@ -195,7 +203,7 @@ td {
     )}</h3>
       </div>
       <div>
-      <h3>${strings.total_amount} (${strings.weight}*${strings.enter_rate}):  ${currencyFormat(
+      <h3>${strings.total_amount} ${strings.weight}*${strings.enter_rate}:  ${currencyFormat(
       sumBy(
         pickerData,
         o =>
@@ -324,8 +332,43 @@ td {
                 marginRight: 15,
                 display: pickerData.length > 1 ? 'flex' : 'none',
               }}
+              // onPress={() => {setShow()}}
               onPress={onShare}
             />
+             {/* <Modal visible={show} setModalVisible={setShow} ratioHeight={0.3}>
+             <View style={[styles.menu]}>
+             <Header
+                leftComponent={
+                    <Icon
+                        name="back"
+                        size={28}
+                        color={colors.text}
+                        onPress={() => goBack()}
+                    />
+                }
+                centerComponent={<Text h2>{strings.lang}</Text>}
+                rightComponent={<Text h2> </Text>}
+            />
+          {langs.map((v, i) => (
+            <TouchableOpacity
+              key={i}
+              style={[styles.main]}
+              onPress={() => {
+                setLang(v);
+                setShow();
+                onShare();
+              }}>
+              <Text h3 black style={[styles.txt]}>
+                {strings[v?.label]}
+              </Text>
+              {strings.getLanguage() === v.code ? (
+                <Icon name="check" size={25} color={colors.primary}
+                 />
+              ) : null}
+            </TouchableOpacity>
+          ))}
+        </View>
+             </Modal> */}
 
             <TouchableOpacity
               onPress={() => {
@@ -403,7 +446,7 @@ td {
                   setValue={v => {
                     if (!isNaN(v)) setRate(v);
                   }}
-                  style={{ width: '60%', height: 40, marginTop: 10 }}
+                  style={{ width: '50%', height: 40, marginTop: 10 }}
                   inputStyle={{ padding: 5 }}
                   keyboardType="numeric"
                 />

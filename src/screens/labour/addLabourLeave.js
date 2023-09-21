@@ -94,12 +94,17 @@ export default function AddLabourLeave() {
             onPress={() => goBack()}
           />
         }
-        centerComponent={<Text h2>{strings.add_labour}</Text>}
+        centerComponent={<Text h2>{data.labour}</Text>}
         rightComponent={<Text h2> </Text>}
       />
       <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
         <View style={styles.form}>
-          <Input value={labour} editable={false} />
+          <Text style={styles.text}> {strings.add_labour} </Text>
+          <Input value={labour}
+            placeholder={strings.add_labour}
+            editable={false} />
+
+          <Text style={styles.text}> {strings.leave_count} </Text>
           <Input
             refs={refAmt}
             placeholder={strings.leave_count + ' 1, 2, 3...'}
@@ -107,6 +112,8 @@ export default function AddLabourLeave() {
             keyboardType="number-pad"
             setValue={value => onChangeValue('count', value)}
           />
+
+          <Text style={styles.text}> {strings.remark} </Text>
           <Input
             placeholder={strings.remark}
             multiline
@@ -114,6 +121,8 @@ export default function AddLabourLeave() {
             value={detail}
             setValue={value => onChangeValue('detail', value)}
           />
+
+          <Text style={styles.text}> {strings.date} </Text>
           <TouchableOpacity
             style={[styles.date, { borderColor: gray3 }]}
             onPress={() => setShowDate(true)}>
@@ -154,5 +163,8 @@ const styles = StyleSheet.create({
   form: {
     paddingVertical: 25,
     width: '100%',
+  },
+  text: {
+    marginTop: 10,
   },
 });

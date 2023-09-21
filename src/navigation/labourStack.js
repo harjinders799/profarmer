@@ -17,7 +17,7 @@ export default function LabourStack() {
         component={Labour}
         options={{headerShown: false}}
       />
-      <Stack.Screen
+      {/* <Stack.Screen
         name="AddLabour"
         component={AddLabour}
         options={{headerShown: false}}
@@ -41,7 +41,7 @@ export default function LabourStack() {
         name="RegularLabourDetail"
         component={RegularLabourDetail}
         options={{headerShown: false}}
-      />
+      /> */}
     </Stack.Navigator>
   );
 }

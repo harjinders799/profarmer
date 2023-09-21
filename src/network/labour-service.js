@@ -233,61 +233,51 @@ export const deleteLabourLeave = async id => {
     }
   });
 };
+export const deleteLabourCollection = async (name) => {
+  try {
+    const userId = Auth().currentUser?.uid;
 
-// export const submitPickerExpense = async data => {
-//   return new Promise(async function (resolve, reject) {
-//     try {
-//       let id = Auth().currentUser?.uid;
-//       await firestore()
-//         .collection('picker_expense')
-//         .add({...data, uid: id});
-//       resolve('success');
-//     } catch (error) {
-//       reject(new Error(error));
-//     }
-//   });
-// };
+    const deleteLabour = firestore()
+      .collection('labour')
+      .where('uid', '==', userId)
+      .where('labour', '==', name)
+      .get()
+      .then((querySnapshot) => {
+        const deletePromises = [];
+        querySnapshot.forEach((documentSnapshot) => {
+          deletePromises.push(documentSnapshot.ref.delete());
+        });
+        return Promise.all(deletePromises);
+      });
 
-// export const getPickerExpense = async name => {
-//   return new Promise(async function (resolve, reject) {
-//     try {
-//       let userId = Auth().currentUser?.uid;
-//       await firestore()
-//         .collection('picker_expense')
-//         .where('uid', '==', userId)
-//         .where('picker', '==', name)
-//         .get()
-//         .then(querySnapshot => {
-//           let arr = [];
-//           querySnapshot.forEach(documentSnapshot => {
-//             arr.push(documentSnapshot.data());
-//           });
-//           resolve(arr);
-//         });
-//       resolve('success');
-//     } catch (error) {
-//       reject(new Error(error));
-//     }
-//   });
-// };
+    const deleteLabourExpense = firestore()
+      .collection('labour_expense')
+      .where('uid', '==', userId)
+      .where('labour', '==', name)
+      .get()
+      .then((querySnapshot) => {
+        const deletePromises = [];
+        querySnapshot.forEach((documentSnapshot) => {
+          deletePromises.push(documentSnapshot.ref.delete());
+        });
+        return Promise.all(deletePromises);
+      });
 
-// export const getCottonByPicker = search => {
-//   return new Promise(async function (resolve, reject) {
-//     let userId = Auth().currentUser?.uid;
-//     await firestore()
-//       .collection('cotton')
-//       .where('uid', '==', userId)
-//       .where('picker', '==', search)
-//       .get()
-//       .then(querySnapshot => {
-//         let arr = [];
-//         querySnapshot.forEach(documentSnapshot => {
-//           arr.push(documentSnapshot.data());
-//         });
-//         resolve(arr);
-//       })
-//       .catch(error => {
-//         reject(new Error(error));
-//       });
-//   });
-// };
+      const deleteLabourLeave = firestore()
+        .collection('labour_leave')
+        .where('uid', '==', userId)
+        .where('labour', '==', name)
+        .get()
+        .then((querySnapshot) => {
+          const deletePromises = [];
+          querySnapshot.forEach((documentSnapshot) => {
+            deletePromises.push(documentSnapshot.ref.delete());
+          });
+          return Promise.all(deletePromises);
+        });
+
+    await Promise.all([deleteLabour, deleteLabourExpense,deleteLabourLeave]);
+  } catch (error) {
+    throw new Error(error);
+  }
+};

@@ -13,6 +13,7 @@ import {getLabourData} from '../../network/labour-service';
 import DateWiseList from '../../container/labour/dateWiseList';
 import {ToastError} from '../../utils/toast';
 import Loader from '../../components/loader';
+import { white } from '../../utils/color';
 
 export default function Labour() {
   const {lang} = useLang();
@@ -58,7 +59,7 @@ export default function Labour() {
   return (
     <BaseView>
       <Loader visible={loading} />
-      <Header
+      {/* <Header
         leftComponent={
           <Button
             label={strings.add_labour}
@@ -73,9 +74,25 @@ export default function Labour() {
             onPress={() => navigate('AddLabourExpense')}
           />
         }
-      />
-      <Text h2>{strings.labour_record}</Text>
+      /> */}
+      
+      <Text h3 style={{ paddingBottom: 10, textAlign: 'center' }}>
+        {strings.labour_record}</Text>
       <DateWiseList data={data} />
+      <Button
+            iconName="plus"
+            iconColor={white}
+            label={strings.add_labour}
+            btnStyle={{
+              width: '40%',
+              height: 50,
+              position: 'absolute',
+              bottom: 20,
+              right: 30,
+              zIndex: 999,
+            }}
+            onPress={() => navigate('AddLabour')}
+          />
     </BaseView>
   );
 }
