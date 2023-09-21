@@ -1,7 +1,7 @@
 import moment from 'moment';
 
 export const dateFormat = value => {
-  return moment(value).format('DD/MM/YYYY');
+  return moment(value).format('DD/MM/YY');
 };
 export const currentStamp = value => {
   return moment(value).valueOf();

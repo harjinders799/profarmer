@@ -8,8 +8,9 @@ import { currencyFormat } from '../utils/dateformat';
 
 export default function List({ data }) {
   const [rate, setRate] = useState();
+  const [loading, setLoading] = useState(true);
   let arr = [];
-
+  
   if (data.length) {
     let grp = groupBy(data, v => v.giver);
     Object.keys(grp).map(v =>
@@ -43,15 +44,13 @@ export default function List({ data }) {
                 <Text numberOfLines={1} h3 style={{ width: '80%' }}>
                   {item?.giver}
                 </Text>
-                <Text h5>{strings.view}</Text>
-              </View>
-              <View style={styles.row}>
-                <Text numberOfLines={1} h4>
-                  {strings.total_principal}
-                </Text>
-                <Text numberOfLines={1} h4>
+                {/* <Text h5>{strings.view}</Text> */}
+                 <Text numberOfLines={1} h4>
                   {currencyFormat(item?.total)}
                 </Text>
+              </View>
+              <View style={styles.row}>
+               
               </View>
             </TouchableOpacity>
           </View>

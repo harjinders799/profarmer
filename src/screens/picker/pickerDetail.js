@@ -1,44 +1,59 @@
-import { View, StyleSheet, TouchableOpacity, Modal, ScrollView } from 'react-native';
-import React, { useCallback, useEffect, useState } from 'react';
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  Modal,
+  ScrollView,
+} from 'react-native';
+import React, {useCallback, useEffect, useState} from 'react';
 import BaseView from 'src/container/base';
 import Text from 'src/components/text';
-import { white } from 'src/utils/color';
-import { useFocusEffect, useRoute, useTheme } from '@react-navigation/native';
+import {white} from 'src/utils/color';
+import {useFocusEffect, useRoute, useTheme} from '@react-navigation/native';
 import Header from '../../components/header';
 import Icon from '../../components/icon';
-import { goBack } from '../../navigation/ref';
+import {goBack} from '../../navigation/ref';
 import Loader from 'src/components/loader';
-import { strings } from 'src/translations/locale';
-import { ToastError } from '../../utils/toast';
-import { deletePickerCollection } from '../../network/picker-service';
-import { green, red, greenDark, gray4 } from '../../utils/color';
-import { currencyFormat, dateFormat } from '../../utils/dateformat';
+import {strings} from 'src/translations/locale';
+import {ToastError} from '../../utils/toast';
+import {deletePickerCollection} from '../../network/picker-service';
+import {
+  green,
+  red,
+  greenDark,
+  gray4,
+  lightBlue,
+  lightGreen,
+  lightOrange,
+  lightGrey,
+} from '../../utils/color';
+import {currencyFormat, dateFormat} from '../../utils/dateformat';
 import PickerDetailAction from '../../container/picker/pickerDetailAction';
 import PickerExpenseDetail from '../../container/picker/pickerExpenseDetail';
-import { navigate } from '../../navigation/ref';
+import {navigate} from '../../navigation/ref';
 import Button from '../../components/button';
 import Input from 'src/components/input';
-import { sortBy, sumBy } from 'lodash';
+import {sortBy, sumBy} from 'lodash';
 import moment from 'moment';
-import { useCotton } from '../../context/cottonContext';
-import { deletePickerNameWise } from '../../sql';
+import {useCotton} from '../../context/cottonContext';
+import {deletePickerNameWise} from '../../sql';
 import auth from '@react-native-firebase/auth';
 import RNFS from 'react-native-fs';
 import RNHTMLtoPDF from 'react-native-html-to-pdf';
-import { useAuth } from '../../context/authContext';
-import { useLang } from 'src/context/langContext';
+import {useAuth} from '../../context/authContext';
+import {useLang} from 'src/context/langContext';
 import Share from 'react-native-share';
 
 const transparent = 'rgba(0,0,0,0.5)';
 
-export default function PickerDetail({ navigation }) {
-  const { params } = useRoute();
-  const { user } = useAuth();
-  const { colors } = useTheme();
+export default function PickerDetail({navigation}) {
+  const {params} = useRoute();
+  const {user} = useAuth();
+  const {colors} = useTheme();
   const [loading, setLoading] = useState(false);
   const data = params?.item ?? [];
   const [rate, setRate] = useState();
-  const { lang } = useLang();
+  const {lang} = useLang();
 
   const {
     db,
@@ -114,9 +129,9 @@ export default function PickerDetail({ navigation }) {
               <Loader visible={loading} />
               <Button
                 label={strings.delete}
-                btnStyle={{ width: '40%', backgroundColor: red }}
+                btnStyle={{width: '40%', backgroundColor: red}}
                 size={30}
-                style={{ color: red, display: __DEV__ ? 'flex' : 'none' }}
+                style={{color: red, display: __DEV__ ? 'flex' : 'none'}}
                 onPress={async () => {
                   try {
                     setLoading(true);
@@ -135,11 +150,11 @@ export default function PickerDetail({ navigation }) {
                     ToastError(error?.message);
                   }
                 }}
-              // type="MaterialCommunityIcons"
+                // type="MaterialCommunityIcons"
               />
               <Button
                 label={strings.cancel}
-                btnStyle={{ width: '40%', backgroundColor: gray4 }}
+                btnStyle={{width: '40%', backgroundColor: gray4}}
                 size={30}
                 onPress={() => setopenModal(false)}
               />
@@ -195,12 +210,13 @@ td {
     )}</h3>
       </div>
       <div>
-      <h3>${strings.total_amount} (${strings.weight}*${strings.enter_rate}):  ${currencyFormat(
+      <h3>${strings.total_amount} (${strings.weight}*${
+      strings.enter_rate
+    }):  ${currencyFormat(
       sumBy(
         pickerData,
         o =>
-          parseFloat(o.weight) *
-          (rate ? parseFloat(rate) : parseFloat(o.rate)),
+          parseFloat(o.weight) * (rate ? parseFloat(rate) : parseFloat(o.rate)),
       ),
     )}</h3>
               <h3>${strings.final}: ${currencyFormat(
@@ -221,21 +237,21 @@ td {
               <th style="width:30%">${strings.remark}</th>
           </tr>
          ${pickerData.map(record =>
-      record?.weight == '0'
-        ? null
-        : `<tr>
+           record?.weight == '0'
+             ? null
+             : `<tr>
               <td style="width:15%">${dateFormat(record?.date)}</td>
               <td style="width:15%">${record?.picker}</td>
               <td style="width:10%">${currencyFormat(
-          rate ? parseFloat(rate) : record?.rate,
-        )}</td>
+                rate ? parseFloat(rate) : record?.rate,
+              )}</td>
               <td style="width:10%">${record?.weight}Kg</td>
               <td style="width:15%">${currencyFormat(
-          (rate ? parseFloat(rate) : record?.rate) * record?.weight,
-        )}</td>
+                (rate ? parseFloat(rate) : record?.rate) * record?.weight,
+              )}</td>
               <td style="width:30%">${record?.detail}</td>
           </tr>`,
-    )}
+         )}
       </table>
 
       <h2>${strings.pickers_amounts}</h2>
@@ -247,14 +263,14 @@ td {
               <th>${strings.remark}</th>
           </tr>
           ${pickerExpenseData.map(
-      amount =>
-        `<tr>
+            amount =>
+              `<tr>
               <td id="date">${dateFormat(amount?.date)}</td>
               <td>${amount?.picker}</td>
               <td>${currencyFormat(amount?.amount)}</td>
               <td>${amount?.detail}</td>
           </tr>`,
-    )}
+          )}
       </table>
   </body>
 </html>
@@ -281,16 +297,16 @@ td {
   };
 
   return (
-    <BaseView style={{ paddingHorizontal: 0 }}>
+    <BaseView style={{paddingHorizontal: 0}}>
       <Loader visible={loading} />
       <Header
         style={styles.header}
         leftComponent={
-          <View style={{ flexDirection: 'row' }}>
+          <View style={{flexDirection: 'row'}}>
             <Icon
               name="back"
               size={28}
-              style={{ color: white, marginRight: 5 }}
+              style={{color: white, marginRight: 5}}
               onPress={() => goBack()}
             />
             {/* <Icon
@@ -303,12 +319,12 @@ td {
           </View>
         }
         centerComponent={
-          <Text h2 numberOfLines={1} style={{ width: '50%', color: white }}>
+          <Text h2 numberOfLines={1} style={{width: '50%', color: white}}>
             {data?.picker}
           </Text>
         }
         rightComponent={
-          <View style={{ flexDirection: 'row' }}>
+          <View style={{flexDirection: 'row'}}>
             {/* <Icon
               name="search1"
               color={white}
@@ -344,19 +360,19 @@ td {
       />
 
       <ScrollView
-        style={{ width: '100%' }}
-        contentContainerStyle={{ paddingBottom: 150, paddingHorizontal: 20 }}
+        style={{width: '100%'}}
+        contentContainerStyle={{paddingBottom: 150, paddingHorizontal: 20}}
         showsVerticalScrollIndicator={false}>
         <View style={[styles.row]}>
           {/* <View style={{ width: '45%' }}> */}
-          <View style={[styles.card, { backgroundColor: '#bbdffc' }]}>
-            <Text h2 style={{ fontWeight: 'bold' }}>
+          <View style={[styles.card, {backgroundColor: lightBlue}]}>
+            <Text h2 style={{fontWeight: 'bold'}}>
               {sumBy(pickerData, o => parseFloat(o.weight))} Kg
             </Text>
             <Text h3>{strings.total_weight}</Text>
           </View>
-          <View style={[styles.card, { backgroundColor: '#ffccaa' }]}>
-            <Text h2 style={{ fontWeight: 'bold' }}>
+          <View style={[styles.card, {backgroundColor: lightOrange}]}>
+            <Text h2 style={{fontWeight: 'bold'}}>
               {currencyFormat(
                 sumBy(
                   pickerData,
@@ -367,8 +383,8 @@ td {
             </Text>
             <Text h3>{strings.total_amount}</Text>
           </View>
-          <View style={[styles.card, { backgroundColor: '#bee8ba' }]}>
-            <Text h2 style={{ fontWeight: 'bold' }}>
+          <View style={[styles.card, {backgroundColor: lightGreen}]}>
+            <Text h2 style={{fontWeight: 'bold'}}>
               -{' '}
               {currencyFormat(
                 sumBy(pickerExpenseData, o => parseFloat(o.amount)),
@@ -379,7 +395,7 @@ td {
           {/* </View> */}
           {/* <View style={{ width: '45%', justifyContent: 'flex-end', alignSelf: 'flex-end' }}>
             <Text h3>{'Baki dene hai '}</Text> */}
-          <View style={[styles.card, { backgroundColor: '#e5e5e5' }]}>
+          <View style={[styles.card, {backgroundColor: lightGrey}]}>
             <Text
               h2
               style={{
@@ -403,13 +419,13 @@ td {
                   setValue={v => {
                     if (!isNaN(v)) setRate(v);
                   }}
-                  style={{ width: '60%', height: 40, marginTop: 10 }}
-                  inputStyle={{ padding: 5 }}
+                  style={{width: '60%', height: 40, marginTop: 10}}
+                  inputStyle={{padding: 5}}
                   keyboardType="numeric"
                 />
                 <Button
                   label={strings.apply}
-                  btnStyle={{ width: '30%' }}
+                  btnStyle={{width: '30%'}}
                   size={30}
                 />
                 {/* <Button
@@ -428,9 +444,9 @@ td {
             {strings.picker_record}
           </Text>
           {Array.isArray(pickerData) &&
-            pickerData.length &&
-            !pickerData.every(o => o?.weight == '0' || !o?.weight) &&
-            data?.picker ? (
+          pickerData.length &&
+          !pickerData.every(o => o?.weight == '0' || !o?.weight) &&
+          data?.picker ? (
             sortBy(pickerData, (a, b) => moment(b?.date) - moment(a?.date)).map(
               (v, i) => <PickerDetailAction key={i} data={v} rate={rate} />,
             )
@@ -445,8 +461,8 @@ td {
             {strings.amount}
           </Text>
           {Array.isArray(pickerExpenseData) &&
-            pickerExpenseData.length &&
-            data?.picker ? (
+          pickerExpenseData.length &&
+          data?.picker ? (
             sortBy(
               pickerExpenseData,
               (a, b) => moment(b?.date) - moment(a?.date),
@@ -454,15 +470,15 @@ td {
               <PickerExpenseDetail
                 key={i}
                 data={v}
-              // onPress={async () => {
-              //   if (
-              //     !data?.total &&
-              //     Array.isArray(pickerData) &&
-              //     pickerData.length &&
-              //     pickerExpenseData.length == 1
-              //   )
-              //     await deletePicker(pickerData[0]?.id);
-              // }}
+                // onPress={async () => {
+                //   if (
+                //     !data?.total &&
+                //     Array.isArray(pickerData) &&
+                //     pickerData.length &&
+                //     pickerExpenseData.length == 1
+                //   )
+                //     await deletePicker(pickerData[0]?.id);
+                // }}
               />
             ))
           ) : (
@@ -471,11 +487,11 @@ td {
         </View>
       </ScrollView>
       <Header
-        style={{ paddingHorizontal: 20 }}
+        style={{paddingHorizontal: 20}}
         leftComponent={
           <Button
             label={strings.add_weight}
-            btnStyle={{ width: '40%' }}
+            btnStyle={{width: '40%'}}
             onPress={() =>
               navigate('AddPickerWeight', {
                 data: {
@@ -489,9 +505,9 @@ td {
         rightComponent={
           <Button
             label={strings.add_expense}
-            btnStyle={{ width: '40%' }}
+            btnStyle={{width: '40%'}}
             onPress={() =>
-              navigate('AddPickerExpense', { data: { picker: data?.picker } })
+              navigate('AddPickerExpense', {data: {picker: data?.picker}})
             }
           />
         }

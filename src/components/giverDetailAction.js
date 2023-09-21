@@ -1,23 +1,24 @@
-import { View, StyleSheet, Alert } from 'react-native';
+import {View, StyleSheet, TouchableOpacity, Alert} from 'react-native';
 import React from 'react';
 import Icon from './icon';
 import Text from './text';
-import { orange, red } from 'src/utils/color';
-import { navigate, replace } from 'src/navigation/ref';
-import { strings } from 'src/translations/locale';
-import { ToastError, ToastSuccess } from 'src/utils/toast';
+import {orange, red} from 'src/utils/color';
+import {navigate, replace} from 'src/navigation/ref';
+import {strings} from 'src/translations/locale';
+import {ToastError, ToastSuccess} from 'src/utils/toast';
 import Loader from './loader';
-import { dateFormat } from 'src/utils/dateformat';
-import { useTheme } from '@react-navigation/native';
+import {dateFormat} from 'src/utils/dateformat';
+import {useTheme} from '@react-navigation/native';
 import moment from 'moment';
-import { deleteIneterstAmt } from 'src/network/interest-service';
-import { currencyFormat } from '../utils/dateformat';
-import { goBack } from '../navigation/ref';
-import { gray3, white } from '../utils/color';
+import {deleteIneterstAmt} from 'src/network/interest-service';
+import {currencyFormat} from '../utils/dateformat';
+import {goBack} from '../navigation/ref';
+import {gray3, green, lightGreen, lightOrange, white} from '../utils/color';
+import {ScrollView} from 'react-native-gesture-handler';
 
-export default function GiverDetailAction({ data }) {
+export default function GiverDetailAction({data}) {
   const [loading, setLoading] = React.useState(false);
-  const { colors } = useTheme();
+  const {colors} = useTheme();
   const delteData = async () => {
     Alert.alert(
       `${data?.amount} Rs`,
@@ -37,10 +38,10 @@ export default function GiverDetailAction({ data }) {
           text: 'No',
         },
       ],
-      { cancelable: true },
+      {cancelable: true},
     );
   };
-  let date = moment(data?.date).format("YYYY-MM-DD");
+  let date = moment(data?.date).format('YYYY-MM-DD');
   let start_date = moment(date);
   let today = moment();
   let days = today.diff(start_date, 'days');
@@ -51,85 +52,77 @@ export default function GiverDetailAction({ data }) {
   ).toFixed(2);
   let final_amount = parseFloat(data?.amount) + parseFloat(interest);
   return (
-    <View style={[styles.list, { backgroundColor: white }]}>
-      <Loader visible={loading} />
-      <View style={styles.row}>
-        <Text h3 numberOfLines={1}>
-          {dateFormat(data?.date)}
-        </Text>
-        <Text h3 numberOfLines={1}>
-          {days} {strings.day}
-        </Text>
+    <ScrollView style={{width: '100%'}}>
+      <View style={styles.list}>
+        <TouchableOpacity onPress={() => navigate('GiverUpdate', {data})}>
+          <Loader visible={loading} />
+
+          <View style={styles.row}>
+            <Text
+              h4
+              style={{ width: '24%'}}
+              numberOfLines={1}>
+              {dateFormat(data?.date)}
+            </Text>
+            <Text
+              style={{
+                
+                width: '11%',
+                textAlign: 'center',
+              }}
+              h4>
+              {days}
+            </Text>
+            {/* <Text h4>{currencyFormat(data?.amount)}</Text> */}
+            <Text
+              style={{ width: '26%', textAlign: 'right'}}
+              h4>
+              {currencyFormat(interest)}
+            </Text>
+            <Text
+              style={{ width: '33%', textAlign: 'right'}}
+              h4>
+              {currencyFormat(final_amount)}
+            </Text>
+          </View>
+          <Text h4>{data?.detail}</Text>
+        </TouchableOpacity>
       </View>
-      <View style={styles.row}>
-        <Text h3>{strings.total_principal}</Text>
-        <Text h3>{currencyFormat(data?.amount)}</Text>
-      </View>
-      <View style={styles.row}>
-        <Text h3>{strings.total_interest}</Text>
-        <Text h3>{currencyFormat(interest)}</Text>
-      </View>
-      <View style={styles.row}>
-        <Text h3>{strings.total_amount}</Text>
-        <Text h3>{currencyFormat(final_amount)}</Text>
-      </View>
-      <Text h4 style={{ textAlign: 'center', paddingTop: 20 }}>
-        {strings.remark}
-      </Text>
-      <Text h4>{data?.detail}</Text>
-      <View style={styles.icons}>
-        <Icon
-          name="delete"
-          size={20}
-          color={red}
-          style={[styles.icon, { backgroundColor: gray3 }]}
-          onPress={delteData}
-        />
-        <Icon
-          name="edit"
-          size={20}
-          color={orange}
-          style={[styles.icon, { backgroundColor: gray3 }]}
-          onPress={() => replace('AddForm', { data })}
-        />
-      </View>
-    </View>
+    </ScrollView>
   );
 }
 const styles = StyleSheet.create({
   list: {
-    elevation: 3,
-    width: '98%',
-    padding: 20,
-    marginTop: 30,
-    borderRadius: 10,
-    borderWidth: 1,
+    marginVertical: 10,
+    width: '100%',
+    // borderBottomWidth: 0.3,
+    // borderBottomColor: "grey"
   },
   row: {
-    // width: '70%',
-    // marginRight: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginVertical: 5,
-    borderBottomWidth: 1,
-    paddingVertical: 10,
-    borderStyle: 'dotted',
-  },
-  icons: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    alignSelf: 'center',
     width: '100%',
+    marginRight: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
     justifyContent: 'space-between',
-    position: 'absolute',
-    top: -20,
+    // marginVertical: 5,
+    // borderBottomWidth: 1,
+    // paddingVertical: 10,
+    // borderStyle: 'dotted',
   },
-  icon: {
-    elevation: 3,
-    padding: 10,
-    borderRadius: 20,
-  },
+  // icons: {
+  //   flexDirection: 'row',
+  //   alignItems: 'center',
+  //   alignSelf: 'center',
+  //   width: '100%',
+  //   justifyContent: 'space-between',
+  //   position: 'absolute',
+  //   top: -20,
+  // },
+  // icon: {
+  //   elevation: 3,
+  //   padding: 10,
+  //   borderRadius: 20,
+  // },
   picker: {
     width: '55%',
   },

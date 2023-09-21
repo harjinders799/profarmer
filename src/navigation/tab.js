@@ -8,7 +8,7 @@ import LabourStack from './labourStack';
 import SettingStack from './settingStack';
 import CottonStack from './cottonStack';
 import AnimatedTabBar from './animateTab';
-import { darkOrange, greenDark, white } from '../utils/color';
+import { darkOrange, green, greenDark, skyBlue, white } from '../utils/color';
 import { strings } from '../translations/locale';
 import { useLang } from '../context/langContext';
 import CropStack from './cropStack';
@@ -66,7 +66,7 @@ export default function Tabs() {
     <Tab.Navigator
       // tabBar={props => <AnimatedTabBar {...props} />}
       screenOptions={{
-        tabBarActiveTintColor: greenDark,
+        tabBarActiveTintColor: skyBlue,
         tabBarInactiveTintColor: white,
         headerShown: false,
         tabBarHideOnKeyboard: true,
