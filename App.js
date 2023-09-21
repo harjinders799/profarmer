@@ -34,7 +34,7 @@ export default function App() {
   };
   return (
     <SafeAreaProvider>
-      <Modal
+      {/* <Modal
         visible={(version?.needsUpdate ? true : false) && visible}
         setModalVisible={() => setVisible(false)}
         ratioHeight={0.9}>
@@ -46,7 +46,7 @@ export default function App() {
           <Text h3>{strings.new_version}</Text>
           <Button label="Update" onPress={update} />
         </View>
-      </Modal>
+      </Modal> */}
       <AuthProvider>
         <StoreProvider>
           <CottonProvider>

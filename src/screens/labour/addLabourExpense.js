@@ -125,6 +125,7 @@ export default function AddLabourExpense() {
     <BaseView style={styles.container}>
       <Loader visible={loading} />
       <Header
+      style={{marginTop:10 }}
         leftComponent={
           <Icon
             name="back"
@@ -133,11 +134,12 @@ export default function AddLabourExpense() {
             onPress={() => goBack()}
           />
         }
-        centerComponent={<Text h2>{strings.add_expense}</Text>}
+        centerComponent={<Text h2>{data.labour}</Text>}
         rightComponent={<Text h2> </Text>}
       />
       <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
         <View style={styles.form}>
+          <Text style={styles.text}>{strings.labour_name}</Text>
           <DataPicker
             data={labours}
             intialVisible={!editData?.labour}
@@ -147,6 +149,7 @@ export default function AddLabourExpense() {
               onChangeValue('labour', val);
             }}
           />
+          <Text style={styles.text}>{strings.given_amount_to_labour}</Text>
           <Input
             refs={refAmt}
             placeholder={strings.given_amount_to_labour}
@@ -154,6 +157,7 @@ export default function AddLabourExpense() {
             keyboardType="number-pad"
             setValue={value => onChangeValue('amount', value)}
           />
+          <Text style={styles.text}>{strings.remark}</Text>
           <Input
             placeholder={strings.remark}
             multiline
@@ -161,6 +165,7 @@ export default function AddLabourExpense() {
             value={detail}
             setValue={value => onChangeValue('detail', value)}
           />
+          <Text style={styles.text}>{strings.date}</Text>
           <TouchableOpacity
             style={[styles.date, { borderColor: gray3 }]}
             onPress={() => setShowDate(true)}>
@@ -201,5 +206,8 @@ const styles = StyleSheet.create({
   form: {
     paddingVertical: 25,
     width: '100%',
+  },
+  text:{
+    marginTop:10,
   },
 });
