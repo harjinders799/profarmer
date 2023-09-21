@@ -49,7 +49,7 @@ export default function Picker({ navigation }) {
   );
   const getData = async () => {
     try {
-      console.log(pickerWeight.length, '-=-=-=-=-=-=-=-=-=----');
+      // console.log(pickerWeight.length, '-=-=-=-=-=-=-=-=-=----');
       await createCottonPriceTable(db);
       await createPickerTable(db);
       await createPickerExpenseTable(db);

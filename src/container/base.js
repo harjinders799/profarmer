@@ -6,6 +6,8 @@ import Icon from 'src/components/icon';
 import { orange } from 'src/utils/color';
 import { commonStyle } from 'src/utils/style';
 import { darkOrange, green, white } from '../utils/color';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { WIDTH, isIOS } from '../utils/constant';
 
 const BaseView = ({ style, addBtn, onPress, children }) => {
   const { colors } = useTheme();
@@ -18,7 +20,13 @@ const BaseView = ({ style, addBtn, onPress, children }) => {
         { backgroundColor: white },
         style,
       ]}>
-      <StatusBar backgroundColor={green} barStyle="light-content" />
+      {isIOS ? (
+        <View style={{ backgroundColor: green, height: 50, width: WIDTH }} >
+          <StatusBar backgroundColor={green} barStyle="light-content" />
+        </View>
+      ) : (
+        <StatusBar backgroundColor={green} barStyle="light-content" />
+      )}
       {children}
       {addBtn ? (
         <TouchableOpacity
@@ -28,12 +36,7 @@ const BaseView = ({ style, addBtn, onPress, children }) => {
             { backgroundColor: colors.primary },
           ]}
           onPress={onPress}>
-          <Icon
-            name="plus"
-            size={30}
-            color={white}
-            onPress={onPress}
-          />
+          <Icon name="plus" size={30} color={white} onPress={onPress} />
         </TouchableOpacity>
       ) : null}
 

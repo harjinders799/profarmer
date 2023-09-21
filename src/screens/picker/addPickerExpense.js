@@ -28,7 +28,7 @@ import { useCotton } from '../../context/cottonContext';
 import Text from '../../components/text';
 import { savePickerExpenseData, updatePickerExpenseData } from '../../sql';
 import auth from '@react-native-firebase/auth';
-import { gray3 } from '../../utils/color';
+import { gray10, gray3 } from '../../utils/color';
 
 export default function AddPickerExpense() {
   const { colors } = useTheme();
@@ -163,6 +163,7 @@ export default function AddPickerExpense() {
         }}
       /> */}
         <Input
+        label={strings.given_amount}
           refs={refAmt}
           autoFocus
           placeholder={strings.given_amount_to_picker}
@@ -171,12 +172,21 @@ export default function AddPickerExpense() {
           setValue={value => onChangeValue('amount', value)}
         />
         <Input
+        label={strings.remark}
           placeholder={strings.remark}
           multiline
           autoCapitalize="words"
           value={detail}
           setValue={value => onChangeValue('detail', value)}
         />
+        <Text
+              style={{
+                color: gray10,
+                fontSize: 18,
+                paddingTop: 5,
+              }}>
+              {strings.date}
+            </Text>
         <TouchableOpacity
           style={[styles.date, { borderColor: gray3 }]}
           onPress={() => setShowDate(true)}>

@@ -1,4 +1,4 @@
-import { deleteDatabase, enablePromise, openDatabase } from "react-native-sqlite-storage";
+ import { deleteDatabase, enablePromise, openDatabase } from "react-native-sqlite-storage";
 import { COTTON_PRICE_TABLE, PCIKER_TABLE, PICKER_EXPENSE_TABLE, } from "./tabels";
 
 enablePromise(true);
