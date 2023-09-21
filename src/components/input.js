@@ -18,7 +18,7 @@ const Input = ({
   iconType = 'AntDesign',
   multiline = false,
   leftComponent = null,
-  rightComponent=null,
+  rightComponent = null,
   placeholder,
   placeholderColor,
   ...props
@@ -49,13 +49,13 @@ const Input = ({
         }
         placeholderTextColor={placeholderColor ?? gray3}
       />
-       {rightComponent}
+      {rightComponent}
     </View>
   );
 };
 const styles = StyleSheet.create({
   container: {
-    // height: 50,
+    height: 50,
     width: '100%',
     flexDirection: 'row',
     alignItems: 'center',

@@ -40,7 +40,7 @@ export const AuthProvider = props => {
                         if (user.exists) {
                             dispatch({ type: 'USER', user: user.data() });
                         } else {
-                            console.log(Auth().currentUser);
+                            // console.log(Auth().currentUser);
                             let data = {
                                 name: Auth().currentUser?.displayName,
                                 phone: Auth().currentUser?.phoneNumber,
@@ -56,9 +56,9 @@ export const AuthProvider = props => {
                 }
             },
             reset: () => {
-                console.log('reset')
+                // console.log('reset')
                 deleteDBConnectionDB().then(res => {
-                    console.log('reset', res, '-----')
+                    // console.log('reset', res, '-----')
                     auth()
                         .signOut()
                         .then(async () => {

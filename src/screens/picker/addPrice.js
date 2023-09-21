@@ -44,7 +44,7 @@ export default function AddPrice() {
   const [showDate, setShowDate] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const { commodity, market, date, maxPrice, minPrice, aavak } = data;
-  console.log(editData)
+  // console.log(editData)
   const onChangeValue = (key, value) => {
     setData({
       ...data,
