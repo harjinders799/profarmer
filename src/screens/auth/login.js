@@ -45,7 +45,7 @@ const Login = ({ navigation }) => {
     }, 1000);
     return () => clearTimeout(timer);
   }, [canResendOtp, time]);
-  console.log(time, time > 0);
+  // console.log(time, time > 0);
   // useEffect(() => {
   // try {
   //   getOtp()

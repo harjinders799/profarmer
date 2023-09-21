@@ -1,45 +1,46 @@
-import { Alert, StyleSheet, TouchableOpacity, View } from 'react-native';
-import React, { useCallback } from 'react';
+import { View, StyleSheet, Alert, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState } from 'react';
 import Icon from '../../components/icon';
-import {
-    white,
-} from '../../utils/color';
-import { ToastError, ToastSuccess } from '../../utils/toast';
-import { deletePickerData, savePickerData, updatePickerData } from '../../sql';
-import { useCotton } from '../../context/cottonContext';
-import { deletePicker } from '../../network/picker-service';
-import Loader from '../../components/loader';
-import { useFocusEffect, useRoute, useTheme } from '@react-navigation/native';
-import { goBack, navigate, replace } from '../../navigation/ref';
-import Text from '../../components/text';
-import { currencyFormat, currentStamp, dateFormat } from '../../utils/dateformat';
+import Text from 'src/components/text';
+import BaseView from 'src/container/base';
+import { orange, red } from 'src/utils/color';
+import { replace } from 'src/navigation/ref';
+import { strings } from 'src/translations/locale';
+import { ToastError, ToastSuccess } from 'src/utils/toast';
+import Loader from 'src/components/loader';
+import { dateFormat } from 'src/utils/dateformat';
+import { useRoute, useTheme } from '@react-navigation/native';
+import { deleteLabour, getLabourExpense } from '../../network/labour-service';
+import { gray2, green, white } from '../../utils/color';
+import { currencyFormat } from '../../utils/dateformat';
+import { goBack } from '../../navigation/ref';
 import Header from '../../components/header';
 import Button from '../../components/button';
-import { strings } from '../../translations/locale';
-import BaseView from 'src/container/base';
 
-export default function PickerUpdate() {
+export default function LabourUpdate() {
+    const [loading, setLoading] = React.useState(false);
+    const { colors } = useTheme();
     const { params } = useRoute();
     const data = params?.data ?? {};
-    const [loading, setLoading] = React.useState(false);
-    const { db, getPickerWeight } =
-        useCotton();
+    const { db, getLabour } = useState();
 
     const delteData = async () => {
         Alert.alert(
-            strings.weight,
-            `${strings.delete_wt} ${data?.weight}Kg`,
+            // strings.labour,
+            // `${strings.delete_wt} ${(data, rate?.labour)}`,
+            `${data.count} ${strings.labour}`,
+            `${strings.delete_wt}`,
             [
                 {
                     text: 'Yes',
                     onPress: async () => {
                         setLoading(true);
-                        await deletePickerData(db, data);
-                        if (data?.fid) await deletePicker(data?.fid);
-                        getPickerWeight();
+                        await deleteLabour(data?.id);
+                        // if ((data, rate?.fid)) await deleteLabour(data, rate?.fid);
+                        // getLabour();
                         setLoading(false);
-                        ToastSuccess(strings.weight_delete, 'Weight');
-                        goBack()
+                        ToastSuccess(strings.labour_deleted, strings.labour);
+                        goBack();
                     },
                 },
                 {
@@ -49,18 +50,17 @@ export default function PickerUpdate() {
             { cancelable: true },
         );
     };
-
     return (
         <BaseView style={styles.container}>
             <View
-                style={[styles.list, { display: data?.weight != 0 ? 'flex' : 'none' }]}>
+                style={[styles.list, { backgroundColor: white }]}>
                 <Loader visible={loading} />
                 <Header
                     style={{ marginTop: 10 }}
                     leftComponent={
                         <Icon name="back" size={28} onPress={() => goBack()} />
                     }
-                    centerComponent={<Text h2>{data.picker}</Text>}
+                    centerComponent={<Text h2>{data.labour}</Text>}
                     rightComponent={<Text h2> </Text>}
                 />
                 <View style={[styles.row]}>
@@ -69,31 +69,29 @@ export default function PickerUpdate() {
                     </Text>
                     <View style={[styles.card, { backgroundColor: '#bbdffc' }]}>
                         <Text h3 style={{ fontWeight: 'bold' }}>
-                            {' '}
-                            {strings.weight}
+                        {' ' + strings.labour}
                         </Text>
                         <Text h3 numberOfLines={1} style={{ fontWeight: 'bold' }}>
-                            {data?.weight}kg
+                            {data?.count}
                         </Text>
                     </View>
                     <View style={[styles.card, { backgroundColor: '#ffccaa' }]}>
                         <Text h3 style={{ fontWeight: 'bold' }}>
-                            {strings.enter_rate}
-                        </Text>
+                            {strings.labour_rate}</Text>
                         <Text h3 numberOfLines={1} style={{ fontWeight: 'bold' }}>
-                            {currencyFormat(data?.rate)}
-                        </Text>
+                            {currencyFormat(data?.rate)}</Text>
                     </View>
-                    <View style={[styles.card, { backgroundColor: '#bee8ba' }]}>
-                        <Text h3 style={{ fontWeight: 'bold' }}>
-                            {' '}
-                            {strings.total_amount}
-                        </Text>
-                        <Text h3 style={{ fontWeight: 'bold' }}>
-                            {currencyFormat(parseFloat(data.weight) * parseFloat(data.rate))}
-                        </Text>
-                    </View>
-                    <View style={[styles.card, { backgroundColor: '#e5e5e5' }]}>
+                    {!data?.is_regulare ? (
+                        <View style={[styles.card, { backgroundColor: '#bee8ba' }]}>
+                            <Text h3 style={{ fontWeight: 'bold' }}>
+                                {strings.total_labour}
+                            </Text>
+                            <Text h3 style={{ fontWeight: 'bold' }}>
+                                {currencyFormat(parseFloat(data?.rate) * parseFloat(data?.count))}
+                            </Text>
+                        </View>
+                    ) : null}
+                    <View style={[styles.card, { backgroundColor: '#bbdffc' }]}>
                         <Text h3 style={{ fontWeight: 'bold' }}>
                             {strings.date}
                         </Text>
@@ -119,13 +117,13 @@ export default function PickerUpdate() {
                     </View>
                 </View>
                 <View style={styles.icons}>
-                    <Button
+                <Button
                         iconName="edit"
                         iconColor={white}
                         btnStyle={{
                             width: '40%',
                         }}
-                        onPress={() => replace('AddPickerWeight', { data })}
+                        onPress={() => replace('AddLabour', { data })}
                     />
                     <Button
                         iconName="delete"
@@ -140,7 +138,6 @@ export default function PickerUpdate() {
         </BaseView>
     );
 }
-
 const styles = StyleSheet.create({
     icons: {
         flexDirection: 'row',

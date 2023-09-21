@@ -10,7 +10,7 @@ import { useLang } from 'src/context/langContext';
 import Header from 'src/components/header';
 import LanguagePicker from 'src/components/languagePicker';
 import { getInterstAmount } from 'src/network/interest-service';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect , useIsFocused} from '@react-navigation/native';
 import { groupBy, sumBy } from 'lodash';
 import moment from 'moment';
 import { strings } from 'src/translations/locale';
@@ -20,14 +20,24 @@ import Loader from '../../components/loader';
 import { ToastError } from '../../utils/toast';
 import Button from '../../components/button';
 import { navigate } from '../../navigation/ref';
+import Detail from 'src/screens/dashboard/detail';
+import AddForm from 'src/screens/dashboard/addForm';
+import Icon from '../../components/icon';
+import { gray10 } from '../../utils/color';
+import { currencyFormat } from '../../utils/dateformat';
 
 export default function DashBoard({ navigation }) {
   const { lang } = useLang();
   const { givers, setGivers } = useStore();
   const [active, setActive] = useState('date');
   const [loading, setLoading] = useState(true);
-  const [data, setData] = useState([]);
+  const [data, setData] = useState([]); 
+   const isFocused = useIsFocused();
   let arr = [];
+
+  const [interest, setInterest] = useState(0);
+
+  const [isTextVisible, setTextVisible] = useState(false)
 
   useFocusEffect(
     useCallback(() => {
@@ -41,9 +51,10 @@ export default function DashBoard({ navigation }) {
       if (Array.isArray(res) && res.length) {
         setData(res);
       } else setData([]);
-      setLoading(false);
+      setLoading(false);   
+
     } catch (error) {
-      ToastError(error?.message, 'Labour');
+      ToastError(error?.message, 'Picker');
       setLoading(false);
     }
   };
@@ -56,7 +67,8 @@ export default function DashBoard({ navigation }) {
         total: sumBy(grp[v], o => parseInt(o.amount)),
         data: grp[v],
       }),
-    );
+    );     
+
   }
   useEffect(() => {
     if (
@@ -66,7 +78,7 @@ export default function DashBoard({ navigation }) {
       Array.isArray(data) &&
       data.length
     ) {
-      let pick = [];
+      let pick = []; 
       data.map(v => {
         if (pick.indexOf(v?.giver) === -1) pick.push(v?.giver);
       });
@@ -74,6 +86,7 @@ export default function DashBoard({ navigation }) {
     }
   }, [data]);
 
+  
   return (
     <BaseView>
       <Loader visible={loading} />
@@ -104,15 +117,49 @@ export default function DashBoard({ navigation }) {
                     {strings.total_interest} {sumBy(arr, o => o.total)} Rs
                 </Text>
             </View> */}
+
+<View
+        style={{
+          marginTop: 20,
+          width: '100%',
+          alignItem: 'center',
+          flexDirection:"row",
+          justifyContent:"space-between"
+        }}>
+        <Icon
+          name={isTextVisible ? 'eye-slash' : 'eye'}
+          type="FontAwesome"
+          size={25}
+          color={gray10}
+          style={{
+            position: 'relative',
+            zIndex: 99,
+            marginTop:5
+            // display: !isSearchActive ? 'flex' : 'none',
+          }}
+          onPress={() => setTextVisible(!isTextVisible)}
+        />
       <Text
-        h2
-        style={[
-          commonStyle.p_v_10,
-          { borderBottomWidth: StyleSheet.hairlineWidth },
-        ]}>
+         h2
+         style={{ paddingBottom: 10, textAlign: 'center' }}>
         {strings.aadhatiya_hisab}
       </Text>
+      </View>
+      {isTextVisible && (
+            <View
+              style={{
+                width: '100%',
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                borderBottomWidth: 0.5,
+                marginVertical: 10,
+              }}>
+               <Text h3>{strings.total_amount}</Text>
+            <Text h3> {sumBy(arr, o => o.total)} Rs</Text>
+          </View>
+          )}
       <List data={data} />
+      
     </BaseView>
   );
 }

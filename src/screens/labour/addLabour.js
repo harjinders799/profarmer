@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { View, StyleSheet, TouchableOpacity, Keyboard, TouchableWithoutFeedback } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Modal, ScrollView } from 'react-native';
+import { Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { useRoute, useTheme } from '@react-navigation/native';
 import Button from 'src/components/button';
 import Input from 'src/components/input';
@@ -25,7 +26,7 @@ import {
 import Header from '../../components/header';
 import Icon from '../../components/icon';
 import { currencyInput } from '../../utils/dateformat';
-import { gray3 } from '../../utils/color';
+import { blue, gray3, black, orange } from '../../utils/color';
 
 export default function AddLabour() {
   const { colors } = useTheme();
@@ -129,11 +130,14 @@ export default function AddLabour() {
             onPress={() => goBack()}
           />
         }
-        centerComponent={<Text h2>{strings.add_labour}</Text>}
+        centerComponent={<Text h2>{data.labour}</Text>}
         rightComponent={<Text h2> </Text>}
       />
-      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}>
+        {/* <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}> */}
         <View style={styles.form}>
+          <Text style={styles.text}>{strings.labour_name}</Text>
           <DataPicker
             data={labours}
             intialVisible={!editData?.labour}
@@ -143,6 +147,7 @@ export default function AddLabour() {
               onChangeValue('labour', val);
             }}
           />
+          <Text style={styles.text}>{strings.labour_count}</Text>
           <Input
             refs={refAmt}
             placeholder={strings.labour_count + ' 1, 2, 3...'}
@@ -150,12 +155,14 @@ export default function AddLabour() {
             keyboardType="number-pad"
             setValue={value => onChangeValue('count', value)}
           />
+          <Text style={styles.text}>{strings.labour_rate}</Text>
           <Input
             placeholder={strings.labour_rate + ' 300, 400...'}
             value={currencyInput(rate)}
             keyboardType="number-pad"
             setValue={value => onChangeValue('rate', value)}
           />
+          <Text style={styles.text}>{strings.remark}</Text>
           <Input
             placeholder={strings.remark}
             multiline
@@ -163,6 +170,7 @@ export default function AddLabour() {
             value={detail}
             setValue={value => onChangeValue('detail', value)}
           />
+          <Text style={styles.text}>{strings.date}</Text>
           <TouchableOpacity
             style={[styles.date, { borderColor: gray3 }]}
             onPress={() => setShowDate(true)}>
@@ -170,11 +178,26 @@ export default function AddLabour() {
               {dateFormat(date)}
             </Text>
           </TouchableOpacity>
-          <Checkbox
+          {/* <Checkbox
             isChecked={is_regulare}
             onPress={() => onChangeValue('is_regulare', !is_regulare)}
             label={strings.is_regular}
-          />
+          /> */}
+          <View style={styles.label}>
+            <Text h3> {strings.is_regular} </Text>
+            <TouchableOpacity
+              style={styles.button} onPress={() => onChangeValue('is_regulare', true)}>
+              <Text h3 style={{ color: data.is_regulare ? blue : black }}>
+                {strings.yes}
+                {/* <Icon name="check" size={10} style={{ color: data.is_regulare ? blue : black }} /> */}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.button} onPress={() => onChangeValue('is_regulare', false)}>
+              <Text h3 style={{ color: data.is_regulare ? black : blue }}>
+                {strings.no} </Text>
+            </TouchableOpacity>
+          </View>
           <DateTimePick
             show={showDate}
             setShow={setShowDate}
@@ -183,7 +206,8 @@ export default function AddLabour() {
           />
           <Button label={strings.save} onPress={onPress} />
         </View>
-      </TouchableWithoutFeedback>
+        {/* </TouchableWithoutFeedback> */}
+      </ScrollView>
     </BaseView>
   );
 }
@@ -208,5 +232,17 @@ const styles = StyleSheet.create({
   form: {
     paddingVertical: 25,
     width: '100%',
+  },
+  text: {
+    // backgroundColor:"pink",
+    marginTop: 5,
+  },
+  label: {
+    flexDirection: "row",
+    width: '100%',
+    alignItems: "center"
+  },
+  button: {
+    marginLeft: 20,
   },
 });

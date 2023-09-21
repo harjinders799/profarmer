@@ -6,10 +6,7 @@ import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 import { strings } from 'src/translations/locale';
 import Button from '../../components/button';
 import { navigate } from '../../navigation/ref';
-import {
-  getAllPickerExpense,
-  getPickerData,
-} from '../../network/picker-service';
+import { getAllPickerExpense, getPickerData } from '../../network/picker-service';
 import DateWiseList from '../../container/picker/dateWiseList';
 import Loader from '../../components/loader';
 import { gray10, red, white } from '../../utils/color';
@@ -26,6 +23,7 @@ import { View } from 'react-native';
 import Icon from '../../components/icon';
 import Search from '../../components/search';
 import SyncLocal from '../../container/picker/syncLocal';
+import { sumBy } from 'lodash';
 
 export default function Picker({ navigation }) {
   const { lang } = useLang();
@@ -40,6 +38,8 @@ export default function Picker({ navigation }) {
 
   const [isSearchActive, setSearchActive] = useState(false);
 
+  const [isTextVisible, setTextVisible] = useState(false);
+
   useFocusEffect(
     useCallback(() => {
       getData();
@@ -49,7 +49,7 @@ export default function Picker({ navigation }) {
   );
   const getData = async () => {
     try {
-      // console.log(pickerWeight, '-=-=-=-=-=-=-=-=-=----')
+      // console.log(pickerWeight.length, '-=-=-=-=-=-=-=-=-=----');
       await createCottonPriceTable(db);
       await createPickerTable(db);
       await createPickerExpenseTable(db);
@@ -87,17 +87,19 @@ export default function Picker({ navigation }) {
         style={{
           marginTop: 20,
           width: '100%',
-          justifyContent: 'space-between',
           alignItem: 'center',
         }}>
         <Icon
-          name="bars"
-          style={{
-            position: 'absolute',
-            display: pickerWeight.length ? 'flex' : 'none',
-          }}
+          name={isTextVisible ? 'eye-slash' : 'eye'}
+          type="FontAwesome"
           size={25}
           color={gray10}
+          style={{
+            position: 'absolute',
+            zIndex: 99,
+            display: !isSearchActive ? 'flex' : 'none',
+          }}
+          onPress={() => setTextVisible(!isTextVisible)}
         />
 
         <Text
@@ -115,6 +117,21 @@ export default function Picker({ navigation }) {
 
       {!isSearchActive && (
         <>
+          {isTextVisible && (
+            <View
+              style={{
+                width: '100%',
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                borderBottomWidth: 0.5,
+                marginVertical: 10,
+              }}>
+              <Text h3>{strings.total_weight}</Text>
+              <Text h2 style={{ fontWeight: 'bold' }}>
+                {sumBy(pickerWeight, o => parseFloat(o.weight))} Kg
+              </Text>
+            </View>
+          )}
           <DateWiseList />
           <Button
             iconName="plus"

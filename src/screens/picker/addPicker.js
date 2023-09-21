@@ -137,12 +137,14 @@ export default function AddPicker() {
       />
       <View style={styles.form}>
         <Input
+        label={strings.name}
           autoFocus
           placeholder={strings.name}
           value={picker}
           setValue={value => onChangeValue('picker', value)}
         />
         <Input
+          label={strings.enter_rate}
           placeholder={strings.enter_rate + '(Rs) 10/10.25/10.50/11...'}
           value={rate}
           setValue={value => onChangeValue('rate', value)}

@@ -23,7 +23,7 @@ import Icon from '../../components/icon';
 import { useCotton } from '../../context/cottonContext';
 import { savePickerData, updatePickerData } from '../../sql';
 import auth from '@react-native-firebase/auth';
-import { gray3 } from '../../utils/color';
+import { gray10, gray3 } from '../../utils/color';
 
 export default function AddPickerWeight() {
   const { colors } = useTheme();
@@ -152,6 +152,7 @@ export default function AddPickerWeight() {
             justifyContent: 'space-between',
           }}>
           <Input
+           label={strings.weight}
             placeholder={strings.weight + '(kg)'}
             value={weight}
             autoFocus
@@ -160,6 +161,7 @@ export default function AddPickerWeight() {
             keyboardType="numeric"
           />
           <Input
+        label={strings.enter_rate}
             placeholder={strings.enter_rate + '(Rs)'}
             value={rate}
             setValue={value => onChangeValue('rate', value)}
@@ -168,12 +170,21 @@ export default function AddPickerWeight() {
           />
         </View>
         <Input
+        label={strings.remark}
           placeholder={strings.remark}
           multiline
           autoCapitalize="words"
           value={detail}
           setValue={value => onChangeValue('detail', value)}
         />
+         <Text
+              style={{
+                color: gray10,
+                fontSize: 18,
+                paddingTop: 5,
+              }}>
+              {strings.date}
+            </Text>
         <TouchableOpacity
           style={[styles.date, { borderColor: gray3 }]}
           onPress={() => setShowDate(true)}>

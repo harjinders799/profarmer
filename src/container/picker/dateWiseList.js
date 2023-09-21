@@ -43,12 +43,12 @@ export default function DateWiseList() {
   const { pickerWeight, pickerExpense, getPickerWeight, getPickerExpense } =
     useCotton();
 
-  useFocusEffect(
-    useCallback(() => {
-      getPickerWeight();
-      getPickerExpense();
-    }, []),
-  );
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     getPickerWeight();
+  //     getPickerExpense();
+  //   }, []),
+  // );
 
   useEffect(() => {
     if (Array.isArray(pickerWeight) && pickerWeight.length) getExpense();

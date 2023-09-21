@@ -16,16 +16,27 @@ import { submitPicker, submitPickerExpense, updatePicker, updatePickerExpense } 
 import AddPrice from '../screens/picker/addPrice';
 import PickerUpdate from '../screens/picker/pickerUpdate';
 import CropUpdate from '../screens/crop/cropUpdate';
+import AboutUs from '../screens/settings/aboutUs';
+import ContactUs from '../screens/settings/contactUs';
+import SalectLanguage from '../screens/settings/salectLanguage';
+import EditProfile from '../screens/settings/editprofile';
+import AddLabourExpense from '../screens/labour/addLabourExpense';
+import AddLabourLeave from '../screens/labour/addLabourLeave';
+import LabourDetail from '../screens/labour/labourDetail';
+import AddLabour from '../screens/labour/addLabour';
+import RegularLabourDetail from '../screens/labour/regularLabourDetail';
+import LabourUpdate from '../screens/labour/labourUpdate';
+import GiverUpdate from '../screens/dashboard/giverUpdate';
 
 const Stack = createNativeStackNavigator();
 
 export default function Stacks() {
-  const { db, pickerWeight, pickerExpense, getPickerWeight, getPickerExpense } =
+  const { db, pickerWeight = [], pickerExpense = [], getPickerWeight, getPickerExpense } =
     useCotton();
   const [isConnected, setisConnected] = useState(false);
 
   useEffect(() => {
-    console.log('Netinfo api');
+    // console.log('Netinfo api');
     const unsubscribe = NetInfo.addEventListener(state => {
       if (state.isConnected && state.isInternetReachable && db) {
         setTimeout(() => {
@@ -36,10 +47,10 @@ export default function Stacks() {
       }
     });
     return () => unsubscribe();
-  }, [db, pickerExpense, pickerWeight]);
+  }, [db, pickerExpense.length == 0, pickerWeight.length == 0]);
 
   useEffect(() => {
-    console.log(isConnected);
+    // console.log(isConnected);
     if (isConnected) fetchData();
   }, [isConnected]);
 
@@ -51,21 +62,23 @@ export default function Stacks() {
           PCIKER_TABLE,
           `WHERE sync='pending'`,
         );
-        console.log(unsyncData.length, '-------wt');
-        let promise = unsyncData.map(async (item, index) => {
-          delete item.sync;
-          let api = item?.fid && item?.fid != '' ? updatePicker : submitPicker
-          let res = await api(item);
-          console.log(res, '--------pick wt');
-          if (res) {
-            await updatePickerId(db, {
-              ...item,
-              fid: res,
-            });
-          }
-        });
-        await Promise.all(promise);
-        getPickerWeight();
+        // console.log(unsyncData.length, '-------wt');
+        if (unsyncData.length) {
+          let promise = unsyncData.map(async (item, index) => {
+            delete item.sync;
+            let api = item?.fid && item?.fid != '' ? updatePicker : submitPicker
+            let res = await api(item);
+            // console.log(res, '--------pick wt');
+            if (res) {
+              await updatePickerId(db, {
+                ...item,
+                fid: res,
+              });
+            }
+          });
+          await Promise.all(promise);
+          getPickerWeight();
+        }
       }
       if (Array.isArray(pickerExpense) && pickerExpense.length) {
         let unsyncData = await getAllItems(
@@ -74,20 +87,22 @@ export default function Stacks() {
           `WHERE sync='pending'`,
         );
         // console.log(unsyncData.length, '-------exp');
-        let promise = unsyncData.map(async (item, index) => {
-          delete item.sync;
-          let api = item?.fid && item?.fid != '' ? updatePickerExpense : submitPickerExpense
-          let res = await api(item);
-          // console.log(res, '--------pick wt');
-          if (res) {
-            await updatePickerExpenseId(db, {
-              ...item,
-              fid: res,
-            });
-          }
-        });
-        await Promise.all(promise);
-        getPickerExpense();
+        if (unsyncData.length) {
+          let promise = unsyncData.map(async (item, index) => {
+            delete item.sync;
+            let api = item?.fid && item?.fid != '' ? updatePickerExpense : submitPickerExpense
+            let res = await api(item);
+            // console.log(res, '--------pick wt');
+            if (res) {
+              await updatePickerExpenseId(db, {
+                ...item,
+                fid: res,
+              });
+            }
+          });
+          await Promise.all(promise);
+          getPickerExpense();
+        }
       }
     } catch (error) {
       console.log(error, '--------');
@@ -95,51 +110,71 @@ export default function Stacks() {
   };
 
   return (
-    <Stack.Navigator>
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen
         name="Main"
         component={Tabs}
-        options={{ headerShown: false }}
       />
       <Stack.Screen
         name="Setting"
         component={Setting}
-        options={{ headerShown: false }}
       />
       <Stack.Screen
         name="AddForm"
         component={AddForm}
-        options={{ headerShown: false }}
       />
       <Stack.Screen
         name="Detail"
         component={Detail}
-        options={{ headerShown: false }}
       />
       <Stack.Screen
         name="AddPicker"
         component={AddPicker}
-        options={{ headerShown: false }}
       />
       <Stack.Screen
         name="AddPickerExpense"
         component={AddPickerExpense}
-        options={{ headerShown: false }}
       />
       <Stack.Screen
         name="AddPickerWeight"
         component={AddPickerWeight}
-        options={{ headerShown: false }}
       />
       <Stack.Screen
         name="PickerDetail"
         component={PickerDetail}
-        options={{ headerShown: false }}
+      />
+       <Stack.Screen
+        name="AddLabour"
+        component={AddLabour}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="AddLabourExpense"
+        component={AddLabourExpense}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="AddLabourLeave"
+        component={AddLabourLeave}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="LabourDetail"
+        component={LabourDetail}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="RegularLabourDetail"
+        component={RegularLabourDetail}
+        options={{headerShown: false}}
       />
       <Stack.Screen
         name="PickerUpdate"
         component={PickerUpdate}
-        options={{ headerShown: false }}
+      />
+       <Stack.Screen
+        name="LabourUpdate"
+        component={LabourUpdate}
       />
       <Stack.Screen
         name="CropUpdate"
@@ -149,8 +184,15 @@ export default function Stacks() {
       <Stack.Screen
         name="AddPrice"
         component={AddPrice}
-        options={{ headerShown: false }}
       />
+      <Stack.Screen
+      name="GiverUpdate"
+      component={GiverUpdate}
+    />
+      <Stack.Screen name="AboutUs" component={AboutUs} />
+      <Stack.Screen name="ContactUs" component={ContactUs} />
+      <Stack.Screen name='SalectLanguage' component={SalectLanguage} />
+      <Stack.Screen name='EditProfile' component={EditProfile} />
     </Stack.Navigator>
   );
 }

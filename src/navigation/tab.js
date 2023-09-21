@@ -8,11 +8,12 @@ import LabourStack from './labourStack';
 import SettingStack from './settingStack';
 import CottonStack from './cottonStack';
 import AnimatedTabBar from './animateTab';
-import { darkOrange, greenDark, white } from '../utils/color';
+import { darkOrange, green, greenDark, skyBlue, white } from '../utils/color';
 import { strings } from '../translations/locale';
 import { useLang } from '../context/langContext';
 import CropStack from './cropStack';
 import PickerStack from './pickerStack';
+import { isIOS } from '../utils/constant';
 
 const Tab = createBottomTabNavigator();
 
@@ -66,14 +67,14 @@ export default function Tabs() {
     <Tab.Navigator
       // tabBar={props => <AnimatedTabBar {...props} />}
       screenOptions={{
-        tabBarActiveTintColor: greenDark,
+        tabBarActiveTintColor: skyBlue,
         tabBarInactiveTintColor: white,
         headerShown: false,
         tabBarHideOnKeyboard: true,
         unmountOnBlur: true,
         tabBarStyle: {
           backgroundColor: darkOrange,
-          height: 50,
+          height: isIOS ? 90 : 50,
         },
         tabBarLabelStyle: {
           fontSize: 18

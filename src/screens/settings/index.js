@@ -72,7 +72,7 @@ export default function Setting({ navigation }) {
           delete item.sync;
           let api = item?.fid && item?.fid != '' ? updatePicker : submitPicker
           let res = await api(item);
-          console.log(res, '--------pick wt');
+          // console.log(res, '--------pick wt');
           if (res) {
             await updatePickerId(db, {
               ...item,

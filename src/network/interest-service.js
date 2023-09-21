@@ -129,4 +129,25 @@ export const deleteCropCollection = async name => {
       reject(new Error(error));
     }
   });
+
+export const deleteGiverCollection = async (name) => {
+  try {
+    const userId = Auth().currentUser?.uid;
+
+    const deleteGiver = firestore()
+      .collection('interest_amount')
+      .where('uid', '==', userId)
+      .where('giver', '==', name)
+      .get()
+      .then((querySnapshot) => {
+        const deletePromises = [];
+        querySnapshot.forEach((documentSnapshot) => {
+          deletePromises.push(documentSnapshot.ref.delete());
+        });
+        return Promise.all(deletePromises);
+      });
+    await Promise.all([deleteGiver]);
+  } catch (error) {
+    throw new Error(error);
+  }
 };

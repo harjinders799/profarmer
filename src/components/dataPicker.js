@@ -37,7 +37,8 @@ export default function DataPicker(props) {
 
   return (
     <View style={styles.screen}>
-      <Input
+      <Input 
+        label={strings.name}
         placeholder={placeholder}
         autoCapitalize="words"
         onFocus={() => setModalVisible(true)}
@@ -50,7 +51,7 @@ export default function DataPicker(props) {
           if (data.length) setSearchKey(v);
           else setSelectedItem(v);
         }}
-        style={{ marginBottom: 10, height: 50 }}
+        style={{ marginBottom: 10, height: 50}}
       />
       {modalVisible &&
         data.length &&
