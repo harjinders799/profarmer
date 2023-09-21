@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import BaseView from 'src/container/base';
 import Text from 'src/components/text';
 import {
@@ -9,27 +9,26 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {green, red, white} from 'src/utils/color';
+import { green, red, white } from 'src/utils/color';
 import moment from 'moment';
-import {sortBy} from 'lodash';
-import {useRoute, useTheme} from '@react-navigation/native';
-import {strings} from 'src/translations/locale';
+import { sortBy } from 'lodash';
+import { useRoute, useTheme } from '@react-navigation/native';
+import { strings } from 'src/translations/locale';
 import Button from 'src/components/button';
 import GiverDetailAction from 'src/components/giverDetailAction';
 import Header from '../../components/header';
 import Icon from '../../components/icon';
-import {goBack} from '../../navigation/ref';
-import {currencyFormat} from '../../utils/dateformat';
-import {ToastError} from '../../utils/toast';
+import { goBack } from '../../navigation/ref';
+import { currencyFormat } from '../../utils/dateformat';
+import { ToastError } from '../../utils/toast';
 import Loader from 'src/components/loader';
-import {dateFormat} from 'src/utils/dateformat';
-import {navigate, replace} from 'src/navigation/ref';
-import RNFS from 'react-native-fs';
+import { dateFormat } from 'src/utils/dateformat';
+import { navigate, replace } from 'src/navigation/ref';
 import RNHTMLtoPDF from 'react-native-html-to-pdf';
-import {useAuth} from '../../context/authContext';
-import {useLang} from 'src/context/langContext';
+import { useAuth } from '../../context/authContext';
+import { useLang } from 'src/context/langContext';
 
-import {deleteGiverCollection} from '../../network/interest-service';
+import { deleteGiverCollection } from '../../network/interest-service';
 
 import {
   gray4,
@@ -44,14 +43,14 @@ import Share from 'react-native-share';
 
 const transparent = 'rgba(0,0,0,0.5)';
 
-export default function Detail({navigation}) {
-  const {user} = useAuth();
-  const {params} = useRoute();
-  const {colors} = useTheme();
+export default function Detail({ navigation }) {
+  const { user } = useAuth();
+  const { params } = useRoute();
+  const { colors } = useTheme();
   const [rate, setRate] = useState();
   const data = params?.item ?? [];
   const [interest, setInterest] = useState(0);
-  const {lang} = useLang();
+  const { lang } = useLang();
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -119,14 +118,14 @@ export default function Detail({navigation}) {
               <Loader visible={loading} />
               <Button
                 label={strings.delete}
-                btnStyle={{width: '40%', backgroundColor: red}}
+                btnStyle={{ width: '40%', backgroundColor: red }}
                 size={30}
-                style={{color: red, display: __DEV__ ? 'flex' : 'none'}}
+                style={{ color: red, display: __DEV__ ? 'flex' : 'none' }}
                 onPress={async () => {
                   try {
                     setLoading(true);
                     setopenModal(false);
-                   
+
                     await deleteGiverCollection(data?.giver);
                     setLoading(false);
                     goBack();
@@ -135,11 +134,11 @@ export default function Detail({navigation}) {
                     ToastError(error?.message);
                   }
                 }}
-                // type="MaterialCommunityIcons"
+              // type="MaterialCommunityIcons"
               />
               <Button
                 label={strings.cancel}
-                btnStyle={{width: '40%', backgroundColor: gray4}}
+                btnStyle={{ width: '40%', backgroundColor: gray4 }}
                 size={30}
                 onPress={() => setopenModal(false)}
               />
@@ -212,20 +211,20 @@ td {
       <th>${strings.remark}</th>
   </tr>
           ${sortBy(data.data, (a, b) => moment(b?.date) - moment(a?.date)).map(
-            record => {
-              let date = moment(record?.date).format('YYYY-MM-DD');
-              let start_date = moment(date);
-              let today = moment();
-              let days = today.diff(start_date, 'days');
-              let interest = (
-                ((parseFloat(record?.amount) *
-                  (parseFloat(record?.interest_rate) / 100)) /
-                  30) *
-                parseInt(days)
-              ).toFixed(2);
-              let final_amount =
-                parseFloat(record?.amount) + parseFloat(interest);
-              return `<tr>
+      record => {
+        let date = moment(record?.date).format('YYYY-MM-DD');
+        let start_date = moment(date);
+        let today = moment();
+        let days = today.diff(start_date, 'days');
+        let interest = (
+          ((parseFloat(record?.amount) *
+            (parseFloat(record?.interest_rate) / 100)) /
+            30) *
+          parseInt(days)
+        ).toFixed(2);
+        let final_amount =
+          parseFloat(record?.amount) + parseFloat(interest);
+        return `<tr>
               <td>${dateFormat(record?.date)}</td>
               <td>${days}</td> 
                <td>${record?.interest_rate}</td>
@@ -234,8 +233,8 @@ td {
               <td>${currencyFormat(final_amount)}</td>
               <td>${record?.detail}</td>
           </tr>`;
-            },
-          )}
+      },
+    )}
       </table>
   </body>
 </html>
@@ -267,7 +266,7 @@ td {
       <Header
         style={styles.header}
         leftComponent={
-          <View style={{flexDirection: 'row'}}>
+          <View style={{ flexDirection: 'row' }}>
             <Icon
               name="back"
               size={28}
@@ -277,12 +276,12 @@ td {
           </View>
         }
         centerComponent={
-          <Text h2 style={{color: white}}>
+          <Text h2 style={{ color: white }}>
             {data?.giver}
           </Text>
         }
         rightComponent={
-          <View style={{flexDirection: 'row'}}>
+          <View style={{ flexDirection: 'row' }}>
             <Icon
               name="pdffile1"
               size={25}
@@ -311,19 +310,19 @@ td {
       />
 
       <View style={[styles.row]}>
-        <View style={[styles.card, {borderColor: lightYellow}]}>
+        <View style={[styles.card, { borderColor: lightYellow }]}>
           <Text h3>{strings.total_principal}</Text>
-          <Text h3 style={{color: green}}>
+          <Text h3 style={{ color: green }}>
             {currencyFormat(data?.total)}
           </Text>
         </View>
-        <View style={[styles.card, {borderColor: greenLight}]}>
+        <View style={[styles.card, { borderColor: greenLight }]}>
           <Text h3>{strings.total_interest}</Text>
-          <Text h3 style={{color: red}}>
+          <Text h3 style={{ color: red }}>
             {currencyFormat(interest)}
           </Text>
         </View>
-        <View style={[styles.card, {borderColor: peach}]}>
+        <View style={[styles.card, { borderColor: peach }]}>
           <Text h3>{strings.total_amount}</Text>
           <Text h3>{currencyFormat(data?.total + interest)}</Text>
         </View>
@@ -333,27 +332,27 @@ td {
           h3
           style={[
             styles.underline,
-            {backgroundColor: greenLight, width: '100%', textAlign: 'center'},
+            { backgroundColor: greenLight, width: '100%', textAlign: 'center' },
           ]}>
           {strings.amount}
         </Text>
 
         <View style={styles.row}>
-          <Text style={{width: '20%', textAlign: 'center'}} h3>
+          <Text style={{ width: '20%', textAlign: 'center' }} h3>
             {strings.date}
           </Text>
-          <Text style={{width: '15%', textAlign: 'right'}} h3>
+          <Text style={{ width: '15%', textAlign: 'right' }} h3>
             {strings.day}
           </Text>
-          <Text style={{width: '28%', textAlign: 'right'}} h3>
+          <Text style={{ width: '28%', textAlign: 'right' }} h3>
             {strings.total_interest}
           </Text>
-          <Text style={{width: '35%', textAlign: 'right'}} h3>
+          <Text style={{ width: '35%', textAlign: 'right' }} h3>
             {strings.total_amount}
           </Text>
         </View>
         <ScrollView
-          style={{width: '100%',height:'40%'}}
+          style={{ width: '100%', height: '40%' }}
           // contentContainerStyle={{paddingBottom: 150}}
           showsVerticalScrollIndicator={false}>
           {Array.isArray(data.data) && data.data.length ? (

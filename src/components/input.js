@@ -1,9 +1,9 @@
-import {useTheme} from '@react-navigation/native';
+import { useTheme } from '@react-navigation/native';
 import React from 'react';
-import {StyleSheet, TextInput, View} from 'react-native';
-import {WIDTH} from 'src/utils/constant';
+import { StyleSheet, TextInput, View } from 'react-native';
+import { WIDTH } from 'src/utils/constant';
 import Icon from './icon';
-import {black, gray1, gray10, gray3} from '../utils/color';
+import { black, gray1, gray10, gray3 } from '../utils/color';
 import Text from 'src/components/text';
 
 const Input = ({
@@ -26,9 +26,9 @@ const Input = ({
   innerStyle,
   ...props
 }) => {
-  const {colors} = useTheme();
+  const { colors } = useTheme();
   return (
-    <View style={[styles.container, {borderColor: gray3}, style]}>
+    <View style={[styles.container, { borderColor: gray3 }, style]}>
       {label ? <Text style={styles.label}>{label}</Text> : null}
 
       <View
@@ -51,14 +51,14 @@ const Input = ({
             type={iconType}
             size={20}
             // color={iconColor}
-            style={{margin: 10}}
+            style={{ margin: 10 }}
           />
         ) : null}
         <TextInput
           ref={refs}
           {...props}
           multiline={multiline}
-          style={[styles.input, {color: black}, inputStyle]}
+          style={[styles.input, { color: black }, inputStyle]}
           value={value}
           onChangeText={text => setValue(text)}
           placeholder={placeholder}
@@ -66,8 +66,8 @@ const Input = ({
             emailType
               ? 'email-address'
               : numberType
-              ? 'phone-pad'
-              : keyboardType
+                ? 'phone-pad'
+                : keyboardType
           }
           placeholderTextColor={placeholderColor ?? gray3}
         />
@@ -78,9 +78,8 @@ const Input = ({
 };
 const styles = StyleSheet.create({
   container: {
-    height: 50,
+    // height: 50,
     width: '100%',
-
     marginVertical: 5,
   },
   input: {

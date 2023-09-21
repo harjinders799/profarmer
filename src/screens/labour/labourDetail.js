@@ -1,4 +1,4 @@
-import { View, StyleSheet, TouchableOpacity, Modal,ScrollView } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Modal, ScrollView } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import BaseView from 'src/container/base';
 import Text from 'src/components/text';
@@ -42,7 +42,7 @@ export default function LabourDetail({ navigation }) {
   const data = params?.item ?? [];
   const [totalLabour, setTotalLabour] = useState(0);
   const [expense, setExpense] = useState([]);
-  
+
 
   useEffect(() => {
     getExpense();
@@ -54,25 +54,6 @@ export default function LabourDetail({ navigation }) {
       let res = await getLabourExpense(data?.labour);
       setExpense(res);
       setLoading(false);
-      let html = '<h1>My Firestore Data</h1>';
-      html += '<ul>';
-
-      res.forEach(item => {
-        html += `<li>${item.amount}: ${item.date}</li>`;
-      });
-
-      html += '</ul>';
-      const options = {
-        html: html,
-        fileName: 'my-pdf',
-        directory: 'Documents',
-      };
-
-      const file = await RNHTMLtoPDF.convert(options);
-
-      const pdfPath = `${RNFS.DocumentDirectoryPath}/users.pdf`;
-      // await RNFS.writeFile(pdfPath, pdfBytes, 'binary');
-
     } catch (error) {
       ToastError(error?.message, 'Labour');
       setLoading(false);
@@ -98,88 +79,88 @@ export default function LabourDetail({ navigation }) {
       ? sumBy(expense, o => parseFloat(o?.amount))
       : 0;
 
-      const [openModal, setopenModal] = useState(false);
+  const [openModal, setopenModal] = useState(false);
 
-      function renderModal() {
-        return (
-          <Modal visible={openModal} animationType="slide" transparent={true}>
-            <View style={styles.modal}>
-              <View
+  function renderModal() {
+    return (
+      <Modal visible={openModal} animationType="slide" transparent={true}>
+        <View style={styles.modal}>
+          <View
+            style={{
+              backgroundColor: 'white',
+              padding: 20,
+              width: '90%',
+              borderRadius: 10,
+              // height:110,
+            }}>
+            <Text
+              h2
+              style={{
+                fontWeight: '700',
+              }}>
+              {strings.are_you_sure}
+            </Text>
+            <Text
+              h3
+              style={{
+                marginTop: 10,
+              }}>
+              <Text
+                h2
                 style={{
-                  backgroundColor: 'white',
-                  padding: 20,
-                  width: '90%',
-                  borderRadius: 10,
-                  // height:110,
+                  fontWeight: '700',
+                  color: red,
                 }}>
-                <Text
-                  h2
-                  style={{
-                    fontWeight: '700',
-                  }}>
-                  {strings.are_you_sure}
-                </Text>
-                <Text
-                  h3
-                  style={{
-                    marginTop: 10,
-                  }}>
-                  <Text
-                    h2
-                    style={{
-                      fontWeight: '700',
-                      color: red,
-                    }}>
-                    {data?.labour}
-                  </Text>
-                  {strings.alert}
-                </Text>
-    
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    marginTop: 10,
-                  }}>
-                  <Loader visible={loading} />
-                  <Button 
-                    label={strings.delete}
-                    btnStyle={{ width: '40%', backgroundColor: red }}
-                    size={30}
-                    style={{ color: red, display: __DEV__ ? 'flex' : 'none' }}
-                    onPress={async () => {
-                      try {
-                        setLoading(true);
-                        setopenModal(false);
-                        await deleteLabourCollection(data?.labour);
-                        setLoading(false);
-                        goBack();
-                      } catch (error) {
-                        setLoading(false);
-                        ToastError(error?.message);
-                      }
-                    }}
-                  />
-                  <Button
-                    label={strings.cancel}
-                    btnStyle={{ width: '40%', backgroundColor: gray4 }}
-                    size={30}
-                    onPress={() => setopenModal(false)}
-                  />
-                </View>
-              </View>
-            </View>
-          </Modal>
-        );
-      }
+                {data?.labour}
+              </Text>
+              {strings.alert}
+            </Text>
 
-      const onShare = async () => {
-        if (!user?.name) {
-          ToastError('Please Complete your profile');
-          navigate('EditProfile');
-          return;
-        }
-        let html = `<!DOCTYPE html>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                marginTop: 10,
+              }}>
+              <Loader visible={loading} />
+              <Button
+                label={strings.delete}
+                btnStyle={{ width: '40%', backgroundColor: red }}
+                size={30}
+                style={{ color: red, display: __DEV__ ? 'flex' : 'none' }}
+                onPress={async () => {
+                  try {
+                    setLoading(true);
+                    setopenModal(false);
+                    await deleteLabourCollection(data?.labour);
+                    setLoading(false);
+                    goBack();
+                  } catch (error) {
+                    setLoading(false);
+                    ToastError(error?.message);
+                  }
+                }}
+              />
+              <Button
+                label={strings.cancel}
+                btnStyle={{ width: '40%', backgroundColor: gray4 }}
+                size={30}
+                onPress={() => setopenModal(false)}
+              />
+            </View>
+          </View>
+        </View>
+      </Modal>
+    );
+  }
+
+  const onShare = async () => {
+    if (!user?.name) {
+      ToastError('Please Complete your profile');
+      navigate('EditProfile');
+      return;
+    }
+    let html = `<!DOCTYPE html>
     <html>
     <head>
     <style>
@@ -212,18 +193,18 @@ export default function LabourDetail({ navigation }) {
               <div>
                   <h3>${strings.total_labour}: ${data?.total}</h3>
         <h3>${strings.given_amount}: ${currencyFormat(expenseTot
-        )}</h3>
+    )}</h3>
           </div>
           <div>
-          <h3>${strings.total_labour_amount} ${strings.labour}*${strings.labour_rate}:=  ${currencyFormat(totalLabour
-        )}</h3>
+          <h3>${strings.total_labour_amount}: ${currencyFormat(totalLabour
+    )}</h3>
                   <h3>${strings.final}: ${currencyFormat(totalLabour - expenseTot
-        )}</h3>
+    )}</h3>
               </div>
           </div>
     
     
-          <h2>${strings.labour}</h2>
+          <h2>${strings.labour_record}</h2>
           <table style="width:100%">
               <tr>
                   <th style="width:15%">${strings.date}</th>
@@ -233,10 +214,10 @@ export default function LabourDetail({ navigation }) {
                   <th style="width:15%">${strings.amount}</th>
                   <th style="width:30%">${strings.remark}</th>
               </tr>
-             ${data.data.map(v => 
-              v?.data
-            ? null
-            : `<tr>
+             ${data.data.map(v =>
+      v?.data
+        ? null
+        : `<tr>
                   <td style="width:15%">${dateFormat(data?.date)}</td>
                   <td style="width:15%">${data?.labour}</td>
                   <td style="width:10%">${v?.count}
@@ -246,10 +227,10 @@ export default function LabourDetail({ navigation }) {
             </td>
                   <td style="width:30%">${v?.detail}</td>
               </tr>`,
-        )}
+    )}
           </table>
     
-          <h2>${strings.labour_amount}</h2>
+          <h2>${strings.given_amount}</h2>
           <table style="width:100%">
               <tr>
                   <th id="date">${strings.date}</th>
@@ -258,38 +239,38 @@ export default function LabourDetail({ navigation }) {
                   <th>${strings.remark}</th>
               </tr>
               ${expense.map(
-          amount =>
-            `<tr>
+      amount =>
+        `<tr>
                   <td id="date">${dateFormat(amount?.date)}</td>
                   <td>${amount?.labour}</td>
                   <td>${currencyFormat(amount?.amount)}</td>
                   <td>${amount?.detail}</td>
               </tr>`,
-        )}
+    )}
           </table>
       </body>
     </html>
       `;
-    
-        const options = {
-          html: html,
-          base64: true,
-          fileName: data?.labour,
-          directory: 'Documents',
-        };
-    
-        const file = await RNHTMLtoPDF.convert(options);
-        Share.open({
-          url: `data:application/pdf;base64,${file?.base64}`,
-          type: 'application/pdf',
-          title: data?.labour,
-          saveToFiles: true,
-          showAppsToView: true,
-          filename: data?.labour,
-        })
-          .then(res => console.log(res, '---res'))
-          .catch(err => console.log(err, '----err'));
-      };
+
+    const options = {
+      html: html,
+      base64: true,
+      fileName: data?.labour,
+      directory: 'Documents',
+    };
+
+    const file = await RNHTMLtoPDF.convert(options);
+    Share.open({
+      url: `data:application/pdf;base64,${file?.base64}`,
+      type: 'application/pdf',
+      title: data?.labour,
+      saveToFiles: true,
+      showAppsToView: true,
+      filename: data?.labour,
+    })
+      .then(res => console.log(res, '---res'))
+      .catch(err => console.log(err, '----err'));
+  };
 
   return (
     <BaseView style={{ paddingHorizontal: 0 }}>
@@ -322,9 +303,9 @@ export default function LabourDetail({ navigation }) {
                 marginRight: 15,
                 // display: labourData.length > 1 ? 'flex' : 'none',
               }}
-            onPress={onShare}
+              onPress={onShare}
             />
-             <TouchableOpacity
+            <TouchableOpacity
               onPress={() => {
                 setopenModal(true);
               }}>
@@ -363,66 +344,68 @@ export default function LabourDetail({ navigation }) {
             {/* <Text h3>{strings.given_amount}</Text> */}
             {/* <Text h3 style={{ color: red }}> */}
             <Text h2 style={{ fontWeight: 'bold' }}>
-            -{' '}
+              -{' '}
               {currencyFormat(expenseTot)}
             </Text>
             <Text h3>{strings.given_amount}</Text>
           </View>
           <View style={[styles.card, { backgroundColor: '#e5e5e5' }]}>
-            <Text h2 style={{ fontWeight: 'bold', 
-            color: totalLabour - expenseTot > 0 ? greenDark : red }}>
+            <Text h2 style={{
+              fontWeight: 'bold',
+              color: totalLabour - expenseTot > 0 ? greenDark : red
+            }}>
               {(!isNaN(totalLabour) ? -expenseTot : 0) > 0 ? '+' : ''}
               {currencyFormat(totalLabour - expenseTot)}
             </Text>
             <Text h3>{strings.final}</Text>
           </View>
-        </View> 
-          <View style={styles.wt}>
-            <Text h3 style={styles.underline}>
-              {strings.labour_record}
-            </Text>
-            {Array.isArray(data.data) && data.data.length && data?.total ? (
-              sortBy(data.data, (a, b) => moment(b?.date) - moment(a?.date)).map(
-                (v, i) => (
-                  <LabourDetailAction
-                    key={i}
-                    data={v}
-                    totalExpense={expense.length}
-                    totalLabour={data?.total}
-                  />
-                ),
-              )
-            ) : (
-              <Text h4 style={styles.underline}>
-                {strings.no_record}</Text>
-            )}
-          </View>
-          <View style={styles.wt}>
-            <Text h3 style={styles.underline}>
-              {strings.amount}
-            </Text>
-            {Array.isArray(expense) && expense.length ? (
-              sortBy(expense, (a, b) => moment(b?.date) - moment(a?.date)).map(
-                (v, i) => (
-                  <LabourExpenseDetail
-                    key={i}
-                    data={v}
-                    onPress={async () => {
-                      if (
-                        !data?.total &&
-                        Array.isArray(data.data) &&
-                        data.data.length &&
-                        expense.length == 1
-                      )
-                        await deleteLabour(data?.data[0]?.id);
-                    }}
-                  />
-                ),
-              )
-            ) : (
-              <Text>{strings.no_record}</Text>
-            )}
-          </View>
+        </View>
+        <View style={styles.wt}>
+          <Text h3 style={styles.underline}>
+            {strings.labour_record}
+          </Text>
+          {Array.isArray(data.data) && data.data.length && data?.total ? (
+            sortBy(data.data, (a, b) => moment(b?.date) - moment(a?.date)).map(
+              (v, i) => (
+                <LabourDetailAction
+                  key={i}
+                  data={v}
+                  totalExpense={expense.length}
+                  totalLabour={data?.total}
+                />
+              ),
+            )
+          ) : (
+            <Text h4 style={styles.underline}>
+              {strings.no_record}</Text>
+          )}
+        </View>
+        <View style={styles.wt}>
+          <Text h3 style={styles.underline}>
+            {strings.amount}
+          </Text>
+          {Array.isArray(expense) && expense.length ? (
+            sortBy(expense, (a, b) => moment(b?.date) - moment(a?.date)).map(
+              (v, i) => (
+                <LabourExpenseDetail
+                  key={i}
+                  data={v}
+                  onPress={async () => {
+                    if (
+                      !data?.total &&
+                      Array.isArray(data.data) &&
+                      data.data.length &&
+                      expense.length == 1
+                    )
+                      await deleteLabour(data?.data[0]?.id);
+                  }}
+                />
+              ),
+            )
+          ) : (
+            <Text>{strings.no_record}</Text>
+          )}
+        </View>
       </ScrollView>
       <Header
         style={{ paddingHorizontal: 20 }}

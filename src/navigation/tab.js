@@ -47,11 +47,11 @@ export default function Tabs() {
     },
     {
       id: 4,
-      name: 'CropStack',
-      title: strings.crop,
+      name: 'LoanStack',
+      title: 'Loan',
       component: CropStack,
-      icon: 'leaf',
-      iconType: 'FontAwesome5',
+      icon: 'sack-percent',
+      iconType: 'MaterialCommunityIcons',
     },
     {
       id: 5,

@@ -1,8 +1,8 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import DashBoard from 'src/screens/dashboard';
-import AddForm from 'src/screens/dashboard/addForm';
-import Detail from 'src/screens/dashboard/detail';
+import DashBoard from 'src/screens/aadtiya';
+import AddForm from 'src/screens/aadtiya/addForm';
+import Detail from 'src/screens/aadtiya/detail';
 
 const Stack = createNativeStackNavigator();
 

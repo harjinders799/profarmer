@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Setting from 'src/screens/settings';
-import AddForm from 'src/screens/dashboard/addForm';
-import Detail from 'src/screens/dashboard/detail';
+import AddForm from 'src/screens/aadtiya/addForm';
+import Detail from 'src/screens/aadtiya/detail';
 import Tabs from './tab';
 import { useCotton } from '../context/cottonContext';
 import NetInfo from '@react-native-community/netinfo';
@@ -26,7 +26,7 @@ import LabourDetail from '../screens/labour/labourDetail';
 import AddLabour from '../screens/labour/addLabour';
 import RegularLabourDetail from '../screens/labour/regularLabourDetail';
 import LabourUpdate from '../screens/labour/labourUpdate';
-import GiverUpdate from '../screens/dashboard/giverUpdate';
+import GiverUpdate from '../screens/aadtiya/giverUpdate';
 
 const Stack = createNativeStackNavigator();
 
@@ -143,36 +143,36 @@ export default function Stacks() {
         name="PickerDetail"
         component={PickerDetail}
       />
-       <Stack.Screen
+      <Stack.Screen
         name="AddLabour"
         component={AddLabour}
-        options={{headerShown: false}}
+        options={{ headerShown: false }}
       />
       <Stack.Screen
         name="AddLabourExpense"
         component={AddLabourExpense}
-        options={{headerShown: false}}
+        options={{ headerShown: false }}
       />
       <Stack.Screen
         name="AddLabourLeave"
         component={AddLabourLeave}
-        options={{headerShown: false}}
+        options={{ headerShown: false }}
       />
       <Stack.Screen
         name="LabourDetail"
         component={LabourDetail}
-        options={{headerShown: false}}
+        options={{ headerShown: false }}
       />
       <Stack.Screen
         name="RegularLabourDetail"
         component={RegularLabourDetail}
-        options={{headerShown: false}}
+        options={{ headerShown: false }}
       />
       <Stack.Screen
         name="PickerUpdate"
         component={PickerUpdate}
       />
-       <Stack.Screen
+      <Stack.Screen
         name="LabourUpdate"
         component={LabourUpdate}
       />
@@ -186,9 +186,9 @@ export default function Stacks() {
         component={AddPrice}
       />
       <Stack.Screen
-      name="GiverUpdate"
-      component={GiverUpdate}
-    />
+        name="GiverUpdate"
+        component={GiverUpdate}
+      />
       <Stack.Screen name="AboutUs" component={AboutUs} />
       <Stack.Screen name="ContactUs" component={ContactUs} />
       <Stack.Screen name='SalectLanguage' component={SalectLanguage} />

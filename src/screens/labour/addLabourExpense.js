@@ -25,7 +25,7 @@ import {
 import Header from '../../components/header';
 import Icon from '../../components/icon';
 import { currencyFormat, currencyInput } from '../../utils/dateformat';
-import { gray3 } from '../../utils/color';
+import { gray10, gray3 } from '../../utils/color';
 
 export default function AddLabourExpense() {
   const { colors } = useTheme();
@@ -125,7 +125,7 @@ export default function AddLabourExpense() {
     <BaseView style={styles.container}>
       <Loader visible={loading} />
       <Header
-      style={{marginTop:10 }}
+        style={{ marginTop: 10 }}
         leftComponent={
           <Icon
             name="back"
@@ -139,26 +139,17 @@ export default function AddLabourExpense() {
       />
       <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
         <View style={styles.form}>
-          <Text style={styles.text}>{strings.labour_name}</Text>
-          <DataPicker
-            data={labours}
-            intialVisible={!editData?.labour}
-            placeholder={strings.labour_name}
-            selectedItem={labour}
-            setSelectedItem={val => {
-              onChangeValue('labour', val);
-            }}
-          />
-          <Text style={styles.text}>{strings.given_amount_to_labour}</Text>
           <Input
+            label={strings.given_amount_to_labour}
             refs={refAmt}
+            autoFocus
             placeholder={strings.given_amount_to_labour}
             value={currencyInput(amount)}
             keyboardType="number-pad"
             setValue={value => onChangeValue('amount', value)}
           />
-          <Text style={styles.text}>{strings.remark}</Text>
           <Input
+            label={strings.remark}
             placeholder={strings.remark}
             multiline
             autoCapitalize="words"
@@ -207,7 +198,10 @@ const styles = StyleSheet.create({
     paddingVertical: 25,
     width: '100%',
   },
-  text:{
-    marginTop:10,
+  text: {
+    color: gray10,
+    fontSize: 16,
+    marginHorizontal: 5,
+    marginTop: 10,
   },
 });

@@ -69,7 +69,7 @@ export default function LabourUpdate() {
                     </Text>
                     <View style={[styles.card, { backgroundColor: '#bbdffc' }]}>
                         <Text h3 style={{ fontWeight: 'bold' }}>
-                        {' ' + strings.labour}
+                            {' ' + strings.labour}
                         </Text>
                         <Text h3 numberOfLines={1} style={{ fontWeight: 'bold' }}>
                             {data?.count}
@@ -91,14 +91,6 @@ export default function LabourUpdate() {
                             </Text>
                         </View>
                     ) : null}
-                    <View style={[styles.card, { backgroundColor: '#bbdffc' }]}>
-                        <Text h3 style={{ fontWeight: 'bold' }}>
-                            {strings.date}
-                        </Text>
-                        <Text h3 style={{ fontWeight: 'bold' }}>
-                            {dateFormat(data?.date)}
-                        </Text>
-                    </View>
                     <View
                         style={[
                             styles.card,
@@ -108,7 +100,6 @@ export default function LabourUpdate() {
                             },
                         ]}>
                         <Text h3 style={{ fontWeight: 'bold' }}>
-                            {' '}
                             {strings.remark}
                         </Text>
                         <Text h3 style={{ fontWeight: 'bold' }}>
@@ -117,7 +108,7 @@ export default function LabourUpdate() {
                     </View>
                 </View>
                 <View style={styles.icons}>
-                <Button
+                    <Button
                         iconName="edit"
                         iconColor={white}
                         btnStyle={{

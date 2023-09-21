@@ -122,6 +122,7 @@ export default function AddLabour() {
     <BaseView style={styles.container}>
       <Loader visible={loading} />
       <Header
+        style={{ marginTop: 10 }}
         leftComponent={
           <Icon
             name="back"
@@ -130,16 +131,17 @@ export default function AddLabour() {
             onPress={() => goBack()}
           />
         }
-        centerComponent={<Text h2>{data.labour}</Text>}
+        centerComponent={<Text h2>{strings.add_labour}</Text>}
         rightComponent={<Text h2> </Text>}
       />
       <ScrollView
+        keyboardShouldPersistTaps='always'
         showsVerticalScrollIndicator={false}>
         {/* <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}> */}
         <View style={styles.form}>
-          <Text style={styles.text}>{strings.labour_name}</Text>
           <DataPicker
             data={labours}
+            label={strings.labour_name}
             intialVisible={!editData?.labour}
             placeholder={strings.labour_name}
             selectedItem={labour}
@@ -147,23 +149,23 @@ export default function AddLabour() {
               onChangeValue('labour', val);
             }}
           />
-          <Text style={styles.text}>{strings.labour_count}</Text>
           <Input
             refs={refAmt}
+            label={strings.labour_count}
             placeholder={strings.labour_count + ' 1, 2, 3...'}
             value={count}
             keyboardType="number-pad"
             setValue={value => onChangeValue('count', value)}
           />
-          <Text style={styles.text}>{strings.labour_rate}</Text>
           <Input
+            label={strings.labour_rate}
             placeholder={strings.labour_rate + ' 300, 400...'}
             value={currencyInput(rate)}
             keyboardType="number-pad"
             setValue={value => onChangeValue('rate', value)}
           />
-          <Text style={styles.text}>{strings.remark}</Text>
           <Input
+            label={strings.remark}
             placeholder={strings.remark}
             multiline
             autoCapitalize="words"

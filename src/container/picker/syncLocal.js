@@ -1,4 +1,4 @@
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import React, { useCallback, useState } from 'react';
 import { useCotton } from '../../context/cottonContext';
 import { useFocusEffect, useIsFocused } from '@react-navigation/native';
@@ -13,7 +13,8 @@ import {
     updatePicker,
     updatePickerExpense,
 } from '../../network/picker-service';
-import { orange, yellow } from '../../utils/color';
+import { orange, white, yellow } from '../../utils/color';
+import Icon from '../../components/icon';
 
 const SyncLocal = () => {
     const {
@@ -25,6 +26,7 @@ const SyncLocal = () => {
     } = useCotton();
     const [localEntries, setLocalEntries] = useState(0);
     const isFocused = useIsFocused();
+    const [hidePopup, setHidePopup] = useState(false)
 
     useFocusEffect(
         useCallback(() => {
@@ -51,8 +53,7 @@ const SyncLocal = () => {
             if (unsyncData.length) {
                 let promise = unsyncData.map(async (item, index) => {
                     delete item.sync;
-                    let api =
-                        item?.fid && item?.fid != '' ? updatePicker : submitPicker;
+                    let api = item?.fid && item?.fid != '' ? updatePicker : submitPicker;
                     let res = await api(item);
                     // console.log(res, '----inside----pick wt');
                     if (res) {
@@ -70,7 +71,7 @@ const SyncLocal = () => {
                 setLocalEntries(totWtEntry);
             }
             if (Array.isArray(pickerExpense) && pickerExpense.length) {
-                let totExEntry = 0
+                let totExEntry = 0;
                 let unsyncExData = await checkLocal(PICKER_EXPENSE_TABLE);
                 totExEntry = unsyncExData.length;
                 setLocalEntries(totWtEntry + totExEntry);
@@ -114,7 +115,7 @@ const SyncLocal = () => {
         return local;
     };
 
-    return localEntries ? (
+    return localEntries && !hidePopup ? (
         <View
             style={{
                 width: '100%',
@@ -122,10 +123,16 @@ const SyncLocal = () => {
                 justifyContent: 'space-between',
                 alignItem: 'center',
                 marginTop: 20,
+                // position: 'absolute',
+                backgroundColor: white,
+                zIndex: 9999,
             }}>
-            <Text h4 style={{ color: orange }}>
+            <Text h4 style={{ color: orange, width: '90%' }}>
                 {strings.offline_warning}
             </Text>
+            <TouchableOpacity hitSlop={20} onPress={() => setHidePopup(true)}>
+                <Icon name={'close'} size={20} />
+            </TouchableOpacity>
         </View>
     ) : null;
 };

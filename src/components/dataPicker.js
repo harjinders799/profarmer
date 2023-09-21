@@ -19,6 +19,7 @@ import { gray1 } from '../utils/color';
 export default function DataPicker(props) {
   const {
     data = [],
+    label,
     placeholder = 'Select here...',
     displayValue,
     selectedItem,
@@ -37,8 +38,8 @@ export default function DataPicker(props) {
 
   return (
     <View style={styles.screen}>
-      <Input 
-        label={strings.name}
+      <Input
+        label={label ?? strings.name}
         placeholder={placeholder}
         autoCapitalize="words"
         onFocus={() => setModalVisible(true)}
@@ -51,7 +52,7 @@ export default function DataPicker(props) {
           if (data.length) setSearchKey(v);
           else setSelectedItem(v);
         }}
-        style={{ marginBottom: 10, height: 50}}
+        style={{ marginBottom: 10 }}
       />
       {modalVisible &&
         data.length &&
@@ -120,8 +121,7 @@ export default function DataPicker(props) {
 }
 const styles = StyleSheet.create({
   screen: {
-    height: 50,
-    marginBottom: 10,
+    // height: 50,
   },
   item: {
     borderWidth: 1,

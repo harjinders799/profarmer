@@ -86,6 +86,7 @@ export default function AddLabourLeave() {
     <BaseView style={styles.container}>
       <Loader visible={loading} />
       <Header
+        style={{ marginTop: 10 }}
         leftComponent={
           <Icon
             name="back"
@@ -99,22 +100,16 @@ export default function AddLabourLeave() {
       />
       <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
         <View style={styles.form}>
-          <Text style={styles.text}> {strings.add_labour} </Text>
-          <Input value={labour}
-            placeholder={strings.add_labour}
-            editable={false} />
-
-          <Text style={styles.text}> {strings.leave_count} </Text>
           <Input
+            label={strings.leave_count}
             refs={refAmt}
             placeholder={strings.leave_count + ' 1, 2, 3...'}
             value={count}
             keyboardType="number-pad"
             setValue={value => onChangeValue('count', value)}
           />
-
-          <Text style={styles.text}> {strings.remark} </Text>
           <Input
+            label={strings.remark}
             placeholder={strings.remark}
             multiline
             autoCapitalize="words"
@@ -166,5 +161,7 @@ const styles = StyleSheet.create({
   },
   text: {
     marginTop: 10,
+    marginLeft: 5,
+    fontSize: 16
   },
 });

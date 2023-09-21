@@ -13,6 +13,7 @@ import Navigation from 'src/navigation';
 import Modal from 'src/components/Modal';
 import { orange } from 'src/utils/color';
 import { AuthProvider } from './src/context/authContext';
+import { AadtProvider } from './src/context/aadtContext';
 
 export default function App() {
   const [version, setVersion] = useState();
@@ -50,9 +51,11 @@ export default function App() {
       <AuthProvider>
         <StoreProvider>
           <CottonProvider>
-            <LangProvider>
-              <Navigation />
-            </LangProvider>
+            <AadtProvider>
+              <LangProvider>
+                <Navigation />
+              </LangProvider>
+            </AadtProvider>
           </CottonProvider>
         </StoreProvider>
       </AuthProvider>

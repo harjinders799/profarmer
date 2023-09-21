@@ -118,26 +118,26 @@ export default function DateWiseList({ data }) {
               {item?.labour}
             </Text>
             <Text
-                numberOfLines={1}
-                h3
-                style={{
-                  color: loading
+              numberOfLines={1}
+              h3
+              style={{
+                color: loading
+                  ? greenDark
+                  : tot - (!isNaN(item?.amount) ? item?.amount : 0) > 0
                     ? greenDark
-                    : tot - (!isNaN(item?.amount) ? item?.amount : 0) > 0
-                      ? greenDark
-                      : red,
-                }}>
-                {!loading
-                  ? currencyFormat(
-                    tot - (!isNaN(item?.amount) ? item?.amount : 0),
-                  )
-                  : '__'}{' '}
-                   {/* {!loading
+                    : red,
+              }}>
+              {!loading
+                ? currencyFormat(
+                  tot - (!isNaN(item?.amount) ? item?.amount : 0),
+                )
+                : '__'}{' '}
+              {/* {!loading
                     ? (!isNaN(item?.amount) ? item?.amount : 0) >= 0
                       ? strings.give
                       : strings.receive
                     : '__'}{' '} */}
-              </Text>
+            </Text>
             {/* <Text h5>{strings.view}</Text> */}
           </View>
           {!item?.is_regulare ? (
@@ -149,23 +149,23 @@ export default function DateWiseList({ data }) {
               {/* <Text numberOfLines={1} h4>
                 {strings.final}
               </Text> */}
-               <View style={{ flexDirection: 'row' }}>
-              <Button
-                hitSlop={10}
-                label={strings.add_expense}
-                btnStyle={{
-                  backgroundColor: navy,
-                  marginRight: 10,
-                  width: 'auto',
-                  paddingHorizontal: 8,
-                  height: 25,
-                  borderRadius: 5,
-                  marginVertical: 0,
-                }}
-                onPress={() =>
-                  navigate('AddLabourExpense', { data: { picker: item?.picker } })
-                }
-              />
+              <View style={{ flexDirection: 'row' }}>
+                <Button
+                  hitSlop={10}
+                  label={strings.add_expense}
+                  btnStyle={{
+                    backgroundColor: navy,
+                    marginRight: 10,
+                    width: 'auto',
+                    paddingHorizontal: 8,
+                    height: 25,
+                    borderRadius: 5,
+                    marginVertical: 0,
+                  }}
+                  onPress={() =>
+                    navigate('AddLabourExpense', { data: { labour: item?.labour } })
+                  }
+                />
               </View>
               <Text
                 numberOfLines={1}
@@ -182,11 +182,11 @@ export default function DateWiseList({ data }) {
                     tot - (!isNaN(item?.amount) ? item?.amount : 0),
                   )
                   : '__'}{' '} */}
-                   {!loading
-                    ? tot - (!isNaN(item?.amount) ? item?.amount : 0) > 0
-                      ? strings.give
-                      : strings.receive
-                    : '__'}{' '}
+                {!loading
+                  ? tot - (!isNaN(item?.amount) ? item?.amount : 0) > 0
+                    ? strings.give
+                    : strings.receive
+                  : '__'}{' '}
               </Text>
             </Animated.View>
           ) : null}
@@ -255,7 +255,7 @@ export default function DateWiseList({ data }) {
                     )
                     : '__'}{' '} */}
                   {!loading
-                    ?  tot - (!isNaN(item?.amount) ? item?.amount : 0) > 0
+                    ? tot - (!isNaN(item?.amount) ? item?.amount : 0) > 0
                       ? strings.give
                       : strings.receive
                     : '__'}{' '}

@@ -1,23 +1,23 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import Text from 'src/components/text';
 import BaseView from 'src/container/base';
-import {Auth} from 'src/service/setup';
-import {useLang} from 'src/context/langContext';
+import { Auth } from 'src/service/setup';
+import { useLang } from 'src/context/langContext';
 import Header from 'src/components/header';
-import {useFocusEffect} from '@react-navigation/native';
-import {strings} from 'src/translations/locale';
-import {useStore} from 'src/context/context';
+import { useFocusEffect } from '@react-navigation/native';
+import { strings } from 'src/translations/locale';
+import { useStore } from 'src/context/context';
 import Button from '../../components/button';
-import {navigate} from '../../navigation/ref';
-import {getLabourData} from '../../network/labour-service';
+import { navigate } from '../../navigation/ref';
+import { getLabourData } from '../../network/labour-service';
 import DateWiseList from '../../container/labour/dateWiseList';
-import {ToastError} from '../../utils/toast';
+import { ToastError } from '../../utils/toast';
 import Loader from '../../components/loader';
 import { white } from '../../utils/color';
 
 export default function Labour() {
-  const {lang} = useLang();
-  const {labours, setLabours} = useStore();
+  const { lang } = useLang();
+  const { labours, setLabours } = useStore();
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState([]);
 
@@ -75,24 +75,24 @@ export default function Labour() {
           />
         }
       /> */}
-      
+
       <Text h3 style={{ paddingBottom: 10, textAlign: 'center' }}>
         {strings.labour_record}</Text>
       <DateWiseList data={data} />
       <Button
-            iconName="plus"
-            iconColor={white}
-            label={strings.add_labour}
-            btnStyle={{
-              width: '40%',
-              height: 50,
-              position: 'absolute',
-              bottom: 20,
-              right: 30,
-              zIndex: 999,
-            }}
-            onPress={() => navigate('AddLabour')}
-          />
+        iconName="plus"
+        iconColor={white}
+        label={strings.add_labour}
+        btnStyle={{
+          width: '40%',
+          height: 50,
+          position: 'absolute',
+          bottom: 20,
+          right: 30,
+          zIndex: 999,
+        }}
+        onPress={() => navigate('AddLabour')}
+      />
     </BaseView>
   );
 }

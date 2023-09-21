@@ -22,7 +22,7 @@ import { goBack, navigate } from '../../navigation/ref';
 import { useAuth } from '../../context/authContext';
 import Share from 'react-native-share';
 import RNHTMLtoPDF from 'react-native-html-to-pdf';
-import {ToastError} from '../../utils/toast';
+import { ToastError } from '../../utils/toast';
 import { deletePickerNameWise } from '../../sql';
 import auth from '@react-native-firebase/auth';
 
@@ -333,7 +333,7 @@ td {
 
 
   return (
-    <BaseView style={{ paddingHorizontal: 0 }}>
+    <BaseView >
       <Loader visible={loading} />
       <Header
         style={styles.header}
@@ -541,7 +541,8 @@ const styles = StyleSheet.create({
   },
   header: {
     backgroundColor: green,
-    paddingHorizontal: 15,
+    paddingHorizontal: '10%',
+    width: '120%',
     paddingVertical: 15,
     elevation: 15,
   },

@@ -124,13 +124,15 @@ export const deleteCropCollection = async name => {
             console.log(documentSnapshot.ref.delete())
           });
         });
-        resolve();
+      resolve();
     } catch (error) {
       reject(new Error(error));
     }
   });
+};
 
 export const deleteGiverCollection = async (name) => {
+  x
   try {
     const userId = Auth().currentUser?.uid;
 

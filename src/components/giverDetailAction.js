@@ -1,24 +1,23 @@
-import {View, StyleSheet, TouchableOpacity, Alert} from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import React from 'react';
 import Icon from './icon';
 import Text from './text';
-import {orange, red} from 'src/utils/color';
-import {navigate, replace} from 'src/navigation/ref';
-import {strings} from 'src/translations/locale';
-import {ToastError, ToastSuccess} from 'src/utils/toast';
+import { orange, red } from 'src/utils/color';
+import { navigate, replace } from 'src/navigation/ref';
+import { strings } from 'src/translations/locale';
+import { ToastError, ToastSuccess } from 'src/utils/toast';
 import Loader from './loader';
-import {dateFormat} from 'src/utils/dateformat';
-import {useTheme} from '@react-navigation/native';
+import { dateFormat } from 'src/utils/dateformat';
+import { useTheme } from '@react-navigation/native';
 import moment from 'moment';
-import {deleteIneterstAmt} from 'src/network/interest-service';
-import {currencyFormat} from '../utils/dateformat';
-import {goBack} from '../navigation/ref';
-import {gray3, green, lightGreen, lightOrange, white} from '../utils/color';
-import {ScrollView} from 'react-native-gesture-handler';
+import { deleteIneterstAmt } from 'src/network/interest-service';
+import { currencyFormat } from '../utils/dateformat';
+import { goBack } from '../navigation/ref';
+import { gray3, green, lightGreen, lightOrange, white } from '../utils/color';
 
-export default function GiverDetailAction({data}) {
+export default function GiverDetailAction({ data }) {
   const [loading, setLoading] = React.useState(false);
-  const {colors} = useTheme();
+  const { colors } = useTheme();
   const delteData = async () => {
     Alert.alert(
       `${data?.amount} Rs`,
@@ -38,7 +37,7 @@ export default function GiverDetailAction({data}) {
           text: 'No',
         },
       ],
-      {cancelable: true},
+      { cancelable: true },
     );
   };
   let date = moment(data?.date).format('YYYY-MM-DD');
@@ -52,43 +51,41 @@ export default function GiverDetailAction({data}) {
   ).toFixed(2);
   let final_amount = parseFloat(data?.amount) + parseFloat(interest);
   return (
-    <ScrollView style={{width: '100%'}}>
-      <View style={styles.list}>
-        <TouchableOpacity onPress={() => navigate('GiverUpdate', {data})}>
-          <Loader visible={loading} />
+    <View style={styles.list}>
+      <TouchableOpacity onPress={() => navigate('GiverUpdate', { data })}>
+        <Loader visible={loading} />
 
-          <View style={styles.row}>
-            <Text
-              h4
-              style={{ width: '24%'}}
-              numberOfLines={1}>
-              {dateFormat(data?.date)}
-            </Text>
-            <Text
-              style={{
-                
-                width: '11%',
-                textAlign: 'center',
-              }}
-              h4>
-              {days}
-            </Text>
-            {/* <Text h4>{currencyFormat(data?.amount)}</Text> */}
-            <Text
-              style={{ width: '26%', textAlign: 'right'}}
-              h4>
-              {currencyFormat(interest)}
-            </Text>
-            <Text
-              style={{ width: '33%', textAlign: 'right'}}
-              h4>
-              {currencyFormat(final_amount)}
-            </Text>
-          </View>
-          <Text h4>{data?.detail}</Text>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+        <View style={styles.row}>
+          <Text
+            h4
+            style={{ width: '24%' }}
+            numberOfLines={1}>
+            {dateFormat(data?.date)}
+          </Text>
+          <Text
+            style={{
+
+              width: '11%',
+              textAlign: 'center',
+            }}
+            h4>
+            {days}
+          </Text>
+          {/* <Text h4>{currencyFormat(data?.amount)}</Text> */}
+          <Text
+            style={{ width: '26%', textAlign: 'right' }}
+            h4>
+            {currencyFormat(interest)}
+          </Text>
+          <Text
+            style={{ width: '33%', textAlign: 'right' }}
+            h4>
+            {currencyFormat(final_amount)}
+          </Text>
+        </View>
+        <Text h4>{data?.detail}</Text>
+      </TouchableOpacity>
+    </View>
   );
 }
 const styles = StyleSheet.create({
