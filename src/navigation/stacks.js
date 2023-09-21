@@ -19,6 +19,7 @@ import AboutUs from '../screens/settings/aboutUs';
 import ContactUs from '../screens/settings/contactUs';
 import SalectLanguage from '../screens/settings/salectLanguage';
 import EditProfile from '../screens/settings/editprofile';
+import GiverUpdate from '../screens/dashboard/giverUpdate';
 
 const Stack = createNativeStackNavigator();
 
@@ -143,6 +144,10 @@ export default function Stacks() {
         name="AddPrice"
         component={AddPrice}
       />
+      <Stack.Screen
+      name="GiverUpdate"
+      component={GiverUpdate}
+    />
       <Stack.Screen name="AboutUs" component={AboutUs} />
       <Stack.Screen name="ContactUs" component={ContactUs} />
       <Stack.Screen name='SalectLanguage' component={SalectLanguage} />
