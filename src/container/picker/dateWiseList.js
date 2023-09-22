@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import Text from 'src/components/text';
-import { FlatList, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { FlatList, PixelRatio, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { white } from 'src/utils/color';
 import _, { every, filter, find, groupBy, some, sortBy, sumBy } from 'lodash';
 import { strings } from '../../translations/locale';
@@ -137,7 +137,7 @@ export default function DateWiseList() {
                   marginRight: 10,
                   width: 'auto',
                   paddingHorizontal: 8,
-                  height: 25,
+                  height: 25 * PixelRatio.getFontScale(),
                   borderRadius: 5,
                   marginVertical: 0,
                 }}
@@ -158,7 +158,7 @@ export default function DateWiseList() {
                   marginRight: 10,
                   width: 'auto',
                   paddingHorizontal: 8,
-                  height: 25,
+                  height: 25 * PixelRatio.getFontScale(),
                   borderRadius: 5,
                   marginVertical: 0,
                 }}

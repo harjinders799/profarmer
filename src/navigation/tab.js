@@ -8,12 +8,13 @@ import LabourStack from './labourStack';
 import SettingStack from './settingStack';
 import CottonStack from './cottonStack';
 import AnimatedTabBar from './animateTab';
-import { darkOrange, green, greenDark, skyBlue, white } from '../utils/color';
+import { darkOrange, greenDark, orange, lightGrey, yellow, green, skyBlue } from '../utils/color';
 import { strings } from '../translations/locale';
 import { useLang } from '../context/langContext';
 import CropStack from './cropStack';
 import PickerStack from './pickerStack';
 import { isIOS } from '../utils/constant';
+import { PixelRatio } from 'react-native';
 
 const Tab = createBottomTabNavigator();
 
@@ -45,14 +46,14 @@ export default function Tabs() {
       icon: 'shopping-store',
       iconType: 'Fontisto',
     },
-    {
-      id: 4,
-      name: 'LoanStack',
-      title: 'Loan',
-      component: CropStack,
-      icon: 'sack-percent',
-      iconType: 'MaterialCommunityIcons',
-    },
+    // {
+    //   id: 4,
+    //   name: 'LoanStack',
+    //   title: 'Loan',
+    //   component: CropStack,
+    //   icon: 'sack-percent',
+    //   iconType: 'MaterialCommunityIcons',
+    // },
     {
       id: 5,
       name: 'SettingStack',
@@ -68,13 +69,13 @@ export default function Tabs() {
       // tabBar={props => <AnimatedTabBar {...props} />}
       screenOptions={{
         tabBarActiveTintColor: skyBlue,
-        tabBarInactiveTintColor: white,
+        tabBarInactiveTintColor: lightGrey,
         headerShown: false,
         tabBarHideOnKeyboard: true,
         unmountOnBlur: true,
         tabBarStyle: {
-          backgroundColor: darkOrange,
-          height: isIOS ? 90 : 50,
+          backgroundColor: orange,
+          height: isIOS ? 90 * PixelRatio.getFontScale() : 50 * PixelRatio.getFontScale(),
         },
         tabBarLabelStyle: {
           fontSize: 18
@@ -96,7 +97,7 @@ export default function Tabs() {
                     type={value?.iconType}
                     name={value.icon}
                     color={color}
-                    size={22}
+                    size={22 * PixelRatio.getFontScale()}
                   />
                 );
               },

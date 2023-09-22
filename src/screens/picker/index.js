@@ -19,7 +19,7 @@ import {
   savePickerData,
   savePickerExpenseData,
 } from '../../sql';
-import { View } from 'react-native';
+import { PixelRatio, View } from 'react-native';
 import Icon from '../../components/icon';
 import Search from '../../components/search';
 import SyncLocal from '../../container/picker/syncLocal';
@@ -139,7 +139,7 @@ export default function Picker({ navigation }) {
             label={strings.add_picker}
             btnStyle={{
               width: '40%',
-              height: 50,
+              height: 50 * PixelRatio.getFontScale(),
               position: 'absolute',
               bottom: 20,
               right: 30,

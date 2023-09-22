@@ -18,7 +18,16 @@ import { ToastError } from '../../utils/toast';
 import Button from '../../components/button';
 import { navigate } from '../../navigation/ref';
 import Icon from '../../components/icon';
-import { gray10, green, lightYellow, orange, red, white } from '../../utils/color';
+import {
+  blue,
+  gray10,
+  green,
+  greenDark,
+  greenLight,
+  orange,
+  red,
+  white,
+} from '../../utils/color';
 import { useAadt } from '../../context/aadtContext';
 import { getTotalInterst } from '../../utils/helper';
 import { currencyFormat } from '../../utils/dateformat';
@@ -120,44 +129,48 @@ export default function DashBoard({ navigation }) {
       <Text h2 style={{ textAlign: 'center', marginVertical: 10 }}>
         {strings.aadhatiya_hisab}
       </Text>
-      <View style={{
-        padding: 10,
-        width: '100%',
-        borderRadius: 10,
-        backgroundColor: lightYellow,
-        elevation: 5,
-        marginVertical: 10
-      }}>
-
+      <View
+        style={{
+          padding: 10,
+          width: '100%',
+          borderRadius: 10,
+          backgroundColor: greenLight,
+          elevation: 5,
+          marginVertical: 10,
+        }}>
         <View
           style={{
-            flexDirection: 'row',
+            // flexDirection: 'row',
             justifyContent: 'space-between',
             alignItems: 'center',
             width: '100%',
-            marginVertical: 5
+            marginVertical: 5,
           }}>
+          <Text
+            h3
+            style={{ color: blue, fontWeight: '700', textAlign: 'center' }}>
+            {currencyFormat(getTotalInterst(aadtData))}
+          </Text>
           <Text h3 style={{ textAlign: 'center' }}>
             {strings.taken_amount_from_aadhtiya}
           </Text>
-          <Text h3 style={{ textAlign: 'center' }}>
-            {currencyFormat(getTotalInterst(aadtData))}
-          </Text>
         </View>
         <View
           style={{
-            flexDirection: 'row',
+            // flexDirection: 'row',
             justifyContent: 'space-between',
             alignItems: 'center',
             width: '100%',
-            marginVertical: 5
+            marginVertical: 5,
           }}>
+          <Text
+            h3
+            style={{ color: orange, fontWeight: '700', textAlign: 'center' }}>
+            {currencyFormat(getTotalInterst(cropData))}
+          </Text>
           <Text h3 style={{ textAlign: 'center' }}>
             {strings.crop}
           </Text>
-          <Text h3 style={{ color: green, textAlign: 'center' }}>
-            {currencyFormat(getTotalInterst(cropData))}
-          </Text>
         </View>
         <View
           style={{
@@ -165,12 +178,21 @@ export default function DashBoard({ navigation }) {
             justifyContent: 'space-between',
             alignItems: 'center',
             width: '100%',
-            marginVertical: 5
+            marginVertical: 5,
           }}>
           <Text h3 style={{ textAlign: 'center' }}>
             {strings.final}
           </Text>
-          <Text h3 style={{ color: red, textAlign: 'center' }}>
+          <Text
+            h2
+            style={{
+              color:
+                getTotalInterst(aadtData) - getTotalInterst(cropData) > 0
+                  ? red
+                  : greenDark,
+              fontWeight: '700',
+              textAlign: 'center',
+            }}>
             {currencyFormat(
               getTotalInterst(aadtData) - getTotalInterst(cropData),
             )}
