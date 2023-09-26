@@ -72,7 +72,7 @@ export default function AddForm() {
   };
 
   const onPress = () => {
-    if (editData.giver) updateWt();
+    if (editData.id) updateWt();
     else AddNew();
   };
   const updateWt = async () => {
@@ -140,7 +140,12 @@ export default function AddForm() {
             onPress={() => goBack()}
           />
         }
-        centerComponent={<Text h2>{strings.aadhtiya}</Text>}
+        centerComponent={
+          <Text h2>
+            {editData?.giver ? editData?.giver + ' ' : ''}
+            {strings.aadhtiya}
+          </Text>
+        }
         rightComponent={<Text h2> </Text>}
       />
       <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
@@ -148,15 +153,17 @@ export default function AddForm() {
           keyboardShouldPersistTaps="always"
           showsVerticalScrollIndicator={false}
           style={styles.form}>
-          <DataPicker
-            data={givers}
-            intialVisible={!editData?.giver}
-            placeholder={strings.giver_name}
-            selectedItem={giver}
-            setSelectedItem={val => {
-              onChangeValue('giver', val);
-            }}
-          />
+          {editData?.giver ? null : (
+            <DataPicker
+              data={givers}
+              intialVisible={!editData?.giver}
+              placeholder={strings.giver_name}
+              selectedItem={giver}
+              setSelectedItem={val => {
+                onChangeValue('giver', val);
+              }}
+            />
+          )}
           <Input
             label={strings.taken_amount}
             refs={refAmt}

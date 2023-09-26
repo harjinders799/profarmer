@@ -48,7 +48,6 @@ export default function DashBoard({ navigation }) {
     }, [navigation, lang]),
   );
 
- 
   useEffect(() => {
     if (
       Auth()?.currentUser?.uid &&
@@ -128,6 +127,7 @@ export default function DashBoard({ navigation }) {
           backgroundColor: greenLight,
           elevation: 5,
           marginVertical: 10,
+          marginBottom: 30,
         }}>
         <View
           style={{
@@ -142,8 +142,8 @@ export default function DashBoard({ navigation }) {
             style={{ color: blue, fontWeight: '700', textAlign: 'center' }}>
             {currencyFormat(getTotalInterst(aadtData))}
           </Text>
-          <Text h3 style={{ textAlign: 'center' }}>
-            {strings.taken_amount_from_aadhtiya}
+          <Text h4 style={{ textAlign: 'center' }}>
+            {strings.taken_amount_from_aadhtiya} ({strings.interest_included})
           </Text>
         </View>
         <View
@@ -152,15 +152,15 @@ export default function DashBoard({ navigation }) {
             justifyContent: 'space-between',
             alignItems: 'center',
             width: '100%',
-            marginVertical: 5,
+            marginVertical: 10,
           }}>
           <Text
             h3
             style={{ color: orange, fontWeight: '700', textAlign: 'center' }}>
             {currencyFormat(getTotalInterst(cropData))}
           </Text>
-          <Text h3 style={{ textAlign: 'center' }}>
-            {strings.crop}
+          <Text h4 style={{ textAlign: 'center' }}>
+            {strings.crop} ({strings.interest_included})
           </Text>
         </View>
         <View
@@ -169,7 +169,7 @@ export default function DashBoard({ navigation }) {
             justifyContent: 'space-between',
             alignItems: 'center',
             width: '100%',
-            marginVertical: 5,
+            marginVertical: 10,
           }}>
           <Text h3 style={{ textAlign: 'center' }}>
             {strings.final}
@@ -178,7 +178,7 @@ export default function DashBoard({ navigation }) {
             h2
             style={{
               color:
-                  getTotalInterst(aadtData)-getTotalInterst(cropData) > 0
+                getTotalInterst(aadtData) - getTotalInterst(cropData) > 0
                   ? red
                   : greenDark,
               fontWeight: '700',
@@ -186,11 +186,23 @@ export default function DashBoard({ navigation }) {
             }}>
             {currencyFormat(
               getTotalInterst(cropData) - getTotalInterst(aadtData),
-            )}
+            )}{'\n'}
+            <Text
+              h4
+              style={{
+                color:
+                  getTotalInterst(aadtData) - getTotalInterst(cropData) > 0
+                    ? red
+                    : greenDark,
+              }}>
+              {getTotalInterst(aadtData) - getTotalInterst(cropData) > 0
+                ? strings.give
+                : strings.receive}
+            </Text>
           </Text>
         </View>
       </View>
-      {isTextVisible && (
+      {/* {isTextVisible && (
         <View
           style={{
             width: '100%',
@@ -202,13 +214,13 @@ export default function DashBoard({ navigation }) {
           <Text h3>{strings.total_amount}</Text>
           <Text h3> {sumBy(arr, o => o.total)} Rs</Text>
         </View>
-      )}
+      )} */}
       <Text h3 style={{ textAlign: 'center' }}>
         {strings.givers_list}
       </Text>
       <ListAadt data={aadtData} />
-      <Text h3 style={{ textAlign: 'center' }}>
-        {strings.crop}
+      <Text h3 style={{ textAlign: 'center', marginTop: 10 }}>
+        {strings.crop_hisab}
       </Text>
       <ListCrop data={cropData} />
       <Header
@@ -217,7 +229,12 @@ export default function DashBoard({ navigation }) {
             iconName="plus"
             iconColor={white}
             label={strings.aadhat_expense}
-            btnStyle={{ width: '40%' }}
+            btnStyle={{
+              width: 'auto',
+              paddingHorizontal: 15,
+              display:
+                Array.isArray(aadtData) && aadtData.length ? 'none' : 'flex',
+            }}
             onPress={() => navigate('AddForm')}
           />
         }
@@ -226,7 +243,11 @@ export default function DashBoard({ navigation }) {
             iconName="plus"
             iconColor={white}
             label={strings.add_crop}
-            btnStyle={{ width: '40%' }}
+            btnStyle={{
+              width: '40%',
+              display:
+                Array.isArray(cropData) && cropData.length ? 'none' : 'flex',
+            }}
             onPress={() => navigate('AddCrop')}
           />
         }

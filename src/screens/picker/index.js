@@ -23,7 +23,8 @@ import { PixelRatio, View } from 'react-native';
 import Icon from '../../components/icon';
 import Search from '../../components/search';
 import SyncLocal from '../../container/picker/syncLocal';
-import { sumBy } from 'lodash';
+import { sumBy, groupBy } from 'lodash';
+import moment from 'moment';
 
 export default function Picker({ navigation }) {
   const { lang } = useLang();
@@ -77,6 +78,9 @@ export default function Picker({ navigation }) {
       setLoading(false);
     }
   };
+  let dateWise = groupBy(pickerWeight, v =>
+    moment(v?.date).format('DD-MM-YYYY'),
+  );
 
   return (
     <BaseView>
@@ -121,15 +125,38 @@ export default function Picker({ navigation }) {
             <View
               style={{
                 width: '100%',
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                borderBottomWidth: 0.5,
-                marginVertical: 10,
               }}>
-              <Text h3>{strings.total_weight}</Text>
-              <Text h2 style={{ fontWeight: 'bold' }}>
-                {sumBy(pickerWeight, o => parseFloat(o.weight))} Kg
-              </Text>
+              <View
+                style={{
+                  width: '100%',
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  borderBottomWidth: 0.5,
+                  marginVertical: 10,
+                }}>
+                <Text h3>{strings.total_weight}</Text>
+                <Text h2 style={{ fontWeight: 'bold' }}>
+                  {sumBy(pickerWeight, o => parseFloat(o.weight))} Kg
+                </Text>
+              </View>
+              {Object.keys(dateWise)
+                .reverse()
+                .map((o, index) => (
+                  <View
+                    key={index}
+                    style={{
+                      width: '100%',
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                      borderBottomWidth: 0.5,
+                      marginVertical: 10,
+                    }}>
+                    <Text>{o}</Text>
+                    <Text>
+                      {sumBy(dateWise[o], o => parseFloat(o.weight))} Kg
+                    </Text>
+                  </View>
+                ))}
             </View>
           )}
           <DateWiseList />

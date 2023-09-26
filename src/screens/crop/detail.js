@@ -1,11 +1,18 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import BaseView from 'src/container/base';
 import Text from 'src/components/text';
-import { FlatList, Modal, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import {
+  FlatList,
+  Modal,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { green, red, white } from 'src/utils/color';
 import moment from 'moment';
 import { sortBy, sumBy } from 'lodash';
-import { useRoute, useTheme } from '@react-navigation/native';
+import { useFocusEffect, useRoute, useTheme } from '@react-navigation/native';
 import { strings } from 'src/translations/locale';
 import Button from 'src/components/button';
 import Header from '../../components/header';
@@ -15,34 +22,40 @@ import { currencyFormat, dateFormat } from '../../utils/dateformat';
 import CropDetailAction from '../../container/crop/detailAction';
 import Loader from '../../components/loader';
 import { ToastError } from '../../utils/toast';
-import { black, gray4, greenlight, lightYellow, peach } from '../../utils/color';
+import {
+  black,
+  gray4,
+  greenLight,
+  greenlight,
+  lightYellow,
+  peach,
+} from '../../utils/color';
 import { useAuth } from '../../context/authContext';
 import { Auth } from '../../service/setup';
 import { deleteCropCollection } from '../../network/interest-service';
 import RNHTMLtoPDF from 'react-native-html-to-pdf';
 import Share from 'react-native-share';
+import { useAadt } from '../../context/aadtContext';
 
 const transparent = 'rgba(0,0,0,0.5)';
 
 export default function Detail({ navigation }) {
-  const { params } = useRoute();
-  const { db } = useState();
   const { user } = useAuth();
   const { colors } = useTheme();
-  const { cropData:data } = useAadt();
+  const { cropData: data, getCrop } = useAadt();
   const [loading, setLoading] = useState(false);
-  // const data = params?.item ?? [];
   const [interest, setInterest] = useState(0);
-  
-  // let cropData = cropWeight.filter(o => data?.crop === o.crop);
-
-
+  useFocusEffect(
+    useCallback(() => {
+      getCrop();
+    }, [navigation]),
+  );
   useEffect(() => {
     if (Array.isArray(data) && data.length) {
       let tot_interest = 0;
       data.map(v => {
         if (v?.interest_rate) {
-          let date = moment(v?.date).format("YYYY-MM-DD");
+          let date = moment(v?.date).format('YYYY-MM-DD');
           let start_date = moment(date);
           let today = moment();
           let days = today.diff(start_date, 'days');
@@ -58,11 +71,9 @@ export default function Detail({ navigation }) {
     }
   }, [data]);
 
-
   const [openModal, setopenModal] = useState(false);
 
-  function renderModal
-    () {
+  function renderModal() {
     return (
       <Modal visible={openModal} animationType="slide" transparent={true}>
         <View style={styles.modal}>
@@ -136,7 +147,6 @@ export default function Detail({ navigation }) {
     );
   }
 
-
   const onShare = async () => {
     if (!user?.name) {
       ToastError('Please Complete your profile');
@@ -174,12 +184,16 @@ td {
       </div>
       <div style="display: flex; justify-content: space-between;">
       <div>
-      <h3> ${strings.crop_total}: ${currencyFormat(sumBy(data, o => parseInt(o.amount)))}
+      <h3> ${strings.crop_total}: ${currencyFormat(
+      sumBy(data, o => parseInt(o.amount)),
+    )}
       </h3>
       <h3>${strings.total_interest}: ${currencyFormat(interest)} </h3>
       </div>
       <div>
-    <h3>${strings.total_amount}  : ${currencyFormat(sumBy(data, o => parseInt(o.amount)) + interest)}
+    <h3>${strings.total_amount}  : ${currencyFormat(
+      sumBy(data, o => parseInt(o.amount)) + interest,
+    )}
     </h3>
       </div>
       </div>
@@ -197,8 +211,8 @@ td {
       <th>${strings.remark}</th>
   </tr>
           ${data.map(v => {
-      (v?.interest_rate)
-      let date = moment(v?.date).format("YYYY-MM-DD");
+      v?.interest_rate;
+      let date = moment(v?.date).format('YYYY-MM-DD');
       let start_date = moment(date);
       let today = moment();
       let days = today.diff(start_date, 'days');
@@ -215,11 +229,12 @@ td {
               <td>${currencyFormat(interest)}</td>
               <td>${currencyFormat(v?.amount)}</td>
               <td>${currencyFormat(interest)}</td>
-              <td>${currencyFormat(parseFloat(v?.amount) + parseFloat(interest))}</td>
+              <td>${currencyFormat(
+        parseFloat(v?.amount) + parseFloat(interest),
+      )}</td>
               <td>${v?.detail}</td>
-          </tr>`
-    },
-    )}
+          </tr>`;
+    })}
       </table>
   </body>
 </html>
@@ -247,21 +262,26 @@ td {
 
   return (
     <BaseView style={{ paddingHorizontal: 0 }}>
-        <Loader visible={loading} />
+      <Loader visible={loading} />
       <Header
         style={styles.header}
         leftComponent={
-          <View style={{ flexDirection: "row" }}>
+          <View style={{ flexDirection: 'row' }}>
             <Icon
               name="back"
               size={28}
-              style={backgroundColor = black}
+              style={(backgroundColor = black)}
               color={white}
               onPress={() => goBack()}
             />
           </View>
         }
-        centerComponent={<Text h2 style={{color:white}}> {strings.crop}</Text>}
+        centerComponent={
+          <Text h2 style={{ color: white }}>
+            {' '}
+            {strings.crop}
+          </Text>
+        }
         // rightComponent={<Text h2> </Text>}
         rightComponent={
           <View style={{ flexDirection: 'row' }}>
@@ -299,21 +319,23 @@ td {
         }
       />
       <View style={[styles.row1]}>
-        <View style={[styles.card, { borderColor: lightYellow }]}>
+        <View style={[styles.card, { borderColor: lightYellow + 50 }]}>
           <Text h3>{strings.crop_total}</Text>
           <Text h3 style={{ color: green }}>
             {currencyFormat(sumBy(data, o => parseInt(o.amount)))}
           </Text>
         </View>
-        <View style={[styles.card, { borderColor: greenlight }]}>
+        <View style={[styles.card, { borderColor: greenLight + 50 }]}>
           <Text h3>{strings.total_interest}</Text>
           <Text h3 style={{ color: red }}>
             {currencyFormat(interest)}
           </Text>
         </View>
-        <View style={[styles.card, { borderColor: peach }]}>
+        <View style={[styles.card, { borderColor: peach + 50 }]}>
           <Text h3>{strings.total_amount}</Text>
-          <Text h3>{currencyFormat(sumBy(data, o => parseInt(o.amount)) + interest)}</Text>
+          <Text h3>
+            {currencyFormat(sumBy(data, o => parseInt(o.amount)) + interest)}
+          </Text>
         </View>
       </View>
       <ScrollView
@@ -321,25 +343,32 @@ td {
         contentContainerStyle={{ paddingBottom: 150 }}
         showsVerticalScrollIndicator={false}>
         <View style={styles.wt}>
-          <Text h3
-            style={[styles.underline, {
-              backgroundColor: greenlight, width: "100%",
-              textAlign: 'center'
-            },]}>{strings.crop_hisab}</Text>
+          <Text
+            h3
+            style={[
+              styles.underline,
+              {
+                backgroundColor: greenLight,
+                width: '100%',
+                textAlign: 'center',
+              },
+            ]}>
+            {strings.crop_hisab}
+          </Text>
 
           <View style={styles.row}>
-            <Text style={{ width: '20%', textAlign: 'center' }} h4>
+            <Text style={{ width: '20%', textAlign: 'left' }} h4>
               {strings.date}
-              </Text>
-            <Text style={{ width: '15%', textAlign: 'right' }} h4>
+            </Text>
+            <Text style={{ width: '20%', textAlign: 'center' }} h4>
               {strings.crop}
-              </Text>
-            <Text style={{ width: '20%', textAlign: 'right' }} h4>
+            </Text>
+            <Text style={{ width: '30%', textAlign: 'center' }} h4>
               {strings.total_interest}
-              </Text>
-            <Text style={{ width: '23%', textAlign: 'center' }} h4>
+            </Text>
+            <Text style={{ width: '30%', textAlign: 'center' }} h4>
               {strings.total_amount}
-              </Text>
+            </Text>
             {/* <Text h3 style={{ textAlign: 'center',}}>
         {strings.remark}
       </Text> */}
@@ -350,8 +379,7 @@ td {
             )
           ) : (
             <Text>0</Text>
-          )
-          }
+          )}
         </View>
       </ScrollView>
     </BaseView>
@@ -383,27 +411,25 @@ const styles = StyleSheet.create({
   },
   modal: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: transparent
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: transparent,
   },
   header: {
     backgroundColor: green,
     paddingHorizontal: 15,
     paddingVertical: 15,
-    width: "100%"
+    width: '100%',
   },
   card: {
     backgroundColor: white,
-    width: "100%",
-    flexDirection: "row",
+    width: '100%',
+    flexDirection: 'row',
     borderRadius: 10,
-    justifyContent: "space-between",
+    justifyContent: 'space-between',
     padding: 10,
     elevation: 5,
     marginVertical: 5,
     borderWidth: 3,
-
-  }
-
+  },
 });

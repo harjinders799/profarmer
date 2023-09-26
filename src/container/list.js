@@ -5,6 +5,7 @@ import { filter, groupBy, sumBy } from 'lodash';
 import { strings } from 'src/translations/locale';
 import { navigate } from 'src/navigation/ref';
 import { currencyFormat } from '../utils/dateformat';
+import Button from '../components/button';
 
 export default function List({ data = [] }) {
   let arr = [];
@@ -54,18 +55,49 @@ export default function List({ data = [] }) {
     //     }}
     //   />
     // </View>
-    arr.map((item, index) =>
-      <TouchableOpacity key={index} style={styles.list} onPress={() => navigate('Detail', { item })}>
-        <View style={styles.row}>
-          <Text numberOfLines={1} h3 style={{ width: '80%' }}>
-            {item?.giver}
-          </Text>
-          {/* <Text h5>{strings.view}</Text> */}
-          <Text numberOfLines={1} h4>
-            {currencyFormat(item?.total)}
-          </Text>
+    Array.isArray(data) && data.length ? (
+      arr.map((item, index) => (
+        <View
+          key={index}
+          style={{
+            borderBottomWidth: 0.5,
+            paddingBottom: 10,
+            marginBottom: 20,
+          }}>
+          <TouchableOpacity
+            style={styles.list}
+            onPress={() => navigate('Detail', { item })}>
+            <View style={styles.row}>
+              <Text numberOfLines={1} h3 style={{ width: '80%' }}>
+                {item?.giver}
+              </Text>
+              {/* <Text h5>{strings.view}</Text> */}
+              <Text numberOfLines={1} h4>
+                {currencyFormat(item?.total)}
+              </Text>
+            </View>
+          </TouchableOpacity>
+          <Button
+            label={strings.aadhat_expense}
+            btnStyle={{
+              width: 'auto',
+              paddingHorizontal: 10,
+              marginVertical: 0,
+              display: Array.isArray(data) && data.length ? 'flex' : 'none',
+            }}
+            onPress={() =>
+              navigate('AddForm', {
+                data: {
+                  giver: item?.giver,
+                  interest_rate: item?.data[item.data.length - 1]?.interest_rate
+                },
+              })
+            }
+          />
         </View>
-      </TouchableOpacity>
+      ))
+    ) : (
+      <Text style={{ marginTop: 20 }}>{strings.no_data}</Text>
     )
   );
 }

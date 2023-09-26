@@ -120,6 +120,7 @@
   "amount_deleted": "Amount Deleted!",
   "in_progress":"In Progress",
   "resend_otp":"Resend OTP",
+  "interest_included":"Interest Included",
   "offline_warning":"You have offline data, Please connect to internet to save it"
 
 }

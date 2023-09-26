@@ -6,57 +6,63 @@ import { filter, groupBy, sumBy } from 'lodash';
 import { strings } from 'src/translations/locale';
 import { navigate } from 'src/navigation/ref';
 import { currencyFormat } from 'src/utils/dateformat';
+import Button from '../../components/button';
 
 export default function List({ data }) {
-  // let arr = [];
-  // if (data.length) {
-  //   // let grp = groupBy(data, v => v.crop);
-  //   (data).map((v, i) =>
-  //     arr.push({
-  //       total: sumBy(data, o => parseInt(o.amount)),
-  //       data: v,
-  //     }),
-  //   );
-  // }
-
   return (
-    <FlatList
-      style={{ width: '100%' }}
-      contentContainerStyle={{ paddingBottom: 100 }}
-      data={data}
-      keyExtractor={item => Math.random().toString()}
-      ListEmptyComponent={() => (
-        <Text style={{ textAlign: 'center', paddingTop: 30 }}>
-          {strings.no_data}
-        </Text>
-      )}
-      extraData={data}
-      showsVerticalScrollIndicator={false}
-      ItemSeparatorComponent={() => <View style={styles.line} />}
-      renderItem={({ item }) => {
-        return (
+    // <FlatList
+    //   style={{ width: '100%' }}
+    //   contentContainerStyle={{ paddingBottom: 100 }}
+    //   data={arr}
+    //   keyExtractor={item => Math.random().toString()}
+    //   ListEmptyComponent={() => (
+    //     <Text style={{ textAlign: 'center', paddingTop: 30 }}>
+    //       {strings.no_data}
+    //     </Text>
+    //   )}
+    //   extraData={data}
+    //   showsVerticalScrollIndicator={false}
+    //   ItemSeparatorComponent={() => <View style={styles.line} />}
+    //   renderItem={({ item }) => {
+    // return (
     <View style={styles.list}>
       <TouchableOpacity onPress={() => navigate('CropDetail', { data })}>
         <View style={styles.row}>
           <Text numberOfLines={1} h3 style={{ width: '80%' }}>
-            {item?.crop}
-          {/* </Text>
+            {strings.crop}
+            {/* </Text>
           <Text h5>{strings.view}</Text>
         </View>
         <View style={styles.row}>
           <Text numberOfLines={1} h4>
-            {strings.total_amount} */}
+             */}
           </Text>
           <Text numberOfLines={1} h4>
-            {/* {currencyFormat(sumBy(data, o => parseInt(o.amount)))} */}
-            {currencyFormat(item?.amount)}
+            {currencyFormat(sumBy(data, o => parseInt(o.amount)))}
+            {/* {currencyFormat(item?.amount)} */}
           </Text>
         </View>
       </TouchableOpacity>
+      <Button
+        label={strings.add_crop}
+        btnStyle={{
+          width: 'auto',
+          paddingHorizontal: 15,
+          marginVertical: 0,
+          display: Array.isArray(data) && data.length ? 'flex' : 'none',
+        }}
+        onPress={() =>
+          navigate('AddCrop', {
+            data: {
+              interest_rate: data[data.length - 1]?.interest_rate,
+            },
+          })
+        }
+      />
     </View>
-        );
-      }}
-    />
+    //     );
+    //   }}
+    // />
   );
 }
 const styles = StyleSheet.create({

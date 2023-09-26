@@ -1,4 +1,4 @@
-import { View, StyleSheet, Alert, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Alert, TouchableOpacity, ScrollView } from 'react-native';
 import React from 'react';
 import Icon from 'src/components/icon';
 import Text from 'src/components/text';
@@ -14,7 +14,6 @@ import { deleteCrop } from 'src/network/interest-service';
 import { currencyFormat } from 'src/utils/dateformat';
 import { goBack } from 'src/navigation/ref';
 import { gray2, green, white } from '../../utils/color';
-import { ScrollView } from 'react-native-gesture-handler';
 
 export default function CropDetailAction({ data }) {
   const [loading, setLoading] = React.useState(false);
@@ -51,27 +50,30 @@ export default function CropDetailAction({ data }) {
     parseInt(days)
   ).toFixed(2);
   let final_amount = parseFloat(data?.amount) + parseFloat(interest);
-  console.log("===============",data)
+  console.log("===============", data)
   return (
-    <ScrollView style={{width:'100%'}}>
-    <View style={styles.list}>
-      {/* <Text h2 style={{ textAlign: 'center' }}>{data?.crop}</Text> */}
-      <TouchableOpacity style={styles.top}
-        onPress={() => navigate('CropUpdate', { data })}>
-      <Loader visible={loading} />
-      <View style={styles.row}>
-        <Text h4 numberOfLines={1}>
-          {dateFormat(data?.date)}
-        </Text>
-        <Text h4 numberOfLines={1}>
-        {data?.crop}
-          {/* {days} */}
-        </Text>
-        <Text h4>{currencyFormat(interest)}</Text>
-        <Text h4>{currencyFormat(data?.amount)}</Text>
-        </View>
-      </TouchableOpacity >
-    </View>
+    <ScrollView style={{ width: '100%' }}>
+      <View style={styles.list}>
+        {/* <Text h2 style={{ textAlign: 'center' }}>{data?.crop}</Text> */}
+        <TouchableOpacity style={styles.top}
+          onPress={() => navigate('CropUpdate', { data })}>
+          <Loader visible={loading} />
+          <View style={styles.row}>
+            <Text style={{ width: '20%', textAlign: 'center' }} h4>
+              {dateFormat(data?.date)}
+            </Text>
+            <Text style={{ width: '20%', textAlign: 'center' }} h4>
+              {data?.crop}
+            </Text>
+            <Text style={{ width: '30%', textAlign: 'center' }} h4>
+              {currencyFormat(interest)}
+            </Text>
+            <Text style={{ width: '30%', textAlign: 'center' }} h4>
+              {currencyFormat(data?.amount)}
+            </Text>
+          </View>
+        </TouchableOpacity >
+      </View>
     </ScrollView>
   );
 }
@@ -111,8 +113,8 @@ const styles = StyleSheet.create({
     width: '35%',
     textAlign: 'right',
   },
-  list:{
-    marginVertical:10,
-    width:"100%"
+  list: {
+    marginVertical: 10,
+    width: "100%"
   }
 });

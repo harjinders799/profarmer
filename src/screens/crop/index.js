@@ -46,7 +46,6 @@ export default function Crop({ navigation }) {
       setLoading(false);
     }
   };
-console.log("+++++++++",data)
   if (data.length) {
     let grp = groupBy(data, v => moment(v.date).format('YYYY/MM/DD'));
     Object.keys(grp).map(v =>
@@ -78,12 +77,12 @@ console.log("+++++++++",data)
       <Loader visible={loading} />
       <Header
       />
-     
-            <Button
-            label={strings.add_crop}
-            btnStyle={{ width: '100%' }}
-            onPress={() => navigate('AddCrop')}
-          />
+
+      <Button
+        label={strings.add_crop}
+        btnStyle={{ width: '100%' }}
+        onPress={() => navigate('AddCrop')}
+      />
       <Text
         h2
         style={[
