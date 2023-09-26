@@ -34,12 +34,15 @@ import {strings} from '../../translations/locale';
 import BaseView from 'src/container/base';
 import moment from 'moment';
 import { deleteIneterstAmt } from '../../network/interest-service';
+import { useAadt } from '../../context/aadtContext';
 
 export default function GiverUpdate() {
   const {params} = useRoute();
   const data = params?.data ?? {};
   const [loading, setLoading] = React.useState(false);
 
+  const { getAadt } = useAadt();
+ 
   const delteData = async () => {
     Alert.alert(
       `${data?.amount} Rs`,
@@ -52,6 +55,7 @@ export default function GiverUpdate() {
             await deleteIneterstAmt(data?.id);
             setLoading(false);
             ToastSuccess(strings.amount_deleted, strings.amount);
+            getAadt();
             goBack();
           },
         },

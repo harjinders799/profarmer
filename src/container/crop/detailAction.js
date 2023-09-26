@@ -64,7 +64,8 @@ export default function CropDetailAction({ data }) {
           {dateFormat(data?.date)}
         </Text>
         <Text h4 numberOfLines={1}>
-          {days}
+        {data?.crop}
+          {/* {days} */}
         </Text>
         <Text h4>{currencyFormat(interest)}</Text>
         <Text h4>{currencyFormat(data?.amount)}</Text>

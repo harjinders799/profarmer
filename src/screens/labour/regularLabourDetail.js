@@ -10,7 +10,7 @@ import { filter, find, sortBy, sumBy } from 'lodash';
 import { useRoute, useTheme } from '@react-navigation/native';
 import { strings } from 'src/translations/locale';
 import LabourDetailAction from '../../container/labour/labourDetailAction';
-import { getLabourExpense, getLabourLeave } from '../../network/labour-service';
+import { deleteLabourCollection, getLabourExpense, getLabourLeave } from '../../network/labour-service';
 import LabourExpenseDetail from '../../container/labour/labourExpenseDetail';
 import { currencyFormat, dateFormat, dayCount } from '../../utils/dateformat';
 import Header from '../../components/header';
@@ -149,13 +149,7 @@ export default function RegularLabourDetail() {
                   try {
                     setLoading(true);
                     setopenModal(false);
-                    await deletePickerNameWise(db, {
-                      ...data,
-                      uid: auth().currentUser?.uid,
-                    });
-                    await deletePickerCollection(data?.labour);
-                    getPickerWeight();
-                    getPickerExpense();
+                    await deleteLabourCollection(data?.labour);
                     setLoading(false);
                     goBack();
                   } catch (error) {

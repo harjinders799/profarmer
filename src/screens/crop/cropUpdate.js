@@ -61,9 +61,10 @@ export default function CropUpdate() {
                 <Header
                     style={{ marginTop: 10 }}
                     leftComponent={
-                        <Icon name="back" size={28} onPress={() => goBack()} />
+                        <Icon name="back" size={28} color= {green} onPress={() => goBack()} />
                     }
-                    centerComponent={<Text h2>{data.crop}</Text>}
+                    centerComponent={<Text h2 style={{color:green,fontWeight:"bold",fontStyle:"italic"}}>
+                        {data.crop}</Text>}
                     rightComponent={<Text h2> </Text>}
                 />
                 <View style={[styles.row]}>
@@ -72,7 +73,7 @@ export default function CropUpdate() {
                     </Text>
                     <View style={[styles.card]}>
                         <Text h3 style={{ fontWeight: 'bold' }}>
-                            {strings.total_principal}
+                            {strings.crop_total}
                         </Text>
                         <Text h3 numberOfLines={1} style={{ fontWeight: 'bold' }}>
                             {currencyFormat(data?.amount)}

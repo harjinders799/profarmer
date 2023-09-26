@@ -84,7 +84,7 @@ export default function LabourUpdate() {
                     {!data?.is_regulare ? (
                         <View style={[styles.card, { backgroundColor: '#bee8ba' }]}>
                             <Text h3 style={{ fontWeight: 'bold' }}>
-                                {strings.total_labour}
+                                {strings.total_labour_amount}
                             </Text>
                             <Text h3 style={{ fontWeight: 'bold' }}>
                                 {currencyFormat(parseFloat(data?.rate) * parseFloat(data?.count))}

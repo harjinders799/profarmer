@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, Keyboard, ScrollView } from 'react-native';
 import { useRoute, useTheme } from '@react-navigation/native';
 import Button from 'src/components/button';
 import Input from 'src/components/input';
@@ -117,7 +117,9 @@ export default function AddCrop() {
         rightComponent={<Text h2> </Text>}
       />
       <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-        <View style={styles.row}>
+        <ScrollView
+          showsVerticalScrollIndicator={false}>
+          <View style={styles.row}>
             <Text h3 >{strings.crop}</Text>
             <Input
               placeholder={strings.crop}
@@ -144,7 +146,7 @@ export default function AddCrop() {
               value={currencyInput(amount)}
               keyboardType="number-pad"
               setValue={value => onChangeValue('amount', value)}
-              />
+            />
             <Text h3 >{strings.remark}</Text>
             <Input
               placeholder={strings.remark}
@@ -153,8 +155,8 @@ export default function AddCrop() {
               autoCapitalize="words"
               value={detail}
               setValue={value => onChangeValue('detail', value)}
-              />
-              {/* <DataPicker
+            />
+            {/* <DataPicker
               data={givers}
               // intialVisible={!editData?.agent}
               placeholder={strings.aadhtiya}
@@ -163,22 +165,23 @@ export default function AddCrop() {
                 onChangeValue('agent', val);
               }}
             /> */}
-          <TouchableOpacity
-            style={[styles.date]}
-            onPress={() => setShowDate(true)}>
-            <Text h3 medium>
-              {dateFormat(date)}
-            </Text>
-          </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.date]}
+              onPress={() => setShowDate(true)}>
+              <Text h3 medium>
+                {dateFormat(date)}
+              </Text>
+            </TouchableOpacity>
 
-          <DateTimePick
-            show={showDate}
-            setShow={setShowDate}
-            date={date}
-            setDate={data => onChangeValue('date', data)}
-          />
-          <Button label={strings.save} onPress={onPress} />
-        </View>
+            <DateTimePick
+              show={showDate}
+              setShow={setShowDate}
+              date={date}
+              setDate={data => onChangeValue('date', data)}
+            />
+            <Button label={strings.save} onPress={onPress} />
+          </View>
+        </ScrollView>
       </TouchableWithoutFeedback>
     </BaseView>
   );
@@ -196,7 +199,7 @@ const styles = StyleSheet.create({
     height: 50,
     width: '100%',
     borderRadius: 10,
-    marginVertical:15,
+    marginVertical: 15,
     justifyContent: 'center',
     paddingHorizontal: 10,
     backgroundColor: '#d3f5e9',
