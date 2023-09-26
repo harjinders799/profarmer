@@ -20,42 +20,43 @@ export default function List({ data }) {
   // }
 
   return (
-    // <FlatList
-    //   style={{ width: '100%' }}
-    //   contentContainerStyle={{ paddingBottom: 100 }}
-    //   data={data}
-    //   keyExtractor={item => Math.random().toString()}
-    //   ListEmptyComponent={() => (
-    //     <Text style={{ textAlign: 'center', paddingTop: 30 }}>
-    //       {strings.no_data}
-    //     </Text>
-    //   )}
-    //   extraData={data}
-    //   showsVerticalScrollIndicator={false}
-    //   ItemSeparatorComponent={() => <View style={styles.line} />}
-    //   renderItem={({ item }) => {
-    //     return (
+    <FlatList
+      style={{ width: '100%' }}
+      contentContainerStyle={{ paddingBottom: 100 }}
+      data={data}
+      keyExtractor={item => Math.random().toString()}
+      ListEmptyComponent={() => (
+        <Text style={{ textAlign: 'center', paddingTop: 30 }}>
+          {strings.no_data}
+        </Text>
+      )}
+      extraData={data}
+      showsVerticalScrollIndicator={false}
+      ItemSeparatorComponent={() => <View style={styles.line} />}
+      renderItem={({ item }) => {
+        return (
     <View style={styles.list}>
-      <TouchableOpacity onPress={() => navigate('Detail', { data })}>
+      <TouchableOpacity onPress={() => navigate('CropDetail', { data })}>
         <View style={styles.row}>
           <Text numberOfLines={1} h3 style={{ width: '80%' }}>
-            {strings.crop}
-          </Text>
+            {item?.crop}
+          {/* </Text>
           <Text h5>{strings.view}</Text>
         </View>
         <View style={styles.row}>
           <Text numberOfLines={1} h4>
-            {strings.total_amount}
+            {strings.total_amount} */}
           </Text>
           <Text numberOfLines={1} h4>
-            {currencyFormat(sumBy(data, o => parseInt(o.amount)))}
+            {/* {currencyFormat(sumBy(data, o => parseInt(o.amount)))} */}
+            {currencyFormat(item?.amount)}
           </Text>
         </View>
       </TouchableOpacity>
     </View>
-    //     );
-    //   }}
-    // />
+        );
+      }}
+    />
   );
 }
 const styles = StyleSheet.create({
@@ -81,8 +82,8 @@ const styles = StyleSheet.create({
     textAlignVertical: 'center',
     borderRadius: 5,
   },
-  line: {
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    width: '100%',
-  },
+  // line: {
+  //   borderBottomWidth: StyleSheet.hairlineWidth,
+  //   width: '100%',
+  // },
 });

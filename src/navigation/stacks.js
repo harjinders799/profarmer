@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Setting from 'src/screens/settings';
 import AddForm from 'src/screens/aadtiya/addForm';
-import Detail from 'src/screens/aadtiya/detail';
+import CropDetail from '../screens/crop/detail';
 import Tabs from './tab';
 import { useCotton } from '../context/cottonContext';
 import NetInfo from '@react-native-community/netinfo';
@@ -16,6 +16,7 @@ import { submitPicker, submitPickerExpense, updatePicker, updatePickerExpense } 
 import AddPrice from '../screens/picker/addPrice';
 import PickerUpdate from '../screens/picker/pickerUpdate';
 import CropUpdate from '../screens/crop/cropUpdate';
+import AddCrop from '../screens/crop/addCrop';
 import AboutUs from '../screens/settings/aboutUs';
 import ContactUs from '../screens/settings/contactUs';
 import SalectLanguage from '../screens/settings/salectLanguage';
@@ -124,8 +125,8 @@ export default function Stacks() {
         component={AddForm}
       />
       <Stack.Screen
-        name="Detail"
-        component={Detail}
+        name="CropDetail"
+        component={CropDetail}
       />
       <Stack.Screen
         name="AddPicker"
@@ -179,6 +180,11 @@ export default function Stacks() {
       <Stack.Screen
         name="CropUpdate"
         component={CropUpdate}
+        options={{ headerShown: false }}
+      />
+       <Stack.Screen
+        name="AddCrop"
+        component={AddCrop}
         options={{ headerShown: false }}
       />
       <Stack.Screen

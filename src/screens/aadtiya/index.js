@@ -48,16 +48,7 @@ export default function DashBoard({ navigation }) {
     }, [navigation, lang]),
   );
 
-  if (data.length) {
-    let grp = groupBy(data, v => moment(v.date).format('YYYY/MM/DD'));
-    Object.keys(grp).map(v =>
-      arr.push({
-        date: v,
-        total: sumBy(grp[v], o => parseInt(o.amount)),
-        data: grp[v],
-      }),
-    );
-  }
+ 
   useEffect(() => {
     if (
       Auth()?.currentUser?.uid &&
@@ -187,14 +178,14 @@ export default function DashBoard({ navigation }) {
             h2
             style={{
               color:
-                getTotalInterst(aadtData) - getTotalInterst(cropData) > 0
+                  getTotalInterst(aadtData)-getTotalInterst(cropData) > 0
                   ? red
                   : greenDark,
               fontWeight: '700',
               textAlign: 'center',
             }}>
             {currencyFormat(
-              getTotalInterst(aadtData) - getTotalInterst(cropData),
+              getTotalInterst(cropData) - getTotalInterst(aadtData),
             )}
           </Text>
         </View>

@@ -235,7 +235,7 @@ export default function DateWiseList({ data }) {
                       marginVertical: 0,
                     }}
                     onPress={() =>
-                      navigate('AddLabourExpense', { data: { picker: item?.picker } })
+                      navigate('AddLabourExpense', { data: { labour: item?.labour } })
                     }
                   />
                 </View>

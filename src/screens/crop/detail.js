@@ -11,7 +11,7 @@ import Button from 'src/components/button';
 import Header from '../../components/header';
 import Icon from '../../components/icon';
 import { goBack } from '../../navigation/ref';
-import { currencyFormat } from '../../utils/dateformat';
+import { currencyFormat, dateFormat } from '../../utils/dateformat';
 import CropDetailAction from '../../container/crop/detailAction';
 import Loader from '../../components/loader';
 import { ToastError } from '../../utils/toast';
@@ -20,20 +20,20 @@ import { useAuth } from '../../context/authContext';
 import { Auth } from '../../service/setup';
 import { deleteCropCollection } from '../../network/interest-service';
 import RNHTMLtoPDF from 'react-native-html-to-pdf';
-import Share  from 'react-native-share';
+import Share from 'react-native-share';
 
 const transparent = 'rgba(0,0,0,0.5)';
 
 export default function Detail({ navigation }) {
   const { params } = useRoute();
-  const {db} = useState();
+  const { db } = useState();
   const { user } = useAuth();
   const { colors } = useTheme();
-  const data = params?.data ?? [];
+  const { cropData:data } = useAadt();
   const [loading, setLoading] = useState(false);
   // const data = params?.item ?? [];
   const [interest, setInterest] = useState(0);
-
+  
   // let cropData = cropWeight.filter(o => data?.crop === o.crop);
 
 
@@ -161,7 +161,7 @@ td {
       <div style="display: flex; flex-direction:column; align-items:center">
           <div style="display: flex; justify-content: space-between; width:100%">
           <div>    
-          <h2> ${strings.farmer} : ${user?.name}</h2>
+          <h2> ${strings.farmer_name} : ${user?.name}</h2>
           <p>${user?.phone}</p>
           <p>${user?.email}</p>
           </div>
@@ -174,43 +174,50 @@ td {
       </div>
       <div style="display: flex; justify-content: space-between;">
       <div>
-      <h3> ${strings.crop_total}: ${currencyFormat(sumBy(data, o => parseInt(o.amount)))}</h3>
+      <h3> ${strings.crop_total}: ${currencyFormat(sumBy(data, o => parseInt(o.amount)))}
+      </h3>
       <h3>${strings.total_interest}: ${currencyFormat(interest)} </h3>
       </div>
       <div>
-    <h3>${strings.total_amount}  : ${currencyFormat(data?.total + interest)}</h3>
+    <h3>${strings.total_amount}  : ${currencyFormat(sumBy(data, o => parseInt(o.amount)) + interest)}
+    </h3>
       </div>
-      <div>
+      </div>
 
       <h2>${strings.crop_hisab}</h2>
       <table style="width:100%">
       <tr>
       <th>${strings.date}</th>
-      <th style="width:10%">${strings.day}</th>
+      <th>${strings.day}</th>
+      <th>${strings.crop}</th>
+      <th>${strings.interest}</th>
       <th>${strings.crop_total}</th>
       <th>${strings.total_interest}</th>
       <th>${strings.total_amount}</th>
-      <th style="width:30%">${strings.remark}</th>
+      <th>${strings.remark}</th>
   </tr>
-          ${sortBy(data.data, (a, b) => moment(b?.date) - moment(a?.date)).map(record => {
-      let date = moment(record?.date).format("YYYY-MM-DD");
+          ${data.map(v => {
+      (v?.interest_rate)
+      let date = moment(v?.date).format("YYYY-MM-DD");
       let start_date = moment(date);
       let today = moment();
       let days = today.diff(start_date, 'days');
       let interest = (
-        ((parseFloat(record?.amount) * (parseFloat(record?.interest_rate) / 100)) /
+        ((parseFloat(v?.amount) * (parseFloat(v?.interest_rate) / 100)) /
           30) *
         parseInt(days)
       ).toFixed(2);
-      let final_amount = parseFloat(record?.amount) + parseFloat(interest);
-      return (`<tr>
-              <td>${dateFormat(record?.date)}</td>
+      let total_amount = parseFloat(v?.amount) + parseFloat(interest);
+      return `<tr>
+              <td>${dateFormat(data?.date)}</td>
               <td>${days}</td>
-              <td>${currencyFormat(record?.amount)}</td>
+              <td>${v.crop}</td>
               <td>${currencyFormat(interest)}</td>
-              <td>${currencyFormat(final_amount)}</td>
-              <td>${record?.detail}</td>
-          </tr>`)
+              <td>${currencyFormat(v?.amount)}</td>
+              <td>${currencyFormat(interest)}</td>
+              <td>${currencyFormat(parseFloat(v?.amount) + parseFloat(interest))}</td>
+              <td>${v?.detail}</td>
+          </tr>`
     },
     )}
       </table>
@@ -240,6 +247,7 @@ td {
 
   return (
     <BaseView style={{ paddingHorizontal: 0 }}>
+        <Loader visible={loading} />
       <Header
         style={styles.header}
         leftComponent={
@@ -253,7 +261,7 @@ td {
             />
           </View>
         }
-        centerComponent={<Text h2>{strings.crop}</Text>}
+        centerComponent={<Text h2 style={{color:white}}> {strings.crop}</Text>}
         // rightComponent={<Text h2> </Text>}
         rightComponent={
           <View style={{ flexDirection: 'row' }}>
@@ -297,31 +305,41 @@ td {
             {currencyFormat(sumBy(data, o => parseInt(o.amount)))}
           </Text>
         </View>
-      <View style={[styles.card, { borderColor: greenlight }]}>
+        <View style={[styles.card, { borderColor: greenlight }]}>
           <Text h3>{strings.total_interest}</Text>
           <Text h3 style={{ color: red }}>
             {currencyFormat(interest)}
           </Text>
-      </View>
-      <View style={[styles.card, { borderColor: peach }]}>
-        <Text h3>{strings.total_amount}</Text>
-        <Text h3>{currencyFormat(sumBy(data, o => parseInt(o.amount)) + interest)}</Text>
-      </View>
+        </View>
+        <View style={[styles.card, { borderColor: peach }]}>
+          <Text h3>{strings.total_amount}</Text>
+          <Text h3>{currencyFormat(sumBy(data, o => parseInt(o.amount)) + interest)}</Text>
+        </View>
       </View>
       <ScrollView
-        style={{ width: '100%' ,paddingHorizontal:20}}
+        style={{ width: '100%', paddingHorizontal: 20 }}
         contentContainerStyle={{ paddingBottom: 150 }}
         showsVerticalScrollIndicator={false}>
         <View style={styles.wt}>
           <Text h3
-          style={[styles.underline,{backgroundColor:greenlight, width:"100%",
-          textAlign:'center'},]}>{strings.crop_hisab}</Text>
+            style={[styles.underline, {
+              backgroundColor: greenlight, width: "100%",
+              textAlign: 'center'
+            },]}>{strings.crop_hisab}</Text>
 
           <View style={styles.row}>
-            <Text h4>{strings.date}</Text>
-            <Text h4>{strings.day}</Text>
-            <Text h4>{strings.total_interest}</Text>
-            <Text h4>{strings.total_amount}</Text>
+            <Text style={{ width: '20%', textAlign: 'center' }} h4>
+              {strings.date}
+              </Text>
+            <Text style={{ width: '15%', textAlign: 'right' }} h4>
+              {strings.crop}
+              </Text>
+            <Text style={{ width: '20%', textAlign: 'right' }} h4>
+              {strings.total_interest}
+              </Text>
+            <Text style={{ width: '23%', textAlign: 'center' }} h4>
+              {strings.total_amount}
+              </Text>
             {/* <Text h3 style={{ textAlign: 'center',}}>
         {strings.remark}
       </Text> */}
@@ -351,8 +369,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    width: '90%',
-    marginVertical: 10,
+    width: '100%',
+    marginVertical: 5,
+    flexWrap: 'wrap',
   },
   underline: {
     paddingVertical: 10,
@@ -360,7 +379,7 @@ const styles = StyleSheet.create({
   wt: {
     width: '100%',
     alignItems: 'center',
-    marginVertical: 10,
+    marginVertical: 5,
   },
   modal: {
     flex: 1,
@@ -374,16 +393,16 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     width: "100%"
   },
-  card:{
-    backgroundColor:white,
-    width:"100%",
-    flexDirection:"row",
-    borderRadius:10,
-    justifyContent:"space-between",
-    padding:10,
-    elevation:5,
-    marginVertical:5,
-    borderWidth:3,
+  card: {
+    backgroundColor: white,
+    width: "100%",
+    flexDirection: "row",
+    borderRadius: 10,
+    justifyContent: "space-between",
+    padding: 10,
+    elevation: 5,
+    marginVertical: 5,
+    borderWidth: 3,
 
   }
 
