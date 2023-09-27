@@ -1,0 +1,157 @@
+import React from 'react';
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  Keyboard,
+  ScrollView,
+} from 'react-native';
+import {useRoute, useTheme} from '@react-navigation/native';
+import Button from 'src/components/button';
+import Input from 'src/components/input';
+import Text from 'src/components/text';
+import BaseView from 'src/container/base';
+import {navigate} from 'src/navigation/ref';
+import {submitInterestAmount} from 'src/network/interest-service';
+import {goBack} from 'src/navigation/ref';
+import {strings} from 'src/translations/locale';
+import Header from '../../components/header';
+import Icon from '../../components/icon';
+import auth from '@react-native-firebase/auth';
+import {currentStamp} from 'src/utils/dateformat';
+import Loader from 'src/components/loader';
+import {useStore} from 'src/context/context';
+import {ToastError, ToastSuccess} from 'src/utils/toast';
+import {submitLoan, updateLoan, updateReceiver} from '../../network/loan-service';
+
+
+
+export default function AddLoan() {
+  const {colors} = useTheme();
+  const {
+    setGivers,
+    interest_rate: storeRate,
+    setInterstRate,
+    givers,
+  } = useStore();
+  const {params} = useRoute();
+  const editData = params?.data ?? {};
+  const refAmt = React.useRef();
+  const [data, setData] = React.useState({
+    id: editData?.id ?? 0,
+    giver: auth().currentUser?.uid,
+    receiver: editData?.receiver ?? '',
+    detail: editData?.detail ?? '',
+    phone: editData?.phone ?? '',
+    amount: editData?.amount ?? 0,
+    interest_rate: editData?.interest_rate ?? '',
+    date: editData?.date ? new Date(editData?.date) : new Date(),
+  });
+  const [showDate, setShowDate] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
+  const {receiver, giver,  amount, phone, interest_rate,date} = data;
+
+  React.useEffect(() => {
+    if (givers.length == 1 && !giver) onChangeValue('giver', givers[0]);
+  }),
+    [givers];
+
+
+  const onChangeValue = (key, value) => {
+    if (key == 'amount') {
+      setData({
+        ...data,
+        amount: value.replace(/[^0-9]/g, ''),
+      });
+    } else {
+      setData({
+        ...data,
+        [key]: value,
+      });
+    }
+    // if (key == 'giver' && Array.isArray(givers) && givers.length)
+    //   refAmt.current.focus();
+  };
+
+  const AddNew = async () => {
+    if (!receiver || interest_rate.trim() == '') {
+      ToastError(strings.receiver_name, strings.amount,);
+    } else if (amount.trim() == '' || parseInt(amount) <= 0) {
+      ToastError(strings.taken_amount, strings.amount);
+      // return;
+    }
+    if (interest_rate.trim() == '' || parseInt(interest_rate) <= 0) {
+      ToastError(strings.interest_rate, strings.amount);
+      // return;
+    } else {
+      setLoading(true);
+      let res = await updateIneterstAmt({
+        ...data,
+        date: currentStamp(date),
+      });
+      setLoading(false);
+      setInterstRate(interest_rate);
+      ToastSuccess(strings.amount_added, strings.amount);
+      goBack();
+
+    // setLoading(true);
+    // await submitLoan({...data,date: currentStamp(date),})
+    // setLoading(false);
+    // ToastSuccess(strings.receiver_added);
+    // goBack();
+  };
+}
+  return (
+    <BaseView style={styles.container}>
+      <Loader visible={loading} />
+      <Header
+        style={{marginTop: 10}}
+        leftComponent={
+          <Icon
+            name="back"
+            size={28}
+            color={colors.text}
+            onPress={() => goBack()}
+          />
+        }
+        centerComponent={<Text h2>{strings.add_loan}</Text>}
+        rightComponent={<Text h2> </Text>}
+      />
+      <View style={styles.form}>
+        <Input
+          label={strings.name}
+          autoFocus
+          placeholder={strings.receiver_name}
+          value={receiver}
+          setValue={value => onChangeValue('receiver', value)}
+        />
+        <Input
+          label={strings.phone}
+          placeholder={strings.phone}
+          value={phone}
+          setValue={value => onChangeValue('phone', value)}
+          keyboardType="numeric"
+        />
+        <Input
+          label={strings.interest}
+          placeholder={strings.interest_rate}
+          value={interest_rate}
+          setValue={value => onChangeValue('interest_rate', value)}
+          keyboardType="numeric"
+        />
+        <Button label={strings.save} onPress={AddNew} />
+      </View>
+    </BaseView>
+  );
+}
+const styles = StyleSheet.create({
+  container: {
+    padding: 10,
+  },
+
+  form: {
+    paddingVertical: 15,
+    width: '100%',
+    marginVertical: 10,
+  },
+});

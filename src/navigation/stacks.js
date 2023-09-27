@@ -27,6 +27,10 @@ import AddLabour from '../screens/labour/addLabour';
 import RegularLabourDetail from '../screens/labour/regularLabourDetail';
 import LabourUpdate from '../screens/labour/labourUpdate';
 import GiverUpdate from '../screens/aadtiya/giverUpdate';
+import AddCrop from '../screens/crop/addCrop';
+import AddLoan from '../screens/loan/addLoan';
+import AddCredit from '../screens/loan/addCredit';
+import LoanDetail from '../screens/loan/loanDetail';
 
 const Stack = createNativeStackNavigator();
 
@@ -189,6 +193,22 @@ export default function Stacks() {
         name="GiverUpdate"
         component={GiverUpdate}
       />
+       <Stack.Screen
+      name="AddCrop"
+      component={AddCrop}
+    />
+    <Stack.Screen
+    name="AddLoan"
+    component={AddLoan}
+  /> 
+  <Stack.Screen
+  name="AddCredit"
+  component={AddCredit}
+/> 
+ <Stack.Screen
+  name="LoanDetail"
+  component={LoanDetail}
+/>
       <Stack.Screen name="AboutUs" component={AboutUs} />
       <Stack.Screen name="ContactUs" component={ContactUs} />
       <Stack.Screen name='SalectLanguage' component={SalectLanguage} />

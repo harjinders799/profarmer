@@ -100,6 +100,17 @@
   "crop_total": "Crop Amount",
   "crop_hisab": "Crop's Calculation",
 
+  "loan": "Loan Record",
+  "add_loan": "Add Loan",
+    "giver": "Giver",
+  "giver_added": " giver Added !",
+  "receiver": "Receiver",
+  "receiver_name": " Receiver name ",
+  "receiver_added": " Receiver Added !",
+  "add_receiver": " Add Receiver",
+  "credit":"Credit",
+  "debt":"Debt",
+
   "labour_name": "Labour's Name",
   "add_labour": "Add Labour",
   "labour_count": "How Many Labours",

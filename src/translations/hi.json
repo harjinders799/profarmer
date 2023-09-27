@@ -99,7 +99,14 @@
   "crop": "फसल",
   "crop_total": "फसल राशि",
   "crop_hisab": "फसल का हिसाब",
-
+  
+  "loan": "कर्ज़ अभिलेख",
+  "receiver": "कर्ज़दार ",
+  "receiver_added": " कर्ज़दार जोड़ा गया!",
+  "receiver_name": " कर्ज़दार का नाम",
+  "giver":"ऋणदाता",
+  "giver_added": " ऋणदाता जोड़ा गया!",
+  
   "labour_name": "लेबर का नाम",
   "add_labour": "लेबर जोड़ें",
   "labour_count": "कितने मजदूर हैं",

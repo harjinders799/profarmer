@@ -105,14 +105,15 @@ export default function DashBoard({ navigation }) {
                 </Text>
             </View> */}
 
-      {/* <View
-        style={{
-          marginTop: 20,
+   
+        <View   style={{
+          // marginTop: 30,
           width: '100%',
           alignItem: 'center',
           flexDirection: "row",
           justifyContent: "space-between"
         }}>
+      
         <Icon
           name={isTextVisible ? 'eye-slash' : 'eye'}
           type="FontAwesome"
@@ -121,14 +122,17 @@ export default function DashBoard({ navigation }) {
           style={{
             position: 'relative',
             zIndex: 99,
-            marginTop: 5
+            marginTop: 15
             // display: !isSearchActive ? 'flex' : 'none',
           }}
           onPress={() => setTextVisible(!isTextVisible)}
-        /> */}
+        />
       <Text h2 style={{ textAlign: 'center', marginVertical: 10 }}>
         {strings.aadhatiya_hisab}
       </Text>
+          
+      </View>
+      {isTextVisible && (
       <View
         style={{
           padding: 10,
@@ -198,8 +202,9 @@ export default function DashBoard({ navigation }) {
             )}
           </Text>
         </View>
-      </View>
-      {isTextVisible && (
+      </View> 
+       )}
+      {/* {isTextVisible && (
         <View
           style={{
             width: '100%',
@@ -211,35 +216,32 @@ export default function DashBoard({ navigation }) {
           <Text h3>{strings.total_amount}</Text>
           <Text h3> {sumBy(arr, o => o.total)} Rs</Text>
         </View>
-      )}
+      )} */}
       <Text h3 style={{ textAlign: 'center' }}>
         {strings.givers_list}
-      </Text>
+      </Text> 
       <ListAadt data={aadtData} />
+      <Button
+            iconName="plus"
+            iconColor={white}
+            label={strings.aadhat_expense}
+            btnStyle={{ width: '60%' }}
+            onPress={() => navigate('AddForm')}
+          />
       <Text h3 style={{ textAlign: 'center' }}>
         {strings.crop}
       </Text>
       <ListCrop data={cropData} />
-      <Header
-        leftComponent={
-          <Button
-            iconName="plus"
-            iconColor={white}
-            label={strings.aadhat_expense}
-            btnStyle={{ width: '40%' }}
-            onPress={() => navigate('AddForm')}
-          />
-        }
-        rightComponent={
+     
           <Button
             iconName="plus"
             iconColor={white}
             label={strings.add_crop}
-            btnStyle={{ width: '40%' }}
+            btnStyle={{ width: '60%' }}
             onPress={() => navigate('AddCrop')}
           />
-        }
-      />
+        {/* }
+      /> */}
     </BaseView>
   );
 }

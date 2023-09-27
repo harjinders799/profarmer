@@ -153,3 +153,25 @@ export const deleteGiverCollection = async (name) => {
     throw new Error(error);
   }
 };
+// export const deleteDebtorCollection = async (name) => {
+//   x
+//   try {
+//     const userId = Auth().currentUser?.uid;
+
+//     const deleteDebtor = firestore()
+//       .collection('interest_amount')
+//       .where('uid', '==', userId)
+//       .where('debtor', '==', name)
+//       .get()
+//       .then((querySnapshot) => {
+//         const deletePromises = [];
+//         querySnapshot.forEach((documentSnapshot) => {
+//           deletePromises.push(documentSnapshot.ref.delete());
+//         });
+//         return Promise.all(deletePromises);
+//       });
+//     await Promise.all([deleteDebtor]);
+//   } catch (error) {
+//     throw new Error(error);
+//   }
+// };
