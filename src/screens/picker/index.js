@@ -25,9 +25,13 @@ import Search from '../../components/search';
 import SyncLocal from '../../container/picker/syncLocal';
 import { sumBy, groupBy, sortBy } from 'lodash';
 import moment from 'moment';
+import { useRoute } from '@react-navigation/native';
+
 
 export default function Picker({ navigation }) {
   const { lang } = useLang();
+  const { params } = useRoute();
+  const data = params?.data ?? {};
   const {
     db,
     getPickerWeight,
@@ -78,14 +82,18 @@ export default function Picker({ navigation }) {
       setLoading(false);
     }
   };
+  
+  
   let dateWise = groupBy(
     sortBy(pickerWeight, d => d?.date),
     v => moment(v?.date).format('DD-MM-YYYY'),
   );
 
+
   return (
     <BaseView>
-      <Loader visible={loading} />
+      <Loader visible={loading} small 
+       />
       {/* <MandiPrice /> */}
       <SyncLocal />
       <View
@@ -103,7 +111,8 @@ export default function Picker({ navigation }) {
             zIndex: 99,
             display: !isSearchActive ? 'flex' : 'none',
           }}
-          onPress={() => setTextVisible(!isTextVisible)}
+          onPress={() => {setTextVisible(!isTextVisible);
+            navigate('Analysis', { data })}}
         />
 
         <Text
@@ -126,19 +135,6 @@ export default function Picker({ navigation }) {
               style={{
                 width: '100%',
               }}>
-              <View
-                style={{
-                  width: '100%',
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  borderBottomWidth: 0.5,
-                  marginVertical: 10,
-                }}>
-                <Text h3>{strings.total_weight}</Text>
-                <Text h2 style={{ fontWeight: 'bold' }}>
-                  {sumBy(pickerWeight, o => parseFloat(o.weight))} Kg
-                </Text>
-              </View>
               <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 250 }}>
 
                 {Object.keys(dateWise)
@@ -189,6 +185,21 @@ export default function Picker({ navigation }) {
           )}
 
           <DateWiseList />
+          <Button
+            iconName="plus"
+            iconColor={white}
+            label={'Group'}
+            // hitSlop={10}
+            btnStyle={{
+              marginRight: 200,
+              width: 'auto',
+              paddingHorizontal: 25,
+              // maxWidth:`${65/ PixelRatio.getFontScale()}%`,
+              height: 50 * PixelRatio.getFontScale(),
+              bottom: 20,
+            }}
+            onPress={() => navigate('Group')}
+          /> 
           <Button
             iconName="plus"
             iconColor={white}

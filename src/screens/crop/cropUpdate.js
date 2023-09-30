@@ -108,7 +108,7 @@ export default function CropUpdate() {
                         <Text h3 style={{ fontWeight: 'bold' }}>
                             {strings.remark}
                         </Text>
-                        <Text h3 style={{ fontWeight: 'bold' }}>
+                        <Text h3 style={{ fontWeight: 'bold', width: '70%', textAlign: 'right' }}>
 
 
 
@@ -143,7 +143,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        marginTop: 50,
+        marginTop: 20,
     },
     list: {
         marginVertical: 15,

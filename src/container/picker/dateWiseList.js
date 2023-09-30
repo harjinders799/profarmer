@@ -43,6 +43,7 @@ import Icon from '../../components/icon';
 import Loader from '../../components/loader';
 import { useCotton } from '../../context/cottonContext';
 import { useFocusEffect } from '@react-navigation/native';
+import moment from 'moment';
 
 export default function DateWiseList() {
   const [fullData, setFullData] = useState([]);
@@ -92,7 +93,14 @@ export default function DateWiseList() {
     }
   };
 
+
   const renderItem = item => {
+    let todayWeight = sumBy(filter(pickerWeight, o =>
+      (moment().diff(moment(moment(o?.date).format('YYYY-MM-DD')), 'days')) == 0 && o?.picker == item?.picker),
+      p => parseFloat(p.weight)) ?? 0
+    let todayExpense = sumBy(filter(pickerExpense, o =>
+      (moment().diff(moment(moment(o?.date).format('YYYY-MM-DD')), 'days')) == 0 && o?.picker == item?.picker),
+      p => parseFloat(p.amount)) ?? 0
     return (
       <TouchableOpacity
         disabled={loading}

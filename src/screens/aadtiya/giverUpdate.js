@@ -192,7 +192,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginTop: 50,
+    marginTop: 20,
     width: '100%',
   },
   list: {
