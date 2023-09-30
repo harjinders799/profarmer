@@ -18,28 +18,7 @@ import { gray3, green, lightGreen, lightOrange, white } from '../utils/color';
 export default function GiverDetailAction({ data }) {
   const [loading, setLoading] = React.useState(false);
   const { colors } = useTheme();
-  const delteData = async () => {
-    Alert.alert(
-      `${data?.amount} Rs`,
-      `${strings.delete_wt}`,
-      [
-        {
-          text: 'Yes',
-          onPress: async () => {
-            setLoading(true);
-            await deleteIneterstAmt(data?.id);
-            setLoading(false);
-            ToastSuccess(strings.amount_deleted, strings.amount);
-            goBack();
-          },
-        },
-        {
-          text: 'No',
-        },
-      ],
-      { cancelable: true },
-    );
-  };
+
   let date = moment(data?.date).format('YYYY-MM-DD');
   let start_date = moment(date);
   let today = moment();
@@ -50,47 +29,45 @@ export default function GiverDetailAction({ data }) {
     parseInt(days)
   ).toFixed(2);
   let final_amount = parseFloat(data?.amount) + parseFloat(interest);
+
   return (
-    <View style={styles.list}>
-      <TouchableOpacity onPress={() => navigate('GiverUpdate', { data })}>
-        <Loader visible={loading} />
+    <TouchableOpacity style={styles.list} onPress={() => navigate('GiverUpdate', { data })}>
+      <Loader visible={loading} />
+      <View style={styles.row}>
+        <Text
+          h4
+          style={{ width: '20%' }}
+          numberOfLines={1}>
+          {dateFormat(data?.date)}
+        </Text>
+        <Text
+          style={{
 
-        <View style={styles.row}>
-          <Text
-            h4
-            style={{ width: '24%' }}
-            numberOfLines={1}>
-            {dateFormat(data?.date)}
-          </Text>
-          <Text
-            style={{
-
-              width: '11%',
-              textAlign: 'center',
-            }}
-            h4>
-            {days}
-          </Text>
-          {/* <Text h4>{currencyFormat(data?.amount)}</Text> */}
-          <Text
-            style={{ width: '26%', textAlign: 'right' }}
-            h4>
-            {currencyFormat(interest)}
-          </Text>
-          <Text
-            style={{ width: '33%', textAlign: 'right' }}
-            h4>
-            {currencyFormat(final_amount)}
-          </Text>
-        </View>
-        <Text h4>{data?.detail}</Text>
-      </TouchableOpacity>
-    </View>
+            width: '10%',
+            textAlign: 'center',
+          }}
+          h4>
+          {days}
+        </Text>
+        {/* <Text h4>{currencyFormat(data?.amount)}</Text> */}
+        <Text
+          style={{ width: '33%', textAlign: 'right' }}
+          h4>
+          {currencyFormat(interest)}
+        </Text>
+        <Text
+          style={{ width: '37%', textAlign: 'right' }}
+          h4>
+          {currencyFormat(final_amount)}
+        </Text>
+      </View>
+      <Text h4>{data?.detail}</Text>
+    </TouchableOpacity>
   );
 }
 const styles = StyleSheet.create({
   list: {
-    marginVertical: 10,
+    marginTop: 10,
     width: '100%',
     // borderBottomWidth: 0.3,
     // borderBottomColor: "grey"

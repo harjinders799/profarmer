@@ -100,6 +100,7 @@ const SyncLocal = () => {
                     setLocalEntries(totWtEntry + totExEntry);
                 }
             }
+            setHidePopup(false);
         } catch (error) {
             console.log(error, '--------');
         }
@@ -123,22 +124,26 @@ const SyncLocal = () => {
                 justifyContent: 'space-between',
                 alignItem: 'center',
                 marginVertical: 5,
+                height: 35,
+                display: hidePopup && !localEntries ? 'none' : 'flex',
                 // position: 'absolute',
-                backgroundColor: white,
                 // zIndex: 9999,
             }}>
             <Text
                 style={{
                     fontSize: 12,
                     color: orange,
-                    width: '100%',
+                    width: '90%',
                     textAlign: 'center',
                 }}>
                 {localEntries ? strings.offline_warning : ''}
             </Text>
-            {/* <TouchableOpacity hitSlop={20} onPress={() => setHidePopup(true)}>
-                <Icon name={'close'} size={20} />
-            </TouchableOpacity> */}
+            <TouchableOpacity hitSlop={20} onPress={() => setHidePopup(true)}>
+                <Text h6>
+                    {localEntries ? localEntries : 'x'}{' '}
+                    <Icon name={'clouduploado'} size={20} />
+                </Text>
+            </TouchableOpacity>
         </View>
     );
 };

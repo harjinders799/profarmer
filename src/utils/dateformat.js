@@ -7,11 +7,11 @@ export const currentStamp = value => {
   return moment(value).valueOf();
 };
 
-export const currencyFormat = value => {
+export const currencyFormat = (value, fraction = 0) => {
   const formatter = new Intl.NumberFormat('en-IN', {
     style: 'currency',
     currency: 'INR',
-    minimumFractionDigits: 0,
+    minimumFractionDigits: fraction,
   });
   return `${formatter.format(parseFloat(value))} /-`;
 };

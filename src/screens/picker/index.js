@@ -27,7 +27,6 @@ import { sumBy, groupBy, sortBy } from 'lodash';
 import moment from 'moment';
 import { useRoute } from '@react-navigation/native';
 
-
 export default function Picker({ navigation }) {
   const { lang } = useLang();
   const { params } = useRoute();
@@ -82,18 +81,14 @@ export default function Picker({ navigation }) {
       setLoading(false);
     }
   };
-  
-  
+
   let dateWise = groupBy(
     sortBy(pickerWeight, d => d?.date),
     v => moment(v?.date).format('DD-MM-YYYY'),
   );
 
-
   return (
     <BaseView>
-      <Loader visible={loading} small 
-       />
       {/* <MandiPrice /> */}
       <SyncLocal />
       <View
@@ -102,8 +97,7 @@ export default function Picker({ navigation }) {
           alignItem: 'center',
         }}>
         <Icon
-          name={isTextVisible ? 'eye' : 'eye-off'}
-          type="Ionicons"
+          name={'barschart'}
           size={25}
           color={gray10}
           style={{
@@ -111,8 +105,9 @@ export default function Picker({ navigation }) {
             zIndex: 99,
             display: !isSearchActive ? 'flex' : 'none',
           }}
-          onPress={() => {setTextVisible(!isTextVisible);
-            navigate('Analysis', { data })}}
+          onPress={() => {
+            navigate('Analysis', { data });
+          }}
         />
 
         <Text
@@ -127,63 +122,10 @@ export default function Picker({ navigation }) {
           setSearchActive={setSearchActive}
         />
       </View>
+      <Loader visible={loading} small />
 
       {!isSearchActive && (
         <>
-          {isTextVisible && (
-            <View
-              style={{
-                width: '100%',
-              }}>
-              <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 250 }}>
-
-                {Object.keys(dateWise)
-                  .reverse()
-                  .map((o, index) => (
-                    <View key={index}
-                      style={{
-                        width: '100%',
-                        borderBottomWidth: 0.5,
-                        marginVertical: 10,
-                      }}
-                    >
-                      <View
-                        style={{
-                          width: '100%',
-                          flexDirection: 'row',
-                          justifyContent: 'space-between',
-                          marginVertical: 10,
-                          padding: 5,
-                          backgroundColor: green
-                        }}>
-                        <Text style={{ color: white }}>{o}</Text>
-                        <Text style={{ color: white }}>
-                          {sumBy(dateWise[o], o => parseFloat(o.weight))} Kg
-                        </Text>
-                      </View>
-                      {dateWise[o].map((picker, key) =>
-                        <View
-                          key={key}
-                          style={{
-                            width: '100%',
-                            flexDirection: 'row',
-                            justifyContent: 'space-between',
-                            // borderBottomWidth: 0.5,
-                            marginVertical: 10,
-                            display: picker?.weight == "0" ? 'none' : 'flex'
-                          }}>
-                          <Text h6>{picker?.picker}</Text>
-                          <Text h6>
-                            {parseFloat(picker?.weight)} Kg
-                          </Text>
-                        </View>
-                      )}
-                    </View>
-                  ))}
-              </ScrollView>
-            </View>
-          )}
-
           <DateWiseList />
           <Button
             iconName="plus"
@@ -191,15 +133,16 @@ export default function Picker({ navigation }) {
             label={'Group'}
             // hitSlop={10}
             btnStyle={{
-              marginRight: 200,
-              width: 'auto',
-              paddingHorizontal: 25,
-              // maxWidth:`${65/ PixelRatio.getFontScale()}%`,
-              height: 50 * PixelRatio.getFontScale(),
+              width: `${40 * PixelRatio.getFontScale()}%`,
+              height: 40 * PixelRatio.getFontScale(),
+              height: 40 * PixelRatio.getFontScale(),
+              position: 'absolute',
               bottom: 20,
+              left: 20,
+              zIndex: 999,
             }}
             onPress={() => navigate('Group')}
-          /> 
+          />
           <Button
             iconName="plus"
             iconColor={white}

@@ -201,7 +201,7 @@ td {
       </div>
       <div>
       <h3>${strings.total_amount}  : ${currencyFormat(getTotalInterst(data)
-        )}</h3>
+    )}</h3>
         </div>
 
       <h2>${strings.aadhatiya_hisab}</h2>
@@ -346,10 +346,10 @@ td {
           <Text h4 style={{ width: '20%', textAlign: 'left' }} h3>
             {strings.date}
           </Text>
-          <Text h4 style={{ width: '15%', textAlign: 'right' }} h3>
+          <Text h4 style={{ width: '10%', textAlign: 'center' }} h3>
             {strings.day}
           </Text>
-          <Text h4 style={{ width: '28%', textAlign: 'right' }} h3>
+          <Text h4 style={{ width: '32%', textAlign: 'right' }} h3>
             {strings.total_interest}
           </Text>
           <Text h4 style={{ width: '35%', textAlign: 'right' }} h3>
@@ -392,6 +392,7 @@ const styles = StyleSheet.create({
   underline: {
     // borderBottomWidth: 1,
     paddingVertical: 10,
+    marginVertical: 10,
     // borderStyle: 'dotted',
   },
   wt: {

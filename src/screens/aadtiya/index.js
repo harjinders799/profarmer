@@ -29,25 +29,21 @@ import {
 } from '../../utils/color';
 import { sortBy, sumBy } from 'lodash';
 import { useAadt } from '../../context/aadtContext';
-import { getTotalInterst } from '../../utils/helper';
+import { getInterst, getTotalInterst } from '../../utils/helper';
 import { currencyFormat } from '../../utils/dateformat';
 import { useAuth } from '../../context/authContext';
 import Share from 'react-native-share';
 import RNHTMLtoPDF from 'react-native-html-to-pdf';
 import { dateFormat } from 'src/utils/dateformat';
 
-
-
 export default function DashBoard({ navigation }) {
   const { lang } = useLang();
   const { aadtData, getAadt, cropData, getCrop } = useAadt();
   const { givers, setGivers } = useStore();
-  const [loading, setLoading] = useState(true);
   const [data, setData] = useState([]);
   let arr = [];
   const [isTextVisible, setTextVisible] = useState(false);
   const { user } = useAuth();
-
 
   useFocusEffect(
     useCallback(() => {
@@ -64,129 +60,157 @@ export default function DashBoard({ navigation }) {
     }
     let html = `<!DOCTYPE html>
 <html>
-<head>
-<style>
-table, th, td {
-  border: 1px solid black;
-  border-collapse: collapse;
-  padding:10px;
-}
-td {
-  text-align: center;
-}
-</style>
-</head>
-<body>
-      <div style="display: flex; flex-direction:column; align-items:center">
-          <div style="display: flex; justify-content: space-between; width:100%">
-          <div>    
+  <head>
+    <style>
+      table,
+      th,
+      td {
+        border: 1px solid black;
+        border-collapse: collapse;
+        padding: 10px;
+      }
+
+      td {
+        text-align: center;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div style="display: flex; flex-direction: column; align-items: center">
+      <div style="display: flex; justify-content: space-between; width: 100%">
+        <div>
           <h2>${strings.farmer_name}: ${user?.name}</h2>
           <p>${user?.phone}</p>
           <p>${user?.email}</p>
-          </div>
-          <div>
-          <a href="https://play.google.com/store/apps/details?id=com.profarmer">Pro Farmer</a>
-              <p>${moment().format('lll')}</p>
-          </div>
-          </div>
-          <h2>${strings.aadhatiya_hisab}</h2>
+        </div>
+        <div>
+          <a href="https://play.google.com/store/apps/details?id=com.profarmer"
+            >Pro Farmer</a
+          >
+          <p>${moment().format('lll')}</p>
+        </div>
       </div>
-      <div style="display: flex; justify-content: space-between;">
-          <div>
-              <h3>${strings.taken_amount_from_aadhtiya} (${strings.interest_included}) : ${currencyFormat(getTotalInterst(aadtData)
-    )}</h3>
-    
+      <h2>${strings.aadhatiya_hisab}</h2>
     </div>
     <div>
-    <h3>${strings.crop} (${strings.interest_included}) : ${currencyFormat(getTotalInterst(cropData))} </h3>
-    </div>
-      </div>
+      <div style="display: flex; justify-content: space-between">
+        <div>
+          <h3>
+            ${strings.taken_amount} : ${currencyFormat(
+      getTotalInterst(aadtData) - getInterst(aadtData), 2)}
+          </h3>
+        </div>
+        <div>
+          <h3>
+            ${strings.crop} : ${currencyFormat(getTotalInterst(cropData) - getInterst(cropData), 2)}
+          </h3>
+        </div>
+      </div> 
+      <div style="display: flex; justify-content: space-between">
+        <div>
+          <h3>
+            ${strings.total_interest} : ${currencyFormat(
+        getInterst(aadtData), 2)}
+          </h3>
+        </div>
+        <div>
+          <h3>
+            ${strings.total_interest} : ${currencyFormat(getInterst(cropData), 2)}
+          </h3>
+        </div>
+      </div> 
+      <div style="display: flex; justify-content: space-between">
       <div>
-      <h3>${strings.final} (${getTotalInterst(aadtData) - getTotalInterst(cropData) > 0
-        ? strings.give
-        : strings.receive})  : ${currencyFormat(
-      getTotalInterst(cropData) - getTotalInterst(aadtData),
-    )}${'\n'}
-    </h3>
-          </div>
-          <h2>${strings.givers_list}</h2>
-          <table style="width:100%">
-          <tr>
-          <th>"${strings.date}</th>
-          <th>${strings.day}</th>
-          <th>${strings.interest}</th>
-          <th>${strings.total_principal}</th>
-          <th>${strings.total_interest}</th>
-          <th>${strings.total_amount}</th>
-          <th>${strings.remark}</th>
+          <h3>
+            ${strings.taken_amount_from_aadhtiya} : ${currencyFormat(
+          getTotalInterst(aadtData), 2)}
+          </h3>
+          <h4>(${strings.interest_included})</h4>
+        </div>
+        <div>
+          <h3>
+            ${strings.crop} : ${currencyFormat(getTotalInterst(cropData), 2)}
+          </h3>
+          <h4>(${strings.interest_included})</h4>
+        </div>
+      </div>
+      
+      <div style="display: flex; align-self: center">
+        <h2>
+          ${strings.final} (${getTotalInterst(aadtData) -
+        getTotalInterst(cropData) > 0 ? strings.give : strings.receive}) :
+          ${currencyFormat(getTotalInterst(cropData) -
+          getTotalInterst(aadtData), 2)}${'\n'}
+        </h2>
+      </div>
+    </div>
+    <h2>${strings.givers_list}</h2>
+    <table style="width: 100%">
+      <tr>
+        <th>"${strings.date}</th>
+        <th>${strings.day}</th>
+        <th>${strings.interest}</th>
+        <th>${strings.total_principal}</th>
+        <th>${strings.total_interest}</th>
+        <th>${strings.total_amount}</th>
+        <th>${strings.remark}</th>
       </tr>
-              ${sortBy(aadtData, (a, b) => moment(b?.date) - moment(a?.date)).map(
-      record => {
-        let date = moment(record?.date).format('YYYY-MM-DD');
-        let start_date = moment(date);
-        let today = moment();
-        let days = today.diff(start_date, 'days');
-        let interest = (
-          ((parseFloat(record?.amount) *
-            (parseFloat(record?.interest_rate) / 100)) /
-            30) *
-          parseInt(days)
-        ).toFixed(2);
-        let final_amount =
-          parseFloat(record?.amount) + parseFloat(interest);
-        return `<tr>
-                  <td>${dateFormat(record?.date)}</td>
-                  <td>${days}</td> 
-                   <td>${record?.interest_rate}</td>
-                  <td>${currencyFormat(record?.amount)}</td>
-                  <td>${currencyFormat(interest)}</td>
-                  <td>${currencyFormat(final_amount)}</td>
-                  <td>${record?.detail}</td>
-              </tr>`;
-      },
-    )}
-          </table>
-          <h2>${strings.crop_hisab}</h2>
-          <table style="width:100%">
-          <tr>
-          <th>${strings.date}</th>
-          <th>${strings.day}</th>
-          <th>${strings.crop}</th>
-          <th>${strings.interest}</th>
-          <th>${strings.crop_total}</th>
-          <th>${strings.total_interest}</th>
-          <th>${strings.total_amount}</th>
-          <th>${strings.remark}</th>
+      ${sortBy(aadtData, (a, b) => moment(b?.date) - moment(a?.date)).map(
+            record => {
+              let date = moment(record?.date).format('YYYY-MM-DD'); let
+                start_date = moment(date); let today = moment(); let days =
+                  today.diff(start_date, 'days'); let interest = (
+                    ((parseFloat(record?.amount) * (parseFloat(record?.interest_rate) / 100))
+                      / 30) * parseInt(days)).toFixed(2); let final_amount =
+                        parseFloat(record?.amount) + parseFloat(interest); return `
+      <tr>
+        <td>${dateFormat(record?.date)}</td>
+        <td>${days}</td>
+        <td>${record?.interest_rate}</td>
+        <td>${currencyFormat(record?.amount, 2)}</td>
+        <td>${currencyFormat(interest, 2)}</td>
+        <td>${currencyFormat(final_amount, 2)}</td>
+        <td>${record?.detail}</td>
       </tr>
-              ${cropData.map(v => {
-      v?.interest_rate;
-      let date = moment(v?.date).format('YYYY-MM-DD');
-      let start_date = moment(date);
-      let today = moment();
-      let days = today.diff(start_date, 'days');
-      let interest = (
-        ((parseFloat(v?.amount) * (parseFloat(v?.interest_rate) / 100)) /
-          30) *
-        parseInt(days)
-      ).toFixed(2);
-      let total_amount = parseFloat(v?.amount) + parseFloat(interest);
-      return `<tr>
-                  <td>${dateFormat(data?.date)}</td>
-                  <td>${days}</td>
-                  <td>${v.crop}</td>
-                  <td>${currencyFormat(v?.interest_rate)}</td>
-                  <td>${currencyFormat(v?.amount)}</td>
-                  <td>${currencyFormat(interest)}</td>
-                  <td>${currencyFormat(
-        parseFloat(v?.amount) + parseFloat(interest),
-      )}</td>
-                  <td>${v?.detail}</td>
-              </tr>`;
-    })}
-          </table>
+      `;
+            },)}
+    </table>
+    <h2>${strings.crop_hisab}</h2>
+    <table style="width: 100%">
+      <tr>
+        <th>${strings.date}</th>
+        <th>${strings.day}</th>
+        <th>${strings.crop}</th>
+        <th>${strings.interest}</th>
+        <th>${strings.crop_total}</th>
+        <th>${strings.total_interest}</th>
+        <th>${strings.total_amount}</th>
+        <th>${strings.remark}</th>
+      </tr>
+      ${cropData.map(v => {
+              v?.interest_rate; let date =
+                moment(v?.date).format('YYYY-MM-DD'); let start_date = moment(date); let
+                  today = moment(); let days = today.diff(start_date, 'days'); let interest
+                    = (((parseFloat(v?.amount) * (parseFloat(v?.interest_rate) / 100)) / 30)
+                      * parseInt(days)).toFixed(2); let total_amount = parseFloat(v?.amount) +
+                        parseFloat(interest); return `
+      <tr>
+        <td>${dateFormat(data?.date)}</td>
+        <td>${days}</td>
+        <td>${v.crop}</td>
+        <td>${currencyFormat(v?.interest_rate, 2)}</td>
+        <td>${currencyFormat(v?.amount, 2)}</td>
+        <td>${currencyFormat(interest, 2)}</td>
+        <td>${currencyFormat(parseFloat(v?.amount) + parseFloat(interest), 2)}</td>
+        <td>${v?.detail}</td>
+      </tr>
+      `;
+            })}
+    </table>
   </body>
 </html>
-  `;
+`;
 
     const options = {
       html: html,
@@ -208,81 +232,28 @@ td {
       .catch(err => console.log(err, '----err'));
   };
 
-
   return (
-    <BaseView>
-      {/* <Loader visible={loading} /> */}
-      {/* <Header
-        centerComponent={
-          <Button
-            label={strings.aadhat_expense}
-            btnStyle={{ width: '100%' }}
-            onPress={() => navigate('AddForm')}
-          />
-        }
-      // rightComponent={
-      //     <Button
-      //         label={strings.add_crop}
-      //         btnStyle={{ width: '40%' }}
-      //         onPress={() => navigate('AddCrop')}
-      //     />
-      // }
-      /> */}
-      {/* <Text h2 style={{ paddingTop: 10 }}>
-                {strings.total_amount} {sumBy(arr, o => o.total)} Rs
-            </Text>
-            <View style={[commonStyle.row_c_s_b, commonStyle.p_b_15, { borderBottomWidth: StyleSheet.hairlineWidth }]}>
-                <Text h4 style={{ paddingTop: 10 }}>
-                    {strings.total_principal} {sumBy(arr, o => o.total)} Rs
-                </Text>
-                <Text h4 style={{ paddingTop: 10 }}>
-                    {strings.total_interest} {sumBy(arr, o => o.total)} Rs
-                </Text>
-            </View> */}
-
-      {/* <View
-        style={{
-          marginTop: 20,
-          width: '100%',
-          alignItem: 'center',
-          flexDirection: "row",
-          justifyContent: "space-between"
-        }}>
-        <Icon
-          name={isTextVisible ? 'eye-slash' : 'eye'}
-          type="FontAwesome"
-          size={25}
-          color={gray10}
+    <BaseView style={{ paddingHorizontal: 0 }}>
+      <ScrollView
+        style={{ width: '100%' }}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 100 }}>
+        <Text
+          h2
           style={{
-            position: 'relative',
-            zIndex: 99,
-            marginTop: 5
-            // display: !isSearchActive ? 'flex' : 'none',
-          }}
-          onPress={() => setTextVisible(!isTextVisible)}
-        /> */}
-      <View style={{ flexDirection: "row" }}>
-        <Text h2 style={{ textAlign: 'center', marginVertical: 10, paddingHorizontal: 50 }}>
+            textAlign: 'center',
+            marginVertical: 10,
+            paddingHorizontal: 50,
+          }}>
           {strings.aadhatiya_hisab}
         </Text>
         <Icon
           name="pdffile1"
           size={30}
           color={green}
-          style={{ marginVertical: 15 }}
+          style={{ position: 'absolute', right: 20, top: 10 }}
           onPress={onShare}
         />
-      </View>
-      <View
-        style={{
-          padding: 10,
-          width: '100%',
-          borderRadius: 10,
-          backgroundColor: greenLight,
-          elevation: 5,
-          marginVertical: 10,
-          marginBottom: 30,
-        }}>
         <View
           style={{
             padding: 10,

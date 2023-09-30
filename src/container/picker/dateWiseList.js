@@ -48,15 +48,8 @@ import moment from 'moment';
 export default function DateWiseList() {
   const [fullData, setFullData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const { pickerWeight, pickerExpense, getPickerWeight, getPickerExpense } =
+  const { pickerWeight, pickerExpense } =
     useCotton();
-
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     getPickerWeight();
-  //     getPickerExpense();
-  //   }, []),
-  // );
 
   useEffect(() => {
     if (Array.isArray(pickerWeight) && pickerWeight.length) getExpense();
@@ -93,17 +86,33 @@ export default function DateWiseList() {
     }
   };
 
-
   const renderItem = item => {
-    let todayWeight = sumBy(filter(pickerWeight, o =>
-      (moment().diff(moment(moment(o?.date).format('YYYY-MM-DD')), 'days')) == 0 && o?.picker == item?.picker),
-      p => parseFloat(p.weight)) ?? 0
-    let todayExpense = sumBy(filter(pickerExpense, o =>
-      (moment().diff(moment(moment(o?.date).format('YYYY-MM-DD')), 'days')) == 0 && o?.picker == item?.picker),
-      p => parseFloat(p.amount)) ?? 0
+    let todayWeight =
+      sumBy(
+        filter(
+          pickerWeight,
+          o =>
+            moment().diff(
+              moment(moment(o?.date).format('YYYY-MM-DD')),
+              'days',
+            ) == 0 && o?.picker == item?.picker,
+        ),
+        p => parseFloat(p.weight),
+      ) ?? 0;
+    let todayExpense =
+      sumBy(
+        filter(
+          pickerExpense,
+          o =>
+            moment().diff(
+              moment(moment(o?.date).format('YYYY-MM-DD')),
+              'days',
+            ) == 0 && o?.picker == item?.picker,
+        ),
+        p => parseFloat(p.amount),
+      ) ?? 0;
     return (
       <TouchableOpacity
-        disabled={loading}
         style={[styles.list, styles.line]}
         onPress={() =>
           navigate(
@@ -157,23 +166,27 @@ export default function DateWiseList() {
         // entering={FadeIn}
         // layout={Layout.}
         >
-          <Text h6 style={{ color: orange, fontWeight: 'bold' }}>
-            Today{' '}
-            <Text h6 style={{ color: '#d00000' }}>
-              44Kg{' '}
+          <Text
+            style={{
+              fontSize: 15 / PixelRatio.getFontScale(),
+            }}>
+            {strings.today}{'  '}
+            <Text style={{ color: todayWeight ? 'green' : 'red' }}>
+              {todayWeight ? todayWeight : ' - '} Kg{'  '}
             </Text>
-            <Text h6 style={{ color: blue }}>
-              100Rs
+            <Text style={{ color: todayExpense ? 'green' : 'red' }}>
+              {todayExpense ? `${todayExpense} Rs` : ''}
             </Text>
           </Text>
           <Text
             numberOfLines={1}
-            h5
+            // h3
             style={{
+              fontSize: 15 / PixelRatio.getFontScale(),
               color: loading
                 ? green
                 : (!isNaN(item?.amount) ? item?.amount : 0) >= 0
-                  ? greenDark
+                  ? green
                   : red,
             }}>
             {!loading

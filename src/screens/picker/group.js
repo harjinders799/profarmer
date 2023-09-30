@@ -1,6 +1,12 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import Text from 'src/components/text';
-import { FlatList, PixelRatio, StyleSheet, TouchableOpacity, View } from 'react-native';
+import {
+    FlatList,
+    PixelRatio,
+    StyleSheet,
+    TouchableOpacity,
+    View,
+} from 'react-native';
 import { white } from 'src/utils/color';
 import _, { every, filter, find, groupBy, some, sortBy, sumBy } from 'lodash';
 import { strings } from '../../translations/locale';
@@ -41,12 +47,12 @@ import { useFocusEffect } from '@react-navigation/native';
 import moment from 'moment';
 import Header from '../../components/header';
 
-
 export default function DateWiseList() {
     const [fullData, setFullData] = useState([]);
     const [loading, setLoading] = useState(true);
     const { pickerWeight, pickerExpense, getPickerWeight, getPickerExpense } =
         useCotton();
+    let grpPicker = groupBy(pickerWeight, v => v.picker);
 
     // useFocusEffect(
     //   useCallback(() => {
@@ -55,118 +61,63 @@ export default function DateWiseList() {
     //   }, []),
     // );
 
-    useEffect(() => {
-        if (Array.isArray(pickerWeight) && pickerWeight.length) getExpense();
-        else setFullData([]);
-    }, [pickerWeight]);
-
-    const getExpense = async () => {
-        setLoading(true);
-        let grpPicker = groupBy(pickerWeight, v => v.picker);
-        try {
-            let result = [];
-            await Promise.all(
-                Object.keys(grpPicker).map(async v => {
-                    let grpExpense = groupBy(pickerExpense, v => v.picker);
-                    result.push({
-                        picker: v,
-                        amount:
-                            sumBy(
-                                grpPicker[v],
-                                o => parseFloat(o.weight) * parseFloat(o?.rate),
-                            ) - sumBy(grpExpense[v], o => parseFloat(o.amount)),
-                        data: {
-                            expense: grpExpense[v],
-                            income: grpPicker[v],
-                        },
-                    });
-                }),
-            );
-            setFullData(result);
-            setLoading(false);
-        } catch (error) {
-            setLoading(false);
-            ToastError(error?.message, 'Picker');
-        }
-    };
-
-
     const renderItem = item => {
-        let todayWeight = sumBy(filter(pickerWeight, o =>
-            (moment().diff(moment(moment(o?.date).format('YYYY-MM-DD')), 'days')) == 0 && o?.picker == item?.picker),
-            p => parseFloat(p.weight)) ?? 0
-        let todayExpense = sumBy(filter(pickerExpense, o =>
-            (moment().diff(moment(moment(o?.date).format('YYYY-MM-DD')), 'days')) == 0 && o?.picker == item?.picker),
-            p => parseFloat(p.amount)) ?? 0
         return (
-            <BaseView>
-             {/* <Header
-        style={styles.header}
-        leftComponent={
-          <View style={{flexDirection: 'row'}}>
-            <Icon
-              name="back"
-              size={28}
-              style={{color: white, marginRight: 5}}
-              onPress={() => goBack()}
-            />
-          </View>
-        }
-        centerComponent={
-          <Text h2 numberOfLines={1} style={{width: '50%', color: white}}>
-            PickersList
-          </Text>
-        }
-        rightComponent={
-            <Text></Text>
-        }
-        />            */}
-
-        <View style={{backgroundColor:"red",marginTop:30}}>
-            <Animated.View style={[styles.list, styles.line]}>
-                <TouchableOpacity
-                    disabled={loading}
-                    onPress={() =>
-                        navigate(
-                            // item?.is_regulare ? 'RegularPickerDetail' : 'PickerDetail',
-                            'PickerDetail',
-                            { item },
-                        )
-                    }>
-                    <Animated.View
+            <View style={[styles.list, styles.line]}>
+                <TouchableOpacity onPress={() => { }}>
+                    <View
                         style={styles.row}
                     // entering={LightSpeedInRight}
                     // layout={Layout.easing}
                     >
-                        <Text numberOfLines={1} h3 style={{
-                            width: '60%',
-                        }}>
-                            {item?.picker}
+                        <Text
+                            numberOfLines={1}
+                            h3
+                            style={{
+                                width: '60%',
+                            }}>
+                            {item}
                         </Text>
-                    </Animated.View>
+                    </View>
                 </TouchableOpacity>
-            </Animated.View>
             </View>
-            </BaseView>
         );
     };
 
     return (
-        <FlatList
-            style={{ width: '100%' }}
-            contentContainerStyle={{ paddingBottom: 150 }}
-            data={sortBy(fullData, o => o?.picker)}
-            keyExtractor={item => Math.random().toString()}
-            ListEmptyComponent={() => (
-                <Text style={{ textAlign: 'center', paddingTop: 30 }}>
-                    {strings.no_data}
-                </Text>
-            )}
-            extraData={pickerWeight}
-            showsVerticalScrollIndicator={false}
-            // ItemSeparatorComponent={() => <View style={styles.line} />}
-            renderItem={({ item }) => renderItem(item)}
-        />
+        <BaseView style={{ padding: 20 }}>
+            <Text h3>{strings.in_progress}</Text>
+            <Text h3 style={{ marginVertical: 10 }}>Select Picker</Text>
+            <FlatList
+                style={{ width: '100%' }}
+                contentContainerStyle={{ paddingBottom: 150 }}
+                data={Object.keys(grpPicker)}
+                keyExtractor={item => Math.random().toString()}
+                ListEmptyComponent={() => (
+                    <Text style={{ textAlign: 'center', paddingTop: 30 }}>
+                        {strings.no_data}
+                    </Text>
+                )}
+                extraData={pickerWeight}
+                showsVerticalScrollIndicator={false}
+                // ItemSeparatorComponent={() => <View style={styles.line} />}
+                renderItem={({ item }) => renderItem(item)}
+            />
+            <Button
+                iconName="plus"
+                iconColor={white}
+                label={strings.add_picker}
+                btnStyle={{
+                    width: `${40 * PixelRatio.getFontScale()}%`,
+                    height: 40 * PixelRatio.getFontScale(),
+                    position: 'absolute',
+                    bottom: 20,
+                    right: 20,
+                    zIndex: 999,
+                }}
+                onPress={() => navigate('AddPicker')}
+            />
+        </BaseView>
     );
 }
 const styles = StyleSheet.create({
@@ -175,9 +126,8 @@ const styles = StyleSheet.create({
         paddingHorizontal: 15,
         paddingVertical: 15,
         elevation: 15,
-      },
+    },
     list: {
-        borderRadius: 10,
         marginVertical: 10,
         width: '100%',
         alignSelf: 'center',
