@@ -9,7 +9,7 @@ import { navigate } from '../../navigation/ref';
 import { getAllPickerExpense, getPickerData } from '../../network/picker-service';
 import DateWiseList from '../../container/picker/dateWiseList';
 import Loader from '../../components/loader';
-import { gray10, red, white } from '../../utils/color';
+import { gray10, green, red, white } from '../../utils/color';
 import { useCotton } from '../../context/cottonContext';
 import {
   createCottonPriceTable,
@@ -19,11 +19,11 @@ import {
   savePickerData,
   savePickerExpenseData,
 } from '../../sql';
-import { PixelRatio, View } from 'react-native';
+import { PixelRatio, ScrollView, View } from 'react-native';
 import Icon from '../../components/icon';
 import Search from '../../components/search';
 import SyncLocal from '../../container/picker/syncLocal';
-import { sumBy, groupBy } from 'lodash';
+import { sumBy, groupBy, sortBy } from 'lodash';
 import moment from 'moment';
 import { useRoute } from '@react-navigation/native';
 
@@ -82,9 +82,11 @@ export default function Picker({ navigation }) {
       setLoading(false);
     }
   };
-  let dateWise = groupBy(pickerWeight, v =>
-    moment(v?.date).format('DD-MM-YYYY'),
-    console.log(pickerWeight,'======++++++====')
+  
+  
+  let dateWise = groupBy(
+    sortBy(pickerWeight, d => d?.date),
+    v => moment(v?.date).format('DD-MM-YYYY'),
   );
 
 
@@ -96,13 +98,12 @@ export default function Picker({ navigation }) {
       <SyncLocal />
       <View
         style={{
-          marginTop: 20,
           width: '100%',
           alignItem: 'center',
         }}>
         <Icon
-          name={isTextVisible ? 'eye-slash' : 'eye'}
-          type="FontAwesome"
+          name={isTextVisible ? 'eye' : 'eye-off'}
+          type="Ionicons"
           size={25}
           color={gray10}
           style={{
@@ -134,64 +135,55 @@ export default function Picker({ navigation }) {
               style={{
                 width: '100%',
               }}>
-              {/* <View
-                style={{
-                  width: '100%',
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  borderBottomWidth: 0.5,
-                  marginVertical: 10,
-                }}>
-                <Text h3>{strings.total_weight}</Text>
-                <Text h2 style={{ fontWeight: 'bold' }}>
-                  {sumBy(pickerWeight, o => parseFloat(o.weight))} Kg
-                </Text>
-              </View>
-              {Object.keys(dateWise)
-                .reverse()
-                .map((o, index) => (
-                  <View style={{
-                    borderBottomWidth: 0.5,
-                    display: sumBy(dateWise[o], o => parseFloat(o.weight)) == 0 ? 'none' : 'flex'
-                  }}>
-                    <View
-                      key={index}
+              <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 250 }}>
+
+                {Object.keys(dateWise)
+                  .reverse()
+                  .map((o, index) => (
+                    <View key={index}
                       style={{
                         width: '100%',
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                        // borderBottomWidth: 0.5,
+                        borderBottomWidth: 0.5,
                         marginVertical: 10,
-                        backgroundColor: "#4CAF99",
-                        // display: sumBy(dateWise[o], o => parseFloat(o.weight)) == 0 ? 'none' : 'flex'
-                      }}>
-                      <Text style={{ color: white }}>{o}</Text>
-                      <Text style={{ color: white }}>
-                        {sumBy(dateWise[o], o => parseFloat(o.weight))} Kg
-                      </Text>
+                      }}
+                    >
+                      <View
+                        style={{
+                          width: '100%',
+                          flexDirection: 'row',
+                          justifyContent: 'space-between',
+                          marginVertical: 10,
+                          padding: 5,
+                          backgroundColor: green
+                        }}>
+                        <Text style={{ color: white }}>{o}</Text>
+                        <Text style={{ color: white }}>
+                          {sumBy(dateWise[o], o => parseFloat(o.weight))} Kg
+                        </Text>
+                      </View>
+                      {dateWise[o].map((picker, key) =>
+                        <View
+                          key={key}
+                          style={{
+                            width: '100%',
+                            flexDirection: 'row',
+                            justifyContent: 'space-between',
+                            // borderBottomWidth: 0.5,
+                            marginVertical: 10,
+                            display: picker?.weight == "0" ? 'none' : 'flex'
+                          }}>
+                          <Text h6>{picker?.picker}</Text>
+                          <Text h6>
+                            {parseFloat(picker?.weight)} Kg
+                          </Text>
+                        </View>
+                      )}
                     </View>
-                    {dateWise[o].map(( picker,key)=>
-                    <View 
-                    key={key}
-                    style={{
-                      flexDirection: "row",
-                      justifyContent: "space-between",
-                      marginVertical: 10,
-                      width: "100%",
-                      // marginTop:30
-                    display:(picker?.weight)== 0 ? 'none' : 'flex'
-                    }}>
-                      <Text>
-                        {picker?.picker}
-                      </Text>
-                      <Text>
-                        {picker.weight} Kg
-                      </Text>
-                    </View>)}
-                  </View>
-                ))} */}
+                  ))}
+              </ScrollView>
             </View>
           )}
+
           <DateWiseList />
           <Button
             iconName="plus"
@@ -213,12 +205,11 @@ export default function Picker({ navigation }) {
             iconColor={white}
             label={strings.add_picker}
             btnStyle={{
-              width: 'auto',
-              paddingHorizontal: 15,
-              height: 50 * PixelRatio.getFontScale(),
+              width: `${40 * PixelRatio.getFontScale()}%`,
+              height: 40 * PixelRatio.getFontScale(),
               position: 'absolute',
               bottom: 20,
-              right: 30,
+              right: 20,
               zIndex: 999,
             }}
             onPress={() => navigate('AddPicker')}

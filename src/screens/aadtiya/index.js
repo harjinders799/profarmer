@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import Text from 'src/components/text';
 import BaseView from 'src/container/base';
 import { Auth } from 'src/service/setup';
@@ -285,78 +285,89 @@ td {
         }}>
         <View
           style={{
-            // flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
+            padding: 10,
             width: '100%',
-            marginVertical: 5,
-          }}>
-          <Text
-            h3
-            style={{ color: blue, fontWeight: '700', textAlign: 'center' }}>
-            {currencyFormat(getTotalInterst(aadtData))}
-          </Text>
-          <Text h4 style={{ textAlign: 'center' }}>
-            {strings.taken_amount_from_aadhtiya} ({strings.interest_included})
-          </Text>
-        </View>
-        <View
-          style={{
-            // flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            width: '100%',
+            borderRadius: 10,
+            backgroundColor: greenLight,
+            elevation: 5,
             marginVertical: 10,
+            marginBottom: 30,
           }}>
-          <Text
-            h3
-            style={{ color: orange, fontWeight: '700', textAlign: 'center' }}>
-            {currencyFormat(getTotalInterst(cropData))}
-          </Text>
-          <Text h4 style={{ textAlign: 'center' }}>
-            {strings.crop} ({strings.interest_included})
-          </Text>
-        </View>
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            width: '100%',
-            marginVertical: 10,
-          }}>
-          <Text h3 style={{ textAlign: 'center' }}>
-            {strings.final}
-          </Text>
-          <Text
-            h2
+          <View
             style={{
-              color:
-                getTotalInterst(aadtData) - getTotalInterst(cropData) > 0
-                  ? red
-                  : greenDark,
-              fontWeight: '700',
-              textAlign: 'center',
+              // flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              width: '100%',
+              marginVertical: 5,
             }}>
-            {currencyFormat(
-              getTotalInterst(cropData) - getTotalInterst(aadtData),
-            )}{'\n'}
             <Text
-              h4
+              h3
+              style={{ color: blue, fontWeight: '700', textAlign: 'center' }}>
+              {currencyFormat(getTotalInterst(aadtData))}
+            </Text>
+            <Text h4 style={{ textAlign: 'center' }}>
+              {strings.taken_amount_from_aadhtiya} ({strings.interest_included})
+            </Text>
+          </View>
+          <View
+            style={{
+              // flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              width: '100%',
+              marginVertical: 10,
+            }}>
+            <Text
+              h3
+              style={{ color: orange, fontWeight: '700', textAlign: 'center' }}>
+              {currencyFormat(getTotalInterst(cropData))}
+            </Text>
+            <Text h4 style={{ textAlign: 'center' }}>
+              {strings.crop} ({strings.interest_included})
+            </Text>
+          </View>
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              width: '100%',
+              marginVertical: 10,
+            }}>
+            <Text h3 style={{ textAlign: 'center' }}>
+              {strings.final}
+            </Text>
+            <Text
+              h2
               style={{
                 color:
                   getTotalInterst(aadtData) - getTotalInterst(cropData) > 0
                     ? red
                     : greenDark,
+                fontWeight: '700',
+                textAlign: 'center',
               }}>
-              {getTotalInterst(aadtData) - getTotalInterst(cropData) > 0
-                ? strings.give
-                : strings.receive}
+              {currencyFormat(
+                getTotalInterst(cropData) - getTotalInterst(aadtData),
+              )}
+              {'\n'}
+              <Text
+                h4
+                style={{
+                  color:
+                    getTotalInterst(aadtData) - getTotalInterst(cropData) > 0
+                      ? red
+                      : greenDark,
+                }}>
+                {getTotalInterst(aadtData) - getTotalInterst(cropData) > 0
+                  ? strings.give
+                  : strings.receive}
+              </Text>
             </Text>
-          </Text>
+          </View>
         </View>
-      </View>
-      {/* {isTextVisible && (
+        {/* {isTextVisible && (
         <View
           style={{
             width: '100%',
@@ -369,43 +380,44 @@ td {
           <Text h3> {sumBy(arr, o => o.total)} Rs</Text>
         </View>
       )} */}
-      <Text h3 style={{ textAlign: 'center' }}>
-        {strings.givers_list}
-      </Text>
-      <ListAadt data={aadtData} />
-      <Text h3 style={{ textAlign: 'center', marginTop: 10 }}>
-        {strings.crop_hisab}
-      </Text>
-      <ListCrop data={cropData} />
-      <Header
-        leftComponent={
-          <Button
-            iconName="plus"
-            iconColor={white}
-            label={strings.aadhat_expense}
-            btnStyle={{
-              width: 'auto',
-              paddingHorizontal: 15,
-              display:
-                Array.isArray(aadtData) && aadtData.length ? 'none' : 'flex',
-            }}
-            onPress={() => navigate('AddForm')}
-          />
-        }
-        rightComponent={
-          <Button
-            iconName="plus"
-            iconColor={white}
-            label={strings.add_crop}
-            btnStyle={{
-              width: '40%',
-              display:
-                Array.isArray(cropData) && cropData.length ? 'none' : 'flex',
-            }}
-            onPress={() => navigate('AddCrop')}
-          />
-        }
-      />
+        <Text h3 style={{ textAlign: 'center' }}>
+          {strings.givers_list}
+        </Text>
+        <ListAadt data={aadtData} />
+        <Text h3 style={{ textAlign: 'center', marginTop: 10 }}>
+          {strings.crop_hisab}
+        </Text>
+        <ListCrop data={cropData} />
+        <Header
+          leftComponent={
+            <Button
+              iconName="plus"
+              iconColor={white}
+              label={strings.aadhat_expense}
+              btnStyle={{
+                width: 'auto',
+                paddingHorizontal: 15,
+                display:
+                  Array.isArray(aadtData) && aadtData.length ? 'none' : 'flex',
+              }}
+              onPress={() => navigate('AddForm')}
+            />
+          }
+          rightComponent={
+            <Button
+              iconName="plus"
+              iconColor={white}
+              label={strings.add_crop}
+              btnStyle={{
+                width: '40%',
+                display:
+                  Array.isArray(cropData) && cropData.length ? 'none' : 'flex',
+              }}
+              onPress={() => navigate('AddCrop')}
+            />
+          }
+        />
+      </ScrollView>
     </BaseView>
   );
 }

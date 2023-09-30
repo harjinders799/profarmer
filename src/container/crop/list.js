@@ -28,7 +28,7 @@ export default function List({ data }) {
     <View style={styles.list}>
       <TouchableOpacity onPress={() => navigate('CropDetail', { data })}>
         <View style={styles.row}>
-          <Text numberOfLines={1} h3 style={{ width: '80%' }}>
+          <Text numberOfLines={1} h3 style={{ width: '70%' }}>
             {strings.crop}
             {/* </Text>
           <Text h5>{strings.view}</Text>
