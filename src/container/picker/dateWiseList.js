@@ -1,6 +1,12 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import Text from 'src/components/text';
-import { FlatList, PixelRatio, StyleSheet, TouchableOpacity, View } from 'react-native';
+import {
+  FlatList,
+  PixelRatio,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { white } from 'src/utils/color';
 import _, { every, filter, find, groupBy, some, sortBy, sumBy } from 'lodash';
 import { strings } from '../../translations/locale';
@@ -18,6 +24,7 @@ import {
   orange,
   navy,
   greenDark,
+  blue,
 } from '../../utils/color';
 import { currencyFormat, kg } from '../../utils/dateformat';
 import Button from '../../components/button';
@@ -87,105 +94,127 @@ export default function DateWiseList() {
 
   const renderItem = item => {
     return (
-      <Animated.View style={[styles.list, styles.line]}>
-        <TouchableOpacity
-          disabled={loading}
-          onPress={() =>
-            navigate(
-              // item?.is_regulare ? 'RegularPickerDetail' : 'PickerDetail',
-              'PickerDetail',
-              { item },
-            )
-          }>
-          <Animated.View
-            style={styles.row}
-          // entering={LightSpeedInRight}
-          // layout={Layout.easing}
-          >
-            <Text numberOfLines={1} h3 style={{ width: '60%' }}>
-              {item?.picker}
-            </Text>
-            {!loading ? (
-              <Text
-                numberOfLines={1}
-                h3
-                style={{
-                  color: loading
-                    ? greenDark
-                    : (!isNaN(item?.amount) ? item?.amount : 0) >= 0
-                      ? greenDark
-                      : red,
-                }}>
-                {!loading
-                  ? currencyFormat(!isNaN(item?.amount) ? item?.amount : 0)
-                  : '__'}{' '}
-              </Text>
-            ) : (
-              <Loader size={15} small visible={loading} />
-            )}
-          </Animated.View>
-          <Animated.View
-            style={styles.row}
-          // entering={FadeIn}
-          // layout={Layout.}
-          >
-            <View style={{ flexDirection: 'row' }}>
-              <Button
-                hitSlop={10}
-                label={strings.add_weight}
-                btnStyle={{
-                  marginRight: 10,
-                  width: 'auto',
-                  paddingHorizontal: 8,
-                  height: 25 * PixelRatio.getFontScale(),
-                  borderRadius: 5,
-                  marginVertical: 0,
-                }}
-                onPress={() =>
-                  navigate('AddPickerWeight', {
-                    data: {
-                      picker: item?.picker,
-                      rate: item.data.income[item.data.income.length - 1]?.rate,
-                    },
-                  })
-                }
-              />
-              <Button
-                hitSlop={10}
-                label={strings.add_expense}
-                btnStyle={{
-                  backgroundColor: navy,
-                  marginRight: 10,
-                  width: 'auto',
-                  paddingHorizontal: 8,
-                  height: 25 * PixelRatio.getFontScale(),
-                  borderRadius: 5,
-                  marginVertical: 0,
-                }}
-                onPress={() =>
-                  navigate('AddPickerExpense', { data: { picker: item?.picker } })
-                }
-              />
-            </View>
+      <TouchableOpacity
+        disabled={loading}
+        style={[styles.list, styles.line]}
+        onPress={() =>
+          navigate(
+            // item?.is_regulare ? 'RegularPickerDetail' : 'PickerDetail',
+            'PickerDetail',
+            { item },
+          )
+        }>
+        {/* <View
+          style={{
+            // backgroundColor: 'red',
+            // width: 10,
+            // height: 10,
+            alignSelf: 'center',
+            top: -4,
+            position: 'absolute',
+          }}>
+          <Text h6 style={{ color: orange }}>
+            Today 44Kg
+          </Text>
+        </View> */}
+        <View
+          style={styles.row}
+        // entering={LightSpeedInRight}
+        // layout={Layout.easing}
+        >
+          <Text numberOfLines={1} h3 style={{ width: '60%' }}>
+            {item?.picker}
+          </Text>
+          {!loading ? (
             <Text
               numberOfLines={1}
               h3
               style={{
                 color: loading
-                  ? green
+                  ? greenDark
                   : (!isNaN(item?.amount) ? item?.amount : 0) >= 0
-                    ? green
+                    ? greenDark
                     : red,
               }}>
               {!loading
-                ? (!isNaN(item?.amount) ? item?.amount : 0) >= 0
-                  ? strings.give
-                  : strings.receive
+                ? currencyFormat(!isNaN(item?.amount) ? item?.amount : 0)
                 : '__'}{' '}
             </Text>
-          </Animated.View>
-        </TouchableOpacity>
-      </Animated.View>
+          ) : (
+            <Loader size={15} small visible={loading} />
+          )}
+        </View>
+        <View
+          style={[styles.row, { marginVertical: 0 }]}
+        // entering={FadeIn}
+        // layout={Layout.}
+        >
+          <Text h6 style={{ color: orange, fontWeight: 'bold' }}>
+            Today{' '}
+            <Text h6 style={{ color: '#d00000' }}>
+              44Kg{' '}
+            </Text>
+            <Text h6 style={{ color: blue }}>
+              100Rs
+            </Text>
+          </Text>
+          <Text
+            numberOfLines={1}
+            h5
+            style={{
+              color: loading
+                ? green
+                : (!isNaN(item?.amount) ? item?.amount : 0) >= 0
+                  ? greenDark
+                  : red,
+            }}>
+            {!loading
+              ? (!isNaN(item?.amount) ? item?.amount : 0) >= 0
+                ? strings.give
+                : strings.receive
+              : '__'}{' '}
+          </Text>
+        </View>
+
+        <View style={styles.row}>
+          <Button
+            hitSlop={10}
+            label={strings.add_expense}
+            btnStyle={{
+              backgroundColor: blue,
+              // marginRight: 10,
+              width: 'auto',
+              paddingHorizontal: 8,
+              height: 25 * PixelRatio.getFontScale(),
+              borderRadius: 5,
+              marginVertical: 5,
+            }}
+            onPress={() =>
+              navigate('AddPickerExpense', { data: { picker: item?.picker } })
+            }
+          />
+          <Button
+            hitSlop={10}
+            label={strings.add_weight}
+            btnStyle={{
+              // marginRight: 10,
+              width: 'auto',
+              paddingHorizontal: 8,
+              height: 25 * PixelRatio.getFontScale(),
+              borderRadius: 5,
+              marginVertical: 5,
+            }}
+            onPress={() =>
+              navigate('AddPickerWeight', {
+                data: {
+                  picker: item?.picker,
+                  rate: item.data.income[item.data.income.length - 1]?.rate,
+                },
+              })
+            }
+          />
+        </View>
+      </TouchableOpacity>
     );
   };
 
@@ -209,17 +238,21 @@ export default function DateWiseList() {
 }
 const styles = StyleSheet.create({
   list: {
-    borderRadius: 10,
     marginVertical: 10,
     width: '100%',
     alignSelf: 'center',
+    zIndex: 9,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    width: '100%',
+    // elevation: 5,
+    // backgroundColor: white
   },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     width: '100%',
-    marginVertical: 5,
+    // marginVertical: 5,
   },
   icon: {
     elevation: 1,
@@ -228,9 +261,5 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     textAlignVertical: 'center',
     borderRadius: 5,
-  },
-  line: {
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    width: WIDTH - 40,
   },
 });

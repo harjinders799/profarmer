@@ -26,7 +26,7 @@ const SyncLocal = () => {
     } = useCotton();
     const [localEntries, setLocalEntries] = useState(0);
     const isFocused = useIsFocused();
-    const [hidePopup, setHidePopup] = useState(false)
+    const [hidePopup, setHidePopup] = useState(false);
 
     useFocusEffect(
         useCallback(() => {
@@ -34,7 +34,7 @@ const SyncLocal = () => {
 
             const fetchDataTimeout = setTimeout(() => {
                 fetchData();
-            }, 5000);
+            }, 20000);
 
             return () => {
                 // Cleanup the effect to prevent multiple calls
@@ -115,26 +115,32 @@ const SyncLocal = () => {
         return local;
     };
 
-    return localEntries && !hidePopup ? (
+    return (
         <View
             style={{
                 width: '100%',
                 flexDirection: 'row',
                 justifyContent: 'space-between',
                 alignItem: 'center',
-                marginTop: 20,
+                marginVertical: 5,
                 // position: 'absolute',
                 backgroundColor: white,
-                zIndex: 9999,
+                // zIndex: 9999,
             }}>
-            <Text h4 style={{ color: orange, width: '90%' }}>
-                {strings.offline_warning}
+            <Text
+                style={{
+                    fontSize: 12,
+                    color: orange,
+                    width: '100%',
+                    textAlign: 'center',
+                }}>
+                {localEntries ? strings.offline_warning : ''}
             </Text>
-            <TouchableOpacity hitSlop={20} onPress={() => setHidePopup(true)}>
+            {/* <TouchableOpacity hitSlop={20} onPress={() => setHidePopup(true)}>
                 <Icon name={'close'} size={20} />
-            </TouchableOpacity>
+            </TouchableOpacity> */}
         </View>
-    ) : null;
+    );
 };
 
 export default SyncLocal;

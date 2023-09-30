@@ -9,7 +9,7 @@ import { navigate } from '../../navigation/ref';
 import { getAllPickerExpense, getPickerData } from '../../network/picker-service';
 import DateWiseList from '../../container/picker/dateWiseList';
 import Loader from '../../components/loader';
-import { gray10, red, white } from '../../utils/color';
+import { gray10, green, red, white } from '../../utils/color';
 import { useCotton } from '../../context/cottonContext';
 import {
   createCottonPriceTable,
@@ -19,11 +19,11 @@ import {
   savePickerData,
   savePickerExpenseData,
 } from '../../sql';
-import { PixelRatio, View } from 'react-native';
+import { PixelRatio, ScrollView, View } from 'react-native';
 import Icon from '../../components/icon';
 import Search from '../../components/search';
 import SyncLocal from '../../container/picker/syncLocal';
-import { sumBy, groupBy } from 'lodash';
+import { sumBy, groupBy, sortBy } from 'lodash';
 import moment from 'moment';
 
 export default function Picker({ navigation }) {
@@ -78,8 +78,9 @@ export default function Picker({ navigation }) {
       setLoading(false);
     }
   };
-  let dateWise = groupBy(pickerWeight, v =>
-    moment(v?.date).format('DD-MM-YYYY'),
+  let dateWise = groupBy(
+    sortBy(pickerWeight, d => d?.date),
+    v => moment(v?.date).format('DD-MM-YYYY'),
   );
 
   return (
@@ -89,13 +90,12 @@ export default function Picker({ navigation }) {
       <SyncLocal />
       <View
         style={{
-          marginTop: 20,
           width: '100%',
           alignItem: 'center',
         }}>
         <Icon
-          name={isTextVisible ? 'eye-slash' : 'eye'}
-          type="FontAwesome"
+          name={isTextVisible ? 'eye' : 'eye-off'}
+          type="Ionicons"
           size={25}
           color={gray10}
           style={{
@@ -139,37 +139,66 @@ export default function Picker({ navigation }) {
                   {sumBy(pickerWeight, o => parseFloat(o.weight))} Kg
                 </Text>
               </View>
-              {Object.keys(dateWise)
-                .reverse()
-                .map((o, index) => (
-                  <View
-                    key={index}
-                    style={{
-                      width: '100%',
-                      flexDirection: 'row',
-                      justifyContent: 'space-between',
-                      borderBottomWidth: 0.5,
-                      marginVertical: 10,
-                    }}>
-                    <Text>{o}</Text>
-                    <Text>
-                      {sumBy(dateWise[o], o => parseFloat(o.weight))} Kg
-                    </Text>
-                  </View>
-                ))}
+              <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 250 }}>
+
+                {Object.keys(dateWise)
+                  .reverse()
+                  .map((o, index) => (
+                    <View key={index}
+                      style={{
+                        width: '100%',
+                        borderBottomWidth: 0.5,
+                        marginVertical: 10,
+                      }}
+                    >
+                      <View
+                        style={{
+                          width: '100%',
+                          flexDirection: 'row',
+                          justifyContent: 'space-between',
+                          marginVertical: 10,
+                          padding: 5,
+                          backgroundColor: green
+                        }}>
+                        <Text style={{ color: white }}>{o}</Text>
+                        <Text style={{ color: white }}>
+                          {sumBy(dateWise[o], o => parseFloat(o.weight))} Kg
+                        </Text>
+                      </View>
+                      {dateWise[o].map((picker, key) =>
+                        <View
+                          key={key}
+                          style={{
+                            width: '100%',
+                            flexDirection: 'row',
+                            justifyContent: 'space-between',
+                            // borderBottomWidth: 0.5,
+                            marginVertical: 10,
+                            display: picker?.weight == "0" ? 'none' : 'flex'
+                          }}>
+                          <Text h6>{picker?.picker}</Text>
+                          <Text h6>
+                            {parseFloat(picker?.weight)} Kg
+                          </Text>
+                        </View>
+                      )}
+                    </View>
+                  ))}
+              </ScrollView>
             </View>
           )}
+
           <DateWiseList />
           <Button
             iconName="plus"
             iconColor={white}
             label={strings.add_picker}
             btnStyle={{
-              width: '40%',
-              height: 50 * PixelRatio.getFontScale(),
+              width: `${40 * PixelRatio.getFontScale()}%`,
+              height: 40 * PixelRatio.getFontScale(),
               position: 'absolute',
               bottom: 20,
-              right: 30,
+              right: 20,
               zIndex: 999,
             }}
             onPress={() => navigate('AddPicker')}
