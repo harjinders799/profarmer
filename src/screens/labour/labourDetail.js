@@ -209,8 +209,8 @@ export default function LabourDetail({ navigation }) {
               <tr>
                   <th style="width:15%">${strings.date}</th>
                   <th style="width:15%">${strings.labour}</th>
-                  <th style="width:10%">${strings.labour_rate}</th>
                   <th style="width:10%">${strings.total_labour}</th>
+                  <th style="width:10%">${strings.labour_rate}</th>
                   <th style="width:15%">${strings.amount}</th>
                   <th style="width:30%">${strings.remark}</th>
               </tr>

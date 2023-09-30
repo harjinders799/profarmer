@@ -7,7 +7,6 @@ import { useLang } from 'src/context/langContext';
 import Header from 'src/components/header';
 import { getInterstAmount } from 'src/network/interest-service';
 import { useFocusEffect, useIsFocused } from '@react-navigation/native';
-import { groupBy, sumBy } from 'lodash';
 import moment from 'moment';
 import { strings } from 'src/translations/locale';
 import { useStore } from 'src/context/context';
@@ -28,9 +27,16 @@ import {
   red,
   white,
 } from '../../utils/color';
+import { sortBy, sumBy } from 'lodash';
 import { useAadt } from '../../context/aadtContext';
 import { getTotalInterst } from '../../utils/helper';
 import { currencyFormat } from '../../utils/dateformat';
+import { useAuth } from '../../context/authContext';
+import Share from 'react-native-share';
+import RNHTMLtoPDF from 'react-native-html-to-pdf';
+import { dateFormat } from 'src/utils/dateformat';
+
+
 
 export default function DashBoard({ navigation }) {
   const { lang } = useLang();
@@ -40,6 +46,8 @@ export default function DashBoard({ navigation }) {
   const [data, setData] = useState([]);
   let arr = [];
   const [isTextVisible, setTextVisible] = useState(false);
+  const { user } = useAuth();
+
 
   useFocusEffect(
     useCallback(() => {
@@ -48,21 +56,158 @@ export default function DashBoard({ navigation }) {
     }, [navigation, lang]),
   );
 
-  useEffect(() => {
-    if (
-      Auth()?.currentUser?.uid &&
-      Array.isArray(givers) &&
-      givers.length < 1 &&
-      Array.isArray(data) &&
-      data.length
-    ) {
-      let pick = [];
-      data.map(v => {
-        if (pick.indexOf(v?.giver) === -1) pick.push(v?.giver);
-      });
-      setGivers(pick);
+  const onShare = async () => {
+    if (!user?.name) {
+      ToastError('Please Complete your profile');
+      navigate('EditProfile');
+      return;
     }
-  }, [data]);
+    let html = `<!DOCTYPE html>
+<html>
+<head>
+<style>
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+  padding:10px;
+}
+td {
+  text-align: center;
+}
+</style>
+</head>
+<body>
+      <div style="display: flex; flex-direction:column; align-items:center">
+          <div style="display: flex; justify-content: space-between; width:100%">
+          <div>    
+          <h2>${strings.farmer_name}: ${user?.name}</h2>
+          <p>${user?.phone}</p>
+          <p>${user?.email}</p>
+          </div>
+          <div>
+          <a href="https://play.google.com/store/apps/details?id=com.profarmer">Pro Farmer</a>
+              <p>${moment().format('lll')}</p>
+          </div>
+          </div>
+          <h2>${strings.aadhatiya_hisab}</h2>
+      </div>
+      <div style="display: flex; justify-content: space-between;">
+          <div>
+              <h3>${strings.taken_amount_from_aadhtiya} (${strings.interest_included}) : ${currencyFormat(getTotalInterst(aadtData)
+    )}</h3>
+    
+    </div>
+    <div>
+    <h3>${strings.crop} (${strings.interest_included}) : ${currencyFormat(getTotalInterst(cropData))} </h3>
+    </div>
+      </div>
+      <div>
+      <h3>${strings.final} (${getTotalInterst(aadtData) - getTotalInterst(cropData) > 0
+        ? strings.give
+        : strings.receive})  : ${currencyFormat(
+      getTotalInterst(cropData) - getTotalInterst(aadtData),
+    )}${'\n'}
+    </h3>
+          </div>
+          <h2>${strings.givers_list}</h2>
+          <table style="width:100%">
+          <tr>
+          <th>"${strings.date}</th>
+          <th>${strings.day}</th>
+          <th>${strings.interest}</th>
+          <th>${strings.total_principal}</th>
+          <th>${strings.total_interest}</th>
+          <th>${strings.total_amount}</th>
+          <th>${strings.remark}</th>
+      </tr>
+              ${sortBy(aadtData, (a, b) => moment(b?.date) - moment(a?.date)).map(
+      record => {
+        let date = moment(record?.date).format('YYYY-MM-DD');
+        let start_date = moment(date);
+        let today = moment();
+        let days = today.diff(start_date, 'days');
+        let interest = (
+          ((parseFloat(record?.amount) *
+            (parseFloat(record?.interest_rate) / 100)) /
+            30) *
+          parseInt(days)
+        ).toFixed(2);
+        let final_amount =
+          parseFloat(record?.amount) + parseFloat(interest);
+        return `<tr>
+                  <td>${dateFormat(record?.date)}</td>
+                  <td>${days}</td> 
+                   <td>${record?.interest_rate}</td>
+                  <td>${currencyFormat(record?.amount)}</td>
+                  <td>${currencyFormat(interest)}</td>
+                  <td>${currencyFormat(final_amount)}</td>
+                  <td>${record?.detail}</td>
+              </tr>`;
+      },
+    )}
+          </table>
+          <h2>${strings.crop_hisab}</h2>
+          <table style="width:100%">
+          <tr>
+          <th>${strings.date}</th>
+          <th>${strings.day}</th>
+          <th>${strings.crop}</th>
+          <th>${strings.interest}</th>
+          <th>${strings.crop_total}</th>
+          <th>${strings.total_interest}</th>
+          <th>${strings.total_amount}</th>
+          <th>${strings.remark}</th>
+      </tr>
+              ${cropData.map(v => {
+      v?.interest_rate;
+      let date = moment(v?.date).format('YYYY-MM-DD');
+      let start_date = moment(date);
+      let today = moment();
+      let days = today.diff(start_date, 'days');
+      let interest = (
+        ((parseFloat(v?.amount) * (parseFloat(v?.interest_rate) / 100)) /
+          30) *
+        parseInt(days)
+      ).toFixed(2);
+      let total_amount = parseFloat(v?.amount) + parseFloat(interest);
+      return `<tr>
+                  <td>${dateFormat(data?.date)}</td>
+                  <td>${days}</td>
+                  <td>${v.crop}</td>
+                  <td>${currencyFormat(v?.interest_rate)}</td>
+                  <td>${currencyFormat(v?.amount)}</td>
+                  <td>${currencyFormat(interest)}</td>
+                  <td>${currencyFormat(
+        parseFloat(v?.amount) + parseFloat(interest),
+      )}</td>
+                  <td>${v?.detail}</td>
+              </tr>`;
+    })}
+          </table>
+  </body>
+</html>
+  `;
+
+    const options = {
+      html: html,
+      base64: true,
+      fileName: strings.aadhatiya_hisab,
+      directory: 'Documents',
+    };
+
+    const file = await RNHTMLtoPDF.convert(options);
+    Share.open({
+      url: `data:application/pdf;base64,${file?.base64}`,
+      type: 'application/pdf',
+      title: strings.aadhatiya_hisab,
+      saveToFiles: true,
+      showAppsToView: true,
+      filename: strings.aadhatiya_hisab,
+    })
+      .then(res => console.log(res, '---res'))
+      .catch(err => console.log(err, '----err'));
+  };
+
 
   return (
     <BaseView>
@@ -116,9 +261,18 @@ export default function DashBoard({ navigation }) {
           }}
           onPress={() => setTextVisible(!isTextVisible)}
         /> */}
-      <Text h2 style={{ textAlign: 'center', marginVertical: 10 }}>
-        {strings.aadhatiya_hisab}
-      </Text>
+      <View style={{ flexDirection: "row" }}>
+        <Text h2 style={{ textAlign: 'center', marginVertical: 10, paddingHorizontal: 50 }}>
+          {strings.aadhatiya_hisab}
+        </Text>
+        <Icon
+          name="pdffile1"
+          size={30}
+          color={green}
+          style={{ marginVertical: 15 }}
+          onPress={onShare}
+        />
+      </View>
       <View
         style={{
           padding: 10,

@@ -15,6 +15,8 @@ import { PCIKER_TABLE, PICKER_EXPENSE_TABLE } from '../sql/tabels';
 import { submitPicker, submitPickerExpense, updatePicker, updatePickerExpense } from '../network/picker-service';
 import AddPrice from '../screens/picker/addPrice';
 import PickerUpdate from '../screens/picker/pickerUpdate';
+import Analysis from '../screens/picker/analysis';
+import Group from '../screens/picker/group';
 import CropUpdate from '../screens/crop/cropUpdate';
 import AddCrop from '../screens/crop/addCrop';
 import AboutUs from '../screens/settings/aboutUs';
@@ -194,6 +196,14 @@ export default function Stacks() {
       <Stack.Screen
         name="GiverUpdate"
         component={GiverUpdate}
+      />
+      <Stack.Screen
+        name="Analysis"
+        component={Analysis}
+      />
+        <Stack.Screen
+        name="Group"
+        component={Group}
       />
       <Stack.Screen name="AboutUs" component={AboutUs} />
       <Stack.Screen name="ContactUs" component={ContactUs} />

@@ -188,14 +188,16 @@ td {
       sumBy(data, o => parseInt(o.amount)),
     )}
       </h3>
+      </div>
+      <div>
       <h3>${strings.total_interest}: ${currencyFormat(interest)} </h3>
+      </div>
       </div>
       <div>
     <h3>${strings.total_amount}  : ${currencyFormat(
       sumBy(data, o => parseInt(o.amount)) + interest,
     )}
     </h3>
-      </div>
       </div>
 
       <h2>${strings.crop_hisab}</h2>
@@ -226,7 +228,7 @@ td {
               <td>${dateFormat(data?.date)}</td>
               <td>${days}</td>
               <td>${v.crop}</td>
-              <td>${currencyFormat(interest)}</td>
+              <td>${currencyFormat(v?.interest_rate)}</td>
               <td>${currencyFormat(v?.amount)}</td>
               <td>${currencyFormat(interest)}</td>
               <td>${currencyFormat(

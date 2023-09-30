@@ -234,9 +234,12 @@ export default function RegularLabourDetail() {
         <h3>${strings.extra_labour}: ${extraDay}</h3>
         <h3>${strings.total_labour_amount} : ${currencyFormat(totalLabour)}</h3>
         <h3>${strings.given_amount}: ${currencyFormat(expenseTot)}</h3>
-        <h3>${strings.final}: ${currencyFormat(totalLabour - expenseTot)}</h3>
+        <h3>${strings.labour_rate}: ${currencyFormat(data?.data[0]?.rate)}</h3>
       </div>
     </div>
+    <div>
+    <h3>${strings.final}: ${currencyFormat(totalLabour - expenseTot)}</h3>
+        </div>
 
     <h2>${strings.labour}</h2>
     <table style="width: 100%">

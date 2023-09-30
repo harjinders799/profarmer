@@ -58,9 +58,9 @@ export default function LabourUpdate() {
                 <Header
                     style={{ marginTop: 10 }}
                     leftComponent={
-                        <Icon name="back" size={28} onPress={() => goBack()} />
+                        <Icon name="back" size={28} color={green} onPress={() => goBack()} />
                     }
-                    centerComponent={<Text h2>{data.labour}</Text>}
+                    centerComponent={<Text h2 style={{ color: green, fontWeight: "bold", fontStyle: "italic" }}>{data.labour}</Text>}
                     rightComponent={<Text h2> </Text>}
                 />
                 <View style={[styles.row]}>

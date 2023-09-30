@@ -36,6 +36,7 @@ import Icon from '../../components/icon';
 import Loader from '../../components/loader';
 import { useCotton } from '../../context/cottonContext';
 import { useFocusEffect } from '@react-navigation/native';
+import moment from 'moment';
 
 export default function DateWiseList() {
   const [fullData, setFullData] = useState([]);
@@ -85,7 +86,14 @@ export default function DateWiseList() {
     }
   };
 
+
   const renderItem = item => {
+    let todayWeight = sumBy(filter(pickerWeight, o =>
+      (moment().diff(moment(moment(o?.date).format('YYYY-MM-DD')), 'days')) == 0 && o?.picker == item?.picker),
+      p => parseFloat(p.weight)) ?? 0
+    let todayExpense = sumBy(filter(pickerExpense, o =>
+      (moment().diff(moment(moment(o?.date).format('YYYY-MM-DD')), 'days')) == 0 && o?.picker == item?.picker),
+      p => parseFloat(p.amount)) ?? 0
     return (
       <Animated.View style={[styles.list, styles.line]}>
         <TouchableOpacity
@@ -102,7 +110,9 @@ export default function DateWiseList() {
           // entering={LightSpeedInRight}
           // layout={Layout.easing}
           >
-            <Text numberOfLines={1} h3 style={{ width: '60%' }}>
+            <Text numberOfLines={1} h3 style={{
+              width: '60%',
+            }}>
               {item?.picker}
             </Text>
             {!loading ? (
@@ -124,18 +134,44 @@ export default function DateWiseList() {
               <Loader size={15} small visible={loading} />
             )}
           </Animated.View>
+          {/* {Object.keys(dateWise)
+                .reverse()
+                .map((o, index) => ( */}
+          <View style={{ flexDirection: 'row', justifyContent: "space-between" }}>
+            <Text style={{ color: todayWeight ? 'green' : 'red' }}>
+              <Text style={{ color: '#61d4e8' }}>{strings.today}</Text>  {todayWeight ? todayWeight : ' -- '} Kg  <Text style={{ color: todayExpense ? 'green' : 'red' }}>{todayExpense ? todayExpense : ' -- '}  Rs</Text></Text>
+            <Text
+              numberOfLines={1}
+              // h3
+              style={{
+                fontSize: 20 / PixelRatio.getFontScale(),
+                color: loading
+                  ? green
+                  : (!isNaN(item?.amount) ? item?.amount : 0) >= 0
+                    ? green
+                    : red,
+              }}>
+              {!loading
+                ? (!isNaN(item?.amount) ? item?.amount : 0) >= 0
+                  ? strings.give
+                  : strings.receive
+                : '__'}{' '}
+            </Text>
+          </View>
+          {/* ))} */}
           <Animated.View
             style={styles.row}
           // entering={FadeIn}
           // layout={Layout.}
           >
-            <View style={{ flexDirection: 'row' }}>
+            <View style={{ flexDirection: 'row', width: '100%', justifyContent: "space-between" }}>
               <Button
                 hitSlop={10}
                 label={strings.add_weight}
                 btnStyle={{
                   marginRight: 10,
                   width: 'auto',
+                  // maxWidth:`${65/ PixelRatio.getFontScale()}%`,
                   paddingHorizontal: 8,
                   height: 25 * PixelRatio.getFontScale(),
                   borderRadius: 5,
@@ -157,6 +193,7 @@ export default function DateWiseList() {
                   backgroundColor: navy,
                   marginRight: 10,
                   width: 'auto',
+                  // maxWidth:`${65/ PixelRatio.getFontScale()}%`,
                   paddingHorizontal: 8,
                   height: 25 * PixelRatio.getFontScale(),
                   borderRadius: 5,
@@ -167,22 +204,6 @@ export default function DateWiseList() {
                 }
               />
             </View>
-            <Text
-              numberOfLines={1}
-              h3
-              style={{
-                color: loading
-                  ? green
-                  : (!isNaN(item?.amount) ? item?.amount : 0) >= 0
-                    ? green
-                    : red,
-              }}>
-              {!loading
-                ? (!isNaN(item?.amount) ? item?.amount : 0) >= 0
-                  ? strings.give
-                  : strings.receive
-                : '__'}{' '}
-            </Text>
           </Animated.View>
         </TouchableOpacity>
       </Animated.View>

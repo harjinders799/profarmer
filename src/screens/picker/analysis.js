@@ -4,10 +4,7 @@ import BaseView from 'src/container/base';
 import { useLang } from 'src/context/langContext';
 import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 import { strings } from 'src/translations/locale';
-import Button from '../../components/button';
-import { navigate } from '../../navigation/ref';
 import { getAllPickerExpense, getPickerData } from '../../network/picker-service';
-import DateWiseList from '../../container/picker/dateWiseList';
 import Loader from '../../components/loader';
 import { gray10, red, white } from '../../utils/color';
 import { useCotton } from '../../context/cottonContext';
@@ -19,10 +16,7 @@ import {
   savePickerData,
   savePickerExpenseData,
 } from '../../sql';
-import { PixelRatio, View } from 'react-native';
-import Icon from '../../components/icon';
-import Search from '../../components/search';
-import SyncLocal from '../../container/picker/syncLocal';
+import { PixelRatio, View, ScrollView, } from 'react-native';
 import { sumBy, groupBy } from 'lodash';
 import moment from 'moment';
 import { useRoute } from '@react-navigation/native';
@@ -86,55 +80,15 @@ export default function Picker({ navigation }) {
     moment(v?.date).format('DD-MM-YYYY'),
     console.log(pickerWeight,'======++++++====')
   );
-
-
   return (
     <BaseView>
       <Loader visible={loading} small 
        />
-      {/* <MandiPrice /> */}
-      <SyncLocal />
-      <View
-        style={{
-          marginTop: 20,
-          width: '100%',
-          alignItem: 'center',
-        }}>
-        <Icon
-          name={isTextVisible ? 'eye-slash' : 'eye'}
-          type="FontAwesome"
-          size={25}
-          color={gray10}
-          style={{
-            position: 'absolute',
-            zIndex: 99,
-            display: !isSearchActive ? 'flex' : 'none',
-          }}
-          onPress={() => {setTextVisible(!isTextVisible);
-            navigate('Analysis', { data })}}
-        />
-
-        <Text
-          h3
-          style={{ paddingBottom: 10, textAlign: 'center' }}
-        // onPress={async () => await deleteDBConnectionDB()}
-        >
-          {strings.picker_record}
-        </Text>
-        <Search
-          isSearchActive={isSearchActive}
-          setSearchActive={setSearchActive}
-        />
-      </View>
-
-      {!isSearchActive && (
-        <>
-          {isTextVisible && (
-            <View
+<View
               style={{
                 width: '100%',
               }}>
-              {/* <View
+              <View
                 style={{
                   width: '100%',
                   flexDirection: 'row',
@@ -147,6 +101,8 @@ export default function Picker({ navigation }) {
                   {sumBy(pickerWeight, o => parseFloat(o.weight))} Kg
                 </Text>
               </View>
+              <ScrollView showsVerticalScrollIndicator={false}
+              contentContainerStyle={{paddingBottom: 150,}}>
               {Object.keys(dateWise)
                 .reverse()
                 .map((o, index) => (
@@ -189,42 +145,9 @@ export default function Picker({ navigation }) {
                       </Text>
                     </View>)}
                   </View>
-                ))} */}
+                ))}
+                </ScrollView>
             </View>
-          )}
-          <DateWiseList />
-          <Button
-            iconName="plus"
-            iconColor={white}
-            label={'Group'}
-            // hitSlop={10}
-            btnStyle={{
-              marginRight: 200,
-              width: 'auto',
-              paddingHorizontal: 25,
-              // maxWidth:`${65/ PixelRatio.getFontScale()}%`,
-              height: 50 * PixelRatio.getFontScale(),
-              bottom: 20,
-            }}
-            onPress={() => navigate('Group')}
-          /> 
-          <Button
-            iconName="plus"
-            iconColor={white}
-            label={strings.add_picker}
-            btnStyle={{
-              width: 'auto',
-              paddingHorizontal: 15,
-              height: 50 * PixelRatio.getFontScale(),
-              position: 'absolute',
-              bottom: 20,
-              right: 30,
-              zIndex: 999,
-            }}
-            onPress={() => navigate('AddPicker')}
-          />
-        </>
-      )}
-    </BaseView>
+            </BaseView>
   );
 }
