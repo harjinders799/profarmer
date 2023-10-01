@@ -1,16 +1,17 @@
 import React, { memo, useCallback, useState } from 'react';
 import Text from 'src/components/text';
-import { FlatList, PixelRatio, StyleSheet, View, TouchableOpacity } from 'react-native';
-import _, { filter, sortBy, sumBy } from 'lodash';
+import {
+  FlatList,
+  PixelRatio,
+  StyleSheet,
+  View,
+  TouchableOpacity,
+} from 'react-native';
+import _, { filter, groupBy, sortBy, sumBy } from 'lodash';
 import { strings } from '../../translations/locale';
 import { navigate } from 'src/navigation/ref';
 import { ToastError } from '../../utils/toast';
-import {
-  green,
-  red,
-  greenDark,
-  blue,
-} from '../../utils/color';
+import { green, red, greenDark, blue, white } from '../../utils/color';
 import { currencyFormat, kg } from '../../utils/dateformat';
 import Button from '../../components/button';
 import Loader from '../../components/loader';
@@ -19,7 +20,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import moment from 'moment';
 import { getPickerFinal } from '../../sql';
 
-export default function DateWiseList({ pickerWeight, pickerExpense }) {
+export default function GroupList({ pickerWeight, pickerExpense }) {
   const [fullData, setFullData] = useState([]);
   const [loading, setLoading] = useState(true);
   const { db } = useCotton();
@@ -32,7 +33,8 @@ export default function DateWiseList({ pickerWeight, pickerExpense }) {
 
   const getData = async () => {
     try {
-      setFullData(await getPickerFinal(db));
+      let data = await getPickerFinal(db);
+      setFullData(groupBy(data, o => o?.gname));
       setLoading(false);
     } catch (error) {
       setLoading(false);
@@ -41,34 +43,16 @@ export default function DateWiseList({ pickerWeight, pickerExpense }) {
   };
 
   const RenderItem = memo(({ item }) => {
-    const todayWeight = sumBy(
-      filter(
-        pickerWeight,
-        o => moment(o?.date).isSame(moment(), 'day') && o?.picker === item?.picker
-      ),
-      p => parseFloat(p.weight)
-    ) ?? 0;
-
-    const todayExpense = sumBy(
-      filter(
-        pickerExpense,
-        o => moment(o?.date).isSame(moment(), 'day') && o?.picker === item?.picker
-      ),
-      p => parseFloat(p.amount)
-    ) ?? 0;
-
+    let finalAmount =
+      sumBy(fullData[item], o => o?.total_rate_weight) -
+      sumBy(fullData[item], o => o?.total_given_amount);
     return (
       <TouchableOpacity
         style={[styles.list]}
-        onPress={() =>
-          navigate(
-            'PickerDetail',
-            { item },
-          )
-        }>
+        onPress={() => navigate('GroupDetail', { name: item, data: fullData[item] })}>
         <View style={styles.row}>
           <Text numberOfLines={1} h3 style={{ width: '60%' }}>
-            {item?.picker}
+            {item != 'null' ? item : 'Open'}
           </Text>
           {!loading ? (
             <Text
@@ -77,38 +61,19 @@ export default function DateWiseList({ pickerWeight, pickerExpense }) {
               style={{
                 color: loading
                   ? greenDark
-                  : (!isNaN(item?.total_rate_weight - item?.total_given_amount)
-                    ? item?.total_rate_weight - item?.total_given_amount
-                    : 0) >= 0
+                  : (!isNaN(finalAmount) ? finalAmount : 0) >= 0
                     ? greenDark
                     : red,
               }}>
               {!loading
-                ? currencyFormat(
-                  !isNaN(item?.total_rate_weight - item?.total_given_amount)
-                    ? item?.total_rate_weight - item?.total_given_amount
-                    : 0,
-                )
+                ? currencyFormat(!isNaN(finalAmount) ? finalAmount : 0)
                 : '__'}{' '}
             </Text>
           ) : (
             <Loader size={15} small visible={loading} />
           )}
         </View>
-        <View style={[styles.row, { marginVertical: 0 }]}>
-          <Text
-            style={{
-              fontSize: 15 / PixelRatio.getFontScale(),
-            }}>
-            {strings.today}
-            {'  '}
-            <Text style={{ color: todayWeight ? 'green' : 'red' }}>
-              {todayWeight ? todayWeight : ' - '} Kg{'  '}
-            </Text>
-            <Text style={{ color: todayExpense ? 'green' : 'red' }}>
-              {todayExpense ? `${todayExpense} Rs` : ''}
-            </Text>
-          </Text>
+        <View style={[styles.row, { justifyContent: 'center' }]}>
           <Text
             numberOfLines={1}
             // h3
@@ -116,15 +81,15 @@ export default function DateWiseList({ pickerWeight, pickerExpense }) {
               fontSize: 15 / PixelRatio.getFontScale(),
               color: loading
                 ? green
-                : (!isNaN(item?.total_rate_weight - item?.total_given_amount)
-                  ? item?.total_rate_weight - item?.total_given_amount
+                : (!isNaN(finalAmount)
+                  ? finalAmount
                   : 0) >= 0
                   ? green
                   : red,
             }}>
             {!loading
-              ? (!isNaN(item?.total_rate_weight - item?.total_given_amount)
-                ? item?.total_rate_weight - item?.total_given_amount
+              ? (!isNaN(finalAmount)
+                ? finalAmount
                 : 0) >= 0
                 ? strings.give
                 : strings.receive
@@ -132,22 +97,8 @@ export default function DateWiseList({ pickerWeight, pickerExpense }) {
           </Text>
         </View>
 
-        <View style={styles.row}>
-          <Button
-            hitSlop={10}
-            label={strings.add_expense}
-            btnStyle={{
-              backgroundColor: blue,
-              width: 'auto',
-              paddingHorizontal: 8,
-              height: 25 * PixelRatio.getFontScale(),
-              borderRadius: 5,
-              marginVertical: 5,
-            }}
-            onPress={() =>
-              navigate('AddPickerExpense', { data: { picker: item?.picker } })
-            }
-          />
+        {/* <View style={styles.row}>
+         
           <Button
             hitSlop={10}
             label={strings.add_weight}
@@ -167,7 +118,7 @@ export default function DateWiseList({ pickerWeight, pickerExpense }) {
               })
             }
           />
-        </View>
+        </View>  */}
       </TouchableOpacity>
     );
   });
@@ -176,7 +127,7 @@ export default function DateWiseList({ pickerWeight, pickerExpense }) {
     <FlatList
       style={{ width: '100%' }}
       contentContainerStyle={{ paddingBottom: 150 }}
-      data={sortBy(fullData, o => o?.picker)}
+      data={sortBy(Object.keys(fullData), o => o)}
       keyExtractor={item => Math.random().toString()}
       ListEmptyComponent={() => (
         <Text style={{ textAlign: 'center', paddingTop: 30 }}>
@@ -195,17 +146,19 @@ const styles = StyleSheet.create({
     width: '100%',
     alignSelf: 'center',
     // zIndex: 9,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    width: '100%',
-    // elevation: 5,
-    // backgroundColor: white
+    width: '98%',
+    elevation: 5,
+    margin: '1%',
+    padding: 5,
+    borderRadius: 5,
+    backgroundColor: white
   },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     width: '100%',
-    // marginVertical: 5,
+    marginVertical: 5,
   },
   icon: {
     elevation: 1,

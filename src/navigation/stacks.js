@@ -30,6 +30,7 @@ import AddLabour from '../screens/labour/addLabour';
 import RegularLabourDetail from '../screens/labour/regularLabourDetail';
 import LabourUpdate from '../screens/labour/labourUpdate';
 import GiverUpdate from '../screens/aadtiya/giverUpdate';
+import GroupDetail from '../screens/picker/groupDetail';
 
 const Stack = createNativeStackNavigator();
 
@@ -184,7 +185,7 @@ export default function Stacks() {
         component={CropUpdate}
         options={{ headerShown: false }}
       />
-       <Stack.Screen
+      <Stack.Screen
         name="AddCrop"
         component={AddCrop}
         options={{ headerShown: false }}
@@ -201,9 +202,13 @@ export default function Stacks() {
         name="Analysis"
         component={Analysis}
       />
-        <Stack.Screen
+      <Stack.Screen
         name="Group"
         component={Group}
+      />
+      <Stack.Screen
+        name="GroupDetail"
+        component={GroupDetail}
       />
       <Stack.Screen name="AboutUs" component={AboutUs} />
       <Stack.Screen name="ContactUs" component={ContactUs} />

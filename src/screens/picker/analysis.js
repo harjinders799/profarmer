@@ -1,25 +1,12 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Text from 'src/components/text';
 import BaseView from 'src/container/base';
-import { useLang } from 'src/context/langContext';
-import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 import { strings } from 'src/translations/locale';
-import { getAllPickerExpense, getPickerData } from '../../network/picker-service';
-import Loader from '../../components/loader';
-import { black, gray10, gray3, green, red, white } from '../../utils/color';
+import { black, gray3, green, white } from '../../utils/color';
 import { useCotton } from '../../context/cottonContext';
-import {
-  createCottonPriceTable,
-  createPickerExpenseTable,
-  createPickerTable,
-  deleteDBConnectionDB,
-  savePickerData,
-  savePickerExpenseData,
-} from '../../sql';
-import { PixelRatio, View, ScrollView } from 'react-native';
+import { View, ScrollView, PixelRatio } from 'react-native';
 import { sumBy, groupBy } from 'lodash';
 import moment from 'moment';
-import { useRoute } from '@react-navigation/native';
 import Header from '../../components/header';
 import Button from '../../components/button';
 import { currencyFormat } from '../../utils/dateformat';
@@ -27,23 +14,12 @@ import Icon from '../../components/icon';
 import { goBack } from '../../navigation/ref';
 
 export default function Analysis({ navigation }) {
-  const { lang } = useLang();
   const [filterBy, setFilterBy] = useState('wt');
   const {
-    db,
-    getPickerWeight,
     pickerWeight = [],
     pickerExpense = [],
-    getPickerExpense,
   } = useCotton();
-  const isFocused = useIsFocused();
 
-  useFocusEffect(
-    useCallback(() => {
-      getPickerWeight();
-      getPickerExpense();
-    }, [lang, isFocused]),
-  );
 
   let dateWise = groupBy(pickerWeight, v =>
     moment(v?.date).format('DD-MM-YYYY'),
@@ -51,6 +27,7 @@ export default function Analysis({ navigation }) {
   let dateWiseCost = groupBy(pickerExpense, v =>
     moment(v?.date).format('DD-MM-YYYY'),
   );
+
   return (
     <BaseView>
       <Header
@@ -71,7 +48,9 @@ export default function Analysis({ navigation }) {
           <Button
             label={'By Weight'}
             btnStyle={{
-              width: '40%',
+              width: '50%',
+              height: 35 * PixelRatio.getFontScale(),
+              borderRadius: 5,
               backgroundColor: filterBy == 'wt' ? green : gray3,
             }}
             onPress={() => setFilterBy('wt')}
@@ -81,7 +60,9 @@ export default function Analysis({ navigation }) {
           <Button
             label={'By Cost'}
             btnStyle={{
-              width: '40%',
+              width: '50%',
+              height: 35 * PixelRatio.getFontScale(),
+              borderRadius: 5,
               backgroundColor: filterBy == 'cost' ? green : gray3,
             }}
             onPress={() => setFilterBy('cost')}
@@ -108,7 +89,7 @@ export default function Analysis({ navigation }) {
           </View>
           <ScrollView
             showsVerticalScrollIndicator={false}
-            contentContainerStyle={{ paddingBottom: 150 }}>
+            contentContainerStyle={{ paddingBottom: '80%' }}>
             {Object.keys(dateWise)
               .reverse()
               .map((o, index) => (
@@ -177,7 +158,7 @@ export default function Analysis({ navigation }) {
           </View>
           <ScrollView
             showsVerticalScrollIndicator={false}
-            contentContainerStyle={{ paddingBottom: 150 }}>
+            contentContainerStyle={{ paddingBottom: '80%' }}>
             {Object.keys(dateWiseCost)
               .reverse()
               .map((o, index) => (

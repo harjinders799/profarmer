@@ -138,11 +138,12 @@ const SyncLocal = () => {
                 }}>
                 {localEntries ? strings.offline_warning : ''}
             </Text>
-            <TouchableOpacity hitSlop={20} onPress={() => setHidePopup(true)}>
-                <Text h6>
-                    {localEntries ? localEntries : 'x'}{' '}
-                    <Icon name={'clouduploado'} size={20} />
-                </Text>
+            <TouchableOpacity
+                style={{ flexDirection: 'row', alignItems: 'center' }}
+                hitSlop={20}
+                onPress={() => setHidePopup(true)}>
+                <Text h6>{localEntries} </Text>
+                <Icon name={'clouduploado'} size={20} />
             </TouchableOpacity>
         </View>
     );

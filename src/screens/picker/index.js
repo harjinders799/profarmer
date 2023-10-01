@@ -6,10 +6,14 @@ import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 import { strings } from 'src/translations/locale';
 import Button from '../../components/button';
 import { navigate } from '../../navigation/ref';
-import { getAllPickerExpense, getPickerData } from '../../network/picker-service';
+import {
+  getAllPickerExpense,
+  getPickerData,
+  getPickerGroup,
+} from '../../network/picker-service';
 import DateWiseList from '../../container/picker/dateWiseList';
 import Loader from '../../components/loader';
-import { gray10, green, red, white } from '../../utils/color';
+import { gray10, green, yellow, white, black, gray3 } from '../../utils/color';
 import { useCotton } from '../../context/cottonContext';
 import {
   createCottonPriceTable,
@@ -18,42 +22,47 @@ import {
   deleteDBConnectionDB,
   savePickerData,
   savePickerExpenseData,
+  updatePickerGid,
 } from '../../sql';
-import { PixelRatio, ScrollView, View } from 'react-native';
+import { PixelRatio, ScrollView, TouchableOpacity, View } from 'react-native';
 import Icon from '../../components/icon';
 import Search from '../../components/search';
 import SyncLocal from '../../container/picker/syncLocal';
-import { sumBy, groupBy, sortBy } from 'lodash';
+import { sumBy, groupBy, sortBy, some } from 'lodash';
 import moment from 'moment';
 import { useRoute } from '@react-navigation/native';
+import GroupList from '../../container/picker/groupList';
+import Header from '../../components/header';
 
-export default function Picker({ navigation }) {
+export default function Picker() {
   const { lang } = useLang();
-  const { params } = useRoute();
-  const data = params?.data ?? {};
   const {
     db,
     getPickerWeight,
     pickerWeight = [],
+    pickerExpense = [],
     getPickerExpense,
   } = useCotton();
   const [loading, setLoading] = useState(false);
   const isFocused = useIsFocused();
-
+  const [filterBy, setFilterBy] = useState('grp');
   const [isSearchActive, setSearchActive] = useState(false);
-
-  const [isTextVisible, setTextVisible] = useState(false);
 
   useFocusEffect(
     useCallback(() => {
-      getData();
       getPickerWeight();
       getPickerExpense();
     }, [lang, isFocused]),
   );
+
+  useEffect(() => {
+    setTimeout(() => {
+      getData();
+    }, 5000);
+  }, []);
+
   const getData = async () => {
     try {
-      // console.log(pickerWeight.length, '-=-=-=-=-=-=-=-=-=----');
       await createCottonPriceTable(db);
       await createPickerTable(db);
       await createPickerExpenseTable(db);
@@ -63,29 +72,44 @@ export default function Picker({ navigation }) {
         (Array.isArray(pickerWeight) && pickerWeight.length == 0)
       ) {
         setLoading(true);
+        let wt = await getPickerData();
+        if (Array.isArray(wt) && wt.length) {
+          wt.map((o, i) => ({ ...o, id: i + 1 }));
+          await savePickerData(db, wt);
+          let grp = await getPickerGroup();
+          let promise = grp.map(o =>
+            o?.pickers.map(
+              async picker =>
+                await updatePickerGid(db, {
+                  uid: o?.uid,
+                  gid: o?.id,
+                  gname: o?.name,
+                  picker: picker,
+                }),
+            ),
+          );
+          await Promise.all(promise);
+          await getPickerWeight();
+        }
+        setLoading(false);
       }
-      let wt = await getPickerData();
-      if (Array.isArray(wt) && wt.length) {
-        wt.map((o, i) => ({ ...o, id: i + 1 }));
-        await savePickerData(db, wt);
+      if (
+        pickerExpense == undefined ||
+        (Array.isArray(pickerExpense) && pickerExpense.length == 0)
+      ) {
+        setLoading(true);
+        let ex = await getAllPickerExpense();
+        if (Array.isArray(ex) && ex.length) {
+          ex.map((o, i) => ({ ...o, id: i + 1 }));
+          await savePickerExpenseData(db, ex);
+          await getPickerExpense();
+        }
       }
-      let ex = await getAllPickerExpense();
-      if (Array.isArray(ex) && ex.length) {
-        ex.map((o, i) => ({ ...o, id: i + 1 }));
-        await savePickerExpenseData(db, ex);
-      }
-      await getPickerWeight();
-      await getPickerExpense();
       setLoading(false);
     } catch (error) {
       setLoading(false);
     }
   };
-
-  let dateWise = groupBy(
-    sortBy(pickerWeight, d => d?.date),
-    v => moment(v?.date).format('DD-MM-YYYY'),
-  );
 
   return (
     <BaseView>
@@ -96,19 +120,25 @@ export default function Picker({ navigation }) {
           width: '100%',
           alignItem: 'center',
         }}>
-        <Icon
-          name={'barschart'}
-          size={25}
-          color={gray10}
+        <TouchableOpacity
           style={{
             position: 'absolute',
             zIndex: 99,
             display: !isSearchActive ? 'flex' : 'none',
           }}
+          hitSlop={20}
           onPress={() => {
-            navigate('Analysis', { data });
-          }}
-        />
+            navigate('Analysis');
+          }}>
+          <Icon
+            name={'barschart'}
+            size={25}
+            color={gray10}
+            onPress={() => {
+              navigate('Analysis');
+            }}
+          />
+        </TouchableOpacity>
 
         <Text
           h3
@@ -126,11 +156,50 @@ export default function Picker({ navigation }) {
 
       {!isSearchActive && (
         <>
-          <DateWiseList />
+          {Array.isArray(pickerWeight) &&
+            pickerWeight.length == 0 ||
+            some(pickerWeight, o => !o?.gname) ? null : (
+            <Header
+              leftComponent={
+                <Button
+                  label={'Group Wise'}
+                  btnStyle={{
+                    width: '50%',
+                    borderRadius: 5,
+                    height: 35 * PixelRatio.getFontScale(),
+                    backgroundColor: filterBy == 'grp' ? green : gray3,
+                  }}
+                  onPress={() => setFilterBy('grp')}
+                />
+              }
+              rightComponent={
+                <Button
+                  label={'Picker Wise'}
+                  btnStyle={{
+                    width: '50%',
+                    height: 35 * PixelRatio.getFontScale(),
+                    borderRadius: 5,
+                    backgroundColor: filterBy == 'picker' ? green : gray3,
+                  }}
+                  onPress={() => setFilterBy('picker')}
+                />
+              }
+            />
+          )}
+          {(Array.isArray(pickerWeight) && pickerWeight.length == 0) || some(pickerWeight, o => !o?.gname) ||
+            filterBy == 'picker' ? (
+            <DateWiseList
+              pickerWeight={pickerWeight}
+              pickerExpense={pickerExpense}
+            />
+          ) : (
+            <GroupList
+              pickerWeight={pickerWeight}
+              pickerExpense={pickerExpense}
+            />
+          )}
           <Button
-            iconName="plus"
-            iconColor={white}
-            label={'Group'}
+            label={'Create Group'}
             // hitSlop={10}
             btnStyle={{
               width: `${40 * PixelRatio.getFontScale()}%`,
@@ -140,7 +209,13 @@ export default function Picker({ navigation }) {
               bottom: 20,
               left: 20,
               zIndex: 999,
+              display:
+                Array.isArray(pickerWeight) && pickerWeight.length > 0
+                  ? 'flex'
+                  : 'none',
+              backgroundColor: yellow,
             }}
+            txtStyle={{ color: black }}
             onPress={() => navigate('Group')}
           />
           <Button

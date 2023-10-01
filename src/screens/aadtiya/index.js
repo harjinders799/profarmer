@@ -249,7 +249,7 @@ export default function DashBoard({ navigation }) {
         </Text>
         <Icon
           name="pdffile1"
-          size={30}
+          size={25}
           color={green}
           style={{ position: 'absolute', right: 20, top: 10 }}
           onPress={onShare}
