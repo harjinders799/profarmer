@@ -3,66 +3,44 @@ import Text from 'src/components/text';
 import {
     FlatList,
     PixelRatio,
-    ScrollView,
     StyleSheet,
     TouchableOpacity,
     View,
 } from 'react-native';
-import { white } from 'src/utils/color';
-import _, { every, filter, find, groupBy, some, sortBy, sumBy } from 'lodash';
+import _, { filter, sumBy } from 'lodash';
 import { strings } from '../../translations/locale';
 import { navigate } from 'src/navigation/ref';
 import BaseView from 'src/container/base';
-
-import {
-    createGroup,
-    getAllPickerExpense,
-    getPickerExpense,
-} from '../../network/picker-service';
 import { ToastError } from '../../utils/toast';
 import {
     green,
     red,
-    yellow,
     black,
-    orange,
-    navy,
     greenDark,
     gray3,
     blue,
 } from '../../utils/color';
 import { currencyFormat, kg } from '../../utils/dateformat';
 import Button from '../../components/button';
-import { WIDTH } from '../../utils/constant';
-import Animated, {
-    BounceInDown,
-    FadeIn,
-    FadeInDown,
-    FadeInUp,
-    Layout,
-    LightSpeedInLeft,
-    LightSpeedInRight,
-    LightSpeedOutLeft,
-} from 'react-native-reanimated';
 import Icon from '../../components/icon';
 import Loader from '../../components/loader';
 import { useCotton } from '../../context/cottonContext';
 import { useFocusEffect, useRoute } from '@react-navigation/native';
 import moment from 'moment';
 import Header from '../../components/header';
-import Input from '../../components/input';
-import { Keyboard } from 'react-native';
 import { getPickerFinal, updatePickerGid } from '../../sql';
-import auth from '@react-native-firebase/auth';
 import { goBack } from '../../navigation/ref';
+import Search from '../../components/search';
 
 export default function GroupDetail() {
     const {
         params: { name },
     } = useRoute();
-    const { db, pickerWeight, pickerExpense, getPickerWeight, getPickerExpense } = useCotton();
-    const [data, setData] = useState([])
+    const { db, pickerWeight, pickerExpense, getPickerWeight, getPickerExpense } =
+        useCotton();
+    const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [isSearchActive, setSearchActive] = useState(false);
 
     useFocusEffect(
         useCallback(() => {
@@ -73,15 +51,18 @@ export default function GroupDetail() {
     );
     const getData = async () => {
         try {
-            setLoading(true)
+            setLoading(true);
             let data = await getPickerFinal(db);
-            setData(filter(data, o => (name != 'null' ? o?.gname == name : !o?.gname)));
+            setData(
+                filter(data, o => (name != 'null' ? o?.gname == name : !o?.gname)),
+            );
             setLoading(false);
         } catch (error) {
             setLoading(false);
             ToastError(error?.message, 'Picker');
         }
     };
+
     const RenderItem = memo(({ item }) => {
         const todayWeight =
             sumBy(
@@ -211,12 +192,36 @@ export default function GroupDetail() {
                 leftComponent={
                     <Icon name="back" size={28} color={black} onPress={() => goBack()} />
                 }
-                centerComponent={<Text h2>{name != 'null' ? name : 'Open Group'}</Text>}
-                rightComponent={<Text h2> </Text>}
+                centerComponent={<Text h2>{name != 'null' ? name : 'Other'}</Text>}
+                rightComponent={
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        {/* <Icon
+                            name="pdffile1"
+                            size={22}
+                            color={black}
+                            style={{ marginRight: 10 }}
+                            onPress={() => setSearchActive(true)}
+                        /> */}
+                        <Icon
+                            name="search1"
+                            size={25}
+                            color={black}
+                            onPress={() => setSearchActive(true)}
+                        />
+                    </View>
+                }
             />
+            <View style={{ width: '100%' }}>
+                <Search
+                    isSearchActive={isSearchActive}
+                    setSearchActive={setSearchActive}
+                    data={data}
+                    hidden
+                />
+            </View>
             <Loader visible={loading} />
             <FlatList
-                style={{ width: '100%' }}
+                style={{ width: '100%', display: isSearchActive ? 'none' : 'flex' }}
                 contentContainerStyle={{ paddingBottom: 150 }}
                 data={data}
                 keyExtractor={item => Math.random().toString()}

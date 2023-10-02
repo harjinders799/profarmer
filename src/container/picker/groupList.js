@@ -52,7 +52,7 @@ export default function GroupList({ pickerWeight, pickerExpense }) {
         onPress={() => navigate('GroupDetail', { name: item, data: fullData[item] })}>
         <View style={styles.row}>
           <Text numberOfLines={1} h3 style={{ width: '60%' }}>
-            {item != 'null' ? item : 'Open'}
+            {item != 'null' ? item : 'Other'}
           </Text>
           {!loading ? (
             <Text

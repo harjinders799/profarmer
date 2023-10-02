@@ -21,16 +21,22 @@ import { useCotton } from '../context/cottonContext';
 import { goBack, navigate } from '../navigation/ref';
 import _, { groupBy, some, sumBy } from 'lodash';
 
-export default function Search({ isSearchActive, setSearchActive }) {
+export default function Search({
+  isSearchActive,
+  setSearchActive,
+  style,
+  data = null,
+  hidden = false
+}) {
   const { pickerWeight = [] } = useCotton();
-  let grpPicker = groupBy(pickerWeight, v => v.picker);
+  let grpPicker = groupBy(data ? data : pickerWeight, v => v.picker);
 
   const [searchKey, setSearchKey] = React.useState();
   const [filteredData, setFilteredData] = React.useState([]);
 
   useEffect(() => {
-    setFilteredData(Object.keys(grpPicker))
-  }, [isSearchActive])
+    setFilteredData(Object.keys(grpPicker));
+  }, [isSearchActive]);
   const onFilter = v => {
     setFilteredData(
       Object.keys(grpPicker).filter(item =>
@@ -50,12 +56,15 @@ export default function Search({ isSearchActive, setSearchActive }) {
         name="search1"
         size={25}
         color={gray10}
-        style={{
-          position: 'absolute',
-          right: 0,
-          top: 0,
-          display: pickerWeight.length ? 'flex' : 'none',
-        }}
+        style={[
+          {
+            position: 'absolute',
+            right: 0,
+            top: 0,
+            display: hidden ? 'none' : pickerWeight.length ? 'flex' : 'none',
+          },
+          style,
+        ]}
         onPress={() => setSearchActive(true)}
       />
 

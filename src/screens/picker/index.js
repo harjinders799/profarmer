@@ -29,9 +29,7 @@ import { PixelRatio, ScrollView, TouchableOpacity, View } from 'react-native';
 import Icon from '../../components/icon';
 import Search from '../../components/search';
 import SyncLocal from '../../container/picker/syncLocal';
-import { sumBy, groupBy, sortBy, some, every } from 'lodash';
-import moment from 'moment';
-import { useRoute } from '@react-navigation/native';
+import { every } from 'lodash';
 import GroupList from '../../container/picker/groupList';
 import Header from '../../components/header';
 import { PCIKER_TABLE, PICKER_EXPENSE_TABLE } from '../../sql/tabels';
@@ -58,7 +56,7 @@ export default function Picker() {
   );
 
   useEffect(() => {
-      getData();
+    getData();
   }, []);
 
   const getData = async () => {
@@ -71,8 +69,6 @@ export default function Picker() {
         pdata == undefined ||
         (Array.isArray(pdata) && pdata.length == 0)
       ) {
-      console.log( '-=-=-=-=-=-=-=-=-=----',  pdata == undefined,
-      (Array.isArray(pdata) && pdata.length == 0),pdata.length,pickerExpense.length)
         setLoading(true);
         let wt = await getPickerData();
         if (Array.isArray(wt) && wt.length) {
@@ -113,7 +109,7 @@ export default function Picker() {
       setLoading(false);
     }
   };
-  
+
   return (
     <BaseView>
       <SyncLocal />

@@ -20,7 +20,7 @@ export let ToastProgress = (message, title = 'ProFarmer') => {
     message: title,
     description: message,
     type: 'info',
-    duration: 3000,
+    duration: 1000,
   });
 };
 
@@ -32,5 +32,6 @@ export let ToastSuccess = (message, title = 'ProFarmer') => {
     message: title,
     description: message,
     type: 'success',
+    duration: 1000,
   });
 };
