@@ -47,7 +47,7 @@ export default function LabourDetailAction({ data, totalExpense, totalLabour }) 
 
       <TouchableOpacity
         style={styles.top}
-         onPress={() => navigate('LabourUpdate', { data })}>
+        onPress={() => navigate('LabourUpdate', { data })}>
         {/* // onPress={() => goBack()}> */}
         <Loader visible={loading} />
         <View style={styles.row}>
@@ -56,21 +56,23 @@ export default function LabourDetailAction({ data, totalExpense, totalLabour }) 
           </Text>
           <Text h4 numberOfLines={1} style={styles.wt}>
             {data?.count}
-            {/* {' ' + strings.labour} */}
+            {' ' + strings.labour}
           </Text>
           {/* <View style={styles.row}> */}
           {/* <Text h3>{strings.labour_rate}</Text> */}
           <Text h4 numberOfLines={1} style={styles.wt}>
-         {currencyFormat(data?.rate)}</Text>
+            {currencyFormat(data?.rate)}</Text>
           {/* </View> */}
-          {!data?.is_regulare ? (
-            <View style={styles.icons}>
-              {/* <Text h3>{strings.total_labour}</Text> */}
-              <Text h4 numberOfLines={1} style={styles.wt}>
-                {currencyFormat(parseFloat(data?.rate) * parseFloat(data?.count))}
-              </Text>
-            </View>
-          ) : null}
+          {data?.is_regulare ?
+            <Text style={{ color: green }}>{strings.regular}</Text>
+            : (
+              <View style={styles.icons}>
+                {/* <Text h3>{strings.total_labour}</Text> */}
+                <Text h4 numberOfLines={1} style={styles.wt}>
+                  {currencyFormat(parseFloat(data?.rate) * parseFloat(data?.count))}
+                </Text>
+              </View>
+            )}
           {/* <Text h4 style={{ textAlign: 'center', paddingTop: 20 }}>
         {strings.remark}
       </Text> */}
@@ -99,7 +101,7 @@ export default function LabourDetailAction({ data, totalExpense, totalLabour }) 
         ) : null}
         </View> */}
       </TouchableOpacity>
-      {data?.detail ? <Text h4 style={{paddingHorizontal:10}}>{data?.detail}</Text> : null}
+      {data?.detail ? <Text h4 style={{ paddingHorizontal: 10 }}>{data?.detail}</Text> : null}
     </View>
   );
 }
@@ -110,7 +112,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     width: '100%',
-    paddingHorizontal:10
+    paddingHorizontal: 10
   },
   list: {
     marginVertical: 15,
@@ -161,6 +163,6 @@ const styles = StyleSheet.create({
   wt: {
     // width: '35%',
     textAlign: 'right',
-    
+
   },
 });

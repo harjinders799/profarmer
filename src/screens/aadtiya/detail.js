@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import BaseView from 'src/container/base';
 import Text from 'src/components/text';
 import {
@@ -11,8 +11,8 @@ import {
 } from 'react-native';
 import { green, red, white } from 'src/utils/color';
 import moment from 'moment';
-import { sortBy } from 'lodash';
-import { useRoute, useTheme } from '@react-navigation/native';
+import { sortBy, sumBy } from 'lodash';
+import { useFocusEffect, useRoute, useTheme } from '@react-navigation/native';
 import { strings } from 'src/translations/locale';
 import Button from 'src/components/button';
 import GiverDetailAction from 'src/components/giverDetailAction';
@@ -40,23 +40,28 @@ import {
   peach,
 } from '../../utils/color';
 import Share from 'react-native-share';
+import { useAadt } from '../../context/aadtContext';
+import { getTotalInterst } from '../../utils/helper';
 
 const transparent = 'rgba(0,0,0,0.5)';
 
 export default function Detail({ navigation }) {
   const { user } = useAuth();
-  const { params } = useRoute();
   const { colors } = useTheme();
-  const [rate, setRate] = useState();
-  const data = params?.item ?? [];
   const [interest, setInterest] = useState(0);
   const { lang } = useLang();
   const [loading, setLoading] = useState(false);
+  const { aadtData: data, getAadt } = useAadt();
+  useFocusEffect(
+    useCallback(() => {
+      getAadt();
+    }, [navigation, lang]),
+  );
 
   useEffect(() => {
-    if (Array.isArray(data.data) && data.data.length) {
+    if (Array.isArray(data) && data.length) {
       let tot_interest = 0;
-      data.data.map(v => {
+      data.map(v => {
         let date = moment(v?.date).format('YYYY-MM-DD');
         let start_date = moment(date);
         let today = moment();
@@ -210,7 +215,7 @@ td {
       <th>${strings.total_amount}</th>
       <th>${strings.remark}</th>
   </tr>
-          ${sortBy(data.data, (a, b) => moment(b?.date) - moment(a?.date)).map(
+          ${sortBy(data, (a, b) => moment(b?.date) - moment(a?.date)).map(
       record => {
         let date = moment(record?.date).format('YYYY-MM-DD');
         let start_date = moment(date);
@@ -277,7 +282,7 @@ td {
         }
         centerComponent={
           <Text h2 style={{ color: white }}>
-            {data?.giver}
+            {data[0]?.giver}
           </Text>
         }
         rightComponent={
@@ -310,21 +315,21 @@ td {
       />
 
       <View style={[styles.row]}>
-        <View style={[styles.card, { borderColor: lightYellow }]}>
+        <View style={[styles.card, { borderColor: lightYellow + 50 }]}>
           <Text h3>{strings.total_principal}</Text>
           <Text h3 style={{ color: green }}>
-            {currencyFormat(data?.total)}
+            {currencyFormat(sumBy(data, o => parseFloat(o?.amount)))}
           </Text>
         </View>
-        <View style={[styles.card, { borderColor: greenLight }]}>
+        <View style={[styles.card, { borderColor: greenLight + 50 }]}>
           <Text h3>{strings.total_interest}</Text>
           <Text h3 style={{ color: red }}>
             {currencyFormat(interest)}
           </Text>
         </View>
-        <View style={[styles.card, { borderColor: peach }]}>
+        <View style={[styles.card, { borderColor: peach + 50 }]}>
           <Text h3>{strings.total_amount}</Text>
-          <Text h3>{currencyFormat(data?.total + interest)}</Text>
+          <Text h3>{currencyFormat(getTotalInterst(data))}</Text>
         </View>
       </View>
       <View style={styles.wt}>
@@ -338,16 +343,16 @@ td {
         </Text>
 
         <View style={styles.row}>
-          <Text style={{ width: '20%', textAlign: 'center' }} h3>
+          <Text h4 style={{ width: '20%', textAlign: 'left' }} h3>
             {strings.date}
           </Text>
-          <Text style={{ width: '15%', textAlign: 'right' }} h3>
+          <Text h4 style={{ width: '15%', textAlign: 'right' }} h3>
             {strings.day}
           </Text>
-          <Text style={{ width: '28%', textAlign: 'right' }} h3>
+          <Text h4 style={{ width: '28%', textAlign: 'right' }} h3>
             {strings.total_interest}
           </Text>
-          <Text style={{ width: '35%', textAlign: 'right' }} h3>
+          <Text h4 style={{ width: '35%', textAlign: 'right' }} h3>
             {strings.total_amount}
           </Text>
         </View>
@@ -355,8 +360,8 @@ td {
           style={{ width: '100%', height: '40%' }}
           // contentContainerStyle={{paddingBottom: 150}}
           showsVerticalScrollIndicator={false}>
-          {Array.isArray(data.data) && data.data.length ? (
-            sortBy(data.data, (a, b) => moment(b?.date) - moment(a?.date)).map(
+          {Array.isArray(data) && data.length ? (
+            sortBy(data, (a, b) => moment(b?.date) - moment(a?.date)).map(
               (v, i) => <GiverDetailAction key={i} data={v} />,
             )
           ) : (

@@ -4,7 +4,7 @@ import Icon from '../../components/icon';
 import { green, white } from '../../utils/color';
 import { ToastSuccess } from '../../utils/toast';
 import { useRoute } from '@react-navigation/native';
-import { goBack, navigate } from '../../navigation/ref';
+import { goBack, navigate, replace } from '../../navigation/ref';
 import Text from '../../components/text';
 import { currencyFormat, dateFormat } from '../../utils/dateformat';
 import Header from '../../components/header';
@@ -61,9 +61,10 @@ export default function CropUpdate() {
                 <Header
                     style={{ marginTop: 10 }}
                     leftComponent={
-                        <Icon name="back" size={28} onPress={() => goBack()} />
+                        <Icon name="back" size={28} color={green} onPress={() => goBack()} />
                     }
-                    centerComponent={<Text h2>{data.crop}</Text>}
+                    centerComponent={<Text h2 style={{ color: green, fontWeight: "bold", fontStyle: "italic" }}>
+                        {data.crop}</Text>}
                     rightComponent={<Text h2> </Text>}
                 />
                 <View style={[styles.row]}>
@@ -72,10 +73,18 @@ export default function CropUpdate() {
                     </Text>
                     <View style={[styles.card]}>
                         <Text h3 style={{ fontWeight: 'bold' }}>
-                            {strings.total_principal}
+                            {strings.crop_total}
                         </Text>
                         <Text h3 numberOfLines={1} style={{ fontWeight: 'bold' }}>
                             {currencyFormat(data?.amount)}
+                        </Text>
+                    </View>
+                    <View style={[styles.card]}>
+                        <Text h3 style={{ fontWeight: 'bold' }}>
+                            {strings.day}
+                        </Text>
+                        <Text h3 numberOfLines={1} style={{ fontWeight: 'bold' }}>
+                            {days}
                         </Text>
                     </View>
                     <View style={[styles.card]}>
@@ -95,22 +104,14 @@ export default function CropUpdate() {
                             {currencyFormat(final_amount)}
                         </Text>
                     </View>
-                    <View style={[styles.card]}>
-                        <Text h3 style={{ fontWeight: 'bold' }}>
-                            {strings.date}
-                        </Text>
-                        <Text h3 style={{ fontWeight: 'bold' }}>
-                            {dateFormat(data?.date)}
-                        </Text>
-                    </View>
                     <View style={[styles.card,]}>
                         <Text h3 style={{ fontWeight: 'bold' }}>
                             {strings.remark}
                         </Text>
                         <Text h3 style={{ fontWeight: 'bold' }}>
-                           
-                           
-                           
+
+
+
                             {data?.detail}
                         </Text>
                     </View>
@@ -122,7 +123,7 @@ export default function CropUpdate() {
                         btnStyle={{
                             width: '40%',
                         }}
-                        onPress={() => navigate('AddCrop', { data })}
+                        onPress={() => replace('AddCrop', { data })}
                     />
                     <Button
                         iconName="delete"
@@ -157,12 +158,12 @@ const styles = StyleSheet.create({
     },
     card: {
         borderWidth: 2,
-        borderColor: green,
-
-        backgroundColor: "#d3f5e9",
+        borderColor: green + 50,
+        backgroundColor: white,
         width: '100%',
         marginVertical: 5,
         padding: 10,
+        elevation: 5,
         borderRadius: 10,
         flexDirection: 'row',
         justifyContent: 'space-between',

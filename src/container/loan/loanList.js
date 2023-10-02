@@ -9,7 +9,7 @@ import {
   View,
 } from 'react-native';
 import {white} from 'src/utils/color';
-import {filter, groupBy, sumBy} from 'lodash';
+import {reduce, groupBy, sumBy} from 'lodash';
 import {strings} from 'src/translations/locale';
 import {navigate} from 'src/navigation/ref';
 import {currencyFormat} from 'src/utils/dateformat';
@@ -28,51 +28,43 @@ import {
   navy,
   red,
   skyBlue,
-} from '../utils/color';
+} from '../../utils/color';
 import Animated from 'react-native-reanimated';
-import { useLoan } from '../context/loanContext';
+import {useLoan} from '../../context/loanContext';
+import auth from '@react-native-firebase/auth';
 
-export default function LoanList({data = []}) {
-  const {loanData} = useLoan();
+export default function LoanList() {
+  const {loanData = []} = useLoan();
   const [loading, setLoading] = useState(true);
-  // let arr = [];
-  // if (data.length) {
-  //   // let grp = groupBy(data, v => v.crop);
-  //   (data).map((v, i) =>
-  //     arr.push({
-  //       total: sumBy(data, o => parseInt(o.amount)),
-  //       data: v,
-  //     }),
-  //   );
-  // }
-  // }
+  let data = [];
 
+  const groupedData = groupBy(loanData, d =>
+    d?.giver == auth().currentUser.uid ? d?.receiver.trim() : d?.giver.trim(),
+  );
+  
+  Object.keys(groupedData).map(o => {
+    data.push({
+      name: o,
+      interest_rate:groupedData[o][0]?.interest_rate
+      
+    });
+  });
+  
   const renderItem = item => {
+    const totalAmount = sumBy(groupedData[item?.name], (entry) => parseInt(entry?.amount));
+  
     return (
       <View style={styles.list}>
         <TouchableOpacity
           // disabled={loading}
-          onPress={() => navigate('LoanDetail', {data})}>
+          onPress={() => navigate('LoanDetail', {item,totalAmount })}>
           <View style={styles.row}>
             <Text numberOfLines={1} h3 style={{width: '60%'}}>
-              {item?.receiver}
+              {item?.name}
             </Text>
-            <Text h5>{strings.view}</Text>
-            {/* {!loading ? (
-           <Text numberOfLines={1} h3 style={{
-            color: loading
-              ? greenLight
-              : (!isNaN(0)) 
-                ? greenLight
-                : red,
-          }}>
-          {!loading 
-          ? currencyFormat (0)
-                  : '__'}{' '}
-                  </Text> 
-                     ) : (
-                        <Loader size={15} small visible={loading} />
-                      )} */}
+              <Text
+                numberOfLines={1} h3> { currencyFormat( totalAmount )}
+              </Text>
           </View>
           <Animated.View
             style={styles.row}
@@ -92,7 +84,16 @@ export default function LoanList({data = []}) {
                   borderRadius: 5,
                   marginVertical: 0,
                 }}
-                onPress={() => navigate('AddCredit')}
+                onPress={() =>
+                  navigate('AddCredit', {
+                    data: {
+                      receiver: auth().currentUser.uid,
+                      giver: item?.name,
+                      type: 'credit',
+                      interest_rate:item?.interest_rate
+                    },
+                  })
+                }
               />
               <Button
                 hitSlop={10}
@@ -106,7 +107,16 @@ export default function LoanList({data = []}) {
                   borderRadius: 5,
                   marginVertical: 0,
                 }}
-                onPress={() => navigate('AddCredit')}
+                onPress={() =>
+                  navigate('AddCredit', {
+                    data: {
+                      giver: auth().currentUser.uid,
+                      receiver: item?.name,
+                      type: 'debt',
+                      interest_rate:item?.interest_rate
+                    },
+                  })
+                }
               />
             </View>
             <Text
@@ -135,16 +145,14 @@ export default function LoanList({data = []}) {
     <FlatList
       style={{width: '100%'}}
       contentContainerStyle={{paddingBottom: 150}}
-      data={loanData}
+      data={data}
       keyExtractor={item => Math.random().toString()}
       ListEmptyComponent={() => (
         <Text style={{textAlign: 'center', paddingTop: 30}}>
           {strings.no_data}
         </Text>
       )}
-      
       showsVerticalScrollIndicator={false}
-      // ItemSeparatorComponent={() => <View style={styles.line} />}
       renderItem={({item}) => renderItem(item)}
     />
   );

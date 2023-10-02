@@ -132,7 +132,7 @@ export const deleteCropCollection = async name => {
 };
 
 export const deleteGiverCollection = async (name) => {
-  x
+  
   try {
     const userId = Auth().currentUser?.uid;
 

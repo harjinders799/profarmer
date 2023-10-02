@@ -1,4 +1,10 @@
-import { View, StyleSheet, TouchableOpacity, Modal, ScrollView } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  Modal,
+  ScrollView,
+} from 'react-native';
 import React, { useEffect, useState } from 'react';
 import BaseView from 'src/container/base';
 import Text from 'src/components/text';
@@ -10,7 +16,11 @@ import { filter, find, sortBy, sumBy } from 'lodash';
 import { useRoute, useTheme } from '@react-navigation/native';
 import { strings } from 'src/translations/locale';
 import LabourDetailAction from '../../container/labour/labourDetailAction';
-import { getLabourExpense, getLabourLeave } from '../../network/labour-service';
+import {
+  deleteLabourCollection,
+  getLabourExpense,
+  getLabourLeave,
+} from '../../network/labour-service';
 import LabourExpenseDetail from '../../container/labour/labourExpenseDetail';
 import { currencyFormat, dateFormat, dayCount } from '../../utils/dateformat';
 import Header from '../../components/header';
@@ -25,8 +35,6 @@ import RNHTMLtoPDF from 'react-native-html-to-pdf';
 import { ToastError } from '../../utils/toast';
 import { deletePickerNameWise } from '../../sql';
 import auth from '@react-native-firebase/auth';
-
-
 
 const transparent = 'rgba(0,0,0,0.5)';
 
@@ -68,7 +76,9 @@ export default function RegularLabourDetail() {
     Array.isArray(expense) && expense.length
       ? sumBy(expense, o => parseFloat(o?.amount))
       : 0;
-  let date = moment(find(data?.data, o => o?.is_regulare === true)?.date).format("YYYY-MM-DD");
+  let date = moment(
+    find(data?.data, o => o?.is_regulare === true)?.date,
+  ).format('YYYY-MM-DD');
   let start_date = moment(date);
   let today = moment();
   let days = today.diff(start_date, 'days');
@@ -88,11 +98,7 @@ export default function RegularLabourDetail() {
       setTotalLabour(tot);
     }
   }, [data, leaveTot]);
-  const {
-    db,
-
-  } = useState();
-
+  const { db } = useState();
 
   const [openModal, setopenModal] = useState(false);
 
@@ -113,7 +119,8 @@ export default function RegularLabourDetail() {
               style={{
                 fontWeight: '700',
               }}>
-              {strings.are_you_sure}     <Text numberOfLines={1} style={{ color: green }} h3>
+              {strings.are_you_sure}{' '}
+              <Text numberOfLines={1} style={{ color: green }} h3>
                 {data?.is_regulare ? strings.regular : ''}
               </Text>
             </Text>
@@ -149,13 +156,7 @@ export default function RegularLabourDetail() {
                   try {
                     setLoading(true);
                     setopenModal(false);
-                    await deletePickerNameWise(db, {
-                      ...data,
-                      uid: auth().currentUser?.uid,
-                    });
-                    await deletePickerCollection(data?.labour);
-                    getPickerWeight();
-                    getPickerExpense();
+                    await deleteLabourCollection(data?.labour);
                     setLoading(false);
                     goBack();
                   } catch (error) {
@@ -186,130 +187,133 @@ export default function RegularLabourDetail() {
     }
     let html = `<!DOCTYPE html>
 <html>
-<head>
-<style>
-table, th, td {
-  border: 1px solid black;
-  border-collapse: collapse;
-  padding:13px;
-}
-td {
-  text-align: center;
-}
-</style>
-</head>
-<body>
-      <div style="display: flex; flex-direction:column; align-items:center">
-          <div style="display: flex; justify-content: space-between; width:100%">
-          <div>    
+  <head>
+    <style>
+      table,
+      th,
+      td {
+        border: 1px solid black;
+        border-collapse: collapse;
+        padding: 13px;
+      }
+      td {
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div style="display: flex; flex-direction: column; align-items: center">
+      <div style="display: flex; justify-content: space-between; width: 100%">
+        <div>
           <h2>${strings.farmer_name}: ${user?.name}</h2>
           <p>${user?.phone}</p>
           <p>${user?.email}</p>
-          </div>
-          <div>
-          <a href="https://play.google.com/store/apps/details?id=com.profarmer">Pro Farmer</a>
-              <p>${moment().format('lll')}</p>
-          </div>
-          </div>
-          <h2>${strings.labour_name}: ${data?.labour}</h2>
+        </div>
+        <div>
+          <a href="https://play.google.com/store/apps/details?id=com.profarmer"
+            >Pro Farmer</a
+          >
+          <p>${moment().format('lll')}</p>
+        </div>
       </div>
-      <div style="display: flex; justify-content: space-between;">
-          <div>
-              <h3>${strings.start_date}: ${dateFormat(find(data?.data, o => o?.is_regulare === true)?.date)}</h3>
-    <h3>${strings.total_days_from_start}: ${days}
-    </h3>
-    <h3>${strings.extra_labour}: ${extraDay}
-      </h3>
-      <h3>${strings.leaves}: ${leaveTot}
+      <h2>${strings.labour_name}: ${data?.labour}</h2>
+    </div>
+    <div style="display: flex; justify-content: space-between">
+      <div>
+        <h3>
+          ${strings.start_date}: ${dateFormat(
+      find(data?.data, o => o?.is_regulare === true)?.date,
+    )}
         </h3>
+        <h3>${strings.total_days_from_start} : ${days + extraDay - leaveTot
+      }</h3>
+        <h3>${strings.leaves}: ${leaveTot}</h3>
+        <h3>${strings.labour_day}: ${days}</h3>
       </div>
       <div>
-      <h3>${strings.labour_day} : ${days + extraDay - leaveTot}
-    </h3>
-    <h3>${strings.labour_rate}: ${currencyFormat(data?.data[0]?.rate)}
-      </h3>
-    <h3>${strings.total_labour_amount} : ${currencyFormat(totalLabour
-    )}</h3>
-    <h3>${strings.given_amount}: ${currencyFormat(expenseTot
-    )}</h3>
-          </div>
+        <h3>${strings.extra_labour}: ${extraDay}</h3>
+        <h3>${strings.total_labour_amount} : ${currencyFormat(totalLabour)}</h3>
+        <h3>${strings.given_amount}: ${currencyFormat(expenseTot)}</h3>
+        <h3>${strings.final}: ${currencyFormat(totalLabour - expenseTot)}</h3>
       </div>
-      
-      <div>
-      <h3>${strings.final}: ${currencyFormat(totalLabour - expenseTot
-    )}</h3>
-      </div>
+    </div>
 
-
-      <h2>${strings.labour}</h2>
-      <table style="width:100%">
-          <tr>
-              <th style="width:15%">${strings.date}</th>
-              <th style="width:15%">${strings.labour_name}</th>
-              <th style="width:10%">${strings.labour}</th>
-              <th style="width:10%">${strings.labour_rate}</th>
-              <th style="width:15%">${strings.amount}</th>
-              <th style="width:30%">${strings.remark}</th>
-          </tr>
-         ${data.data.map(v =>
-      v?.data
-        ? null
-        : `<tr>
-              <td style="width:15%">${dateFormat(data?.date)}</td>
-              <td style="width:15%">${data?.labour}</td>
-              <td style="width:10%">${v?.count}
+    <h2>${strings.labour}</h2>
+    <table style="width: 100%">
+      <tr>
+        <th style="width: 15%">${strings.date}</th>
+        <th style="width: 15%">${strings.labour_name}</th>
+        <th style="width: 10%">${strings.labour}</th>
+        <th style="width: 10%">${strings.labour_rate}</th>
+        <th style="width: 15%">${strings.amount}</th>
+        <th style="width: 30%">${strings.remark}</th>
+      </tr>
+      ${data.data.map(v =>
+        v?.data
+          ? null
+          : `
+      <tr>
+        <td style="width: 15%">${dateFormat(data?.date)}</td>
+        <td style="width: 15%">${data?.labour}</td>
+        <td style="width: 10%">${v?.count}</td>
+        <td style="width: 10%">${currencyFormat(v?.rate)}</td>
+        <td style="width: 15%">
+          ${currencyFormat(parseFloat(v?.rate) * parseFloat(v?.count))}
         </td>
-              <td style="width:10%">${currencyFormat(v?.rate)}</td>
-              <td style="width:15%">${currencyFormat(parseFloat(v?.rate) * parseFloat(v?.count))}
-        </td>
-              <td style="width:30%">${v?.detail}</td>
-          </tr>`,
-    )}
-      </table>
+        <td style="width: 30%">${v?.detail}</td>
+      </tr>
+      `,
+      )}
+    </table>
 
-      <h2>${strings.labour_amount}</h2>
-      <table style="width:100%">
-          <tr>
-              <th id="date">${strings.date}</th>
-              <th>${strings.labour}</th>
-              <th>${strings.amount}</th>
-              <th>${strings.remark}</th>
-          </tr>
-          ${expense.map(
-      amount =>
-        `<tr>
-              <td id="date">${dateFormat(amount?.date)}</td>
-              <td>${amount?.labour}</td>
-              <td>${currencyFormat(amount?.amount)}</td>
-              <td>${amount?.detail}</td>
-          </tr>`,
-    )}
-      </table>
-      
-      <h2>${strings.leaves}</h2>
-      <table style="width:100%">
-          <tr>
-              <th id="date">${strings.date}</th>
-              <th>${strings.labour}</th>
-              <th>${strings.leave}</th>
-              <th>${strings.extra_labour}</th>
-              <th>${strings.remark}</th>
-          </tr>
-          ${data, leaves.map(o =>
-      o?.data
-        ? null
-        : `<tr>
-              <td id="date">${dateFormat(data?.date)}</td>
-              <th>${data?.labour}</th>
-              <td>${o?.count}</td>
-              <td>${extraDay}</td>
-              <td>${o?.detail}</td>
-          </tr>`,
-    )}
-      </table>
+    <h2>${strings.labour_amount}</h2>
+    <table style="width: 100%">
+      <tr>
+        <th id="date">${strings.date}</th>
+        <th>${strings.labour}</th>
+        <th>${strings.amount}</th>
+        <th>${strings.remark}</th>
+      </tr>
+      ${expense.map(
+        amount => `
+      <tr>
+        <td id="date">${dateFormat(amount?.date)}</td>
+        <td>${amount?.labour}</td>
+        <td>${currencyFormat(amount?.amount)}</td>
+        <td>${amount?.detail}</td>
+      </tr>
+      `,
+      )}
+    </table>
+
+    <h2>${strings.leaves}</h2>
+    <table style="width: 100%">
+      <tr>
+        <th id="date">${strings.date}</th>
+        <th>${strings.labour}</th>
+        <th>${strings.leave}</th>
+        <th>${strings.extra_labour}</th>
+        <th>${strings.remark}</th>
+      </tr>
+      ${(data,
+        leaves.map(o =>
+          o?.data
+            ? null
+            : `
+      <tr>
+        <td id="date">${dateFormat(data?.date)}</td>
+        <th>${data?.labour}</th>
+        <td>${o?.count}</td>
+        <td>${extraDay}</td>
+        <td>${o?.detail}</td>
+      </tr>
+      `,
+        ))
+      }
+    </table>
   </body>
 </html>
-  `;
+`;
 
     const options = {
       html: html,
@@ -331,9 +335,8 @@ td {
       .catch(err => console.log(err, '----err'));
   };
 
-
   return (
-    <BaseView >
+    <BaseView>
       <Loader visible={loading} />
       <Header
         style={styles.header}
@@ -394,7 +397,7 @@ td {
         style={[{ width: '100%' }]}
         contentContainerStyle={{ paddingBottom: 150 }}
         showsVerticalScrollIndicator={false}>
-        <View style={{ alignSelf: "center", marginTop: 8 }}>
+        <View style={{ alignSelf: 'center', marginTop: 8 }}>
           <Text numberOfLines={1} style={{ color: green }} h4>
             {data?.is_regulare ? strings.regular : ''}
           </Text>
@@ -454,20 +457,6 @@ td {
           </Text>
         </View>
         <Text h3 style={styles.subhead}>
-          {strings.leaves}
-        </Text>
-        {Array.isArray(leaves) && leaves.length ? (
-          <Animated.View style={styles.wt} entering={FadeInUp}>
-            {sortBy(leaves, (a, b) => moment(b?.date) - moment(a?.date)).map(
-              (v, i) => (
-                <LabourLeaveDetail key={i} data={v} />
-              ),
-            )}
-          </Animated.View>
-        ) : (
-          <Text>0</Text>
-        )}
-        <Text h3 style={styles.subhead}>
           {strings.labour_record}
         </Text>
         {Array.isArray(data.data) && data.data.length && data?.total ? (
@@ -483,6 +472,20 @@ td {
           )
         ) : (
           <Text>{strings.no_record}</Text>
+        )}
+        <Text h3 style={styles.subhead}>
+          {strings.leaves}
+        </Text>
+        {Array.isArray(leaves) && leaves.length ? (
+          <Animated.View style={styles.wt} entering={FadeInUp}>
+            {sortBy(leaves, (a, b) => moment(b?.date) - moment(a?.date)).map(
+              (v, i) => (
+                <LabourLeaveDetail key={i} data={v} />
+              ),
+            )}
+          </Animated.View>
+        ) : (
+          <Text>0</Text>
         )}
         <Text h3 style={styles.subhead}>
           {strings.amount}
@@ -506,12 +509,16 @@ td {
             label={strings.add_leave}
             btnStyle={{ width: '40%' }}
             onPress={() =>
-              // { console.log(Array.isArray(data?.data) && data?.data.length ? data?.data[0] : data)}
+              // {
+              //   console.log({
+              //     labour: data?.labour,
+              //     is_regulare: data?.data[0]?.is_regulare,
+              //   })
+              // }
               navigate('AddLabourLeave', {
-                item:
-                  Array.isArray(data?.data) && data?.data.length
-                    ? data?.data[0]
-                    : data,
+                item: {
+                  labour: data?.labour,
+                },
               })
             }
           />
@@ -553,7 +560,7 @@ const styles = StyleSheet.create({
     width: '100%',
     marginVertical: 5,
     // marginTop:5,
-    paddingHorizontal: 10
+    paddingHorizontal: 10,
   },
   underline: {
     borderBottomWidth: 1,

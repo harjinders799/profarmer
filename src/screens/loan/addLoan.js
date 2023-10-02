@@ -51,56 +51,36 @@ export default function AddLoan() {
   const [loading, setLoading] = React.useState(false);
   const {receiver, giver,  amount, phone, interest_rate,date} = data;
 
-  React.useEffect(() => {
-    if (givers.length == 1 && !giver) onChangeValue('giver', givers[0]);
-  }),
-    [givers];
+  // React.useEffect(() => {
+  //   if (givers.length == 1 && !giver) onChangeValue('giver', givers[0]);
+  // }),
+  //   [givers];
 
 
   const onChangeValue = (key, value) => {
-    if (key == 'amount') {
-      setData({
-        ...data,
-        amount: value.replace(/[^0-9]/g, ''),
-      });
-    } else {
       setData({
         ...data,
         [key]: value,
       });
-    }
-    // if (key == 'giver' && Array.isArray(givers) && givers.length)
-    //   refAmt.current.focus();
   };
-
   const AddNew = async () => {
     if (!receiver || interest_rate.trim() == '') {
-      ToastError(strings.receiver_name, strings.amount,);
-    } else if (amount.trim() == '' || parseInt(amount) <= 0) {
-      ToastError(strings.taken_amount, strings.amount);
-      // return;
+      ToastError(strings.receiver_name.trim());
+      return;
     }
     if (interest_rate.trim() == '' || parseInt(interest_rate) <= 0) {
-      ToastError(strings.interest_rate, strings.amount);
-      // return;
-    } else {
-      setLoading(true);
-      let res = await updateIneterstAmt({
-        ...data,
-        date: currentStamp(date),
-      });
-      setLoading(false);
-      setInterstRate(interest_rate);
-      ToastSuccess(strings.amount_added, strings.amount);
-      goBack();
-
-    // setLoading(true);
-    // await submitLoan({...data,date: currentStamp(date),})
-    // setLoading(false);
-    // ToastSuccess(strings.receiver_added);
-    // goBack();
+      ToastError(strings.interest_rate);
+      return;
+    } 
+ 
+    setLoading(true);
+    await submitLoan({...data,date: currentStamp(date),})
+    setLoading(false);
+    ToastSuccess(strings.receiver_added);
+    goBack();
   };
-}
+// }
+console.log(data,)
   return (
     <BaseView style={styles.container}>
       <Loader visible={loading} />
@@ -117,7 +97,7 @@ export default function AddLoan() {
         centerComponent={<Text h2>{strings.add_loan}</Text>}
         rightComponent={<Text h2> </Text>}
       />
-      <View style={styles.form}>
+      <ScrollView style={styles.form}>
         <Input
           label={strings.name}
           autoFocus
@@ -140,7 +120,7 @@ export default function AddLoan() {
           keyboardType="numeric"
         />
         <Button label={strings.save} onPress={AddNew} />
-      </View>
+      </ScrollView>
     </BaseView>
   );
 }

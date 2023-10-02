@@ -79,7 +79,6 @@ export default function PickerDetail({navigation}) {
       let baseRate = pickerData[pickerData.length - 1].rate;
       let pRate = pickerData.every(o => baseRate == o.rate || o.weight == '0');
       if (pRate) setRate(baseRate);
-      if (!lang?.code) setShow(true);
     }, [lang]),
   );
 

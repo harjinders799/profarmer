@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, Keyboard, ScrollView } from 'react-native';
 import { useRoute, useTheme } from '@react-navigation/native';
 import Button from 'src/components/button';
 import Input from 'src/components/input';
@@ -105,6 +105,7 @@ export default function AddCrop() {
     <BaseView style={styles.container}>
       <Loader visible={loading} />
       <Header
+        style={{ marginTop: 10 }}
         leftComponent={
           <Icon
             name="back"
@@ -116,45 +117,43 @@ export default function AddCrop() {
         centerComponent={<Text h2>{strings.add_crop}</Text>}
         rightComponent={<Text h2> </Text>}
       />
-      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+      <ScrollView
+        keyboardShouldPersistTaps='handled'
+        showsVerticalScrollIndicator={false}>
         <View style={styles.row}>
-            <Text h3 >{strings.crop}</Text>
-            <Input
-              placeholder={strings.crop}
-              value={crop}
-              style={{ borderColor: green, borderWidth: 1, backgroundColor: '#d3f5e9' }}
-              autoCapitalize="words"
-              setValue={value => onChangeValue('crop', value)}
-              rightComponent
-            />
-            <Text h3 >{strings.total_interest}</Text>
-            <Input
-              placeholder={strings.interest_rate}
-              value={interest_rate}
-              style={{ borderColor: green, borderWidth: 1, backgroundColor: '#d3f5e9' }}
-              keyboardType="number-pad"
-              autoCapitalize="words"
-              setValue={value => onChangeValue('interest_rate', value)}
-            />
-            <Text h3>{strings.total_amount}</Text>
-            <Input
-              refs={refAmt}
-              placeholder={strings.total_amount}
-              style={{ borderColor: green, borderWidth: 1, backgroundColor: '#d3f5e9' }}
-              value={currencyInput(amount)}
-              keyboardType="number-pad"
-              setValue={value => onChangeValue('amount', value)}
-              />
-            <Text h3 >{strings.remark}</Text>
-            <Input
-              placeholder={strings.remark}
-              style={{ borderColor: green, borderWidth: 1, backgroundColor: '#d3f5e9' }}
-              multiline
-              autoCapitalize="words"
-              value={detail}
-              setValue={value => onChangeValue('detail', value)}
-              />
-              {/* <DataPicker
+          <Input
+            autoFocus
+            label={strings.crop}
+            placeholder={strings.crop}
+            value={crop}
+            autoCapitalize="words"
+            setValue={value => onChangeValue('crop', value)}
+          />
+          <Input
+            label={strings.total_interest}
+            placeholder={strings.interest_rate}
+            value={interest_rate}
+            keyboardType="number-pad"
+            autoCapitalize="words"
+            setValue={value => onChangeValue('interest_rate', value)}
+          />
+          <Input
+            label={strings.total_amount}
+            refs={refAmt}
+            placeholder={strings.total_amount}
+            value={currencyInput(amount)}
+            keyboardType="number-pad"
+            setValue={value => onChangeValue('amount', value)}
+          />
+          <Input
+            label={strings.remark}
+            placeholder={strings.remark}
+            multiline
+            autoCapitalize="words"
+            value={detail}
+            setValue={value => onChangeValue('detail', value)}
+          />
+          {/* <DataPicker
               data={givers}
               // intialVisible={!editData?.agent}
               placeholder={strings.aadhtiya}
@@ -179,7 +178,7 @@ export default function AddCrop() {
           />
           <Button label={strings.save} onPress={onPress} />
         </View>
-      </TouchableWithoutFeedback>
+      </ScrollView>
     </BaseView>
   );
 }
@@ -196,14 +195,13 @@ const styles = StyleSheet.create({
     height: 50,
     width: '100%',
     borderRadius: 10,
-    marginVertical:15,
+    marginVertical: 15,
     justifyContent: 'center',
     paddingHorizontal: 10,
-    backgroundColor: '#d3f5e9',
-    borderColor: green
+    borderColor: gray3
   },
   row: {
     width: '100%',
-    paddingVertical: 35,
+    // paddingVertical: 35,
   },
 });

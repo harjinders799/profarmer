@@ -1,21 +1,27 @@
-import React, { useEffect, useState } from 'react';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import React, {useEffect, useState} from 'react';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import Setting from 'src/screens/settings';
 import AddForm from 'src/screens/aadtiya/addForm';
-import Detail from 'src/screens/aadtiya/detail';
+import CropDetail from '../screens/crop/detail';
 import Tabs from './tab';
-import { useCotton } from '../context/cottonContext';
+import {useCotton} from '../context/cottonContext';
 import NetInfo from '@react-native-community/netinfo';
 import AddPicker from '../screens/picker/addPicker';
 import AddPickerExpense from '../screens/picker/addPickerExpense';
 import AddPickerWeight from '../screens/picker/addPickerWeight';
 import PickerDetail from '../screens/picker/pickerDetail';
-import { getAllItems, updatePickerExpenseId, updatePickerId } from '../sql';
-import { PCIKER_TABLE, PICKER_EXPENSE_TABLE } from '../sql/tabels';
-import { submitPicker, submitPickerExpense, updatePicker, updatePickerExpense } from '../network/picker-service';
+import {getAllItems, updatePickerExpenseId, updatePickerId} from '../sql';
+import {PCIKER_TABLE, PICKER_EXPENSE_TABLE} from '../sql/tabels';
+import {
+  submitPicker,
+  submitPickerExpense,
+  updatePicker,
+  updatePickerExpense,
+} from '../network/picker-service';
 import AddPrice from '../screens/picker/addPrice';
 import PickerUpdate from '../screens/picker/pickerUpdate';
 import CropUpdate from '../screens/crop/cropUpdate';
+import AddCrop from '../screens/crop/addCrop';
 import AboutUs from '../screens/settings/aboutUs';
 import ContactUs from '../screens/settings/contactUs';
 import SalectLanguage from '../screens/settings/salectLanguage';
@@ -27,16 +33,21 @@ import AddLabour from '../screens/labour/addLabour';
 import RegularLabourDetail from '../screens/labour/regularLabourDetail';
 import LabourUpdate from '../screens/labour/labourUpdate';
 import GiverUpdate from '../screens/aadtiya/giverUpdate';
-import AddCrop from '../screens/crop/addCrop';
 import AddLoan from '../screens/loan/addLoan';
 import AddCredit from '../screens/loan/addCredit';
 import LoanDetail from '../screens/loan/loanDetail';
+import LoanUpdate from '../screens/loan/loanUpdate';
 
 const Stack = createNativeStackNavigator();
 
 export default function Stacks() {
-  const { db, pickerWeight = [], pickerExpense = [], getPickerWeight, getPickerExpense } =
-    useCotton();
+  const {
+    db,
+    pickerWeight = [],
+    pickerExpense = [],
+    getPickerWeight,
+    getPickerExpense,
+  } = useCotton();
   const [isConnected, setisConnected] = useState(false);
 
   useEffect(() => {
@@ -70,7 +81,8 @@ export default function Stacks() {
         if (unsyncData.length) {
           let promise = unsyncData.map(async (item, index) => {
             delete item.sync;
-            let api = item?.fid && item?.fid != '' ? updatePicker : submitPicker
+            let api =
+              item?.fid && item?.fid != '' ? updatePicker : submitPicker;
             let res = await api(item);
             // console.log(res, '--------pick wt');
             if (res) {
@@ -94,7 +106,10 @@ export default function Stacks() {
         if (unsyncData.length) {
           let promise = unsyncData.map(async (item, index) => {
             delete item.sync;
-            let api = item?.fid && item?.fid != '' ? updatePickerExpense : submitPickerExpense
+            let api =
+              item?.fid && item?.fid != ''
+                ? updatePickerExpense
+                : submitPickerExpense;
             let res = await api(item);
             // console.log(res, '--------pick wt');
             if (res) {
@@ -114,105 +129,37 @@ export default function Stacks() {
   };
 
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen
-        name="Main"
-        component={Tabs}
-      />
-      <Stack.Screen
-        name="Setting"
-        component={Setting}
-      />
-      <Stack.Screen
-        name="AddForm"
-        component={AddForm}
-      />
-      <Stack.Screen
-        name="Detail"
-        component={Detail}
-      />
-      <Stack.Screen
-        name="AddPicker"
-        component={AddPicker}
-      />
-      <Stack.Screen
-        name="AddPickerExpense"
-        component={AddPickerExpense}
-      />
-      <Stack.Screen
-        name="AddPickerWeight"
-        component={AddPickerWeight}
-      />
-      <Stack.Screen
-        name="PickerDetail"
-        component={PickerDetail}
-      />
-      <Stack.Screen
-        name="AddLabour"
-        component={AddLabour}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name="AddLabourExpense"
-        component={AddLabourExpense}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name="AddLabourLeave"
-        component={AddLabourLeave}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name="LabourDetail"
-        component={LabourDetail}
-        options={{ headerShown: false }}
-      />
+    <Stack.Navigator screenOptions={{headerShown: false}}>
+      <Stack.Screen name="Main" component={Tabs} />
+      <Stack.Screen name="Setting" component={Setting} />
+      <Stack.Screen name="AddForm" component={AddForm} />
+      <Stack.Screen name="CropDetail" component={CropDetail} />
+      <Stack.Screen name="AddPicker" component={AddPicker} />
+      <Stack.Screen name="AddPickerExpense" component={AddPickerExpense} />
+      <Stack.Screen name="AddPickerWeight" component={AddPickerWeight} />
+      <Stack.Screen name="PickerDetail" component={PickerDetail} />
+      <Stack.Screen name="AddLabour" component={AddLabour} />
+      <Stack.Screen name="AddLabourExpense" component={AddLabourExpense} />
+      <Stack.Screen name="AddLabourLeave" component={AddLabourLeave} />
+      <Stack.Screen name="LabourDetail" component={LabourDetail} />
       <Stack.Screen
         name="RegularLabourDetail"
         component={RegularLabourDetail}
-        options={{ headerShown: false }}
       />
-      <Stack.Screen
-        name="PickerUpdate"
-        component={PickerUpdate}
-      />
-      <Stack.Screen
-        name="LabourUpdate"
-        component={LabourUpdate}
-      />
-      <Stack.Screen
-        name="CropUpdate"
-        component={CropUpdate}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name="AddPrice"
-        component={AddPrice}
-      />
-      <Stack.Screen
-        name="GiverUpdate"
-        component={GiverUpdate}
-      />
-       <Stack.Screen
-      name="AddCrop"
-      component={AddCrop}
-    />
-    <Stack.Screen
-    name="AddLoan"
-    component={AddLoan}
-  /> 
-  <Stack.Screen
-  name="AddCredit"
-  component={AddCredit}
-/> 
- <Stack.Screen
-  name="LoanDetail"
-  component={LoanDetail}
-/>
+      <Stack.Screen name="PickerUpdate" component={PickerUpdate} />
+      <Stack.Screen name="LabourUpdate" component={LabourUpdate} />
+      <Stack.Screen name="CropUpdate" component={CropUpdate} />
+      <Stack.Screen name="AddCrop" component={AddCrop} />
+      <Stack.Screen name="AddPrice" component={AddPrice} />
+      <Stack.Screen name="GiverUpdate" component={GiverUpdate} />
+      <Stack.Screen name="LoanUpdate" component={LoanUpdate} />
+      <Stack.Screen name="AddLoan" component={AddLoan} />
+      <Stack.Screen name="AddCredit" component={AddCredit} />
+      <Stack.Screen name="LoanDetail" component={LoanDetail} />
       <Stack.Screen name="AboutUs" component={AboutUs} />
       <Stack.Screen name="ContactUs" component={ContactUs} />
-      <Stack.Screen name='SalectLanguage' component={SalectLanguage} />
-      <Stack.Screen name='EditProfile' component={EditProfile} />
+      <Stack.Screen name="SalectLanguage" component={SalectLanguage} />
+      <Stack.Screen name="EditProfile" component={EditProfile} />
     </Stack.Navigator>
   );
 }

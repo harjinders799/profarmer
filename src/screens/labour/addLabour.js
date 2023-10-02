@@ -65,9 +65,10 @@ export default function AddLabour() {
   };
 
   const onPress = () => {
-    if (editData?.edit) updateWt();
+    if (editData?.id) updateWt();
     else AddNew();
   };
+
   const updateWt = async () => {
     if (labour == '') {
       ToastError(strings.labour_name, strings.labour);
@@ -189,14 +190,14 @@ export default function AddLabour() {
             <Text h3> {strings.is_regular} </Text>
             <TouchableOpacity
               style={styles.button} onPress={() => onChangeValue('is_regulare', true)}>
-              <Text h3 style={{ color: data.is_regulare ? blue : black }}>
+              <Text h3 style={{ color: data.is_regulare ? blue : black + 50 }}>
                 {strings.yes}
                 {/* <Icon name="check" size={10} style={{ color: data.is_regulare ? blue : black }} /> */}
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.button} onPress={() => onChangeValue('is_regulare', false)}>
-              <Text h3 style={{ color: data.is_regulare ? black : blue }}>
+              <Text h3 style={{ color: data.is_regulare ? black + 50 : blue }}>
                 {strings.no} </Text>
             </TouchableOpacity>
           </View>

@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import {green, red, white} from 'src/utils/color';
 import moment from 'moment';
-import {sortBy} from 'lodash';
+import {sortBy, groupBy,sumBy} from 'lodash';
 import {useRoute, useTheme} from '@react-navigation/native';
 import {strings} from 'src/translations/locale';
 import Button from 'src/components/button';
@@ -36,6 +36,7 @@ import {
   lightBlue,
   lightGreen,
   lightOrange,
+  lightRed,
   lightYellow,
   peach,
 } from '../../utils/color';
@@ -43,28 +44,52 @@ import Share from 'react-native-share';
 import {useLoan} from '../../context/loanContext';
 import { getLoanData } from '../../network/loan-service';
 import LoanDetailAction from '../../components/loanDetailAction';
+import auth from '@react-native-firebase/auth';
 
 const transparent = 'rgba(0,0,0,0.5)';
 
 export default function LoanDetail({navigation}) {
   const {user} = useAuth();
   const {params} = useRoute();
+  const data = params?.item ?? {};
   const {colors} = useTheme();
-  const data = params?.item ?? [];
   const [interest, setInterest] = useState(0);
   const {lang} = useLang();
   const [loading, setLoading] = useState(false);
+  const {loanData = []} = useLoan();
 
-  const langs = [
-    {code: 'pb', label: 'punjabi'},
-    {code: 'hi', label: 'hindi'},
-    {code: 'en', label: 'english'},
-  ];
+
+  const personName = data?.name; 
+
+   const groupedData = loanData.filter((entry) => {
+    return (
+      (entry.giver === personName || entry.receiver === personName) &&
+      entry.giver !== entry.receiver
+    );
+  });
+
+  const givenAmountWithInterest = groupedData
+    .filter((entry) => entry.giver === personName)
+    .reduce((total, entry) => {
+      const interestAmount = (entry.interest_rate * parseFloat(entry.amount)) / 100;
+      return total + parseFloat(entry.amount) + interestAmount;
+    }, 0);
+
+  const takenAmountWithInterest = groupedData
+    .filter((entry) => entry.receiver === personName)
+    .reduce((total, entry) => {
+      const interestAmount = (entry.interest_rate * parseFloat(entry.amount)) / 100;
+      return total + parseFloat(entry.amount) + interestAmount;
+    }, 0);
+
+  const finalAmount = givenAmountWithInterest - takenAmountWithInterest;
+
+
 
   useEffect(() => {
-    if (Array.isArray(data.data) && data.data.length) {
+    if (Array.isArray(loanData) && loanData.length) {
       let tot_interest = 0;
-      data.data.map(v => {
+      loanData.map(v => {
         let date = moment(v?.date).format('YYYY-MM-DD');
         let start_date = moment(date);
         let today = moment();
@@ -78,7 +103,7 @@ export default function LoanDetail({navigation}) {
       });
       setInterest(tot_interest);
     }
-  }, [data]);
+  }, [loanData]);
 
   return (
     <BaseView>
@@ -94,12 +119,8 @@ export default function LoanDetail({navigation}) {
             />
           </View>
         }
-        centerComponent={
-          <Text h2 style={{color: white}}>
-            {data?.receiver}
-          </Text>
-        }
-        rightComponent={
+        centerComponent={<Text h2>{data?.name}</Text>}
+         rightComponent={
           <View style={{flexDirection: 'row'}}>
             <Icon
               name="pdffile1"
@@ -112,7 +133,7 @@ export default function LoanDetail({navigation}) {
 
             <TouchableOpacity
               onPress={() => {
-                setopenModal(true);
+                // setopenModal(true);
               }}>
               <Icon
                 name="delete"
@@ -125,24 +146,32 @@ export default function LoanDetail({navigation}) {
           </View>
         }
       />
-
+ 
       <View style={[styles.row]}>
-        <View style={[styles.card, {borderColor: lightYellow}]}>
-          <Text h3>{strings.taken_amount}</Text>
-          <Text h3 style={{color: green}}>
-            {currencyFormat(data?.total)}
-          </Text>
-        </View>
         <View style={[styles.card, {borderColor: greenLight}]}>
+        <Text h4 style={styles.text}>{strings.taken_amount_with_interest}</Text>
+    <Text h3 style={{ color: lightRed }}>
+      {currencyFormat(takenAmountWithInterest)}
+    </Text>
+        </View>
+        <View style={[styles.card, {borderColor: peach}]}>
+        <Text h4 style={styles.text}>{strings.given_amount_with_interest}</Text>
+    <Text h3 style={{ color: green }}>
+      {currencyFormat(givenAmountWithInterest)}
+    </Text>
+        </View> 
+        {/* <View style={[styles.card, {borderColor: greenLight}]}>
           <Text h3>{strings.total_interest}</Text>
           <Text h3 style={{color: red}}>
             {currencyFormat(interest)}
           </Text>
-        </View>
-        <View style={[styles.card, {borderColor: peach}]}>
+        </View> */}
+        <View style={[styles.card, {borderColor: lightYellow}]}>
           <Text h3>{strings.total_amount}</Text>
-          <Text h3>{currencyFormat(data?.total + interest)}</Text>
-        </View>
+            <Text h3 style={{ color: finalAmount >= 0 ? green : lightRed }}>
+      {currencyFormat(finalAmount)}
+    </Text>
+           </View>
       </View>
       <View style={styles.wt}>
         <Text
@@ -155,25 +184,25 @@ export default function LoanDetail({navigation}) {
         </Text>
 
         <View style={styles.row}>
-          <Text style={{width: '20%', textAlign: 'center'}} h3>
+          {/* <Text style={{width: '20%', textAlign: 'center'}} h3>
             {strings.date}
           </Text>
           <Text style={{width: '15%', textAlign: 'right'}} h3>
             {strings.day}
-          </Text>
-          <Text style={{width: '28%', textAlign: 'right'}} h3>
+          </Text> */}
+          {/* <Text style={{width: '28%', textAlign: 'right'}} h3>
             {strings.total_interest}
-          </Text>
-          <Text style={{width: '35%', textAlign: 'right'}} h3>
+          </Text> */}
+          {/* <Text style={{width: '45%', textAlign: 'right'}} h3>
             {strings.total_amount}
-          </Text>
+          </Text> */}
         </View>
         <ScrollView
           style={{width: '100%', height: '40%'}}
           // contentContainerStyle={{paddingBottom: 150}}
           showsVerticalScrollIndicator={false}>
-          {Array.isArray(data.data) && data.data.length ? (
-            sortBy(data.data, (a, b) => moment(b?.date) - moment(a?.date)).map(
+          {Array.isArray(loanData) && loanData.length ? (
+            sortBy(loanData, (a, b) => moment(b?.date) - moment(a?.date)).map(
               (v, i) => <LoanDetailAction key={i} data={v} />,
             )
           ) : (
@@ -228,4 +257,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: transparent,
   },
+   text: {
+  // backgroundColor:"red",
+  width:"50%"
+  }
 });

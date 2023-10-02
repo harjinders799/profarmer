@@ -108,8 +108,13 @@
   "receiver_name": " Receiver name ",
   "receiver_added": " Receiver Added !",
   "add_receiver": " Add Receiver",
-  "credit":"Credit",
-  "debt":"Debt",
+  "credit":"Receive",
+  "debt":"Give",
+  "credit_amount":"Received Amount",
+"given_amount_added":"Given Amount Added",
+"given_amount_with_interest":"Given Amount With Interset",
+"taken_amount_with_interest":"Taken Amount With Interset",
+
 
   "labour_name": "Labour's Name",
   "add_labour": "Add Labour",
@@ -131,6 +136,7 @@
   "amount_deleted": "Amount Deleted!",
   "in_progress":"In Progress",
   "resend_otp":"Resend OTP",
+  "interest_included":"Interest Included",
   "offline_warning":"You have offline data, Please connect to internet to save it"
 
 }

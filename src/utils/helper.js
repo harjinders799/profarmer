@@ -12,7 +12,7 @@ export const getTotalInterst = (data = [],) => {
                 30) *
             parseInt(days)
         ).toFixed(2);
-        tot_interest += parseFloat(interest);
+        tot_interest += parseFloat(interest)+parseFloat(v?.amount);
     });
     return tot_interest;
 }

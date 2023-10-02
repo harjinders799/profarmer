@@ -1,41 +1,6 @@
 import { Auth, firestore } from 'src/service/setup';
 
-export const submitInterestAmount = async data => {
-  return new Promise(async function (resolve, reject) {
-    try {
-      let id = Auth().currentUser?.uid;
-      await firestore()
-        .collection('interest_amount')
-        .add({ ...data, uid: id });
-      resolve('success');
-    } catch (error) {
-      reject(new Error(error));
-    }
-  });
-};
-export const updateIneterstAmt = async data => {
-  return new Promise(async function (resolve, reject) {
-    try {
-      await firestore()
-        .collection('interest_amount')
-        .doc(data?.id)
-        .update(data);
-      resolve('success');
-    } catch (error) {
-      reject(new Error(error));
-    }
-  });
-};
-export const updateReceiver = async data => {
-  return new Promise(async function (resolve, reject) {
-    try {
-      await firestore().collection('receiver').doc(data?.fid).update(data);
-      resolve(data?.fid);
-    } catch (error) {
-      reject(new Error(error));
-    }
-  });
-};
+
 export const submitLoan = async data => {
     return new Promise(async function (resolve, reject) {
       try {
@@ -96,7 +61,7 @@ export const deleteLoanCollection = async (name) => {
       const userId = Auth().currentUser?.uid;
   
       const deleteLoan = firestore()
-        .collection('interest_amount')
+        .collection('loan')
         .where('uid', '==', userId)
         .where('loan', '==', name)
         .get()

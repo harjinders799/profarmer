@@ -9,7 +9,7 @@ import Button from '../../components/button';
 import {white} from '../../utils/color';
 
 import {navigate} from 'src/navigation/ref';
-import LoanList from '../../container/loanList';
+import LoanList from '../../container/loan/loanList';
 import {useLoan} from '../../context/loanContext';
 import {useFocusEffect} from '@react-navigation/native';
 
