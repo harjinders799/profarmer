@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import BaseView from 'src/container/base';
 import Text from 'src/components/text';
 import {
@@ -9,26 +9,26 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {green, red, white} from 'src/utils/color';
+import { green, red, white } from 'src/utils/color';
 import moment from 'moment';
-import {sortBy, groupBy,sumBy} from 'lodash';
-import {useRoute, useTheme} from '@react-navigation/native';
-import {strings} from 'src/translations/locale';
+import { sortBy, groupBy, sumBy } from 'lodash';
+import { useFocusEffect, useIsFocused, useRoute, useTheme } from '@react-navigation/native';
+import { strings } from 'src/translations/locale';
 import Button from 'src/components/button';
 import GiverDetailAction from 'src/components/giverDetailAction';
 import Header from '../../components/header';
 import Icon from '../../components/icon';
-import {goBack} from '../../navigation/ref';
-import {currencyFormat} from '../../utils/dateformat';
-import {ToastError} from '../../utils/toast';
+import { goBack } from '../../navigation/ref';
+import { currencyFormat } from '../../utils/dateformat';
+import { ToastError, ToastProgress } from '../../utils/toast';
 import Loader from 'src/components/loader';
-import {dateFormat} from 'src/utils/dateformat';
-import {navigate, replace} from 'src/navigation/ref';
+import { dateFormat } from 'src/utils/dateformat';
+import { navigate, replace } from 'src/navigation/ref';
 import RNHTMLtoPDF from 'react-native-html-to-pdf';
-import {useAuth} from '../../context/authContext';
-import {useLang} from 'src/context/langContext';
+import { useAuth } from '../../context/authContext';
+import { useLang } from 'src/context/langContext';
 
-import {deleteGiverCollection} from '../../network/interest-service';
+import { deleteGiverCollection } from '../../network/interest-service';
 
 import {
   gray4,
@@ -41,76 +41,51 @@ import {
   peach,
 } from '../../utils/color';
 import Share from 'react-native-share';
-import {useLoan} from '../../context/loanContext';
+import { useLoan } from '../../context/loanContext';
 import { getLoanData } from '../../network/loan-service';
 import LoanDetailAction from '../../components/loanDetailAction';
 import auth from '@react-native-firebase/auth';
+import { getTotalInterst } from '../../utils/helper';
 
 const transparent = 'rgba(0,0,0,0.5)';
 
-export default function LoanDetail({navigation}) {
-  const {user} = useAuth();
-  const {params} = useRoute();
+export default function LoanDetail() {
+  const { params } = useRoute();
   const data = params?.item ?? {};
-  const {colors} = useTheme();
-  const [interest, setInterest] = useState(0);
-  const {lang} = useLang();
-  const [loading, setLoading] = useState(false);
-  const {loanData = []} = useLoan();
+  const { loanData = [], getLoan } = useLoan();
+  const isFocused = useIsFocused();
+  const personName = data?.name;
 
+  useFocusEffect(
+    useCallback(() => {
+      getLoan();
+    }, [isFocused]),
+  );
 
-  const personName = data?.name; 
-
-   const groupedData = loanData.filter((entry) => {
+  const groupedData = loanData.filter(entry => {
     return (
-      (entry.giver === personName || entry.receiver === personName) &&
-      entry.giver !== entry.receiver
+      (entry.giver === personName &&
+        entry?.receiver == auth().currentUser.uid) ||
+      (entry.receiver === personName && entry?.giver == auth().currentUser.uid)
     );
   });
 
-  const givenAmountWithInterest = groupedData
-    .filter((entry) => entry.giver === personName)
-    .reduce((total, entry) => {
-      const interestAmount = (entry.interest_rate * parseFloat(entry.amount)) / 100;
-      return total + parseFloat(entry.amount) + interestAmount;
-    }, 0);
+  const givenAmountWithInterest = getTotalInterst(
+    groupedData.filter(entry => entry.giver === auth().currentUser.uid),
+  );
 
-  const takenAmountWithInterest = groupedData
-    .filter((entry) => entry.receiver === personName)
-    .reduce((total, entry) => {
-      const interestAmount = (entry.interest_rate * parseFloat(entry.amount)) / 100;
-      return total + parseFloat(entry.amount) + interestAmount;
-    }, 0);
+  const takenAmountWithInterest = getTotalInterst(
+    groupedData.filter(entry => entry.giver === personName),
+  );
 
   const finalAmount = givenAmountWithInterest - takenAmountWithInterest;
-
-
-
-  useEffect(() => {
-    if (Array.isArray(loanData) && loanData.length) {
-      let tot_interest = 0;
-      loanData.map(v => {
-        let date = moment(v?.date).format('YYYY-MM-DD');
-        let start_date = moment(date);
-        let today = moment();
-        let days = today.diff(start_date, 'days');
-        let interest = (
-          ((parseFloat(v?.amount) * (parseFloat(v?.interest_rate) / 100)) /
-            30) *
-          parseInt(days)
-        ).toFixed(2);
-        tot_interest += parseFloat(interest);
-      });
-      setInterest(tot_interest);
-    }
-  }, [loanData]);
 
   return (
     <BaseView>
       <Header
         style={styles.header}
         leftComponent={
-          <View style={{flexDirection: 'row'}}>
+          <View style={{ flexDirection: 'row' }}>
             <Icon
               name="back"
               size={28}
@@ -119,21 +94,26 @@ export default function LoanDetail({navigation}) {
             />
           </View>
         }
-        centerComponent={<Text h2>{data?.name}</Text>}
-         rightComponent={
-          <View style={{flexDirection: 'row'}}>
-            <Icon
+        centerComponent={
+          <Text h2 style={{ color: white }}>
+            {data?.name}
+          </Text>
+        }
+        rightComponent={
+          <View style={{ flexDirection: 'row' }}>
+            {/* <Icon
               name="pdffile1"
               size={25}
               color={white}
               style={{
                 marginRight: 15,
               }}
-            />
+            /> */}
 
             <TouchableOpacity
               onPress={() => {
                 // setopenModal(true);
+                ToastProgress(strings.in_progress)
               }}>
               <Icon
                 name="delete"
@@ -146,41 +126,45 @@ export default function LoanDetail({navigation}) {
           </View>
         }
       />
- 
+
       <View style={[styles.row]}>
-        <View style={[styles.card, {borderColor: greenLight}]}>
-        <Text h4 style={styles.text}>{strings.taken_amount_with_interest}</Text>
-    <Text h3 style={{ color: lightRed }}>
-      {currencyFormat(takenAmountWithInterest)}
-    </Text>
+        <View style={[styles.card, { borderColor: greenLight }]}>
+          <Text h4 style={styles.text}>
+            {strings.taken_amount_with_interest}
+          </Text>
+          <Text h3 style={{ color: lightRed }}>
+            {currencyFormat(takenAmountWithInterest)}
+          </Text>
         </View>
-        <View style={[styles.card, {borderColor: peach}]}>
-        <Text h4 style={styles.text}>{strings.given_amount_with_interest}</Text>
-    <Text h3 style={{ color: green }}>
-      {currencyFormat(givenAmountWithInterest)}
-    </Text>
-        </View> 
+        <View style={[styles.card, { borderColor: peach }]}>
+          <Text h4 style={styles.text}>
+            {strings.given_amount_with_interest}
+          </Text>
+          <Text h3 style={{ color: green }}>
+            {currencyFormat(givenAmountWithInterest)}
+          </Text>
+        </View>
         {/* <View style={[styles.card, {borderColor: greenLight}]}>
           <Text h3>{strings.total_interest}</Text>
           <Text h3 style={{color: red}}>
             {currencyFormat(interest)}
           </Text>
         </View> */}
-        <View style={[styles.card, {borderColor: lightYellow}]}>
+        <View style={[styles.card, { borderColor: lightYellow }]}>
           <Text h3>{strings.total_amount}</Text>
-            <Text h3 style={{ color: finalAmount >= 0 ? green : lightRed }}>
-      {currencyFormat(finalAmount)}
-    </Text>
-           </View>
+          <Text h3 style={{ color: finalAmount >= 0 ? green : red }}>
+            {currencyFormat(finalAmount)}
+          </Text>
+        </View>
       </View>
       <View style={styles.wt}>
         <Text
           h3
           style={[
             styles.underline,
-            {backgroundColor: greenLight, width: '100%', textAlign: 'center'},
+            { backgroundColor: greenLight, width: '100%', textAlign: 'center' },
           ]}>
-          {strings.amount}
+          {strings.loan}
         </Text>
 
         <View style={styles.row}>
@@ -198,13 +182,14 @@ export default function LoanDetail({navigation}) {
           </Text> */}
         </View>
         <ScrollView
-          style={{width: '100%', height: '40%'}}
-          // contentContainerStyle={{paddingBottom: 150}}
+          style={{ width: '100%' }}
+          contentContainerStyle={{ paddingBottom: '100%' }}
           showsVerticalScrollIndicator={false}>
-          {Array.isArray(loanData) && loanData.length ? (
-            sortBy(loanData, (a, b) => moment(b?.date) - moment(a?.date)).map(
-              (v, i) => <LoanDetailAction key={i} data={v} />,
-            )
+          {Array.isArray(groupedData) && groupedData.length ? (
+            sortBy(
+              groupedData,
+              (a, b) => moment(b?.date) - moment(a?.date),
+            ).map((v, i) => <LoanDetailAction key={i} data={v} />)
           ) : (
             <Text>0</Text>
           )}
@@ -257,8 +242,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: transparent,
   },
-   text: {
-  // backgroundColor:"red",
-  width:"50%"
-  }
+  text: {
+    // backgroundColor:"red",
+    width: '50%',
+  },
 });

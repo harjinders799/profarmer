@@ -1,35 +1,36 @@
 import React from 'react';
-import {View, StyleSheet,ScrollView, TouchableOpacity} from 'react-native';
-import {useRoute, useTheme} from '@react-navigation/native';
+import { View, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { useRoute, useTheme } from '@react-navigation/native';
 import Button from 'src/components/button';
 import Input from 'src/components/input';
 import Text from 'src/components/text';
 import DateTimePick from 'src/components/DateTime';
-import {currentStamp, dateFormat} from 'src/utils/dateformat';
+import { currentStamp, dateFormat } from 'src/utils/dateformat';
 import Loader from 'src/components/loader';
 import BaseView from 'src/container/base';
-import {ToastError, ToastSuccess} from 'src/utils/toast';
-import {strings} from 'src/translations/locale';
-import {navigate} from 'src/navigation/ref';
-import {useStore} from 'src/context/context';
-import {goBack} from 'src/navigation/ref';
+import { ToastError, ToastSuccess } from 'src/utils/toast';
+import { strings } from 'src/translations/locale';
+import { navigate } from 'src/navigation/ref';
+import { useStore } from 'src/context/context';
+import { goBack } from 'src/navigation/ref';
 import Header from '../../components/header';
 import Icon from '../../components/icon';
 import auth from '@react-native-firebase/auth';
-import {gray10, gray3} from '../../utils/color';
-import {useLoan} from '../../context/loanContext';
-import { submitLoan } from '../../network/loan-service';
+import { gray10, gray3 } from '../../utils/color';
+import { useLoan } from '../../context/loanContext';
+import { submitLoan, updateLoan } from '../../network/loan-service';
+import { currencyInput } from '../../utils/dateformat';
 
 export default function AddCredit() {
-  const {colors} = useTheme();
-  const {getLoan } = useLoan();
-  const {params} = useRoute();
+  const { colors } = useTheme();
+  const { getLoan } = useLoan();
+  const { params } = useRoute();
   const editData = params?.data ?? {};
   const refAmt = React.useRef();
   const [data, setData] = React.useState({
     id: editData?.id ?? '',
-    giver: editData?.giver??auth().currentUser?.uid,
-    detail: editData?.detail ?? '', 
+    giver: editData?.giver ?? auth().currentUser?.uid,
+    detail: editData?.detail ?? '',
     receiver: editData?.receiver ?? '',
     amount: editData?.amount ?? '',
     interest_rate: editData?.interest_rate ?? '',
@@ -37,7 +38,7 @@ export default function AddCredit() {
   });
   const [showDate, setShowDate] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
-  const {receiver,amount,detail, date} = data;
+  const { receiver, amount, detail, date } = data;
 
   const onChangeValue = (key, value) => {
     if (key == 'amount') {
@@ -61,8 +62,8 @@ export default function AddCredit() {
       if (amount.trim() == '' || amount < 0) {
         ToastError(strings.credit_amount);
       } else {
-            setLoading(true);
-            await submitLoan({...data,date: currentStamp(date),})
+        setLoading(true);
+        await updateLoan({ ...data, date: currentStamp(date), })
         setLoading(false);
         ToastSuccess(strings.given_amount_added);
         goBack();
@@ -73,30 +74,30 @@ export default function AddCredit() {
       console.log(error, '----111---');
     }
   };
-  const AddNew = async () => {  
-      try {
-    if (amount.trim() == '' || amount <= 0) {
-      ToastError(strings.credit_amount);
-      // return   
-    }else {
-    setLoading(true);
-    await submitLoan({...data,date: currentStamp(date),})
-    setLoading(false);
-    ToastSuccess(strings.given_amount_added);
-    goBack();
+  const AddNew = async () => {
+    try {
+      if (amount.trim() == '' || amount <= 0) {
+        ToastError(strings.credit_amount);
+        // return   
+      } else {
+        setLoading(true);
+        await submitLoan({ ...data, date: currentStamp(date), })
+        setLoading(false);
+        ToastSuccess(strings.given_amount_added);
+        goBack();
+      };
+    } catch (error) {
+      setLoading(false);
+      ToastError(error?.message);
+      console.log(error, '----11--');
+    }
   };
-} catch (error) {
-  setLoading(false);
-  ToastError(error?.message);
-  console.log(error, '----11--');
-}
-};
 
   return (
     <BaseView style={styles.container}>
       <Loader visible={loading} />
       <Header
-        style={{marginTop: 10}}
+        style={{ marginTop: 10 }}
         leftComponent={
           <Icon
             name="back"
@@ -105,14 +106,14 @@ export default function AddCredit() {
             onPress={() => goBack()}
           />
         }
-        centerComponent={<Text h2>{editData?.type=='debt'?editData?.receiver: editData.giver}</Text>}
+        centerComponent={<Text h2>{editData?.type == 'debt' ? editData?.receiver : editData.giver}</Text>}
         rightComponent={<Text h2> </Text>}
       />
-      <ScrollView style={styles.form}>
+      <ScrollView style={styles.form} keyboardShouldPersistTaps='handled'>
         <Input
-          label={strings.amount}
-          placeholder={strings.amount + '(Rs)'}
-          value={amount}
+          label={editData?.type == 'debt' ? strings.amount : strings.taken_amount}
+          placeholder={'Rs'}
+          value={currencyInput(amount)}
           autoFocus
           setValue={value => onChangeValue('amount', value)}
           keyboardType="numeric"
@@ -134,7 +135,7 @@ export default function AddCredit() {
           {strings.date}
         </Text>
         <TouchableOpacity
-          style={[styles.date, {borderColor: gray3}]}
+          style={[styles.date, { borderColor: gray3 }]}
           onPress={() => setShowDate(true)}>
           <Text h3 medium>
             {dateFormat(date)}

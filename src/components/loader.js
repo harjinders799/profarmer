@@ -2,14 +2,14 @@ import { useTheme } from '@react-navigation/native';
 import React from 'react';
 import { ActivityIndicator, StyleSheet } from 'react-native';
 import { HEIGHT, WIDTH } from 'src/utils/constant';
-import { green } from '../utils/color';
+import { black, green } from '../utils/color';
 
 const Loader = ({ size = 'large', small = false, color, visible, style }) => {
   const { colors } = useTheme();
   return visible ? (
     <ActivityIndicator
       size={size}
-      color={color ? color : green}
+      color={color ? color : black}
       style={[styles.loader, small && styles.small, { backgroundColor: 'transparent' }, style]}
     />
   ) : null;

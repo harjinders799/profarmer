@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import Text from 'src/components/text';
 import Button from 'src/components/button';
 import {
@@ -8,70 +8,65 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {white} from 'src/utils/color';
-import {reduce, groupBy, sumBy} from 'lodash';
-import {strings} from 'src/translations/locale';
-import {navigate} from 'src/navigation/ref';
-import {currencyFormat} from 'src/utils/dateformat';
-import {ToastError} from '../../utils/toast';
-import Loader from 'src/components/loader';
-import {
-  aqua,
-  cyan,
-  gray10,
-  green,
-  greenDark,
-  greenLight,
-  lightBlue,
-  lightGreen,
-  lightOrange,
-  navy,
-  red,
-  skyBlue,
-} from '../../utils/color';
+import { white } from 'src/utils/color';
+import { reduce, groupBy, sumBy } from 'lodash';
+import { strings } from 'src/translations/locale';
+import { navigate } from 'src/navigation/ref';
+import { currencyFormat } from 'src/utils/dateformat';
+import { ToastError } from '../../utils/toast';
+import { aqua, greenDark, greenLight, lightOrange, red } from '../../utils/color';
 import Animated from 'react-native-reanimated';
-import {useLoan} from '../../context/loanContext';
+import { useLoan } from '../../context/loanContext';
 import auth from '@react-native-firebase/auth';
+import { getTotalInterst } from '../../utils/helper';
 
 export default function LoanList() {
-  const {loanData = []} = useLoan();
+  const { loanData = [] } = useLoan();
   const [loading, setLoading] = useState(true);
   let data = [];
 
   const groupedData = groupBy(loanData, d =>
     d?.giver == auth().currentUser.uid ? d?.receiver.trim() : d?.giver.trim(),
   );
-  
+
   Object.keys(groupedData).map(o => {
     data.push({
       name: o,
-      interest_rate:groupedData[o][0]?.interest_rate
-      
+      interest_rate: groupedData[o][0]?.interest_rate,
     });
   });
-  
+
   const renderItem = item => {
-    const totalAmount = sumBy(groupedData[item?.name], (entry) => parseInt(entry?.amount));
-  
+    const given = getTotalInterst(
+      groupedData[item?.name].filter(entry => entry.giver === auth().currentUser.uid),
+    );
+    const taken = getTotalInterst(
+      groupedData[item?.name].filter(entry => entry.giver === item?.name),
+    );
+
     return (
       <View style={styles.list}>
         <TouchableOpacity
-          // disabled={loading}
-          onPress={() => navigate('LoanDetail', {item,totalAmount })}>
+          onPress={() => navigate('LoanDetail', { item })}>
           <View style={styles.row}>
-            <Text numberOfLines={1} h3 style={{width: '60%'}}>
+            <Text numberOfLines={1} h3 style={{ width: '60%' }}>
               {item?.name}
             </Text>
-              <Text
-                numberOfLines={1} h3> { currencyFormat( totalAmount )}
-              </Text>
+            <Text
+              numberOfLines={1}
+              h3
+              style={{
+                color: taken - given >= 0 ? red : greenDark,
+              }}>
+              {currencyFormat(given - taken)}
+            </Text>
           </View>
-          <Animated.View
+          <View
             style={styles.row}
-            // entering={FadeIn}
-            // layout={Layout.}
+          // entering={FadeIn}
+          // layout={Layout.}
           >
-            <View style={{flexDirection: 'row'}}>
+            <View style={{ flexDirection: 'row' }}>
               <Button
                 hitSlop={10}
                 label={strings.credit}
@@ -90,7 +85,7 @@ export default function LoanList() {
                       receiver: auth().currentUser.uid,
                       giver: item?.name,
                       type: 'credit',
-                      interest_rate:item?.interest_rate
+                      interest_rate: item?.interest_rate,
                     },
                   })
                 }
@@ -113,7 +108,7 @@ export default function LoanList() {
                       giver: auth().currentUser.uid,
                       receiver: item?.name,
                       type: 'debt',
-                      interest_rate:item?.interest_rate
+                      interest_rate: item?.interest_rate,
                     },
                   })
                 }
@@ -123,19 +118,11 @@ export default function LoanList() {
               numberOfLines={1}
               h3
               style={{
-                color: loading
-                  ? greenLight
-                  : (!isNaN(item?.amount) ? item?.amount : 0) >= 0
-                  ? greenLight
-                  : red,
+                color: taken - given >= 0 ? red : greenDark,
               }}>
-              {!loading
-                ? (!isNaN(item?.amount) ? item?.amount : 0) >= 0
-                  ? strings.give
-                  : strings.receive
-                : '__'}{' '}
+              {taken - given >= 0 ? strings.give : strings.receive}
             </Text>
-          </Animated.View>
+          </View>
         </TouchableOpacity>
       </View>
     );
@@ -143,17 +130,17 @@ export default function LoanList() {
 
   return (
     <FlatList
-      style={{width: '100%'}}
-      contentContainerStyle={{paddingBottom: 150}}
+      style={{ width: '100%' }}
+      contentContainerStyle={{ paddingBottom: 150 }}
       data={data}
       keyExtractor={item => Math.random().toString()}
       ListEmptyComponent={() => (
-        <Text style={{textAlign: 'center', paddingTop: 30}}>
+        <Text style={{ textAlign: 'center', paddingTop: 30 }}>
           {strings.no_data}
         </Text>
       )}
       showsVerticalScrollIndicator={false}
-      renderItem={({item}) => renderItem(item)}
+      renderItem={({ item }) => renderItem(item)}
     />
   );
 }

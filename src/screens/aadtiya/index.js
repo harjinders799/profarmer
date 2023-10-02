@@ -233,26 +233,26 @@ export default function DashBoard({ navigation }) {
 
   return (
     <BaseView style={{ paddingHorizontal: 0 }}>
+      <Text
+        h2
+        style={{
+          textAlign: 'center',
+          marginVertical: 10,
+          paddingHorizontal: 50,
+        }}>
+        {strings.aadhatiya_hisab}
+      </Text>
+      <Icon
+        name="pdffile1"
+        size={25}
+        color={green}
+        style={{ position: 'absolute', right: 20, top: 10 }}
+        onPress={onShare}
+      />
       <ScrollView
         style={{ width: '100%' }}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 100 }}>
-        <Text
-          h2
-          style={{
-            textAlign: 'center',
-            marginVertical: 10,
-            paddingHorizontal: 50,
-          }}>
-          {strings.aadhatiya_hisab}
-        </Text>
-        <Icon
-          name="pdffile1"
-          size={25}
-          color={green}
-          style={{ position: 'absolute', right: 20, top: 10 }}
-          onPress={onShare}
-        />
+        contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: '80%' }}>
         <View
           style={{
             padding: 10,
