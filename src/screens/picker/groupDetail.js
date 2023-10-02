@@ -75,7 +75,7 @@ export default function GroupDetail() {
         try {
             setLoading(true)
             let data = await getPickerFinal(db);
-            setData(filter(data, o => o?.gname == name));
+            setData(filter(data, o => (name != 'null' ? o?.gname == name : !o?.gname)));
             setLoading(false);
         } catch (error) {
             setLoading(false);

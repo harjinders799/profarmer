@@ -20,6 +20,7 @@ import {
   createPickerExpenseTable,
   createPickerTable,
   deleteDBConnectionDB,
+  getAllItems,
   savePickerData,
   savePickerExpenseData,
   updatePickerGid,
@@ -28,11 +29,12 @@ import { PixelRatio, ScrollView, TouchableOpacity, View } from 'react-native';
 import Icon from '../../components/icon';
 import Search from '../../components/search';
 import SyncLocal from '../../container/picker/syncLocal';
-import { sumBy, groupBy, sortBy, some } from 'lodash';
+import { sumBy, groupBy, sortBy, some, every } from 'lodash';
 import moment from 'moment';
 import { useRoute } from '@react-navigation/native';
 import GroupList from '../../container/picker/groupList';
 import Header from '../../components/header';
+import { PCIKER_TABLE, PICKER_EXPENSE_TABLE } from '../../sql/tabels';
 
 export default function Picker() {
   const { lang } = useLang();
@@ -56,9 +58,7 @@ export default function Picker() {
   );
 
   useEffect(() => {
-    setTimeout(() => {
       getData();
-    }, 5000);
   }, []);
 
   const getData = async () => {
@@ -66,11 +66,13 @@ export default function Picker() {
       await createCottonPriceTable(db);
       await createPickerTable(db);
       await createPickerExpenseTable(db);
-      // console.log(pickerWeight, '-=-=-=-=-=-=-=-=-=----')
+      let pdata = await getAllItems(db, PCIKER_TABLE)
       if (
-        pickerWeight == undefined ||
-        (Array.isArray(pickerWeight) && pickerWeight.length == 0)
+        pdata == undefined ||
+        (Array.isArray(pdata) && pdata.length == 0)
       ) {
+      console.log( '-=-=-=-=-=-=-=-=-=----',  pdata == undefined,
+      (Array.isArray(pdata) && pdata.length == 0),pdata.length,pickerExpense.length)
         setLoading(true);
         let wt = await getPickerData();
         if (Array.isArray(wt) && wt.length) {
@@ -93,9 +95,10 @@ export default function Picker() {
         }
         setLoading(false);
       }
+      let pedata = await getAllItems(db, PICKER_EXPENSE_TABLE)
       if (
-        pickerExpense == undefined ||
-        (Array.isArray(pickerExpense) && pickerExpense.length == 0)
+        pedata == undefined ||
+        (Array.isArray(pedata) && pedata.length == 0)
       ) {
         setLoading(true);
         let ex = await getAllPickerExpense();
@@ -110,10 +113,9 @@ export default function Picker() {
       setLoading(false);
     }
   };
-
+  
   return (
     <BaseView>
-      {/* <MandiPrice /> */}
       <SyncLocal />
       <View
         style={{
@@ -158,11 +160,11 @@ export default function Picker() {
         <>
           {Array.isArray(pickerWeight) &&
             pickerWeight.length == 0 ||
-            some(pickerWeight, o => !o?.gname) ? null : (
+            every(pickerWeight, o => !o?.gname) ? null : (
             <Header
               leftComponent={
                 <Button
-                  label={'Group Wise'}
+                  label={strings.group}
                   btnStyle={{
                     width: '50%',
                     borderRadius: 5,
@@ -174,7 +176,7 @@ export default function Picker() {
               }
               rightComponent={
                 <Button
-                  label={'Picker Wise'}
+                  label={strings.pickers_list}
                   btnStyle={{
                     width: '50%',
                     height: 35 * PixelRatio.getFontScale(),
@@ -186,7 +188,7 @@ export default function Picker() {
               }
             />
           )}
-          {(Array.isArray(pickerWeight) && pickerWeight.length == 0) || some(pickerWeight, o => !o?.gname) ||
+          {(Array.isArray(pickerWeight) && pickerWeight.length == 0) || every(pickerWeight, o => !o?.gname) ||
             filterBy == 'picker' ? (
             <DateWiseList
               pickerWeight={pickerWeight}
@@ -199,7 +201,7 @@ export default function Picker() {
             />
           )}
           <Button
-            label={'Create Group'}
+            label={strings.create_group}
             // hitSlop={10}
             btnStyle={{
               width: `${40 * PixelRatio.getFontScale()}%`,

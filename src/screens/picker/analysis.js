@@ -46,7 +46,7 @@ export default function Analysis({ navigation }) {
       <Header
         leftComponent={
           <Button
-            label={'By Weight'}
+            label={strings.by_weight}
             btnStyle={{
               width: '50%',
               height: 35 * PixelRatio.getFontScale(),
@@ -58,7 +58,7 @@ export default function Analysis({ navigation }) {
         }
         rightComponent={
           <Button
-            label={'By Cost'}
+            label={strings.by_cost}
             btnStyle={{
               width: '50%',
               height: 35 * PixelRatio.getFontScale(),
