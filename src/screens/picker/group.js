@@ -67,7 +67,7 @@ export default function Group() {
                     }),
             );
             await Promise.all(promise);
-            getPickerWeight();
+           await getPickerWeight();
             setLoading(false);
             goBack();
         } catch (error) {
@@ -106,19 +106,19 @@ export default function Group() {
                 leftComponent={
                     <Icon name="back" size={28} color={black} onPress={() => goBack()} />
                 }
-                centerComponent={<Text h2>{'Create Group'}</Text>}
+                centerComponent={<Text h2>{strings.create_group}</Text>}
                 rightComponent={<Text h2> </Text>}
             />
             <Loader visible={loading} />
             <Input
-                label={'Group Name'}
+                label={strings.group_name}
                 autoFocus
                 autoCapitalize="words"
                 value={name}
                 setValue={setName}
             />
             <Text h3 style={{ marginVertical: 10 }}>
-                Select Picker
+                {strings.select_picker}
             </Text>
             <FlatList
                 style={{ width: '100%', position: 'relative' }}
@@ -136,7 +136,7 @@ export default function Group() {
                 renderItem={({ item }) => renderItem(item)}
             />
             <Button
-                label={'Create Group'}
+                label={strings.create_group}
                 btnStyle={{
                     height: 40 * PixelRatio.getFontScale(),
                     position: 'absolute',
