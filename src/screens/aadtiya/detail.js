@@ -109,7 +109,7 @@ export default function Detail({ navigation }) {
                   fontWeight: '700',
                   color: red,
                 }}>
-                {data?.giver}
+                {data[0]?.giver}
               </Text>
               {strings.alert}
             </Text>
@@ -187,22 +187,22 @@ td {
               <p>${moment().format('lll')}</p>
           </div>
           </div>
-          <h2>${strings.giver_name}: ${data?.giver}</h2>
+          <h2>${strings.giver_name}: ${data[0]?.giver}</h2>
       </div>
       <div style="display: flex; justify-content: space-between;">
           <div>
-              <h3>${strings.total_principal}: ${currencyFormat(
-      data?.total,
-    )}</h3>
+              <h3>${strings.total_principal}: ${currencyFormat(sumBy(data, o => parseFloat(o?.amount)))}
+    </h3>
     
-              <h3>${strings.total_interest}: ${currencyFormat(interest)} </h3>
       </div>
       <div>
-      <h3>${strings.total_amount}  : ${currencyFormat(
-      data?.total + interest,
-    )}</h3>
+      <h3>${strings.total_interest}: ${currencyFormat(interest)} </h3>
           </div>
       </div>
+      <div>
+      <h3>${strings.total_amount}  : ${currencyFormat(getTotalInterst(data)
+    )}</h3>
+        </div>
 
       <h2>${strings.aadhatiya_hisab}</h2>
       <table style="width:100%">
@@ -248,7 +248,7 @@ td {
     const options = {
       html: html,
       base64: true,
-      fileName: data?.giver,
+      fileName: data[0]?.giver,
       directory: 'Documents',
     };
 
@@ -256,10 +256,10 @@ td {
     Share.open({
       url: `data:application/pdf;base64,${file?.base64}`,
       type: 'application/pdf',
-      title: data?.giver,
+      title: data[0]?.giver,
       saveToFiles: true,
       showAppsToView: true,
-      filename: data?.giver,
+      filename: data[0]?.giver,
     })
       .then(res => console.log(res, '---res'))
       .catch(err => console.log(err, '----err'));
@@ -346,10 +346,10 @@ td {
           <Text h4 style={{ width: '20%', textAlign: 'left' }} h3>
             {strings.date}
           </Text>
-          <Text h4 style={{ width: '15%', textAlign: 'right' }} h3>
+          <Text h4 style={{ width: '10%', textAlign: 'center' }} h3>
             {strings.day}
           </Text>
-          <Text h4 style={{ width: '28%', textAlign: 'right' }} h3>
+          <Text h4 style={{ width: '32%', textAlign: 'right' }} h3>
             {strings.total_interest}
           </Text>
           <Text h4 style={{ width: '35%', textAlign: 'right' }} h3>
@@ -392,6 +392,7 @@ const styles = StyleSheet.create({
   underline: {
     // borderBottomWidth: 1,
     paddingVertical: 10,
+    marginVertical: 10,
     // borderStyle: 'dotted',
   },
   wt: {

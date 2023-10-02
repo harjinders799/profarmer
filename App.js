@@ -6,9 +6,9 @@ import FlashMessage from 'react-native-flash-message';
 import Button from 'src/components/button';
 import {checkVersion} from 'react-native-check-version';
 import Text from 'src/components/text';
-import {Linking, View} from 'react-native';
-import {LangProvider} from 'src/context/langContext';
-import {strings} from 'src/translations/locale';
+import { Linking, ScrollView, View } from 'react-native';
+import { LangProvider } from 'src/context/langContext';
+import { strings } from 'src/translations/locale';
 import Navigation from 'src/navigation';
 import Modal from 'src/components/Modal';
 import {orange} from 'src/utils/color';
@@ -40,14 +40,18 @@ export default function App() {
         visible={(version?.needsUpdate ? true : false) && visible}
         setModalVisible={() => setVisible(false)}
         ratioHeight={0.9}>
-        <View
+        <ScrollView
           style={{
+            width: '100%',
+          }}
+          contentContainerStyle={{
             alignItems: 'center',
-            padding: 20,
+            paddingHorizontal: 20,
+            paddingBottom: '30%',
           }}>
+          <Button label="Update" btnStyle={{ marginTop: 0 }} onPress={update} />
           <Text h3>{strings.new_version}</Text>
-          <Button label="Update" onPress={update} />
-        </View>
+        </ScrollView>
       </Modal>
       <AuthProvider>
         <StoreProvider>

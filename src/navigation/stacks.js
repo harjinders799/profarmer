@@ -20,6 +20,8 @@ import {
 } from '../network/picker-service';
 import AddPrice from '../screens/picker/addPrice';
 import PickerUpdate from '../screens/picker/pickerUpdate';
+import Analysis from '../screens/picker/analysis';
+import Group from '../screens/picker/group';
 import CropUpdate from '../screens/crop/cropUpdate';
 import AddCrop from '../screens/crop/addCrop';
 import AboutUs from '../screens/settings/aboutUs';
@@ -37,6 +39,7 @@ import AddLoan from '../screens/loan/addLoan';
 import AddCredit from '../screens/loan/addCredit';
 import LoanDetail from '../screens/loan/loanDetail';
 import LoanUpdate from '../screens/loan/loanUpdate';
+import GroupDetail from '../screens/picker/groupDetail';
 
 const Stack = createNativeStackNavigator();
 
@@ -156,6 +159,18 @@ export default function Stacks() {
       <Stack.Screen name="AddLoan" component={AddLoan} />
       <Stack.Screen name="AddCredit" component={AddCredit} />
       <Stack.Screen name="LoanDetail" component={LoanDetail} />
+      <Stack.Screen
+        name="Analysis"
+        component={Analysis}
+      />
+      <Stack.Screen
+        name="Group"
+        component={Group}
+      />
+      <Stack.Screen
+        name="GroupDetail"
+        component={GroupDetail}
+      />
       <Stack.Screen name="AboutUs" component={AboutUs} />
       <Stack.Screen name="ContactUs" component={ContactUs} />
       <Stack.Screen name="SalectLanguage" component={SalectLanguage} />

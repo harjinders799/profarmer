@@ -84,7 +84,8 @@ export default function Labour() {
         iconColor={white}
         label={strings.add_labour}
         btnStyle={{
-          width: '40%',
+          width: 'auto',
+          paddingHorizontal: 10,
           height: 50,
           position: 'absolute',
           bottom: 20,

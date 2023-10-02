@@ -68,7 +68,7 @@ export default function List({ data = [] }) {
             style={styles.list}
             onPress={() => navigate('Detail', { item })}>
             <View style={styles.row}>
-              <Text numberOfLines={1} h3 style={{ width: '80%' }}>
+              <Text numberOfLines={1} h3 style={{ width: '70%' }}>
                 {item?.giver}
               </Text>
               {/* <Text h5>{strings.view}</Text> */}
@@ -97,7 +97,7 @@ export default function List({ data = [] }) {
         </View>
       ))
     ) : (
-      <Text style={{ marginTop: 20 }}>{strings.no_data}</Text>
+      <Text style={{ marginVertical: 20, textAlign: 'center' }}>{strings.no_data}</Text>
     )
   );
 }

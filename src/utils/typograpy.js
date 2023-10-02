@@ -4,6 +4,6 @@ export const sizes = {
   h2: 24,
   h3: 20,
   h4: 16,
-  h5: 12,
+  h5: 14,
   h6: 10,
 };

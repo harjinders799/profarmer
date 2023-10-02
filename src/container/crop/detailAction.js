@@ -72,6 +72,7 @@ export default function CropDetailAction({ data }) {
               {currencyFormat(data?.amount)}
             </Text>
           </View>
+          <Text h4>{data?.detail}</Text>
         </TouchableOpacity >
       </View>
     </ScrollView>

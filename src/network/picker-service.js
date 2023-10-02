@@ -216,4 +216,41 @@ export const deletePickerCollection = async (name) => {
   } catch (error) {
     throw new Error(error);
   }
+
+};
+
+export const createGroup = async data => {
+  return new Promise(async function (resolve, reject) {
+    try {
+      let id = Auth().currentUser?.uid;
+      firestore()
+        .collection('picker_group')
+        .add({ ...data, uid: id })
+        .then(res => resolve(res?.id));
+    } catch (error) {
+      reject(new Error(error));
+    }
+  });
+};
+
+export const getPickerGroup = async () => {
+  return new Promise(async function (resolve, reject) {
+    try {
+      let userId = Auth().currentUser?.uid;
+      await firestore()
+        .collection('picker_group')
+        .where('uid', '==', userId)
+        .get()
+        .then(querySnapshot => {
+          let arr = [];
+          querySnapshot.forEach(documentSnapshot => {
+            arr.push({ ...documentSnapshot.data(), id: documentSnapshot.id });
+          });
+          resolve(arr);
+        });
+      resolve('success');
+    } catch (error) {
+      reject(new Error(error));
+    }
+  });
 };
