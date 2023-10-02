@@ -1,19 +1,20 @@
-import React, { useEffect, useState } from 'react';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { StoreProvider } from 'src/context/context';
-import { CottonProvider } from 'src/context/cottonContext';
+import React, {useEffect, useState} from 'react';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
+import {StoreProvider} from 'src/context/context';
+import {CottonProvider} from 'src/context/cottonContext';
 import FlashMessage from 'react-native-flash-message';
 import Button from 'src/components/button';
-import { checkVersion } from 'react-native-check-version';
+import {checkVersion} from 'react-native-check-version';
 import Text from 'src/components/text';
 import { Linking, ScrollView, View } from 'react-native';
 import { LangProvider } from 'src/context/langContext';
 import { strings } from 'src/translations/locale';
 import Navigation from 'src/navigation';
 import Modal from 'src/components/Modal';
-import { orange } from 'src/utils/color';
-import { AuthProvider } from './src/context/authContext';
-import { AadtProvider } from './src/context/aadtContext';
+import {orange} from 'src/utils/color';
+import {AuthProvider} from './src/context/authContext';
+import {AadtProvider} from './src/context/aadtContext';
+import {LoanProvider} from './src/context/loanContext';
 
 export default function App() {
   const [version, setVersion] = useState();
@@ -56,9 +57,11 @@ export default function App() {
         <StoreProvider>
           <CottonProvider>
             <AadtProvider>
-              <LangProvider>
-                <Navigation />
-              </LangProvider>
+              <LoanProvider>
+                <LangProvider>
+                  <Navigation />
+                </LangProvider>
+              </LoanProvider>
             </AadtProvider>
           </CottonProvider>
         </StoreProvider>

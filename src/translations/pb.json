@@ -106,6 +106,13 @@
   "crop_total": "ਫਸਲ ਰਕਮ",
   "crop_hisab": "ਫਸਲ ਦਾ ਹਿਸਾਬ",
 
+  "loan": "ਕਰਜ਼ਾ ਰਿਕਾਰਡ", 
+  "receiver": " ਕਰਜ਼ਦਾਰ",
+  "receiver_added": " ਕਰਜ਼ਦਾਰ ਜੋੜਿਆ ਗਿਆ!",
+  "receiver_name": " ਕਰਜ਼ਦਾਰ ਦਾ ਨਾਮ",
+  "giver": "ਰਿਣਦਾਤਾ",
+  "giver_added": " ਰਿਣਦਾਤਾ ਜੋੜਿਆ ਗਿਆ!",
+  
   "labour_name": "ਮਜ਼ਦੂਰ ਦਾ ਨਾਮ",
   "add_labour": "ਮਜ਼ਦੂਰ ਜੋੜੋ",
   "labour_count": "ਕਿੰਨੇ ਮਜ਼ਦੂਰ ਹਨ",

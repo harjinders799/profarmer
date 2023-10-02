@@ -75,7 +75,6 @@ export default function DashBoard({ navigation }) {
       }
     </style>
   </head>
-
   <body>
     <div style="display: flex; flex-direction: column; align-items: center">
       <div style="display: flex; justify-content: space-between; width: 100%">

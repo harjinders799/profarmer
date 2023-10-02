@@ -1,5 +1,5 @@
-import { Alert, StyleSheet, TouchableOpacity, View } from 'react-native';
-import React, { useCallback } from 'react';
+import {Alert, StyleSheet, TouchableOpacity, View} from 'react-native';
+import React, {useCallback} from 'react';
 import Icon from '../../components/icon';
 import {
   cyan,
@@ -19,31 +19,34 @@ import {
   white,
   yellow,
 } from '../../utils/color';
-import { ToastError, ToastSuccess } from '../../utils/toast';
-import { deletePickerData, savePickerData, updatePickerData } from '../../sql';
-import { useCotton } from '../../context/cottonContext';
-import { deletePicker } from '../../network/picker-service';
+import {ToastError, ToastSuccess} from '../../utils/toast';
+import {deletePickerData, savePickerData, updatePickerData} from '../../sql';
+import {useCotton} from '../../context/cottonContext';
+import {deletePicker} from '../../network/picker-service';
 import Loader from '../../components/loader';
-import { useFocusEffect, useRoute, useTheme } from '@react-navigation/native';
-import { goBack, navigate, replace } from '../../navigation/ref';
+import {useFocusEffect, useRoute, useTheme} from '@react-navigation/native';
+import {goBack, navigate, replace} from '../../navigation/ref';
 import Text from '../../components/text';
-import { currencyFormat, currentStamp, dateFormat } from '../../utils/dateformat';
+import {currencyFormat, currentStamp, dateFormat} from '../../utils/dateformat';
 import Header from '../../components/header';
 import Button from '../../components/button';
-import { strings } from '../../translations/locale';
+import {strings} from '../../translations/locale';
 import BaseView from 'src/container/base';
 import moment from 'moment';
-import { deleteIneterstAmt } from '../../network/interest-service';
-import { useAadt } from '../../context/aadtContext';
+import {sortBy, groupBy, sumBy} from 'lodash';
+import { deleteLoan} from '../../network/loan-service';
+import {useLoan} from '../../context/loanContext';
+import auth from '@react-native-firebase/auth';
 
-export default function GiverUpdate() {
-  const { params } = useRoute();
+export default function LoanUpdate() {
+  const {params} = useRoute();
+  const editData = params?.data ?? {};
   const data = params?.data ?? {};
   const [loading, setLoading] = React.useState(false);
 
-  const { getAadt } = useAadt();
+  const {loanData,getLoan} = useLoan();
 
-  const delteData = async () => {
+  const deleteData = async () => {
     Alert.alert(
       `${data?.amount} Rs`,
       `${strings.delete_wt}`,
@@ -52,10 +55,10 @@ export default function GiverUpdate() {
           text: 'Yes',
           onPress: async () => {
             setLoading(true);
-            await deleteIneterstAmt(data?.id);
+            await deleteLoan(data?.id);
             setLoading(false);
             ToastSuccess(strings.amount_deleted, strings.amount);
-            getAadt();
+            getLoan();
             goBack();
           },
         },
@@ -63,9 +66,29 @@ export default function GiverUpdate() {
           text: 'No',
         },
       ],
-      { cancelable: true },
+      {cancelable: true},
     );
   };
+  const groupedData = groupBy(loanData, d =>
+    d?.giver === auth().currentUser.uid ? d?.receiver.trim() : d?.giver.trim(),
+  );
+
+  const givenAmountWithInterest = sumBy(loanData, o => {
+    if (o.giver.trim() === auth().currentUser.uid) {
+      return parseInt(o?.amount) + (o?.interest_rate * o?.amount) / 100;
+    }
+    return 0;
+  });
+
+  const takenAmountWithInterest = sumBy(loanData, o => {
+    if (o.receiver.trim() === auth().currentUser.uid) {
+      return parseInt(o?.amount) + (o?.interest_rate * o?.amount) / 100;
+    }
+    return 0;
+  });
+
+  const finalAmount = givenAmountWithInterest - takenAmountWithInterest;
+  
   let date = moment(data?.date).format('YYYY-MM-DD');
   let start_date = moment(date);
   let today = moment();
@@ -75,7 +98,7 @@ export default function GiverUpdate() {
       30) *
     parseInt(days)
   ).toFixed(2);
-  let final_amount = parseFloat(data?.amount) + parseFloat(interest);
+  let total_amount = parseFloat(data?.amount) + parseFloat(interest);
 
   return (
     <BaseView style={styles.list}>
@@ -86,79 +109,78 @@ export default function GiverUpdate() {
           <Icon name="back" size={28} color={green} onPress={() => goBack()} />
         }
         centerComponent={
-          <Text
-            style={{ color: green, fontWeight: 'bold', fontStyle: 'italic' }}
-            h2>
-            {data.giver}
+          <Text h3 style={{ color:green, fontWeight: 'bold', fontStyle: 'italic'}}>
+            {editData?.type == 'debt' ? editData?.receiver : editData.giver}
           </Text>
         }
         rightComponent={<Text h2> </Text>}
       />
       <View style={[styles.row]}>
-        <Text h3 style={{ marginBottom: 10 }}>
+        <Text h3 style={{marginBottom: 10}}>
           {dateFormat(data?.date)}
         </Text>
-        <View
-          style={[styles.card, { borderColor: gray4+80, borderWidth: 2 }]}>
-          <Text h3 style={{ fontWeight: 'bold' }}>
+        <View style={[styles.card, {borderColor: cyan + 80, borderWidth: 2}]}>
+          <Text h4 style={{fontWeight: 'bold', width: '50%'}}>
             {strings.total_principal}
           </Text>
-          <Text h3 numberOfLines={1} style={{ fontWeight: 'bold' }}>
+          <Text h3 numberOfLines={1} style={{fontWeight: 'bold'}}>
             {currencyFormat(data?.amount)}
           </Text>
         </View>
-        <View style={[styles.card, { borderColor: peach, borderWidth: 2 }]}>
-          <Text h3 style={{ fontWeight: 'bold' }}>
+        <View style={[styles.card, {borderColor: peach, borderWidth: 2}]}>
+          <Text h4 style={{fontWeight: 'bold', width: '50%'}}>
             {strings.interest}
           </Text>
-          <Text h3 numberOfLines={1} style={{ fontWeight: 'bold' }}>
+          <Text h3 numberOfLines={1} style={{fontWeight: 'bold'}}>
             {currencyFormat(parseFloat(data?.interest_rate))}
           </Text>
         </View>
-        <View style={[styles.card, { borderColor: cyan + 80, borderWidth: 2 }]}>
-          <Text h3 style={{ fontWeight: 'bold' }}>
+        <View style={[styles.card, {borderColor: greenLight, borderWidth: 2}]}>
+          <Text h3 style={{fontWeight: 'bold'}}>
             {strings.day}
           </Text>
-          <Text h3 style={{ fontWeight: 'bold' }}>
+          <Text h3 style={{fontWeight: 'bold'}}>
             {days}
           </Text>
         </View>
         <View
-          style={[styles.card, { borderColor: lightRed + 90, borderWidth: 2 }]}>
-          <Text h3 style={{ fontWeight: 'bold' }}>
+          style={[styles.card, {borderColor: lightRed + 80, borderWidth: 2}]}>
+          <Text h3 style={{fontWeight: 'bold'}}>
             {strings.total_interest}
           </Text>
-          <Text h3 numberOfLines={1} style={{ fontWeight: 'bold' }}>
+          <Text h3 numberOfLines={1} style={{fontWeight: 'bold'}}>
             {currencyFormat(interest)}
           </Text>
         </View>
-        <View
-          style={[styles.card, { borderColor: greenLight , borderWidth: 2 }]}>
-          <Text h3 style={{ fontWeight: 'bold' }}>
+        <View style={[styles.card, {borderColor: lightYellow, borderWidth: 2}]}>
+          <Text h3 style={{fontWeight: 'bold'}}>
             {' '}
             {strings.total_amount}
           </Text>
-          <Text h3 style={{ fontWeight: 'bold' }}>
-            {currencyFormat(final_amount)}
+          <Text
+            h3
+            style={{
+              fontWeight: 'bold'}}>
+            {currencyFormat(total_amount)}
           </Text>
         </View>
         <View
           style={[
             styles.card,
             {
-              borderColor: lightOrange + 90,
+              borderColor: gray4,
               borderWidth: 3,
               display: data?.detail ? 'flex' : 'none',
               width: '100%',
             },
           ]}>
-          <Text h3 style={{ fontWeight: 'bold' }}>
+          <Text h3 style={{fontWeight: 'bold'}}>
             {' '}
             {strings.remark}
           </Text>
           <Text
             h3
-            style={{ fontWeight: 'bold', width: '70%', textAlign: 'right' }}>
+            style={{fontWeight: 'bold', width: '70%', textAlign: 'right'}}>
             {data?.detail}
           </Text>
         </View>
@@ -171,7 +193,7 @@ export default function GiverUpdate() {
           btnStyle={{
             width: '40%',
           }}
-          onPress={() => replace('AddForm', { data })}
+          onPress={() => replace('AddCredit', {data})}
         />
         <Button
           iconName="delete"
@@ -180,7 +202,7 @@ export default function GiverUpdate() {
           btnStyle={{
             width: '40%',
           }}
-          onPress={delteData}
+          onPress={deleteData}
         />
       </View>
     </BaseView>
@@ -196,15 +218,14 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   list: {
+    marginVertical: 5,
     width: '100%',
   },
   row: {
     alignItems: 'center',
     justifyContent: 'space-between',
     width: '100%',
-    marginVertical: 5,
     flexWrap: 'wrap',
-    // elevation: 5
   },
   card: {
     elevation: 5,
