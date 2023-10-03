@@ -141,11 +141,7 @@ export default function AddCredit() {
             {dateFormat(date)}
           </Text>
         </TouchableOpacity>
-        {/* <Checkbox
-          isChecked={is_regulare}
-          onPress={() => onChangeValue('is_regulare', !is_regulare)}
-          label={strings.is_regular}
-        /> */}
+    
         <DateTimePick
           show={showDate}
           setShow={setShowDate}

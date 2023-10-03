@@ -56,7 +56,7 @@ export const submitLoan = async data => {
   };
 
 export const deleteLoanCollection = async (name) => {
-    x
+    
     try {
       const userId = Auth().currentUser?.uid;
   

@@ -107,15 +107,23 @@
   "crop_total": "फसल राशि",
   "crop_hisab": "फसल का हिसाब",
   
-  "loan": "कर्ज़ अभिलेख",
+  "loan_record": "कर्ज़ अभिलेख",
+  "loan": "कर्ज़ ",
+  "add_loan": " कर्ज़ जोड़ें",
   "receiver": "कर्ज़दार ",
   "receiver_added": " कर्ज़दार जोड़ा गया!",
   "receiver_name": " कर्ज़दार का नाम",
   "giver":"ऋणदाता",
   "giver_added": " ऋणदाता जोड़ा गया!",
-  
+  "add_receiver": " कर्ज़दार  जोड़ें",
   "credit":"पैसे लिए",
   "debt":"पैसे दिए",
+  "credit_amount":"प्राप्त राशि",
+"given_amount_added":"दी गई राशि  जोड़ी गई",
+"given_amount_with_interest":"दी गई राशि ब्याज सहित",
+"taken_amount_with_interest":"ली गई राशि ब्याज सहित",
+
+
   "labour_name": "लेबर का नाम",
   "add_labour": "लेबर जोड़ें",
   "labour_count": "कितने मजदूर हैं",

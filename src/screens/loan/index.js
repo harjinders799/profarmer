@@ -26,7 +26,7 @@ export default function Loan({navigation}) {
     <BaseView>
       {/* <Loader visible={loading} /> */}
       <Text h2 style={{padding: 20, textAlign: 'center'}}>
-        {strings.loan}
+        {strings.loan_record}
       </Text>
 
       <LoanList />

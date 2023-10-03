@@ -107,7 +107,8 @@
   "crop_total": "Crop Amount",
   "crop_hisab": "Crop's Calculation",
 
-  "loan": "Loan Record",
+  "loan_record": "Loan Record",
+  "loan": "Loan",
   "add_loan": "Add Loan",
     "giver": "Giver",
   "giver_added": " giver Added !",

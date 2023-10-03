@@ -50,7 +50,7 @@ export default function Tabs() {
     {
       id: 4,
       name: 'LoanStack',
-      title: 'Loan',
+      title: strings.loan,
       component: LoanStack,
       icon: 'sack-percent',
       iconType: 'MaterialCommunityIcons',
