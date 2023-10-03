@@ -254,7 +254,6 @@ td {
       fileName: data?.name,
       directory: 'Documents',
     };
-    console.log(data, '--33--77--')
     const file = await RNHTMLtoPDF.convert(options);
     Share.open({
       url: `data:application/pdf;base64,${file?.base64}`,

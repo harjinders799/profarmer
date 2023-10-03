@@ -96,7 +96,6 @@ export default function Group() {
         }
     };
     const renderItem = item => {
-        console.log(item, typeof item);
         return item != 'null' ? (
             <TouchableOpacity style={styles.list} onPress={() => onClick(item)}>
                 <View style={styles.checkBox}>

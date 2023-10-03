@@ -49,8 +49,7 @@ export default function CropDetailAction({ data }) {
       30) *
     parseInt(days)
   ).toFixed(2);
-  let final_amount = parseFloat(data?.amount) + parseFloat(interest);
-  console.log("===============", data)
+
   return (
     <ScrollView style={{ width: '100%' }}>
       <View style={styles.list}>

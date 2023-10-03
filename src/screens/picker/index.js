@@ -65,7 +65,6 @@ export default function Picker() {
       await createPickerTable(db);
       await createPickerExpenseTable(db);
       let pdata = await getAllItems(db, PCIKER_TABLE)
-      console.log(pdata, '----pdata---')
       if (
         pdata == undefined ||
         (Array.isArray(pdata) && pdata.length == 0)

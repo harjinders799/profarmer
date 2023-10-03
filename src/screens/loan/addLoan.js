@@ -6,35 +6,35 @@ import {
   Keyboard,
   ScrollView,
 } from 'react-native';
-import {useRoute, useTheme} from '@react-navigation/native';
+import { useRoute, useTheme } from '@react-navigation/native';
 import Button from 'src/components/button';
 import Input from 'src/components/input';
 import Text from 'src/components/text';
 import BaseView from 'src/container/base';
-import {navigate} from 'src/navigation/ref';
-import {submitInterestAmount} from 'src/network/interest-service';
-import {goBack} from 'src/navigation/ref';
-import {strings} from 'src/translations/locale';
+import { navigate } from 'src/navigation/ref';
+import { submitInterestAmount } from 'src/network/interest-service';
+import { goBack } from 'src/navigation/ref';
+import { strings } from 'src/translations/locale';
 import Header from '../../components/header';
 import Icon from '../../components/icon';
 import auth from '@react-native-firebase/auth';
-import {currentStamp} from 'src/utils/dateformat';
+import { currentStamp } from 'src/utils/dateformat';
 import Loader from 'src/components/loader';
-import {useStore} from 'src/context/context';
-import {ToastError, ToastSuccess} from 'src/utils/toast';
-import {submitLoan, updateLoan, updateReceiver} from '../../network/loan-service';
+import { useStore } from 'src/context/context';
+import { ToastError, ToastSuccess } from 'src/utils/toast';
+import { submitLoan, updateLoan, updateReceiver } from '../../network/loan-service';
 
 
 
 export default function AddLoan() {
-  const {colors} = useTheme();
+  const { colors } = useTheme();
   const {
     setGivers,
     interest_rate: storeRate,
     setInterstRate,
     givers,
   } = useStore();
-  const {params} = useRoute();
+  const { params } = useRoute();
   const editData = params?.data ?? {};
   const refAmt = React.useRef();
   const [data, setData] = React.useState({
@@ -49,7 +49,7 @@ export default function AddLoan() {
   });
   const [showDate, setShowDate] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
-  const {receiver, giver,  amount, phone, interest_rate,date} = data;
+  const { receiver, giver, amount, phone, interest_rate, date } = data;
 
   // React.useEffect(() => {
   //   if (givers.length == 1 && !giver) onChangeValue('giver', givers[0]);
@@ -58,10 +58,10 @@ export default function AddLoan() {
 
 
   const onChangeValue = (key, value) => {
-      setData({
-        ...data,
-        [key]: value,
-      });
+    setData({
+      ...data,
+      [key]: value,
+    });
   };
   const AddNew = async () => {
     if (!receiver || interest_rate.trim() == '') {
@@ -71,21 +71,20 @@ export default function AddLoan() {
     if (interest_rate.trim() == '' || parseInt(interest_rate) <= 0) {
       ToastError(strings.interest_rate);
       return;
-    } 
- 
+    }
+
     setLoading(true);
-    await submitLoan({...data,date: currentStamp(date),})
+    await submitLoan({ ...data, date: currentStamp(date), })
     setLoading(false);
     ToastSuccess(strings.receiver_added);
     goBack();
   };
-// }
-console.log(data,)
+  // }
   return (
     <BaseView style={styles.container}>
       <Loader visible={loading} />
       <Header
-        style={{marginTop: 10}}
+        style={{ marginTop: 10 }}
         leftComponent={
           <Icon
             name="back"
