@@ -55,8 +55,8 @@ export default function LoanDetailAction({ data }) {
               style={{
                 width: '100%',
                 textAlign:
-                  receiver == auth().currentUser.uid ? 'left' : 'right',
-                color: receiver == auth().currentUser.uid ? greenDark : red,
+                  receiver == auth().currentUser.uid ? 'right' : 'left',
+                color: receiver == auth().currentUser.uid ? red : greenDark,
               }}>
               {currencyFormat(parseFloat(amount))}
             </Text>

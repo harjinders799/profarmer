@@ -5,7 +5,7 @@ import { strings } from 'src/translations/locale';
 import { black, gray3, green, white } from '../../utils/color';
 import { useCotton } from '../../context/cottonContext';
 import { View, ScrollView, PixelRatio } from 'react-native';
-import { sumBy, groupBy } from 'lodash';
+import { sumBy, groupBy, sortBy } from 'lodash';
 import moment from 'moment';
 import Header from '../../components/header';
 import Button from '../../components/button';
@@ -90,8 +90,7 @@ export default function Analysis({ navigation }) {
           <ScrollView
             showsVerticalScrollIndicator={false}
             contentContainerStyle={{ paddingBottom: '80%' }}>
-            {Object.keys(dateWise)
-              .reverse()
+            {sortBy(Object.keys(dateWise), o => moment(o, 'DD-MM-YYYY'), 'asc')
               .map((o, index) => (
                 <View
                   key={index}

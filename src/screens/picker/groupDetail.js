@@ -192,7 +192,7 @@ export default function GroupDetail() {
                 leftComponent={
                     <Icon name="back" size={28} color={black} onPress={() => goBack()} />
                 }
-                centerComponent={<Text h2>{name != 'null' ? name : 'Other'}</Text>}
+                centerComponent={<Text h2>{name != 'null' ? name : strings.other}</Text>}
                 rightComponent={
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                         {/* <Icon

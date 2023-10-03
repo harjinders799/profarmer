@@ -229,7 +229,7 @@ td {
           ((parseFloat(record?.amount) * (parseFloat(record?.interest_rate) / 100)) / 30) *
           parseInt(days)
         ).toFixed(2);
-      
+
         return `<tr>
               <td>${dateFormat(record.date)}</td>
               <td>${days}</td> 
@@ -237,8 +237,8 @@ td {
                <td>${currencyFormat(record?.amount)}</td>
                <td>${currencyFormat(interest)}</td>
               <td>${currencyFormat(
-                parseFloat(interest) + parseFloat(record?.amount)
-                )}</td>
+          parseFloat(interest) + parseFloat(record?.amount)
+        )}</td>
               <td>${record?.detail}</td>
           </tr>`;
       },
@@ -254,7 +254,7 @@ td {
       fileName: data?.name,
       directory: 'Documents',
     };
-console.log(data,'--33--77--')
+    console.log(data, '--33--77--')
     const file = await RNHTMLtoPDF.convert(options);
     Share.open({
       url: `data:application/pdf;base64,${file?.base64}`,
@@ -296,12 +296,15 @@ console.log(data,'--33--77--')
               style={{
                 marginRight: 15,
               }}
-              onPress={onShare}
+              onPress={() => {
+                ToastProgress(strings.in_progress)
+              }}
             />
 
             <TouchableOpacity
               onPress={() => {
-                setopenModal(true);
+                // setopenModal(true);
+                ToastProgress(strings.in_progress)
               }}>
               <Icon
                 name="delete"
@@ -334,7 +337,7 @@ console.log(data,'--33--77--')
         </View>
 
         <View style={[styles.card, { borderColor: lightYellow }]}>
-          <Text h3>{strings.total_amount}</Text>
+          <Text h3>{strings.final}</Text>
           <Text h3 style={{ color: finalAmount >= 0 ? green : red }}>
             {currencyFormat(finalAmount)}
           </Text>

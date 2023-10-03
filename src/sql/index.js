@@ -120,6 +120,7 @@ export const getPickerFinal = async (db) => {
             `SELECT 
     p.picker,
     p.gname,
+    p.gid,
     SUM(p.weight) AS total_weight,
     COALESCE(pe.total_amount, 0) AS total_given_amount,
      SUM(CAST(p.rate AS FLOAT) * CAST(p.weight AS FLOAT)) AS total_rate_weight
