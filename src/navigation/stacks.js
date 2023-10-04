@@ -35,11 +35,11 @@ import AddLabour from '../screens/labour/addLabour';
 import RegularLabourDetail from '../screens/labour/regularLabourDetail';
 import LabourUpdate from '../screens/labour/labourUpdate';
 import GiverUpdate from '../screens/aadtiya/giverUpdate';
+import GroupDetail from '../screens/picker/groupDetail';
 import AddLoan from '../screens/loan/addLoan';
 import AddCredit from '../screens/loan/addCredit';
 import LoanDetail from '../screens/loan/loanDetail';
 import LoanUpdate from '../screens/loan/loanUpdate';
-import GroupDetail from '../screens/picker/groupDetail';
 
 const Stack = createNativeStackNavigator();
 

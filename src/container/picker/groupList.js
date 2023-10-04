@@ -73,7 +73,22 @@ export default function GroupList({ pickerWeight, pickerExpense }) {
             <Loader size={15} small visible={loading} />
           )}
         </View>
-        <View style={[styles.row, { justifyContent: 'center' }]}>
+        <View style={[styles.row,
+          //  { justifyContent: 'center'}
+        ]}>
+          <Button
+            hitSlop={10}
+            label={'Edit'}
+            btnStyle={{
+              backgroundColor: blue,
+              width: 'auto',
+              paddingHorizontal: 15,
+              height: 25 * PixelRatio.getFontScale(),
+              borderRadius: 5,
+              marginVertical: 5,
+            }}
+            onPress={() => navigate('Group',{ name: item, data: fullData[item] })}
+          />
           <Text
             numberOfLines={1}
             // h3
