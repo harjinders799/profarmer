@@ -12,7 +12,7 @@ import { strings } from '../../translations/locale';
 import BaseView from 'src/container/base';
 import { createGroup, updateGroup } from '../../network/picker-service';
 import { ToastError } from '../../utils/toast';
-import { green, black, gray3 } from '../../utils/color';
+import { green, black, gray3, orange, white } from '../../utils/color';
 import Button from '../../components/button';
 import Icon from '../../components/icon';
 import Loader from '../../components/loader';
@@ -126,6 +126,19 @@ export default function Group() {
                 }
                 rightComponent={<Text h2> </Text>}
             />
+            <Text
+                h5
+                style={{
+                    marginVertical: 10,
+                    padding: 10,
+                    width: '100%',
+                    backgroundColor: orange,
+                    color: white,
+                    display: editData?.id ? 'none' : 'flex'
+                }}>
+                Note: {strings.group_warning}
+            </Text>
+
             <Loader visible={loading} />
             <Input
                 label={strings.group_name}

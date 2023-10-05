@@ -23,18 +23,29 @@ import NetInfo from '@react-native-community/netinfo';
 import { ToastError } from '../../utils/toast';
 import { getAllItems, updatePickerExpenseId, updatePickerId } from '../../sql';
 import { PCIKER_TABLE, PICKER_EXPENSE_TABLE } from '../../sql/tabels';
-import { submitPicker, submitPickerExpense, updatePicker, updatePickerExpense } from '../../network/picker-service';
+import {
+  submitPicker,
+  submitPickerExpense,
+  updatePicker,
+  updatePickerExpense,
+} from '../../network/picker-service';
 import Loader from '../../components/loader';
-
 
 const rnBiometrics = new ReactNativeBiometrics();
 
 export default function Setting({ navigation }) {
   const { lang, setFingerLock, fingerLock } = useLang();
   const [isBiometry, setIsBiometry] = useState(false);
-  const { db, getPickerWeight, pickerWeight, pickerExpense, getPickerExpense, resetPicker } = useCotton();
+  const {
+    db,
+    getPickerWeight,
+    pickerWeight,
+    pickerExpense,
+    getPickerExpense,
+    resetPicker,
+  } = useCotton();
   const { user, reset } = useAuth();
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -44,24 +55,33 @@ export default function Setting({ navigation }) {
   }, [lang]);
 
   const onLogOut = async () => {
-    let existWt = pickerWeight.some(o => o?.sync == 'pending')
-    let existEx = pickerExpense.some(o => o?.sync == 'pending')
-    if (existWt || existEx) {
-      NetInfo.fetch().then(state => {
-        if (state.isConnected && state.isInternetReachable) fetchData()
-        else ToastError(strings.offline_warning)
-      })
-      return
+    try {
+      setLoading(true);
+      let existWt = pickerWeight.some(o => o?.sync == 'pending');
+      let existEx = pickerExpense.some(o => o?.sync == 'pending');
+      if (existWt || existEx) {
+        NetInfo.fetch().then(state => {
+          if (state.isConnected && state.isInternetReachable) fetchData();
+          else ToastError(strings.offline_warning);
+        });
+        setLoading(false);
+        return;
+      } else {
+        setTimeout(() => {
+          resetPicker();
+          reset();
+          setLoading(false);
+        }, 2000);
+      }
+    } catch (error) {
+      ToastError("Something Went Wrong!")
+      setLoading(false);
     }
-    else {
-      resetPicker();
-      reset();
-    }
-  }
+  };
 
   const fetchData = async () => {
     try {
-      setLoading(true)
+      setLoading(true);
       if (Array.isArray(pickerWeight) && pickerWeight.length) {
         let unsyncData = await getAllItems(
           db,
@@ -70,7 +90,7 @@ export default function Setting({ navigation }) {
         );
         let promise = unsyncData.map(async (item, index) => {
           delete item.sync;
-          let api = item?.fid && item?.fid != '' ? updatePicker : submitPicker
+          let api = item?.fid && item?.fid != '' ? updatePicker : submitPicker;
           let res = await api(item);
           // console.log(res, '--------pick wt');
           if (res) {
@@ -82,6 +102,7 @@ export default function Setting({ navigation }) {
         });
         await Promise.all(promise);
         getPickerWeight();
+        setLoading(false);
       }
       if (Array.isArray(pickerExpense) && pickerExpense.length) {
         let unsyncData = await getAllItems(
@@ -92,7 +113,10 @@ export default function Setting({ navigation }) {
         // console.log(unsyncData.length, '-------exp');
         let promise = unsyncData.map(async (item, index) => {
           delete item.sync;
-          let api = item?.fid && item?.fid != '' ? updatePickerExpense : submitPickerExpense
+          let api =
+            item?.fid && item?.fid != ''
+              ? updatePickerExpense
+              : submitPickerExpense;
           let res = await api(item);
           // console.log(res, '--------pick wt');
           if (res) {
@@ -104,12 +128,15 @@ export default function Setting({ navigation }) {
         });
         await Promise.all(promise);
         getPickerExpense();
+        setLoading(false);
       }
-      resetPicker()
-      reset();
-      setLoading(false)
+      setTimeout(() => {
+        resetPicker();
+        reset();
+      }, 2000);
+      setLoading(false);
     } catch (error) {
-      setLoading(false)
+      setLoading(false);
       console.log(error, '--------');
     }
   };
@@ -187,9 +214,7 @@ https://play.google.com/store/apps/details?id=com.profarmer
             </TouchableOpacity>
           ) : null} */}
 
-          <TouchableOpacity
-            style={styles.row}
-            onPress={onLogOut}>
+          <TouchableOpacity style={styles.row} onPress={onLogOut}>
             <Text style={styles.txt}>Log Out</Text>
             <Icon name="chevron-right" type="Entypo" size={25} />
           </TouchableOpacity>

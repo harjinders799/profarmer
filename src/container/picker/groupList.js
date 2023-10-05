@@ -77,7 +77,14 @@ export default function GroupList({ pickerWeight, pickerExpense }) {
           )}
         </View>
         <View style={[styles.row]}>
-          <TouchableOpacity hitSlop={20}>
+          <TouchableOpacity hitSlop={20}
+            onPress={() =>
+              navigate('Group', {
+                name: item != 'null' ? item : undefined,
+                pickers: item != 'null' ? fullData[item].map(o => o?.picker) : undefined,
+                id: item != 'null' ? fullData[item][0]?.gid : undefined,
+              })
+            }>
             <Icon
               name="edit"
               size={20}

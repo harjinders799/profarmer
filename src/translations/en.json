@@ -106,8 +106,8 @@
   "crop": "Crop",
   "crop_total": "Crop Amount",
   "crop_hisab": "Crop's Calculation",
-  "other":"Other",
-
+  "other": "Other",
+  "group_warning": "If You Face Any Issue To Create Group Please Logout and Login Again!",
   "loan_record": "Loan Record",
   "loan": "Loan",
   "add_loan": "Add Loan",

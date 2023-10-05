@@ -54,7 +54,7 @@ export default function GroupDetail() {
             setLoading(true);
             let data = await getPickerFinal(db);
             setData(
-                filter(data, o => (name != 'null' ? o?.gname == name : !o?.gname)),
+                filter(data, o => (name != 'null' ? o?.gname == name : !o?.gname || o?.gname == 'null')),
             );
             setLoading(false);
         } catch (error) {
@@ -62,7 +62,7 @@ export default function GroupDetail() {
             ToastError(error?.message, 'Picker');
         }
     };
-
+    console.log(data, name != 'null')
     const RenderItem = memo(({ item }) => {
         const todayWeight =
             sumBy(
