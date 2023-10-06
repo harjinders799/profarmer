@@ -55,21 +55,32 @@ export const submitLoan = async data => {
     });
   };
 
-export const deleteLoanCollection = async (name) => {
+export const deleteLoanCollection = async (personName) => {
     
     try {
       const userId = Auth().currentUser?.uid;
-  
+      
+      
       const deleteLoan = firestore()
         .collection('loan')
         .where('uid', '==', userId)
-        .where('loan', '==', name)
+        //  .where('receiver', '==', personName)
+        //  .where('giver', '==', userId)
         .get()
         .then((querySnapshot) => {
           const deletePromises = [];
+
           querySnapshot.forEach((documentSnapshot) => {
-            deletePromises.push(documentSnapshot.ref.delete());
+            const loanData = documentSnapshot.data();
+
+            const isGiver = loanData.giver === userId;
+            const isReceiver = loanData.receiver === userId;
+
+            if (isGiver || isReceiver) {
+              deletePromises.push(documentSnapshot.ref.delete());
+            }
           });
+  
           return Promise.all(deletePromises);
         });
       await Promise.all([deleteLoan]);

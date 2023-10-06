@@ -108,6 +108,8 @@
   "crop_hisab": "फसल का हिसाब",
   
   "loan_record": "कर्ज़ अभिलेख",
+  "receiver_record": "कर्ज़दार अभिलेख",
+  "giver_record": "ऋणदाता अभिलेख",
   "loan": "कर्ज़ ",
   "add_loan": " कर्ज़ जोड़ें",
   "receiver": "कर्ज़दार ",

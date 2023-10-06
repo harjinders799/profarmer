@@ -108,6 +108,8 @@
   "crop_hisab": "Crop's Calculation",
 
   "loan_record": "Loan Record",
+  "receiver_record": "Receiver Record",
+  "giver_record": "Giver Record",
   "loan": "Loan",
   "add_loan": "Add Loan",
     "giver": "Giver",

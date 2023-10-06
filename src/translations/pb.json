@@ -109,6 +109,8 @@
   "credit": "ਪੈਸੇ ਲਏ",
   "debt": "ਪੈਸੇ ਦਿੱਤੇ",
   "loan_record": "ਕਰਜ਼ਾ ਰਿਕਾਰਡ",
+  "receiver_record": "ਕਰਜ਼ਦਾਰ ਰਿਕਾਰਡ ",
+  "giver_record": "ਰਿਣਦਾਤਾ ਰਿਕਾਰਡ",
   "loan": " ਕਰਜ਼ਾ",
   "receiver": " ਕਰਜ਼ਦਾਰ",
   "receiver_added": " ਕਰਜ਼ਦਾਰ ਜੋੜਿਆ ਗਿਆ!",
