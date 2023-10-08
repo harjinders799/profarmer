@@ -11,7 +11,7 @@ import _, { filter, groupBy, sortBy, sumBy } from 'lodash';
 import { strings } from '../../translations/locale';
 import { navigate } from 'src/navigation/ref';
 import { ToastError } from '../../utils/toast';
-import { green, red, greenDark, blue, white } from '../../utils/color';
+import { green, red, greenDark, blue, white, orange } from '../../utils/color';
 import { currencyFormat, kg } from '../../utils/dateformat';
 import Button from '../../components/button';
 import Loader from '../../components/loader';
@@ -19,6 +19,7 @@ import { useCotton } from '../../context/cottonContext';
 import { useFocusEffect } from '@react-navigation/native';
 import moment from 'moment';
 import { getPickerFinal } from '../../sql';
+import Icon from '../../components/icon';
 
 export default function GroupList({ pickerWeight, pickerExpense }) {
   const [fullData, setFullData] = useState([]);
@@ -49,10 +50,12 @@ export default function GroupList({ pickerWeight, pickerExpense }) {
     return (
       <TouchableOpacity
         style={[styles.list]}
-        onPress={() => navigate('GroupDetail', { name: item, data: fullData[item] })}>
+        onPress={() =>
+          navigate('GroupDetail', { name: item, data: fullData[item] })
+        }>
         <View style={styles.row}>
           <Text numberOfLines={1} h3 style={{ width: '60%' }}>
-            {item != 'null' ? item : 'Other'}
+            {item != 'null' ? item : strings.other}
           </Text>
           {!loading ? (
             <Text
@@ -96,16 +99,12 @@ export default function GroupList({ pickerWeight, pickerExpense }) {
               fontSize: 15 / PixelRatio.getFontScale(),
               color: loading
                 ? green
-                : (!isNaN(finalAmount)
-                  ? finalAmount
-                  : 0) >= 0
+                : (!isNaN(finalAmount) ? finalAmount : 0) >= 0
                   ? green
                   : red,
             }}>
             {!loading
-              ? (!isNaN(finalAmount)
-                ? finalAmount
-                : 0) >= 0
+              ? (!isNaN(finalAmount) ? finalAmount : 0) >= 0
                 ? strings.give
                 : strings.receive
               : '__'}{' '}
@@ -166,7 +165,7 @@ const styles = StyleSheet.create({
     margin: '1%',
     padding: 5,
     borderRadius: 5,
-    backgroundColor: white
+    backgroundColor: white,
   },
   row: {
     flexDirection: 'row',

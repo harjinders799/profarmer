@@ -232,6 +232,20 @@ export const createGroup = async data => {
     }
   });
 };
+export const updateGroup = async data => {
+  return new Promise(async function (resolve, reject) {
+    try {
+      let id = Auth().currentUser?.uid;
+      firestore()
+        .collection('picker_group')
+        .doc(data?.id)
+        .update(data);
+      resolve(data?.id);
+    } catch (error) {
+      reject(new Error(error));
+    }
+  });
+};
 
 export const getPickerGroup = async () => {
   return new Promise(async function (resolve, reject) {

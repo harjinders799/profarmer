@@ -7,10 +7,10 @@ import {
     TouchableOpacity,
     View,
 } from 'react-native';
-import _, { groupBy } from 'lodash';
+import _, { difference, find, groupBy, intersection } from 'lodash';
 import { strings } from '../../translations/locale';
 import BaseView from 'src/container/base';
-import { createGroup } from '../../network/picker-service';
+import { createGroup, updateGroup } from '../../network/picker-service';
 import { ToastError } from '../../utils/toast';
 import { green, black, gray3 } from '../../utils/color';
 import Button from '../../components/button';
@@ -22,13 +22,16 @@ import Input from '../../components/input';
 import { updatePickerGid } from '../../sql';
 import auth from '@react-native-firebase/auth';
 import { goBack } from '../../navigation/ref';
+import { useRoute } from '@react-navigation/native';
 
 export default function Group() {
+    const { params } = useRoute();
+    const editData = params;
     const [loading, setLoading] = useState(false);
     const { pickerWeight, getPickerWeight, db } = useCotton();
     let grpPicker = groupBy(pickerWeight, v => (v?.gid ? null : v.picker));
-    const [name, setName] = useState('');
-    const [selectedPicker, setSelectedPicker] = useState([]);
+    const [name, setName] = useState(editData?.name ?? '');
+    const [selectedPicker, setSelectedPicker] = useState(editData?.pickers ?? []);
 
     const onClick = async item => {
         let arr = [...selectedPicker];
@@ -56,7 +59,12 @@ export default function Group() {
                 return;
             }
             setLoading(true);
-            let res = await createGroup({ name, pickers: selectedPicker });
+            let api = editData?.id ? updateGroup : createGroup;
+            let res = await api({
+                name,
+                pickers: selectedPicker,
+                id: editData?.id ?? '',
+            });
             let promise = selectedPicker.map(
                 async o =>
                     await updatePickerGid(db, {
@@ -66,8 +74,20 @@ export default function Group() {
                         picker: o,
                     }),
             );
+            if (editData?.id) {
+                let promise2 = difference(editData?.pickers, selectedPicker).map(
+                    async o =>
+                        await updatePickerGid(db, {
+                            uid: auth().currentUser.uid,
+                            gid: 'null',
+                            gname: 'null',
+                            picker: o,
+                        }),
+                );
+                await Promise.all(promise2);
+            }
             await Promise.all(promise);
-           await getPickerWeight();
+            await getPickerWeight();
             setLoading(false);
             goBack();
         } catch (error) {
@@ -76,7 +96,6 @@ export default function Group() {
         }
     };
     const renderItem = item => {
-        console.log(item);
         return item != 'null' ? (
             <TouchableOpacity style={styles.list} onPress={() => onClick(item)}>
                 <View style={styles.checkBox}>
@@ -91,10 +110,6 @@ export default function Group() {
                         paddingVertical: 5,
                     }}>
                     {item}
-                    <Text
-                        style={{ textAlign: 'right', width: 'auto', backgroundColor: 'red' }}>
-                        {grpPicker[item][0]?.gname ?? ''}
-                    </Text>
                 </Text>
             </TouchableOpacity>
         ) : null;
@@ -106,13 +121,15 @@ export default function Group() {
                 leftComponent={
                     <Icon name="back" size={28} color={black} onPress={() => goBack()} />
                 }
-                centerComponent={<Text h2>{strings.create_group}</Text>}
+                centerComponent={
+                    <Text h2>{editData?.id ? editData?.name : strings.create_group}</Text>
+                }
                 rightComponent={<Text h2> </Text>}
             />
             <Loader visible={loading} />
             <Input
                 label={strings.group_name}
-                autoFocus
+                autoFocus={editData?.id ? false : true}
                 autoCapitalize="words"
                 value={name}
                 setValue={setName}
@@ -123,7 +140,14 @@ export default function Group() {
             <FlatList
                 style={{ width: '100%', position: 'relative' }}
                 contentContainerStyle={{ paddingBottom: 150 }}
-                data={Object.keys(grpPicker)}
+                data={
+                    Array.isArray(editData?.pickers)
+                        ? [
+                            ...editData?.pickers,
+                            ...difference(Object.keys(grpPicker), editData?.pickers),
+                        ]
+                        : Object.keys(grpPicker)
+                }
                 keyExtractor={item => Math.random().toString()}
                 ListEmptyComponent={() => (
                     <Text style={{ textAlign: 'center', paddingTop: 30 }}>
@@ -136,7 +160,7 @@ export default function Group() {
                 renderItem={({ item }) => renderItem(item)}
             />
             <Button
-                label={strings.create_group}
+                label={strings.save}
                 btnStyle={{
                     height: 40 * PixelRatio.getFontScale(),
                     position: 'absolute',

@@ -14,7 +14,7 @@ import { strings } from 'src/translations/locale';
 import { navigate } from 'src/navigation/ref';
 import { currencyFormat } from 'src/utils/dateformat';
 import { ToastError } from '../../utils/toast';
-import { aqua, greenDark, greenLight, lightOrange, red } from '../../utils/color';
+import { aqua, greenDark, greenLight, lightOrange, orange, red } from '../../utils/color';
 import Animated from 'react-native-reanimated';
 import { useLoan } from '../../context/loanContext';
 import auth from '@react-native-firebase/auth';
@@ -71,7 +71,7 @@ export default function LoanList() {
                 hitSlop={10}
                 label={strings.credit}
                 btnStyle={{
-                  backgroundColor: lightOrange,
+                  backgroundColor: orange,
                   marginRight: 10,
                   width: 'auto',
                   paddingHorizontal: 8,
