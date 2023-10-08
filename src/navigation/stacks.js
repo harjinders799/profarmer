@@ -40,6 +40,7 @@ import AddCredit from '../screens/loan/addCredit';
 import LoanDetail from '../screens/loan/loanDetail';
 import LoanUpdate from '../screens/loan/loanUpdate';
 import GroupDetail from '../screens/picker/groupDetail';
+import PinSecurity from '../screens/auth/pinSecurity';
 
 const Stack = createNativeStackNavigator();
 
@@ -159,18 +160,10 @@ export default function Stacks() {
       <Stack.Screen name="AddLoan" component={AddLoan} />
       <Stack.Screen name="AddCredit" component={AddCredit} />
       <Stack.Screen name="LoanDetail" component={LoanDetail} />
-      <Stack.Screen
-        name="Analysis"
-        component={Analysis}
-      />
-      <Stack.Screen
-        name="Group"
-        component={Group}
-      />
-      <Stack.Screen
-        name="GroupDetail"
-        component={GroupDetail}
-      />
+      <Stack.Screen name="Analysis" component={Analysis} />
+      <Stack.Screen name="Group" component={Group} />
+      <Stack.Screen name="GroupDetail" component={GroupDetail} />
+      <Stack.Screen name="PinSecurity" component={PinSecurity} />
       <Stack.Screen name="AboutUs" component={AboutUs} />
       <Stack.Screen name="ContactUs" component={ContactUs} />
       <Stack.Screen name="SalectLanguage" component={SalectLanguage} />

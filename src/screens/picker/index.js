@@ -228,7 +228,7 @@ export default function Picker() {
               right: 20,
               zIndex: 999,
             }}
-            onPress={() => navigate('AddPicker')}
+            onPress={() => navigate('PinSecurity')}
           />
         </>
       )}
