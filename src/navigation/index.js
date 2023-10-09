@@ -24,12 +24,14 @@ import LoginMethods from '../screens/auth/loginMethods';
 import SignInWithEmail from '../screens/auth/signInWithEmail';
 import { useCotton } from '../context/cottonContext';
 import Stacks from './stacks';
+import LocalAuth from '../screens/auth/localAuth';
+import PinSecurity from '../screens/auth/pinSecurity';
 
 const Stack = createNativeStackNavigator();
 
 export default function Navigation() {
   const { getLang, fingerLock, authenticate, setAuthenticate } = useLang();
-  const { getUser } = useAuth();
+  const { getUser, userVerified,reset } = useAuth();
   const { db, getDB } = useCotton();
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState();
@@ -85,7 +87,16 @@ export default function Navigation() {
   // }
   return (
     <NavigationContainer theme={themeLight} ref={navigationRef}>
-      {!user ? (
+      {user ? (
+        userVerified ? (
+          <Stacks />
+        ) : (
+          <Stack.Navigator screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="LocalAuth" component={LocalAuth} />
+            <Stack.Screen name="PinSecurity" component={PinSecurity} />
+          </Stack.Navigator>
+        )
+      ) : (
         <Stack.Navigator>
           <Stack.Screen
             name="LoginMethods"
@@ -103,8 +114,6 @@ export default function Navigation() {
             options={{ headerShown: false }}
           />
         </Stack.Navigator>
-      ) : (
-        <Stacks />
       )}
       {/* <AdBanner /> */}
     </NavigationContainer>
