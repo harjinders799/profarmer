@@ -32,7 +32,7 @@ export default function Group() {
     let grpPicker = groupBy(pickerWeight, v => (v?.gid ? null : v.picker));
     const [name, setName] = useState(editData?.name ?? '');
     const [selectedPicker, setSelectedPicker] = useState(editData?.pickers ?? []);
-
+console.log(editData)
     const onClick = async item => {
         let arr = [...selectedPicker];
         let exist = selectedPicker.findIndex(o => o === item);

@@ -6,6 +6,7 @@ import {
   ScrollView,
   StyleSheet,
   Modal,
+  PixelRatio,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -36,8 +37,13 @@ import { useLang } from 'src/context/langContext';
 import { deleteLoanCollection } from '../../network/loan-service';
 
 import {
+  aqua,
   black,
+  blue,
+  cyan,
+  gray1,
   gray2,
+  gray3,
   gray4,
   greenDark,
   greenLight,
@@ -46,7 +52,13 @@ import {
   lightOrange,
   lightRed,
   lightYellow,
+  parrot,
   peach,
+  pink,
+  purple,
+  redLight,
+  skyBlue,
+  yellowLight,
 } from '../../utils/color';
 import Share from 'react-native-share';
 import { useLoan } from '../../context/loanContext';
@@ -65,7 +77,9 @@ export default function LoanDetail() {
   const { loanData = [], getLoan } = useLoan();
   const isFocused = useIsFocused();
   const personName = data?.name;
-  const [showDetails, setShowDetails] = useState(false)
+  const [showDetails, setShowDetails] = useState(false);
+
+  const { amount, interest_rate } = data;
 
   useFocusEffect(
     useCallback(() => {
@@ -80,7 +94,6 @@ export default function LoanDetail() {
       (entry.receiver === personName && entry?.giver == auth().currentUser.uid)
     );
   });
-
   const givenAmountWithInterest = getTotalInterst(
     groupedData.filter(entry => entry.giver === auth().currentUser.uid),
   );
@@ -88,8 +101,20 @@ export default function LoanDetail() {
   const takenAmountWithInterest = getTotalInterst(
     groupedData.filter(entry => entry.giver === personName),
   );
+  const finalAmount = takenAmountWithInterest - givenAmountWithInterest;
 
-  const finalAmount = givenAmountWithInterest - takenAmountWithInterest;
+  let givenAmount = 0;
+  let takenAmount = 0;
+  groupedData.forEach(entry => {
+    if (entry.giver === auth().currentUser.uid) {
+      takenAmount += parseInt(entry.amount);
+    } else if (entry.receiver === auth().currentUser.uid) {
+      givenAmount += parseInt(entry.amount);
+    }
+  });
+  const givenInterest = (givenAmount * interest_rate) / 100;
+  const takenInterest = (takenAmount * interest_rate) / 100;
+  // const finalAmount = givenAmount - takenAmount;
 
   const [openModal, setopenModal] = useState(false);
 
@@ -143,7 +168,6 @@ export default function LoanDetail() {
                   try {
                     setLoading(true);
                     setopenModal(false);
-
                     await deleteLoanCollection(data?.name);
                     setLoading(false);
                     goBack();
@@ -215,48 +239,52 @@ td {
     )} </h3>
           </div>
       </div>
-      <div>
+      <div style="display: flex; justify-content: space-between;">
+         <div>
       <h3>${strings.total_amount}  : ${currencyFormat(finalAmount)}</h3>
+        </div>
+        <div>
+        <h3>${strings.interest}: ${currencyFormat(interest_rate)} </h3>
+            </div>
         </div>
 
       <h2>${strings.loan_record}</h2>
       <table style="width:100%">
       <tr>
-      <th>"${strings.date}</th>
+      <th>${strings.date}</th>
       <th>${strings.day}</th>
-      <th>${strings.interest}</th>
-      <th>${strings.total_principal}</th>
       <th>${strings.total_interest}</th>
+      <th>${strings.given_amount}</th>
+      <th>${strings.taken_amount}</th>
       <th>${strings.total_amount}</th>
       <th>${strings.remark}</th>
   </tr>
-          ${sortBy(
-      groupedData,
-      (a, b) => moment(b?.date) - moment(a?.date),
-    ).map(record => {
-      let date = moment(record?.date).format('YYYY-MM-DD');
-      let start_date = moment(date);
-      let today = moment();
-      let days = today.diff(start_date, 'days');
-      let interest = (
-        ((parseFloat(record?.amount) *
-          (parseFloat(record?.interest_rate) / 100)) /
-          30) *
-        parseInt(days)
-      ).toFixed(2);
+  ${sortBy(groupedData, (a, b) => moment(b?.date) - moment(a?.date)).map(
+      record => {
+        let date = moment(record?.date).format('YYYY-MM-DD');
+        let start_date = moment(date);
+        let today = moment();
+        let days = today.diff(start_date, 'days');
+        let interest = (
+          ((parseFloat(record?.amount) *
+            (parseFloat(record?.interest_rate) / 100)) /
+            30) *
+          parseInt(days)
+        ).toFixed(2);
 
-      return `<tr>
+        return `<tr>
               <td>${dateFormat(record.date)}</td>
               <td>${days}</td> 
                <td>${currencyFormat(record?.interest_rate)}</td>
                <td>${currencyFormat(record?.amount)}</td>
                <td>${currencyFormat(interest)}</td>
               <td>${currencyFormat(
-        parseFloat(interest) + parseFloat(record?.amount),
-      )}</td>
+          parseFloat(interest) + parseFloat(record?.amount),
+        )}</td>
               <td>${record?.detail}</td>
           </tr>`;
-    })}
+      },
+    )}
       </table>
   </body>
 </html>
@@ -290,31 +318,37 @@ td {
             <Icon
               name="back"
               size={28}
-              color={black}
-              // color={white}
+              color={white}
               onPress={() => goBack()}
             />
           </View>
         }
-        centerComponent={<Text h2>{data?.name}</Text>}
+        centerComponent={
+          <Text h2 style={{ color: white, fontWeight: 'bold' }}>
+            {data?.name}
+          </Text>
+        }
         rightComponent={
-          <View style={{ flexDirection: 'row' }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Icon
+              name="edit"
+              size={25}
+              style={{ color: white, marginRight: 15 }}
+              onPress={() => replace('AddLoan', { data })}
+            />
             <Icon
               name="pdffile1"
-              size={25}
-              color={black}
+              size={22}
+              color={white}
               style={{
                 marginRight: 15,
               }}
-              onPress={() => {
-                ToastProgress(strings.in_progress);
-              }}
+              onPress={onShare}
             />
 
             <TouchableOpacity
               onPress={() => {
-                // setopenModal(true);
-                ToastProgress(strings.in_progress);
+                setopenModal(true);
               }}>
               <Icon
                 name="delete"
@@ -327,48 +361,34 @@ td {
           </View>
         }
       />
-
-      <View style={[styles.card, { backgroundColor: greenDark }]}>
+      <View style={[styles.card, { backgroundColor: red }]}>
         <View style={styles.row}>
           <View style={{ alignItems: 'flex-start', padding: 10 }}>
             <Text h3 style={{ color: white, fontWeight: 'bold' }}>
-              {currencyFormat(2200)}
+              {currencyFormat(givenAmount + givenInterest)}
             </Text>
             <Text h4 style={{ color: white }}>
-              Taken
+              Given
             </Text>
           </View>
           <View style={{ alignItems: 'flex-end' }}>
-            <View
-              style={{
-                backgroundColor: white + 40,
-                borderTopLeftRadius: 20,
-                borderBottomLeftRadius: 20,
-                paddingLeft: 25,
-                paddingRight: 15,
-                padding: 10,
-                paddingVertical: 5,
-              }}>
+            <View style={styles.innerCard}>
               <Text h3 style={{ color: white, fontWeight: 'bold' }}>
-                {currencyFormat(20000)}
+                {currencyFormat(givenAmount)}
               </Text>
               <Text h5 style={{ color: white }}>
                 {strings.taken_amount}
               </Text>
             </View>
             <View
-              style={{
-                backgroundColor: white + 40,
-                borderTopLeftRadius: 20,
-                borderBottomLeftRadius: 20,
-                paddingLeft: 25,
-                paddingRight: 15,
-                padding: 10,
-                paddingVertical: 5,
-                marginTop: 5,
-              }}>
+              style={[
+                styles.innerCard,
+                {
+                  marginTop: 5,
+                },
+              ]}>
               <Text h3 style={{ color: white, fontWeight: 'bold' }}>
-                {currencyFormat(2791)}
+                {currencyFormat(givenInterest)}
               </Text>
               <Text h5 style={{ color: white }}>
                 {strings.interest}
@@ -377,47 +397,34 @@ td {
           </View>
         </View>
       </View>
-      <View style={[styles.card, { backgroundColor: red }]}>
+      <View style={[styles.card, { backgroundColor: greenDark }]}>
         <View style={styles.row}>
           <View style={{ alignItems: 'flex-start', padding: 10 }}>
             <Text h3 style={{ color: white, fontWeight: 'bold' }}>
-              {currencyFormat(2200)}
+              {currencyFormat(takenAmount + takenInterest)}
             </Text>
             <Text h4 style={{ color: white }}>
-              Given
+              Taken
             </Text>
           </View>
           <View style={{ alignItems: 'flex-end' }}>
-            <View
-              style={{
-                backgroundColor: white + 40,
-                borderTopLeftRadius: 20,
-                borderBottomLeftRadius: 20,
-                paddingLeft: 25,
-                paddingRight: 15,
-                padding: 10,
-                paddingVertical: 5,
-              }}>
+            <View style={styles.innerCard}>
               <Text h3 style={{ color: white, fontWeight: 'bold' }}>
-                {currencyFormat(2000)}
+                {currencyFormat(takenAmount)}
               </Text>
               <Text h5 style={{ color: white }}>
                 {strings.taken_amount}
               </Text>
             </View>
             <View
-              style={{
-                backgroundColor: white + 40,
-                borderTopLeftRadius: 20,
-                borderBottomLeftRadius: 20,
-                paddingLeft: 25,
-                paddingRight: 15,
-                padding: 10,
-                paddingVertical: 5,
-                marginTop: 5,
-              }}>
+              style={[
+                styles.innerCard,
+                {
+                  marginTop: 5,
+                },
+              ]}>
               <Text h3 style={{ color: white, fontWeight: 'bold' }}>
-                {currencyFormat(200)}
+                {currencyFormat(takenInterest)}
               </Text>
               <Text h5 style={{ color: white }}>
                 {strings.interest}
@@ -456,37 +463,47 @@ td {
             }}>
             Final Amount
           </Text>
-          <Text h3 style={{ color: greenDark, fontWeight: 'bold', padding: 10 }}>
-            {currencyFormat(2000)}
+          <Text
+            h3
+            style={{
+              color: finalAmount > 0 ? greenDark : red,
+              fontWeight: 'bold',
+              padding: 10,
+            }}>
+            {currencyFormat(finalAmount)}
           </Text>
         </View>
         <Text
           h5
           style={{
-            color: red,
+            color: finalAmount > 0 ? greenDark : red,
           }}>
-          {strings.give}
+          {finalAmount < 0 ? strings.give : strings.receive}
         </Text>
       </View>
       <TouchableOpacity
         style={[
           styles.row,
-          { paddingHorizontal: 10 },
+          {
+            paddingVertical: 10,
+            borderBottomWidth: showDetails ? 1 : 0,
+            borderColor: gray3,
+          },
         ]}
         onPress={() => setShowDetails(!showDetails)}>
-        <Text h4 style={[styles.underline]}>
+        <Text h4 style={{}}>
           {/* {strings.loan_record} */}
-          View All
+          View All Transaction
         </Text>
-        <Icon
-          name={showDetails ? "down" : "right"}
-          color='black'
-          size={20}
-        />
+        <Icon name={showDetails ? 'down' : 'right'} color="black" size={20} />
       </TouchableOpacity>
+
       <ScrollView
         style={{ width: '100%' }}
-        contentContainerStyle={{ paddingBottom: '100%', display: showDetails ? 'flex' : 'none' }}
+        contentContainerStyle={{
+          paddingBottom: '100%',
+          display: showDetails ? 'flex' : 'none',
+        }}
         showsVerticalScrollIndicator={false}>
         {Array.isArray(groupedData) && groupedData.length ? (
           sortBy(groupedData, (a, b) => moment(b?.date) - moment(a?.date)).map(
@@ -496,12 +513,60 @@ td {
           <Text>0</Text>
         )}
       </ScrollView>
+      {/* </View> */}
+
+      <Button
+        hitSlop={10}
+        label={strings.receive}
+        btnStyle={{
+          backgroundColor: greenDark,
+          width: '40%',
+          position: 'absolute',
+          bottom: 5,
+          left: 30,
+          zIndex: 999,
+          height: 35 * PixelRatio.getFontScale(),
+        }}
+        onPress={() =>
+          navigate('AddCredit', {
+            data: {
+              giver: auth().currentUser.uid,
+              receiver: data?.name,
+              type: 'debt',
+              interest_rate: data?.interest_rate,
+            },
+          })
+        }
+      />
+      <Button
+        hitSlop={10}
+        label={strings.give}
+        btnStyle={{
+          backgroundColor: red,
+          width: '40%',
+          position: 'absolute',
+          bottom: 5,
+          right: 30,
+          zIndex: 999,
+          height: 35 * PixelRatio.getFontScale(),
+        }}
+        onPress={() =>
+          navigate('AddCredit', {
+            data: {
+              receiver: auth().currentUser.uid,
+              giver: data?.name,
+              type: 'credit',
+              interest_rate: data?.interest_rate,
+            },
+          })
+        }
+      />
     </BaseView>
   );
 }
 const styles = StyleSheet.create({
   header: {
-    // backgroundColor: green,
+    backgroundColor: green,
     paddingHorizontal: 25,
     paddingVertical: 15,
     width: '120%',
@@ -512,28 +577,14 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     width: '100%',
     marginVertical: 5,
-    flexWrap: 'wrap',
-  },
-  underline: {
-    // borderBottomWidth: 1,
-    paddingVertical: 10,
-    // borderStyle: 'dotted',
-  },
-  wt: {
-    width: '100%',
-    alignItems: 'center',
-    marginVertical: 5,
   },
   card: {
+    elevation: 5,
     backgroundColor: white,
     width: '100%',
-    flexDirection: 'row',
-    borderRadius: 10,
-    justifyContent: 'space-between',
-    // padding: 10,
-    elevation: 5,
     marginVertical: 5,
-    // borderWidth: 3,
+    borderRadius: 10,
+    alignItems: 'center',
   },
   modal: {
     flex: 1,
@@ -541,8 +592,24 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: transparent,
   },
+  underline: {
+    width: '100%',
+  },
   text: {
-    // backgroundColor:"red",
     width: '50%',
   },
+  cardtext: {
+    width: '80%',
+    textAlign: 'center',
+  },
+  innerCard: {
+    backgroundColor: white + 40,
+    borderTopLeftRadius: 20,
+    borderBottomLeftRadius: 20,
+    paddingLeft: 25,
+    paddingRight: 15,
+    padding: 10,
+    paddingVertical: 5,
+  },
 });
+// style={{color: finalAmount >= 0 ? green : red}}

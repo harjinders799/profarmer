@@ -14,7 +14,7 @@ import { strings } from 'src/translations/locale';
 import { navigate } from 'src/navigation/ref';
 import { currencyFormat } from 'src/utils/dateformat';
 import { ToastError } from '../../utils/toast';
-import { aqua, greenDark, greenLight, lightOrange, orange, red } from '../../utils/color';
+import { aqua, green, greenDark, greenLight, lightOrange, lightRed, orange, red } from '../../utils/color';
 import Animated from 'react-native-reanimated';
 import { useLoan } from '../../context/loanContext';
 import auth from '@react-native-firebase/auth';
@@ -45,86 +45,60 @@ export default function LoanList() {
     );
 
     return (
-      <View style={styles.list}>
-        <TouchableOpacity
-          onPress={() => navigate('LoanDetail', { item })}>
-          <View style={styles.row}>
-            <Text numberOfLines={1} h3 style={{ width: '60%' }}>
-              {item?.name}
-            </Text>
-            <Text
-              numberOfLines={1}
-              h3
-              style={{
-                color: taken - given >= 0 ? red : greenDark,
-              }}>
-              {currencyFormat(given - taken)}
-            </Text>
-          </View>
-          <View
-            style={styles.row}
-          // entering={FadeIn}
-          // layout={Layout.}
-          >
-            <View style={{ flexDirection: 'row' }}>
+      <TouchableOpacity
+        style={styles.list}
+        onPress={() => navigate('LoanDetail', { item })}>
+        <View style={styles.row}>
+          <Text numberOfLines={1} h3 style={{ width: '60%' }}>
+            {item?.name}
+          </Text>
+          <Text
+            numberOfLines={1}
+            h3
+            style={{
+              color: taken - given <= 0 ? red : greenDark,
+            }}>
+            {currencyFormat(taken - given)}
+          </Text>
+        </View>
+        {/* <View style={{ flexDirection: 'row' }}>
               <Button
-                hitSlop={10}
-                label={strings.credit}
-                btnStyle={{
-                  backgroundColor: orange,
-                  marginRight: 10,
-                  width: 'auto',
-                  paddingHorizontal: 8,
-                  height: 25 * PixelRatio.getFontScale(),
-                  borderRadius: 5,
-                  marginVertical: 0,
-                }}
-                onPress={() =>
-                  navigate('AddCredit', {
-                    data: {
-                      receiver: auth().currentUser.uid,
-                      giver: item?.name,
-                      type: 'credit',
-                      interest_rate: item?.interest_rate,
-                    },
-                  })
-                }
               />
               <Button
-                hitSlop={10}
-                label={strings.debt}
-                btnStyle={{
-                  backgroundColor: aqua,
-                  marginRight: 10,
-                  width: 'auto',
-                  paddingHorizontal: 8,
-                  height: 25 * PixelRatio.getFontScale(),
-                  borderRadius: 5,
-                  marginVertical: 0,
-                }}
-                onPress={() =>
-                  navigate('AddCredit', {
-                    data: {
-                      giver: auth().currentUser.uid,
-                      receiver: item?.name,
-                      type: 'debt',
-                      interest_rate: item?.interest_rate,
-                    },
-                  })
-                }
+              hitSlop={10}
+              label={strings.receive}
+              btnStyle={{
+                backgroundColor: green,
+                marginRight: 10,
+                width: 'auto',
+                paddingHorizontal: 8,
+                height: 25 * PixelRatio.getFontScale(),
+                borderRadius: 5,
+                marginVertical: 0,
+              }}
+              onPress={() =>
+                navigate('AddCredit', {
+                  data: {
+                    giver: auth().currentUser.uid,
+                    receiver: item?.name,
+                    type: 'debt',
+                    interest_rate: item?.interest_rate,
+                  },
+                })
+              }
               />
-            </View>
-            <Text
-              numberOfLines={1}
-              h3
-              style={{
-                color: taken - given >= 0 ? red : greenDark,
-              }}>
-              {taken - given >= 0 ? strings.give : strings.receive}
-            </Text>
-          </View>
-        </TouchableOpacity>
-      </View>
+            </View> */}
+        <View style={{ alignSelf: "flex-end" }}>
+          <Text
+            numberOfLines={1}
+            h3
+            style={{
+              color: taken - given <= 0 ? red : greenDark,
+            }}>
+            {taken - given <= 0 ? strings.give : strings.receive}
+          </Text>
+        </View>
+      </TouchableOpacity>
     );
   };
 
@@ -146,11 +120,13 @@ export default function LoanList() {
 }
 const styles = StyleSheet.create({
   list: {
-    borderRadius: 10,
-    // elevation: 3,
-    paddingVertical: 10,
-    width: '100%',
-    alignSelf: 'center',
+    borderRadius: 5,
+    elevation: 3,
+    backgroundColor: white,
+    paddingHorizontal: 10,
+    padding: 5,
+    margin: '1%',
+    width: '98%',
   },
   row: {
     flexDirection: 'row',
@@ -158,6 +134,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     width: '100%',
     marginVertical: 5,
+
   },
   icon: {
     elevation: 1,

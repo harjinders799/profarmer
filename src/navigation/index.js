@@ -24,12 +24,14 @@ import LoginMethods from '../screens/auth/loginMethods';
 import SignInWithEmail from '../screens/auth/signInWithEmail';
 import { useCotton } from '../context/cottonContext';
 import Stacks from './stacks';
+import LocalAuth from '../screens/auth/localAuth';
+import PinSecurity from '../screens/auth/pinSecurity';
 
 const Stack = createNativeStackNavigator();
 
 export default function Navigation() {
   const { getLang, fingerLock, authenticate, setAuthenticate } = useLang();
-  const { getUser } = useAuth();
+  const { getUser, userVerified, getPin, reset } = useAuth();
   const { db, getDB } = useCotton();
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState();
@@ -38,6 +40,7 @@ export default function Navigation() {
   useEffect(() => {
     getLang();
     getUser();
+    getPin();
     (async () => {
       const { available } = await rnBiometrics.isSensorAvailable();
       setFingerLockAvailable(available);
@@ -65,7 +68,7 @@ export default function Navigation() {
   useEffect(() => {
     const subscriber = Auth().onAuthStateChanged(onAuthStateChanged);
     return subscriber; // unsubscribe on unmount
-  }, []);
+  }, [userVerified]);
 
   if (initializing || !db) return <Loader visible={initializing || !db} />;
   // if (fingerLock && user && fingerLockAvailable && !authenticate) {
@@ -83,9 +86,19 @@ export default function Navigation() {
   //       console.log('biometrics failed');
   //     });
   // }
+  console.log(userVerified, '---11--');
   return (
     <NavigationContainer theme={themeLight} ref={navigationRef}>
-      {!user ? (
+      {user ? (
+        userVerified ? (
+          <Stacks />
+        ) : (
+          <Stack.Navigator screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="LocalAuth" component={LocalAuth} />
+            <Stack.Screen name="PinSecurity" component={PinSecurity} />
+          </Stack.Navigator>
+        )
+      ) : (
         <Stack.Navigator>
           <Stack.Screen
             name="LoginMethods"
@@ -103,8 +116,6 @@ export default function Navigation() {
             options={{ headerShown: false }}
           />
         </Stack.Navigator>
-      ) : (
-        <Stacks />
       )}
       {/* <AdBanner /> */}
     </NavigationContainer>

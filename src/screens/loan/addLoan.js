@@ -22,25 +22,20 @@ import { currentStamp } from 'src/utils/dateformat';
 import Loader from 'src/components/loader';
 import { useStore } from 'src/context/context';
 import { ToastError, ToastSuccess } from 'src/utils/toast';
-import { submitLoan, updateLoan, updateReceiver } from '../../network/loan-service';
+import { submitLoan, updateLoan, updateLoanName, updateReceiver } from '../../network/loan-service';
+import { black } from '../../utils/color';
 
 
 
 export default function AddLoan() {
   const { colors } = useTheme();
-  const {
-    setGivers,
-    interest_rate: storeRate,
-    setInterstRate,
-    givers,
-  } = useStore();
   const { params } = useRoute();
   const editData = params?.data ?? {};
   const refAmt = React.useRef();
   const [data, setData] = React.useState({
     id: editData?.id ?? 0,
     giver: auth().currentUser?.uid,
-    receiver: editData?.receiver ?? '',
+    receiver: editData?.name ?? '',
     detail: editData?.detail ?? '',
     phone: editData?.phone ?? '',
     amount: editData?.amount ?? 0,
@@ -49,7 +44,7 @@ export default function AddLoan() {
   });
   const [showDate, setShowDate] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
-  const { receiver, giver, amount, phone, interest_rate, date } = data;
+  const { receiver, phone, interest_rate, date } = data;
 
   // React.useEffect(() => {
   //   if (givers.length == 1 && !giver) onChangeValue('giver', givers[0]);
@@ -62,6 +57,27 @@ export default function AddLoan() {
       ...data,
       [key]: value,
     });
+  };
+  const onPress = () => {
+    console.log(editData?.name)
+    if (editData?.name) updateWt();
+    else AddNew();
+  };
+  const updateWt = async () => {
+    if (receiver == '') {
+      ToastError(strings.receiver_name);
+    } else if (interest_rate.trim() == '' || parseInt(interest_rate) <= 0) {
+      ToastError(strings.interest_rate);
+    } else {
+      setLoading(true);
+      await updateLoanName(
+        editData?.name,
+        data
+      )
+      setLoading(false);
+      ToastSuccess(strings.receiver_added);
+      goBack();
+    }
   };
   const AddNew = async () => {
     if (!receiver || interest_rate.trim() == '') {
@@ -79,7 +95,7 @@ export default function AddLoan() {
     ToastSuccess(strings.receiver_added);
     goBack();
   };
-  // }
+  console.log(editData)
   return (
     <BaseView style={styles.container}>
       <Loader visible={loading} />
@@ -89,7 +105,7 @@ export default function AddLoan() {
           <Icon
             name="back"
             size={28}
-            color={colors.text}
+            color={black}
             onPress={() => goBack()}
           />
         }
@@ -118,7 +134,7 @@ export default function AddLoan() {
           setValue={value => onChangeValue('interest_rate', value)}
           keyboardType="numeric"
         />
-        <Button label={strings.save} onPress={AddNew} />
+        <Button label={strings.save} onPress={onPress} />
       </ScrollView>
     </BaseView>
   );

@@ -20,7 +20,7 @@ import {
     gray3,
     blue,
 } from '../../utils/color';
-import { currencyFormat, kg } from '../../utils/dateformat';
+import { currencyFormat, dateFormat, kg } from '../../utils/dateformat';
 import Button from '../../components/button';
 import Icon from '../../components/icon';
 import Loader from '../../components/loader';
@@ -31,6 +31,9 @@ import Header from '../../components/header';
 import { getPickerFinal, updatePickerGid } from '../../sql';
 import { goBack } from '../../navigation/ref';
 import Search from '../../components/search';
+import Share from 'react-native-share';
+import { useAuth } from '../../context/authContext';
+import RNHTMLtoPDF from 'react-native-html-to-pdf';
 
 export default function GroupDetail() {
     const {
@@ -41,7 +44,8 @@ export default function GroupDetail() {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [isSearchActive, setSearchActive] = useState(false);
-
+    const { user } = useAuth();
+    console.log(data)
     useFocusEffect(
         useCallback(() => {
             getPickerWeight();
@@ -62,7 +66,7 @@ export default function GroupDetail() {
             ToastError(error?.message, 'Picker');
         }
     };
-    console.log(data, name != 'null')
+
     const RenderItem = memo(({ item }) => {
         const todayWeight =
             sumBy(
@@ -185,6 +189,149 @@ export default function GroupDetail() {
             </TouchableOpacity>
         );
     });
+    const onShare = async () => {
+        if (!user?.name) {
+            ToastError('Please Complete your profile');
+            navigate('EditProfile');
+            return;
+        }
+        let html = `<!DOCTYPE html>
+        <html>
+        <head>
+        <style>
+        table, th, td {
+          border: 1px solid black;
+          border-collapse: collapse;
+          padding:10px;
+        }
+        .picker {
+           margin-top:50px;
+          }
+        td {
+          text-align: center;
+        }
+        </style>
+        </head>
+        <body>
+              <div style="display: flex; flex-direction:column; align-items:center">
+                  <div style="display: flex; justify-content: space-between; width:100%">
+                  <div>    
+                  <h2>${strings.farmer_name}: ${user?.name}</h2>
+                  <p>${user?.phone}</p>
+                  <p>${user?.email}</p>
+                  </div>
+                  <div>
+                  <a href="https://play.google.com/store/apps/details?id=com.profarmer">Pro Farmer</a>
+                      <p>${moment().format('lll')}</p>
+                  </div>
+                  </div>
+                  <h2 style="color:green;">${strings.group_name}: ${name != 'null' ? name : strings.other}</h2>
+              </div>
+             ${data.map(data => {
+            let pickerData = pickerWeight.filter(o => data?.picker === o.picker);
+            let pickerExpenseData = pickerExpense.filter(o => data?.picker === o.picker);
+            let amount =
+                sumBy(
+                    pickerData,
+                    o =>
+                        parseFloat(o.weight) * (parseFloat(o.rate)),
+                ) - sumBy(pickerExpenseData, o => parseFloat(o.amount));
+            return (
+                `<div class="picker">
+              <div>
+              <h2 style="color:red;">${strings.picker_name}: ${data?.picker}</h2>
+              </div>
+              <div style="display: flex; justify-content: space-between;">
+                  <div>
+                      <h3>${strings.total_weight}: ${sumBy(pickerData, o =>
+                    parseFloat(o.weight),
+                )} Kg</h3>
+            <h3>${strings.given_amount}: ${currencyFormat(
+                    sumBy(pickerExpenseData, o => parseFloat(o.amount)),
+                )}</h3>
+              </div>
+              <div>
+              <h3>${strings.total_amount} (${strings.weight}*${strings.enter_rate
+                }):  ${currencyFormat(
+                    sumBy(
+                        pickerData,
+                        o =>
+                            parseFloat(o.weight) * parseFloat(o.rate),
+                    ),
+                )}</h3>
+                      <h3>${strings.final}: ${currencyFormat(
+                    !isNaN(amount) ? amount : 0,
+                )}</h3>
+                  </div>
+              </div>
+        
+        
+              <h2>${strings.pickers_weight}</h2>
+              <table style="width:100%">
+                  <tr>
+                      <th style="width:15%">${strings.date}</th>
+                      <th style="width:10%">${strings.enter_rate}</th>
+                      <th style="width:10%">${strings.weight}</th>
+                      <th style="width:15%">${strings.amount}</th>
+                      <th style="width:30%">${strings.remark}</th>
+                  </tr>
+                 ${pickerData.map(record =>
+                    record?.weight == '0'
+                        ? null
+                        : `<tr>
+                      <td style="width:15%">${dateFormat(record?.date)}</td>
+                      <td style="width:10%">${currencyFormat(
+                            record?.rate,
+                        )}</td>
+                      <td style="width:10%">${record?.weight}Kg</td>
+                      <td style="width:15%">${currencyFormat(
+                            record?.rate * record?.weight,
+                        )}</td>
+                      <td style="width:30%">${record?.detail}</td>
+                  </tr>`,
+                )}
+              </table>
+              <h2>${strings.pickers_amounts}</h2>
+              <table style="width:100%">
+                  <tr>
+                      <th id="date">${strings.date}</th>
+                      <th>${strings.amount}</th>
+                      <th>${strings.remark}</th>
+                  </tr>
+                  ${pickerExpenseData.map(
+                    amount =>
+                        `<tr>
+                      <td id="date">${dateFormat(amount?.date)}</td>
+                      <td>${currencyFormat(amount?.amount)}</td>
+                      <td>${amount?.detail}</td>
+                  </tr>`,
+                )}
+              </table>
+        </div>`)
+        })}
+          </body>
+        </html>
+          `;
+
+        const options = {
+            html: html,
+            base64: true,
+            fileName: name != 'null' ? name : strings.other,
+            directory: 'Documents',
+        };
+
+        const file = await RNHTMLtoPDF.convert(options);
+        Share.open({
+            url: `data:application/pdf;base64,${file?.base64}`,
+            type: 'application/pdf',
+            title: name != 'null' ? name : strings.other,
+            saveToFiles: true,
+            showAppsToView: true,
+            filename: name != 'null' ? name : strings.other,
+        })
+            .then(res => console.log(res, '---res'))
+            .catch(err => console.log(err, '----err'));
+    };
 
     return (
         <BaseView style={{ padding: 10 }}>
@@ -195,13 +342,15 @@ export default function GroupDetail() {
                 centerComponent={<Text h2>{name != 'null' ? name : strings.other}</Text>}
                 rightComponent={
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                        {/* <Icon
+                        <Icon
                             name="pdffile1"
-                            size={22}
+                            size={25}
                             color={black}
-                            style={{ marginRight: 10 }}
-                            onPress={() => setSearchActive(true)}
-                        /> */}
+                            style={{
+                                marginRight: 5,
+                            }}
+                            onPress={onShare}
+                        />
                         <Icon
                             name="search1"
                             size={25}

@@ -1,17 +1,17 @@
-import React, {useEffect, useState} from 'react';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import React, { useEffect, useState } from 'react';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Setting from 'src/screens/settings';
 import AddForm from 'src/screens/aadtiya/addForm';
 import CropDetail from '../screens/crop/detail';
 import Tabs from './tab';
-import {useCotton} from '../context/cottonContext';
+import { useCotton } from '../context/cottonContext';
 import NetInfo from '@react-native-community/netinfo';
 import AddPicker from '../screens/picker/addPicker';
 import AddPickerExpense from '../screens/picker/addPickerExpense';
 import AddPickerWeight from '../screens/picker/addPickerWeight';
 import PickerDetail from '../screens/picker/pickerDetail';
-import {getAllItems, updatePickerExpenseId, updatePickerId} from '../sql';
-import {PCIKER_TABLE, PICKER_EXPENSE_TABLE} from '../sql/tabels';
+import { getAllItems, updatePickerExpenseId, updatePickerId } from '../sql';
+import { PCIKER_TABLE, PICKER_EXPENSE_TABLE } from '../sql/tabels';
 import {
   submitPicker,
   submitPickerExpense,
@@ -35,11 +35,13 @@ import AddLabour from '../screens/labour/addLabour';
 import RegularLabourDetail from '../screens/labour/regularLabourDetail';
 import LabourUpdate from '../screens/labour/labourUpdate';
 import GiverUpdate from '../screens/aadtiya/giverUpdate';
+import GroupDetail from '../screens/picker/groupDetail';
 import AddLoan from '../screens/loan/addLoan';
 import AddCredit from '../screens/loan/addCredit';
 import LoanDetail from '../screens/loan/loanDetail';
 import LoanUpdate from '../screens/loan/loanUpdate';
-import GroupDetail from '../screens/picker/groupDetail';
+import PinSecurity from '../screens/auth/pinSecurity';
+import LocalAuth from '../screens/auth/localAuth';
 
 const Stack = createNativeStackNavigator();
 
@@ -132,7 +134,7 @@ export default function Stacks() {
   };
 
   return (
-    <Stack.Navigator screenOptions={{headerShown: false}}>
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Main" component={Tabs} />
       <Stack.Screen name="Setting" component={Setting} />
       <Stack.Screen name="AddForm" component={AddForm} />
@@ -159,18 +161,9 @@ export default function Stacks() {
       <Stack.Screen name="AddLoan" component={AddLoan} />
       <Stack.Screen name="AddCredit" component={AddCredit} />
       <Stack.Screen name="LoanDetail" component={LoanDetail} />
-      <Stack.Screen
-        name="Analysis"
-        component={Analysis}
-      />
-      <Stack.Screen
-        name="Group"
-        component={Group}
-      />
-      <Stack.Screen
-        name="GroupDetail"
-        component={GroupDetail}
-      />
+      <Stack.Screen name="Analysis" component={Analysis} />
+      <Stack.Screen name="Group" component={Group} />
+      <Stack.Screen name="GroupDetail" component={GroupDetail} />
       <Stack.Screen name="AboutUs" component={AboutUs} />
       <Stack.Screen name="ContactUs" component={ContactUs} />
       <Stack.Screen name="SalectLanguage" component={SalectLanguage} />
