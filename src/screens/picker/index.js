@@ -68,7 +68,6 @@ export default function Picker() {
       setTimeout(async () => {
         setLoading(true);
         let pdata = await getAllItems(db, PCIKER_TABLE);
-        console.log(pdata.length, '---------');
         if (pdata == undefined || (Array.isArray(pdata) && pdata.length == 0)) {
           let wt = await getPickerData();
           if (Array.isArray(wt) && wt.length) {
@@ -111,7 +110,6 @@ export default function Picker() {
       setLoading(false);
     }
   };
-  console.log(pickerWeight);
   return (
     <BaseView>
       <SyncLocal />
