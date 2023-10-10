@@ -135,7 +135,6 @@ export default function LoanDetail() {
                   try {
                     setLoading(true);
                     setopenModal(false);
-
                     await deleteLoanCollection(data?.name);
                     setLoading(false);
                     goBack();
@@ -289,21 +288,28 @@ td {
         rightComponent={
           <View style={{ flexDirection: 'row' }}>
             <Icon
+              name="edit"
+              size={25}
+              style={{ color: white, marginRight: 10 }}
+              onPress={() => replace('AddLoan', { data })}
+            />
+            <Icon
               name="pdffile1"
               size={25}
               color={white}
               style={{
                 marginRight: 15,
               }}
-              onPress={() => {
-                ToastProgress(strings.in_progress)
-              }}
+              onPress={onShare}
+              // onPress={() => {
+              //   ToastProgress(strings.in_progress)
+              // }}
             />
 
             <TouchableOpacity
               onPress={() => {
-                // setopenModal(true);
-                ToastProgress(strings.in_progress)
+                setopenModal(true);
+                // ToastProgress(strings.in_progress)
               }}>
               <Icon
                 name="delete"

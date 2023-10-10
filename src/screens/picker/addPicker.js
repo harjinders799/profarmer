@@ -18,7 +18,7 @@ import {
 import Header from '../../components/header';
 import Icon from '../../components/icon';
 import { useCotton } from '../../context/cottonContext';
-import { savePickerData } from '../../sql';
+import { savePickerData, updatePickerData, updatePickerNameRate } from '../../sql';
 import auth from '@react-native-firebase/auth';
 
 export default function AddPicker() {
@@ -26,10 +26,11 @@ export default function AddPicker() {
   const { db, pickerWeight } = useCotton();
   const { params } = useRoute();
   const editData = params?.data ?? {};
+  console.log(editData, '_________data')
   const [data, setData] = React.useState({
     id: editData?.id ?? 0,
     uid: auth().currentUser?.uid,
-    fid: '',
+    fid: editData?.fid ?? '',
     picker: editData?.picker ?? '',
     detail: editData?.detail ?? '',
     rate: editData?.rate ?? '',
@@ -56,7 +57,7 @@ export default function AddPicker() {
   };
 
   const onPress = () => {
-    if (editData?.edit) updateWt();
+    if (editData?.id) updateWt();
     else AddNew();
   };
   const updateWt = async () => {
@@ -68,13 +69,16 @@ export default function AddPicker() {
       //   ToastError(strings.picker_count);
     } else {
       setLoading(true);
-      let res = await updatePicker({
-        ...data,
-        date: currentStamp(date),
-      });
+      await updatePickerNameRate(db,
+        data, editData?.picker
+      )
+      // let res = await updatePicker({
+      //   ...data,
+      //   date: currentStamp(date),
+      // });
       setLoading(false);
       ToastSuccess(strings.picker_added);
-      navigate('Picker');
+      goBack();
     }
   };
   const AddNew = async () => {
@@ -85,14 +89,14 @@ export default function AddPicker() {
         ToastError(strings.enter_rate);
       } else {
         setLoading(true);
-        let isExist = Array.isArray(pickerWeight)
-          ? pickerWeight.some(o => o?.picker == picker)
-          : false;
-        if (isExist) {
-          setLoading(false);
-          ToastError(strings.picker_exist);
-          return;
-        }
+        // let isExist = Array.isArray(pickerWeight)
+        //   ? pickerWeight.some(o => o?.picker == picker)
+        //   : false;
+        // if (isExist) {
+        //   setLoading(false);
+        //   ToastError(strings.picker_exist);
+        //   return;
+        // }
         await savePickerData(db, [
           {
             ...data,
@@ -137,7 +141,7 @@ export default function AddPicker() {
       />
       <View style={styles.form}>
         <Input
-        label={strings.name}
+          label={strings.name}
           autoFocus
           placeholder={strings.name}
           value={picker}

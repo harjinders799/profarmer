@@ -148,7 +148,7 @@ export const deleteGiverCollection = async (name) => {
         });
         return Promise.all(deletePromises);
       });
-    await Promise.all([deleteGiver]);
+    await Promise.all(deleteGiver);
   } catch (error) {
     throw new Error(error);
   }
