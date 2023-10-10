@@ -12,9 +12,6 @@ import {deleteDBConnectionDB} from '../sql';
 const initialState = {
   user: undefined,
   pin: undefined,
-  activeMidIndex: 0,
-  loading: false,
-  basicData: undefined,
   userVerified: false,
 };
 
@@ -26,9 +23,6 @@ const AuthReducer = (prevState, action) => {
       return {
         ...prevState,
         user: action.user,
-        activeMidIndex: 0,
-        loading: false,
-        basicData: action.basicData,
       };
     case 'PIN':
       return {
@@ -52,12 +46,7 @@ const AuthReducer = (prevState, action) => {
         ...prevState,
         userVerified: true,
       };
-    case 'SET_ACTIVE_MID_INDEX':
-      return {
-        ...prevState,
-        loading: true,
-        activeMidIndex: action.activeMidIndex,
-      };
+
     default:
       return {
         ...prevState,
@@ -101,12 +90,6 @@ export const AuthProvider = props => {
       setPin: async value => {
         await setAsyncStorage('pin', JSON.stringify(value));
         dispatch({type: 'PIN', pin: value});
-      },
-      setActiveMidIndex: async index => {
-        dispatch({type: 'SET_ACTIVE_MID_INDEX', activeMidIndex: index});
-      },
-      stopLoading: () => {
-        dispatch({type: 'STOP_LOADING'});
       },
       setUserVerified: () => {
         dispatch({type: 'SET_USER_VERIFIED'});

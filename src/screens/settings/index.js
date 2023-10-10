@@ -32,7 +32,7 @@ const rnBiometrics = new ReactNativeBiometrics();
 export default function Setting({ navigation }) {
   const { lang, setFingerLock, fingerLock } = useLang();
   const [isBiometry, setIsBiometry] = useState(false);
-  const { db, getPickerWeight, pickerWeight, pickerExpense, getPickerExpense, resetPicker } = useCotton();
+  const { db, getPickerWeight, pickerWeight =[], pickerExpense =[], getPickerExpense, resetPicker } = useCotton();
   const { user, reset } = useAuth();
   const [loading, setLoading] = useState(false)
 

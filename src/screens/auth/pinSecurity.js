@@ -22,39 +22,13 @@ import {ToastError, ToastSuccess} from 'src/utils/toast';
 const rnBiometrics = new ReactNativeBiometrics();
 
 export default function PinSecurity({navigation}) {
-  const {getPin, pin, reset ,setUserVerified, setPin} = useAuth();
+  const {getPin, pin, reset, setUserVerified, setPin} = useAuth();
   const [enteredPin, setEnteredPin] = useState('');
   const [confirmPin, setConfirmPin] = useState('');
   const [verifiedPin, setVerifiedPin] = useState('');
   const [label, setLabel] = useState(pin ? 'Verify' : 'Enter');
-  const {lang, setFingerLock, fingerLock} = useLang();
   const [isBiometry, setIsBiometry] = useState(false);
-
   const [attempt, setAttempt] = useState(3);
- 
-
-  // const authenticateWithBiometrics = async (biometryType) => {
-  //   try {
-  //     const { available } = await ReactNativeBiometrics.isSensorAvailable();
-
-  //     if (available) {
-  //       const result = await ReactNativeBiometrics.simplePrompt({
-  //         promptMessage: `Authenticate with ${biometryType}`,
-  //       });
-
-  //       if (result.success) {
-  //         // Biometric authentication successful, navigate back
-  //         navigation.goBack();
-  //       } else {
-  //         // Biometric authentication failed, handle this appropriately.
-  //       }
-  //     } else {
-  //       // Biometry not available.
-  //     }
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // };
 
   useEffect(() => {
     if (label === 'Enter' && enteredPin.length === 4) {
@@ -77,9 +51,9 @@ export default function PinSecurity({navigation}) {
         // navigation.replace('AddForm'); // Navigate to the next screen
       } else {
         if (attempt <= 1) {
-        ToastError('You have exceed max attempt');
-      reset();
-      }else ToastError('Pin Not match');
+          ToastError('You have exceed max attempt');
+          reset();
+        } else ToastError('Pin Not match');
         setAttempt(attempt - 1);
       }
     }
@@ -109,7 +83,7 @@ export default function PinSecurity({navigation}) {
   };
   if (attempt == 0) {
     reset();
-}
+  }
   return (
     <View style={styles.container}>
       <Text h2 style={{color: cyan}}>
@@ -148,33 +122,6 @@ export default function PinSecurity({navigation}) {
           </TouchableOpacity>
         ))}
       </View>
-      {/* {isBiometry ? (
-        <TouchableOpacity
-          style={styles.row}
-          onPress={() => navigation.navigate('AboutUs')}>
-          <Text style={styles.txt}>Finger Lock</Text>
-          <Switch
-            value={fingerLock}
-            trackColor={{false: '#767577', true: black}}
-            thumbColor={fingerLock ? green : '#f4f3f4'}
-            onValueChange={() => setFingerLock(!fingerLock)}
-          />
-        </TouchableOpacity>
-      ) : null} */}
-      {isBiometry ? (
-        <TouchableOpacity
-          style={styles.row}
-          onPress={() => authenticateWithBiometrics('Fingerprint')}>
-          <Text style={styles.txt}>Fingerprint</Text>
-        </TouchableOpacity>
-      ) : null}
-      {isBiometry ? (
-        <TouchableOpacity
-          style={styles.row}
-          onPress={() => authenticateWithBiometrics('Face ID')}>
-          <Text style={styles.txt}>Face ID</Text>
-        </TouchableOpacity>
-      ) : null}
     </View>
   );
 }
