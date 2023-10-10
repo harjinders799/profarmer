@@ -35,7 +35,7 @@ export default function Loan({navigation}) {
         iconColor={white}
         label={strings.giver + ' / ' + strings.receiver}
         btnStyle={{
-          width: '50%',
+          width: 'auto',
           height: 50,
           position: 'absolute',
           bottom: 20,

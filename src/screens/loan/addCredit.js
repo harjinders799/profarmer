@@ -16,7 +16,7 @@ import { goBack } from 'src/navigation/ref';
 import Header from '../../components/header';
 import Icon from '../../components/icon';
 import auth from '@react-native-firebase/auth';
-import { gray10, gray3 } from '../../utils/color';
+import { gray10, gray3, green } from '../../utils/color';
 import { useLoan } from '../../context/loanContext';
 import { submitLoan, updateLoan } from '../../network/loan-service';
 import { currencyInput } from '../../utils/dateformat';
@@ -102,11 +102,11 @@ export default function AddCredit() {
           <Icon
             name="back"
             size={28}
-            color={colors.text}
+            color={green}
             onPress={() => goBack()}
           />
         }
-        centerComponent={<Text h2>{editData?.type == 'debt' ? editData?.receiver : editData.giver}</Text>}
+        centerComponent={<Text h2 style={{color:green,fontWeight:"bold"}}>{editData?.type == 'debt' ? editData?.receiver : editData.giver}</Text>}
         rightComponent={<Text h2> </Text>}
       />
       <ScrollView style={styles.form} keyboardShouldPersistTaps='handled'>

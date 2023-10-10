@@ -32,9 +32,21 @@ export const getLoanData = () => {
       })
       .catch(error => {
         reject(new Error(error));
-      });
-  });
-};
+      }
+    });
+  };
+                     
+  export const deleteLoan = async id => {
+    return new Promise(async function (resolve, reject) {
+      try {
+        await firestore().collection('loan').doc(id).delete();
+        resolve('success');
+      } catch (error) {
+        reject(new Error(error));
+      }
+    });
+  };
+
 export const updateLoan = async data => {
   return new Promise(async function (resolve, reject) {
     try {
@@ -68,7 +80,6 @@ export const updateLoanName = async (name,data) => {
             interest_rate:data?.interest_rate,
             phone:data?.phone
           });
-          console.log('-----------',)
         });
       
          batch.commit();
@@ -79,16 +90,7 @@ export const updateLoanName = async (name,data) => {
     }
   });
 };
-export const deleteLoan = async id => {
-  return new Promise(async function (resolve, reject) {
-    try {
-      await firestore().collection('loan').doc(id).delete();
-      resolve('success');
-    } catch (error) {
-      reject(new Error(error));
-    }
-  });
-};
+
 
 export const deleteLoanCollection = async (name,data) => {
   return new Promise(async function (resolve, reject) {
@@ -117,19 +119,6 @@ export const deleteLoanCollection = async (name,data) => {
      batch.commit();
   
   resolve('success')
-    // const deleteLoan = firestore()
-    //   .collection('loan')
-    //   .where('uid', '==', userId)
-    //   .where('loan', '==', name)
-    //   .get()
-    //   .then((querySnapshot) => {
-    //     const deletePromises = [];
-    //     querySnapshot.forEach((documentSnapshot) => {
-    //       deletePromises.push(documentSnapshot.ref.delete());
-    //     });
-    //     return Promise.all(deletePromises);
-    //   });
-    // await Promise.all([deleteLoan]);
   } catch (error) {
     throw new Error(error);
   }
