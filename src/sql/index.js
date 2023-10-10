@@ -62,6 +62,10 @@ export const updatePickerGid = async (db, i) => {
     const updateQuery = `UPDATE ${PCIKER_TABLE} SET  gid = '${i?.gid}',gname = '${i?.gname}', sync = 'pending' WHERE uid = '${i?.uid}' AND picker='${i?.picker}';`;
     return db.executeSql(updateQuery);
 };
+export const updatePickerNameRate = async (db, i, picker) => {
+    const updateQuery = `UPDATE ${PCIKER_TABLE} SET  picker = '${i?.picker}',rate = '${i?.rate}', sync = 'pending' WHERE uid = '${i?.uid}' AND picker='${picker}';`;
+    return db.executeSql(updateQuery);
+};
 
 export const deletePickerData = async (db, i) => {
     const deleteQuery = `DELETE from ${PCIKER_TABLE} where picker = '${i?.picker}' AND uid='${i?.uid}' AND id =${i?.id}`;
@@ -120,6 +124,7 @@ export const getPickerFinal = async (db) => {
             `SELECT 
     p.picker,
     p.gname,
+    p.gid,
     SUM(p.weight) AS total_weight,
     COALESCE(pe.total_amount, 0) AS total_given_amount,
      SUM(CAST(p.rate AS FLOAT) * CAST(p.weight AS FLOAT)) AS total_rate_weight

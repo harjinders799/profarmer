@@ -5,7 +5,7 @@ import { strings } from 'src/translations/locale';
 import { black, gray3, green, white } from '../../utils/color';
 import { useCotton } from '../../context/cottonContext';
 import { View, ScrollView, PixelRatio } from 'react-native';
-import { sumBy, groupBy } from 'lodash';
+import { sumBy, groupBy, sortBy } from 'lodash';
 import moment from 'moment';
 import Header from '../../components/header';
 import Button from '../../components/button';
@@ -15,11 +15,7 @@ import { goBack } from '../../navigation/ref';
 
 export default function Analysis({ navigation }) {
   const [filterBy, setFilterBy] = useState('wt');
-  const {
-    pickerWeight = [],
-    pickerExpense = [],
-  } = useCotton();
-
+  const { pickerWeight = [], pickerExpense = [] } = useCotton();
 
   let dateWise = groupBy(pickerWeight, v =>
     moment(v?.date).format('DD-MM-YYYY'),
@@ -33,12 +29,7 @@ export default function Analysis({ navigation }) {
       <Header
         style={{ marginTop: 10 }}
         leftComponent={
-          <Icon
-            name="back"
-            size={28}
-            color={black}
-            onPress={() => goBack()}
-          />
+          <Icon name="back" size={28} color={black} onPress={() => goBack()} />
         }
         centerComponent={<Text h2>{strings.pickers}</Text>}
         rightComponent={<Text h2> </Text>}
@@ -90,7 +81,7 @@ export default function Analysis({ navigation }) {
           <ScrollView
             showsVerticalScrollIndicator={false}
             contentContainerStyle={{ paddingBottom: '80%' }}>
-            {Object.keys(dateWise)
+            {sortBy(Object.keys(dateWise), o => moment(o, 'DD-MM-YYYY'))
               .reverse()
               .map((o, index) => (
                 <View
@@ -113,7 +104,9 @@ export default function Analysis({ navigation }) {
                       backgroundColor: '#4CAF99',
                       // display: sumBy(dateWiseCost[o], o => parseFloat(o.weight)) == 0 ? 'none' : 'flex'
                     }}>
-                    <Text h4 style={{ color: white, fontWeight: '800' }}>{o}</Text>
+                    <Text h4 style={{ color: white, fontWeight: '800' }}>
+                      {o}
+                    </Text>
                     <Text h4 style={{ color: white, fontWeight: '800' }}>
                       {sumBy(dateWise[o], o => parseFloat(o.weight))} Kg
                     </Text>
@@ -182,9 +175,13 @@ export default function Analysis({ navigation }) {
                       backgroundColor: '#4CAF99',
                       // display: sumBy(dateWiseCost[o], o => parseFloat(o.weight)) == 0 ? 'none' : 'flex'
                     }}>
-                    <Text h4 style={{ color: white, fontWeight: '800' }}>{o}</Text>
                     <Text h4 style={{ color: white, fontWeight: '800' }}>
-                      {currencyFormat(sumBy(dateWiseCost[o], o => parseFloat(o.amount)))}
+                      {o}
+                    </Text>
+                    <Text h4 style={{ color: white, fontWeight: '800' }}>
+                      {currencyFormat(
+                        sumBy(dateWiseCost[o], o => parseFloat(o.amount)),
+                      )}
                     </Text>
                   </View>
                   {dateWiseCost[o].map((picker, key) => (

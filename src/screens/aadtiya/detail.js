@@ -131,7 +131,7 @@ export default function Detail({ navigation }) {
                     setLoading(true);
                     setopenModal(false);
 
-                    await deleteGiverCollection(data?.giver);
+                    await deleteGiverCollection(data[0]?.giver);
                     setLoading(false);
                     goBack();
                   } catch (error) {

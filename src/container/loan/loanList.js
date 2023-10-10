@@ -14,7 +14,7 @@ import { strings } from 'src/translations/locale';
 import { navigate } from 'src/navigation/ref';
 import { currencyFormat } from 'src/utils/dateformat';
 import { ToastError } from '../../utils/toast';
-import { aqua, green, greenDark, greenLight, lightOrange, lightRed, red } from '../../utils/color';
+import { aqua, green, greenDark, greenLight, lightOrange, lightRed, orange, red } from '../../utils/color';
 import Animated from 'react-native-reanimated';
 import { useLoan } from '../../context/loanContext';
 import auth from '@react-native-firebase/auth';
@@ -63,27 +63,6 @@ export default function LoanList() {
           </View>
             {/* <View style={{ flexDirection: 'row' }}>
               <Button
-              hitSlop={10}
-              label={strings.give}
-              btnStyle={{
-                backgroundColor: red,
-                marginRight: 10,
-                width: 'auto',
-                paddingHorizontal: 8,
-                height: 25 * PixelRatio.getFontScale(),
-                borderRadius: 5,
-                marginVertical: 0,
-              }}
-              onPress={() =>
-                navigate('AddCredit', {
-                  data: {
-                    receiver: auth().currentUser.uid,
-                    giver: item?.name,
-                    type: 'credit',
-                    interest_rate: item?.interest_rate,
-                  },
-                })
-              }
               />
               <Button
               hitSlop={10}
