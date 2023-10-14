@@ -12,7 +12,6 @@ import { strings } from 'src/translations/locale';
 import { green, red, white } from '../../utils/color';
 import Icon from '../../components/icon';
 import { useCotton } from '../../context/cottonContext';
-import { saveCottonPriceData } from '../../sql';
 import { sortBy } from 'lodash';
 import moment from 'moment';
 import { deletePrice, getPriceData } from '../../network/price-service';

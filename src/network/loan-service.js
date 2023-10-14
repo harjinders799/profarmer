@@ -5,11 +5,11 @@ export const submitLoan = async data => {
   return new Promise(async function (resolve, reject) {
     try {
       let id = Auth().currentUser?.uid;
-      await firestore()
+      firestore()
         .collection('loan')
         .add({ ...data, uid: id })
-        .then(res => resolve(res?.id));
-      // resolve('success');
+      // .then(res => resolve(res?.id));
+      resolve('success');
     } catch (error) {
       reject(new Error(error));
     }
@@ -17,21 +17,17 @@ export const submitLoan = async data => {
 };
 
 export const getLoanData = () => {
-  return new Promise(async function (resolve, reject) {
+  return new Promise(function (resolve, reject) {
     let userId = Auth().currentUser?.uid;
-    await firestore()
+    firestore()
       .collection('loan')
       .where('uid', '==', userId)
-      .get()
-      .then(querySnapshot => {
+      .onSnapshot(querySnapshot => {
         let arr = [];
         querySnapshot.forEach(documentSnapshot => {
           arr.push({ ...documentSnapshot.data(), id: documentSnapshot.id });
         });
         resolve(arr);
-      })
-      .catch(error => {
-        reject(new Error(error));
       })
   });
 };

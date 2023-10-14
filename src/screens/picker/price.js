@@ -5,27 +5,25 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
-import {load} from 'react-native-cheerio';
+import React, { useEffect, useState } from 'react';
+import { load } from 'react-native-cheerio';
 import Text from '../../components/text';
-import {strings} from 'src/translations/locale';
-import {green, red, white} from '../../utils/color';
-import {useCotton} from '../../context/cottonContext';
-import {saveCottonPriceData} from '../../sql';
+import { strings } from 'src/translations/locale';
+import { green, red, white } from '../../utils/color';
+import { useCotton } from '../../context/cottonContext';
 import Header from '../../components/header';
 import Icon from '../../components/icon';
-import {goBack} from '../../navigation/ref';
+import { goBack } from '../../navigation/ref';
 import BaseView from '../../container/base';
 
 const Price = () => {
-  const {cottonPrice, db, getCottonPrice} = useCotton();
+  const { cottonPrice, db, getCottonPrice } = useCotton();
 
   // useEffect(() => {
   //     getCottonPrice();
   //     (async () => {
   //         let res = await getPrice();
   //         if (Array.isArray(res)) {
-  //             await saveCottonPriceData(db, res.reverse());
   //             getCottonPrice();
   //         }
   //     })();
@@ -39,20 +37,20 @@ const Price = () => {
             name="back"
             size={28}
             color={white}
-            style={{marginRight: 5}}
+            style={{ marginRight: 5 }}
             onPress={() => goBack()}
           />
         }
         centerComponent={<Text style={styles.header}> {strings.price} </Text>}
-        // rightComponent={
-        //   <Icon
-        //     name="back"
-        //     size={28}
-        //     color={'#227371'}
-        //     style={{marginRight: 5}}
-        //     onPress={() => goBack()}
-        //   />
-        // }
+      // rightComponent={
+      //   <Icon
+      //     name="back"
+      //     size={28}
+      //     color={'#227371'}
+      //     style={{marginRight: 5}}
+      //     onPress={() => goBack()}
+      //   />
+      // }
       />
       <ScrollView style={[styles.list]}>
         {cottonPrice.map((item, index) => (
@@ -62,7 +60,7 @@ const Price = () => {
                 name="edit"
                 size={20}
                 color={'#7a3767'}
-                style={{paddingStart: '90%'}}
+                style={{ paddingStart: '90%' }}
               />
             </TouchableOpacity>
             <View
@@ -71,17 +69,17 @@ const Price = () => {
                 justifyContent: 'space-between',
                 paddingBottom: 5,
               }}>
-              <Text h3 style={{width: '60%'}}>
+              <Text h3 style={{ width: '60%' }}>
                 {item?.market}
               </Text>
               <Text h4>{item?.arrivalDate}</Text>
             </View>
             <View
-              style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-              <Text h4 style={{color: green}}>
+              style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+              <Text h4 style={{ color: green }}>
                 {item?.maxPrice.replace('/ Quintal', 'max')}
               </Text>
-              <Text h4 style={{color: red}}>
+              <Text h4 style={{ color: red }}>
                 {item?.minPrice.replace('/ Quintal', 'min')}
               </Text>
             </View>

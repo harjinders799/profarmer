@@ -4,7 +4,7 @@ export const submitInterestAmount = async data => {
   return new Promise(async function (resolve, reject) {
     try {
       let id = Auth().currentUser?.uid;
-      await firestore()
+      firestore()
         .collection('interest_amount')
         .add({ ...data, uid: id });
       resolve('success');
@@ -16,7 +16,7 @@ export const submitInterestAmount = async data => {
 export const updateIneterstAmt = async data => {
   return new Promise(async function (resolve, reject) {
     try {
-      await firestore()
+      firestore()
         .collection('interest_amount')
         .doc(data?.id)
         .update(data);
@@ -30,7 +30,7 @@ export const updateIneterstAmt = async data => {
 export const deleteIneterstAmt = async id => {
   return new Promise(async function (resolve, reject) {
     try {
-      await firestore().collection('interest_amount').doc(id).delete();
+      firestore().collection('interest_amount').doc(id).delete();
       resolve('success');
     } catch (error) {
       reject(new Error(error));
@@ -41,7 +41,7 @@ export const deleteIneterstAmt = async id => {
 export const getInterstAmount = () => {
   return new Promise(async function (resolve, reject) {
     let userId = Auth().currentUser?.uid;
-    await firestore()
+    firestore()
       .collection('interest_amount')
       .where('uid', '==', userId)
       .get()
@@ -62,7 +62,7 @@ export const submitCrop = async data => {
   return new Promise(async function (resolve, reject) {
     try {
       let id = Auth().currentUser?.uid;
-      await firestore()
+      firestore()
         .collection('crop')
         .add({ ...data, uid: id });
       resolve('success');
@@ -74,7 +74,7 @@ export const submitCrop = async data => {
 export const updateCrop = async data => {
   return new Promise(async function (resolve, reject) {
     try {
-      await firestore().collection('crop').doc(data?.id).update(data);
+      firestore().collection('crop').doc(data?.id).update(data);
       resolve('success');
     } catch (error) {
       reject(new Error(error));
@@ -85,7 +85,7 @@ export const updateCrop = async data => {
 export const deleteCrop = async id => {
   return new Promise(async function (resolve, reject) {
     try {
-      await firestore().collection('crop').doc(id).delete();
+      firestore().collection('crop').doc(id).delete();
       resolve('success');
     } catch (error) {
       reject(new Error(error));
@@ -95,7 +95,7 @@ export const deleteCrop = async id => {
 export const getCrops = () => {
   return new Promise(async function (resolve, reject) {
     let userId = Auth().currentUser?.uid;
-    await firestore()
+    firestore()
       .collection('crop')
       .where('uid', '==', userId)
       .get()
@@ -115,7 +115,7 @@ export const deleteCropCollection = async name => {
   return new Promise(async function (resolve, reject) {
     try {
       let userId = Auth().currentUser?.uid;
-      await firestore()
+      firestore()
         .collection('crop')
         .where('uid', '==', userId)
         .get()
@@ -132,7 +132,7 @@ export const deleteCropCollection = async name => {
 };
 
 export const deleteGiverCollection = async (name) => {
-  
+
   try {
     const userId = Auth().currentUser?.uid;
 
@@ -148,7 +148,7 @@ export const deleteGiverCollection = async (name) => {
         });
         return Promise.all(deletePromises);
       });
-    await Promise.all(deleteGiver);
+    Promise.all(deleteGiver);
   } catch (error) {
     throw new Error(error);
   }
@@ -170,7 +170,7 @@ export const deleteGiverCollection = async (name) => {
 //         });
 //         return Promise.all(deletePromises);
 //       });
-//     await Promise.all([deleteDebtor]);
+//      Promise.all([deleteDebtor]);
 //   } catch (error) {
 //     throw new Error(error);
 //   }

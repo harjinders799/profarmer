@@ -29,7 +29,7 @@ export default function Tabs() {
       id: 1,
       name: 'Picker',
       title: strings.pickers,
-      component: Timeline,
+      component: PickerStack,
       icon: "flower-poppy",
       iconType: 'MaterialCommunityIcons',
     },
