@@ -104,6 +104,7 @@
   "crop": "ਫਸਲ",
   "crop_total": "ਫਸਲ ਰਕਮ",
   "crop_hisab": "ਫਸਲ ਦਾ ਹਿਸਾਬ",
+  "other": "ਹੋਰ",
 
   "credit": "ਪੈਸੇ ਲਏ",
   "debt": "ਪੈਸੇ ਦਿੱਤੇ",
@@ -124,10 +125,10 @@
   "giver_added": " ਰਿਣਦਾਤਾ ਜੋੜਿਆ ਗਿਆ!",
   "add_loan": " कर्ज़ जोड़ें",
   "add_receiver": "  ਕਰਜ਼ਦਾਰ ",
-  "credit_amount":"ਪ੍ਰਾਪਤ ਕੀਤੀ ਰਕਮ",
-"given_amount_added":"ਦਿੱਤੀ ਗਈ ਰਕਮ ਜੋੜੀ ਗਈ",
-"given_amount_with_interest":"ਦਿੱਤੀ ਗਈ ਰਕਮ ਵਿਆਜ ਸਮੇਤ",
-"taken_amount_with_interest":"ਲਈ  ਗਈ ਰਕਮ ਵਿਆਜ ਸਮੇਤ",
+  "credit_amount": "ਪ੍ਰਾਪਤ ਕੀਤੀ ਰਕਮ",
+  "given_amount_added": "ਦਿੱਤੀ ਗਈ ਰਕਮ ਜੋੜੀ ਗਈ",
+  "given_amount_with_interest": "ਦਿੱਤੀ ਗਈ ਰਕਮ ਵਿਆਜ ਸਮੇਤ",
+  "taken_amount_with_interest": "ਲਈ  ਗਈ ਰਕਮ ਵਿਆਜ ਸਮੇਤ",
 
 
 

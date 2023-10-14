@@ -21,7 +21,7 @@ import { ToastError } from '../../utils/toast';
 import LabourExpenseDetail from '../../container/labour/labourExpenseDetail';
 import Header from '../../components/header';
 import Icon from '../../components/icon';
-import { goBack, navigate } from '../../navigation/ref';
+import { goBack, navigate, replace } from '../../navigation/ref';
 import Button from '../../components/button';
 import { currencyFormat, dateFormat } from '../../utils/dateformat';
 import RNFS from 'react-native-fs'

@@ -10,10 +10,10 @@ import React, { useCallback, useEffect, useState } from 'react';
 import BaseView from 'src/container/base';
 import Text from 'src/components/text';
 import { white } from 'src/utils/color';
-import { useFocusEffect, useRoute, useTheme } from '@react-navigation/native';
+import { useFocusEffect, useIsFocused, useRoute, useTheme } from '@react-navigation/native';
 import Header from '../../components/header';
 import Icon from '../../components/icon';
-import { goBack } from '../../navigation/ref';
+import { goBack, replace } from '../../navigation/ref';
 import Loader from 'src/components/loader';
 import { strings } from 'src/translations/locale';
 import { ToastError } from '../../utils/toast';
@@ -54,13 +54,8 @@ export default function PickerDetail({ navigation }) {
   const [loading, setLoading] = useState(false);
   const data = params?.item ?? [];
   const [rate, setRate] = useState();
-  const { lang } = useLang();
-
-  const langs = [
-    { code: 'pb', label: 'punjabi' },
-    { code: 'hi', label: 'hindi' },
-    { code: 'en', label: 'english' },
-  ];
+ 
+  const isFocused = useIsFocused();
   const {
     db,
     pickerWeight = [],
@@ -79,7 +74,7 @@ export default function PickerDetail({ navigation }) {
       let baseRate = pickerData[pickerData.length - 1].rate;
       let pRate = pickerData.every(o => baseRate == o.rate || o.weight == '0');
       if (pRate) setRate(baseRate);
-    }, [lang]),
+    }, [isFocused]),
   );
 
   let amount =
@@ -329,7 +324,7 @@ td {
           </Text>
         }
         rightComponent={
-          <View style={{ flexDirection: 'row' }}>
+          <View style={{ flexDirection: 'row',alignItems:"center" }}>
             {/* <Icon
               name="search1"
               color={white}
@@ -338,50 +333,22 @@ td {
               onPress={() => ToastProgress(strings.in_progress)}
             /> */}
             <Icon
+              name="edit"
+              size={25}
+              style={{ color: white, marginRight: 10 }}
+              onPress={() => replace('AddPicker', { data: pickerData[pickerData.length - 1] })}
+            />
+            <Icon
               name="pdffile1"
               size={25}
               color={white}
               style={{
-                marginRight: 15,
+                marginRight: 5,
                 display: pickerData.length > 1 ? 'flex' : 'none',
               }}
               // onPress={() => {setShow()}}
               onPress={onShare}
             />
-            {/* <Modal visible={show} setModalVisible={setShow} ratioHeight={0.3}>
-             <View style={[styles.menu]}>
-             <Header
-                leftComponent={
-                    <Icon
-                        name="back"
-                        size={28}
-                        color={colors.text}
-                        onPress={() => goBack()}
-                    />
-                }
-                centerComponent={<Text h2>{strings.lang}</Text>}
-                rightComponent={<Text h2> </Text>}
-            />
-          {langs.map((v, i) => (
-            <TouchableOpacity
-              key={i}
-              style={[styles.main]}
-              onPress={() => {
-                setLang(v);
-                setShow();
-                onShare();
-              }}>
-              <Text h3 black style={[styles.txt]}>
-                {strings[v?.label]}
-              </Text>
-              {strings.getLanguage() === v.code ? (
-                <Icon name="check" size={25} color={colors.primary}
-                 />
-              ) : null}
-            </TouchableOpacity>
-          ))}
-        </View>
-             </Modal> */}
 
             <TouchableOpacity
               onPress={() => {

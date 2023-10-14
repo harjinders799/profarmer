@@ -167,8 +167,7 @@ export default function LoanDetail() {
                   try {
                     setLoading(true);
                     setopenModal(false);
-
-                    await deleteLoanCollection(data?.personName);
+                    await deleteLoanCollection(data?.name);
                     setLoading(false);
                     goBack();
                   } catch (error) {
@@ -280,20 +279,43 @@ td {
           ? currencyFormat(record?.amount)
           : '-';
 
-      return `<tr>
-    <td>${dateFormat(record?.date)}</td>
-    <td>${days}</td> 
-    <td>${currencyFormat(parseFloat(interest))}</td>  
-        <td>${givenAmount}</td>
-    <td>${takenAmount}</td>
-    <td>${currencyFormat(final_amount)}
-    </td>
-    <td>${record?.detail}</td>
-      </tr>`;
-    },
-  )}
-  </table>
+//       return `<tr>
+//     <td>${dateFormat(record?.date)}</td>
+//     <td>${days}</td> 
+//     <td>${currencyFormat(parseFloat(interest))}</td>  
+//         <td>${givenAmount}</td>
+//     <td>${takenAmount}</td>
+//     <td>${currencyFormat(final_amount)}
+//     </td>
+//     <td>${record?.detail}</td>
+//       </tr>`;
+//     },
+//   )}
+//   </table>
   
+        let date = moment(record?.date).format('YYYY-MM-DD');
+        let start_date = moment(date);
+        let today = moment();
+        let days = today.diff(start_date, 'days');
+        let interest = (
+          ((parseFloat(record?.amount) * (parseFloat(record?.interest_rate) / 100)) / 30) *
+          parseInt(days)
+        ).toFixed(2);
+
+        return `<tr>
+              <td>${dateFormat(record.date)}</td>
+              <td>${days}</td> 
+               <td>${currencyFormat(record?.interest_rate)}</td>
+               <td>${currencyFormat(record?.amount)}</td>
+               <td>${currencyFormat(interest)}</td>
+              <td>${currencyFormat(
+          parseFloat(interest) + parseFloat(record?.amount)
+        )}</td>
+              <td>${record?.detail}</td>
+          </tr>`;
+      },
+    )}
+      </table>
   </body>
 </html>
   `;
@@ -339,6 +361,12 @@ td {
         rightComponent={
           <View style={{flexDirection: 'row'}}>
             <Icon
+              name="edit"
+              size={25}
+              style={{ color: white, marginRight: 10 }}
+              onPress={() => replace('AddLoan', { data })}
+            />
+            <Icon
               name="pdffile1"
               size={25}
               color={white}
@@ -346,11 +374,15 @@ td {
                 marginRight: 15,
               }}
               onPress={onShare}
+              // onPress={() => {
+              //   ToastProgress(strings.in_progress)
+              // }}
             />
 
             <TouchableOpacity
               onPress={() => {
                 setopenModal(true);
+                // ToastProgress(strings.in_progress)
               }}>
               <Icon
                 name="delete"
