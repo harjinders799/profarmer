@@ -3,7 +3,7 @@ import React from 'react';
 import { StyleSheet, TextInput, View } from 'react-native';
 import { WIDTH } from 'src/utils/constant';
 import Icon from './icon';
-import { black, gray1, gray10, gray3 } from '../utils/color';
+import { black, gray1, gray10, gray2, gray3 } from '../utils/color';
 import Text from 'src/components/text';
 
 const Input = ({
@@ -21,7 +21,7 @@ const Input = ({
   leftComponent = null,
   rightComponent = null,
   placeholder,
-  placeholderColor,
+  placeholderColor = gray2,
   label,
   innerStyle,
   ...props

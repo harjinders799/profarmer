@@ -1,4 +1,4 @@
-import React, {Component, useState, useEffect} from 'react';
+import React, { Component, useState, useEffect } from 'react';
 import {
   View,
   TextInput,
@@ -8,21 +8,23 @@ import {
   Switch,
 } from 'react-native';
 import Input from 'src/components/input';
-import {goBack, replace} from '../../navigation/ref';
+import { goBack, replace } from '../../navigation/ref';
 import Text from 'src/components/text';
 import Button from 'src/components/button';
-import {strings} from 'src/translations/locale';
-import {black, cyan, green, red, white} from '../../utils/color';
-import {useLang} from '../../context/langContext';
-import {useAuth} from '../../context/authContext';
+import { strings } from 'src/translations/locale';
+import { black, cyan, green, red, white } from '../../utils/color';
+import { useLang } from '../../context/langContext';
+import { useAuth } from '../../context/authContext';
 
-import ReactNativeBiometrics, {BiometryTypes} from 'react-native-biometrics';
-import {ToastError, ToastSuccess} from 'src/utils/toast';
+import ReactNativeBiometrics, { BiometryTypes } from 'react-native-biometrics';
+import { ToastError, ToastSuccess } from 'src/utils/toast';
+import BaseView from '../../container/base';
+import { WIDTH } from '../../utils/constant';
 
 const rnBiometrics = new ReactNativeBiometrics();
 
-export default function PinSecurity({navigation}) {
-  const {getPin, pin, reset, setUserVerified, setPin} = useAuth();
+export default function PinSecurity({ navigation }) {
+  const { getPin, pin, reset, setUserVerified, setPin } = useAuth();
   const [enteredPin, setEnteredPin] = useState('');
   const [confirmPin, setConfirmPin] = useState('');
   const [verifiedPin, setVerifiedPin] = useState('');
@@ -84,23 +86,24 @@ export default function PinSecurity({navigation}) {
   if (attempt == 0) {
     reset();
   }
+  console.log(enteredPin, confirmPin)
   return (
-    <View style={styles.container}>
-      <Text h2 style={{color: cyan}}>
+    <BaseView style={styles.container}>
+      <Text h2 style={{ color: green }}>
         {label === 'Enter'
           ? strings.enter_pin
           : label === 'Confirm'
-          ? strings.confirm_pin
-          : strings.verify_pin}
+            ? strings.confirm_pin
+            : strings.verify_pin}
       </Text>
       <View style={[styles.displayArea]}>
         {Array(4)
           .fill()
           .map((_, index) => (
-            <View key={index} style={[styles.dot, {backgroundColor: white}]}>
+            <View key={index} style={[styles.dot, { backgroundColor: white }]}>
               {(index < enteredPin.length && label == 'Enter') ||
-              (index < confirmPin.length && label === 'Confirm') ||
-              index < verifiedPin.length ? (
+                (index < confirmPin.length && label === 'Confirm') ||
+                index < verifiedPin.length ? (
                 <View style={[styles.enteredDot]} />
               ) : (
                 ''
@@ -109,20 +112,21 @@ export default function PinSecurity({navigation}) {
           ))}
       </View>
       <View style={styles.keypad}>
-        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 'C', 0].map(key => (
+        {[1, 2, 3, 4, 5, 6, 7, 8, 9, '', 0, 'X'].map(key => (
           <TouchableOpacity
             key={key}
-            style={styles.keyButton}
+            disabled={key === '' ? true : false}
+            style={[styles.keyButton, { elevation: key === '' ? 0 : 3 }]}
             onPress={() =>
-              key === 'C' ? handleBackspace() : handleKeyPress(key)
+              key === 'X' ? handleBackspace() : handleKeyPress(key)
             }>
-            <Text h2 style={{color: cyan}}>
+            <Text h2 style={{ color: green }}>
               {key}
             </Text>
           </TouchableOpacity>
         ))}
       </View>
-    </View>
+    </BaseView>
   );
 }
 
@@ -131,7 +135,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: white,
   },
   displayArea: {
     alignItems: 'center',
@@ -148,29 +151,31 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 2,
-    borderColor: cyan,
+    borderColor: green,
   },
   enteredDot: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: cyan,
+    backgroundColor: green,
     elevation: 5,
     fontSize: 20,
   },
   keypad: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    margin: 30,
-    paddingLeft: 15,
+    alignContent: 'center',
+    justifyContent: 'space-between',
+    marginHorizontal: 30,
+    marginVertical: 20
   },
   keyButton: {
-    width: 60,
-    height: 60,
-    margin: 15,
+    width: WIDTH / 6,
+    height: WIDTH / 6,
+    margin: WIDTH / 30,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 30,
+    borderRadius: 50,
     backgroundColor: white,
     elevation: 3,
     //     borderWidth: 2,

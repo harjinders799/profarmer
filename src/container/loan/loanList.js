@@ -45,23 +45,23 @@ export default function LoanList() {
     );
 
     return (
-      <View style={styles.list}>
-        <TouchableOpacity
-          onPress={() => navigate('LoanDetail', { item })}>
-          <View style={styles.row}>
-            <Text numberOfLines={1} h3 style={{ width: '60%' }}>
-              {item?.name}
-            </Text>
-            <Text
-              numberOfLines={1}
-              h3
-              style={{
-                color: taken - given >= 0 ? red : greenDark,
-              }}>
-              {currencyFormat(given - taken)}
-            </Text>
-          </View>
-            {/* <View style={{ flexDirection: 'row' }}>
+      <TouchableOpacity
+        style={styles.list}
+        onPress={() => navigate('LoanDetail', { item })}>
+        <View style={styles.row}>
+          <Text numberOfLines={1} h3 style={{ width: '60%' }}>
+            {item?.name}
+          </Text>
+          <Text
+            numberOfLines={1}
+            h3
+            style={{
+              color: taken - given <= 0 ? red : greenDark,
+            }}>
+            {currencyFormat(taken - given)}
+          </Text>
+        </View>
+        {/* <View style={{ flexDirection: 'row' }}>
               <Button
               />
               <Button
@@ -88,18 +88,17 @@ export default function LoanList() {
               }
               />
             </View> */}
-            <View style={{alignSelf:"flex-end"}}>
-            <Text
-              numberOfLines={1}
-              h3
-              style={{
-                color: taken - given >= 0 ? red : greenDark,
-              }}>
-              {taken - given >= 0 ? strings.give : strings.receive}
-            </Text>
-          </View>
-        </TouchableOpacity>
-      </View>
+        <View style={{ alignSelf: "flex-end" }}>
+          <Text
+            numberOfLines={1}
+            h3
+            style={{
+              color: taken - given <= 0 ? red : greenDark,
+            }}>
+            {taken - given <= 0 ? strings.give : strings.receive}
+          </Text>
+        </View>
+      </TouchableOpacity>
     );
   };
 
@@ -121,11 +120,13 @@ export default function LoanList() {
 }
 const styles = StyleSheet.create({
   list: {
-    borderRadius: 10,
-    // elevation: 3,
-    paddingVertical: 10,
-    width: '100%',
-    alignSelf: 'center',
+    borderRadius: 5,
+    elevation: 3,
+    backgroundColor: white,
+    paddingHorizontal: 10,
+    padding: 5,
+    margin: '1%',
+    width: '98%',
   },
   row: {
     flexDirection: 'row',
@@ -133,7 +134,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     width: '100%',
     marginVertical: 5,
-    
+
   },
   icon: {
     elevation: 1,

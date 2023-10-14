@@ -16,7 +16,7 @@ import { goBack } from 'src/navigation/ref';
 import Header from '../../components/header';
 import Icon from '../../components/icon';
 import auth from '@react-native-firebase/auth';
-import { gray10, gray3, green } from '../../utils/color';
+import { black, gray10, gray3, green } from '../../utils/color';
 import { useLoan } from '../../context/loanContext';
 import { submitLoan, updateLoan } from '../../network/loan-service';
 import { currencyInput } from '../../utils/dateformat';
@@ -63,7 +63,7 @@ export default function AddCredit() {
         ToastError(strings.credit_amount);
       } else {
         setLoading(true);
-        await updateLoan({ ...data, date: currentStamp(date), })
+        await updateLoan({ ...data, date: currentStamp(date) });
         setLoading(false);
         ToastSuccess(strings.given_amount_added);
         goBack();
@@ -78,14 +78,14 @@ export default function AddCredit() {
     try {
       if (amount.trim() == '' || amount <= 0) {
         ToastError(strings.credit_amount);
-        // return   
+        // return
       } else {
         setLoading(true);
-        await submitLoan({ ...data, date: currentStamp(date), })
+        await submitLoan({ ...data, date: currentStamp(date) });
         setLoading(false);
         ToastSuccess(strings.given_amount_added);
         goBack();
-      };
+      }
     } catch (error) {
       setLoading(false);
       ToastError(error?.message);
@@ -99,19 +99,20 @@ export default function AddCredit() {
       <Header
         style={{ marginTop: 10 }}
         leftComponent={
-          <Icon
-            name="back"
-            size={28}
-            color={green}
-            onPress={() => goBack()}
-          />
+          <Icon name="back" size={28} color={black} onPress={() => goBack()} />
         }
-        centerComponent={<Text h2 style={{color:green,fontWeight:"bold"}}>{editData?.type == 'debt' ? editData?.receiver : editData.giver}</Text>}
+        centerComponent={
+          <Text h2 style={{ color: black }}>
+            {editData?.type == 'debt' ? editData?.receiver : editData.giver}
+          </Text>
+        }
         rightComponent={<Text h2> </Text>}
       />
-      <ScrollView style={styles.form} keyboardShouldPersistTaps='handled'>
+      <ScrollView style={styles.form} keyboardShouldPersistTaps="handled">
         <Input
-          label={editData?.type == 'debt' ? strings.amount : strings.taken_amount}
+          label={
+            editData?.type == 'debt' ? strings.amount : strings.taken_amount
+          }
           placeholder={'Rs'}
           value={currencyInput(amount)}
           autoFocus
@@ -141,7 +142,7 @@ export default function AddCredit() {
             {dateFormat(date)}
           </Text>
         </TouchableOpacity>
-    
+
         <DateTimePick
           show={showDate}
           setShow={setShowDate}

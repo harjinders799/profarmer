@@ -44,7 +44,7 @@ export default function GroupDetail() {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [isSearchActive, setSearchActive] = useState(false);
-  const { user } = useAuth();
+    const { user } = useAuth();
     console.log(data)
     useFocusEffect(
         useCallback(() => {
@@ -58,7 +58,7 @@ export default function GroupDetail() {
             setLoading(true);
             let data = await getPickerFinal(db);
             setData(
-                filter(data, o => (name != 'null' ? o?.gname == name : !o?.gname)),
+                filter(data, o => (name != 'null' ? o?.gname == name : !o?.gname || o?.gname == 'null')),
             );
             setLoading(false);
         } catch (error) {
@@ -66,7 +66,7 @@ export default function GroupDetail() {
             ToastError(error?.message, 'Picker');
         }
     };
-    let pickerExpenseData = pickerExpense.filter(o => data?.picker === o.picker);
+
     const RenderItem = memo(({ item }) => {
         const todayWeight =
             sumBy(
@@ -227,41 +227,41 @@ export default function GroupDetail() {
                   </div>
                   <h2 style="color:green;">${strings.group_name}: ${name != 'null' ? name : strings.other}</h2>
               </div>
-             ${data.map(data =>{
-    let pickerData = pickerWeight.filter(o => data?.picker === o.picker);
-    let pickerExpenseData = pickerExpense.filter(o => data?.picker === o.picker);
-    let amount =
-    sumBy(
-      pickerData,
-      o =>
-        parseFloat(o.weight) * (parseFloat(o.rate)),
-    ) - sumBy(pickerExpenseData, o => parseFloat(o.amount));
-return(
-    `<div class="picker">
+             ${data.map(data => {
+            let pickerData = pickerWeight.filter(o => data?.picker === o.picker);
+            let pickerExpenseData = pickerExpense.filter(o => data?.picker === o.picker);
+            let amount =
+                sumBy(
+                    pickerData,
+                    o =>
+                        parseFloat(o.weight) * (parseFloat(o.rate)),
+                ) - sumBy(pickerExpenseData, o => parseFloat(o.amount));
+            return (
+                `<div class="picker">
               <div>
               <h2 style="color:red;">${strings.picker_name}: ${data?.picker}</h2>
               </div>
               <div style="display: flex; justify-content: space-between;">
                   <div>
                       <h3>${strings.total_weight}: ${sumBy(pickerData, o =>
-            parseFloat(o.weight),
-        )} Kg</h3>
+                    parseFloat(o.weight),
+                )} Kg</h3>
             <h3>${strings.given_amount}: ${currencyFormat(
-            sumBy(pickerExpenseData, o => parseFloat(o.amount)),
-        )}</h3>
+                    sumBy(pickerExpenseData, o => parseFloat(o.amount)),
+                )}</h3>
               </div>
               <div>
               <h3>${strings.total_amount} (${strings.weight}*${strings.enter_rate
-            }):  ${currencyFormat(
-                sumBy(
-                    pickerData,
-                    o =>
-                        parseFloat(o.weight) * parseFloat(o.rate),
-                ),
-            )}</h3>
+                }):  ${currencyFormat(
+                    sumBy(
+                        pickerData,
+                        o =>
+                            parseFloat(o.weight) * parseFloat(o.rate),
+                    ),
+                )}</h3>
                       <h3>${strings.final}: ${currencyFormat(
-                      !isNaN(amount) ? amount : 0,
-                        )}</h3>
+                    !isNaN(amount) ? amount : 0,
+                )}</h3>
                   </div>
               </div>
         
@@ -276,20 +276,20 @@ return(
                       <th style="width:30%">${strings.remark}</th>
                   </tr>
                  ${pickerData.map(record =>
-                record?.weight == '0'
-                    ? null
-                    : `<tr>
+                    record?.weight == '0'
+                        ? null
+                        : `<tr>
                       <td style="width:15%">${dateFormat(record?.date)}</td>
                       <td style="width:10%">${currencyFormat(
-                         record?.rate,
-                    )}</td>
+                            record?.rate,
+                        )}</td>
                       <td style="width:10%">${record?.weight}Kg</td>
                       <td style="width:15%">${currencyFormat(
-                         record?.rate * record?.weight,
-                    )}</td>
+                            record?.rate * record?.weight,
+                        )}</td>
                       <td style="width:30%">${record?.detail}</td>
                   </tr>`,
-            )}
+                )}
               </table>
               <h2>${strings.pickers_amounts}</h2>
               <table style="width:100%">
@@ -299,15 +299,16 @@ return(
                       <th>${strings.remark}</th>
                   </tr>
                   ${pickerExpenseData.map(
-                amount =>
-                    `<tr>
+                    amount =>
+                        `<tr>
                       <td id="date">${dateFormat(amount?.date)}</td>
                       <td>${currencyFormat(amount?.amount)}</td>
                       <td>${amount?.detail}</td>
                   </tr>`,
-            )}
+                )}
               </table>
-        </div>`)})}
+        </div>`)
+        })}
           </body>
         </html>
           `;

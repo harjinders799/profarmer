@@ -3,6 +3,9 @@ import moment from 'moment';
 export const dateFormat = value => {
   return moment(value).format('DD/MM/YY');
 };
+export const dateTimeFormat = value => {
+  return moment(value).format('DD/MM/YY hh:mm A');
+};
 export const currentStamp = value => {
   return moment(value).valueOf();
 };

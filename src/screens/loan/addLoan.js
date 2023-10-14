@@ -23,6 +23,7 @@ import Loader from 'src/components/loader';
 import { useStore } from 'src/context/context';
 import { ToastError, ToastSuccess } from 'src/utils/toast';
 import { submitLoan, updateLoan, updateLoanName, updateReceiver } from '../../network/loan-service';
+import { black } from '../../utils/color';
 
 
 
@@ -104,7 +105,7 @@ export default function AddLoan() {
           <Icon
             name="back"
             size={28}
-            color={colors.text}
+            color={black}
             onPress={() => goBack()}
           />
         }
