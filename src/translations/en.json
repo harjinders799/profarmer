@@ -132,6 +132,25 @@
 "taken_amount_with_interest":"Taken Amount With Interset",
 
 
+"description":"Description",
+"title":"Title",
+"add_event":"Add Event",
+"cotton":"Cotton",
+"rice":"Rice",
+"wheat":"Wheat",
+"maize":"Maize",
+"barley":"Barley",
+"millet":"Millet",
+"guar":"Guar",
+"mustard":"Mustard",
+"orange":"Orange",
+"vegetable":"Vegetable",
+"fruit":"Fruit",
+"other":"Other",
+"crop_added":"Crop Added",
+
+
+
   "labour_name": "Labour's Name",
   "add_labour": "Add Labour",
   "labour_count": "How Many Labours",

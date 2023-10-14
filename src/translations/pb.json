@@ -129,6 +129,26 @@
 "given_amount_with_interest":"ਦਿੱਤੀ ਗਈ ਰਕਮ ਵਿਆਜ ਸਮੇਤ",
 "taken_amount_with_interest":"ਲਈ  ਗਈ ਰਕਮ ਵਿਆਜ ਸਮੇਤ",
 
+
+
+"description":"ਵੇਰਵਾ",
+"title":"ਸਿਰਲੇਖ",
+"add_event":"ਪ੍ਰੋਗਰਾਮ ਸ਼ਾਮਲ ਕਰੋ ",
+"cotton":"ਨਰਮਾ ",
+"rice":"ਝੋਨਾ",
+"wheat":"ਕਣਕ",
+"maize":"ਮੱਕੀ",
+"barley":"ਜੌਂ",
+"millet":"ਬਾਜਰਾ",
+"guar":"ਗਵਾਰਾ",
+"mustard":"ਸਰ੍ਹੋਂ",
+"orange":"ਸੰਤਰਾ",
+"vegetable":"ਸਬਜ਼ੀ",
+"fruit":"ਫਲ",
+"other":"ਹੋਰ",
+"crop_added":"ਫਸਲ ਜੋੜੀ ਗਈ",
+
+
   "labour_name": "ਮਜ਼ਦੂਰ ਦਾ ਨਾਮ",
   "add_labour": "ਮਜ਼ਦੂਰ ਜੋੜੋ",
   "labour_count": "ਕਿੰਨੇ ਮਜ਼ਦੂਰ ਹਨ",

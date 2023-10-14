@@ -16,6 +16,7 @@ import PickerStack from './pickerStack';
 import { isIOS } from '../utils/constant';
 import { PixelRatio } from 'react-native';
 import LoanStack from './loanStack';
+import Timeline from '../screens/timeline';
 
 const Tab = createBottomTabNavigator();
 
@@ -28,7 +29,7 @@ export default function Tabs() {
       id: 1,
       name: 'Picker',
       title: strings.pickers,
-      component: PickerStack,
+      component: Timeline,
       icon: "flower-poppy",
       iconType: 'MaterialCommunityIcons',
     },
