@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import BaseView from 'src/container/base';
 import Text from 'src/components/text';
 import {
@@ -10,31 +10,31 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {green, red, white} from 'src/utils/color';
+import { green, red, white } from 'src/utils/color';
 import moment from 'moment';
-import {sortBy, groupBy, sumBy} from 'lodash';
+import { sortBy, groupBy, sumBy } from 'lodash';
 import {
   useFocusEffect,
   useIsFocused,
   useRoute,
   useTheme,
 } from '@react-navigation/native';
-import {strings} from 'src/translations/locale';
+import { strings } from 'src/translations/locale';
 import Button from 'src/components/button';
 import GiverDetailAction from 'src/components/giverDetailAction';
 import Header from '../../components/header';
 import Icon from '../../components/icon';
-import {goBack} from '../../navigation/ref';
-import {currencyFormat} from '../../utils/dateformat';
-import {ToastError, ToastProgress} from '../../utils/toast';
+import { goBack } from '../../navigation/ref';
+import { currencyFormat } from '../../utils/dateformat';
+import { ToastError, ToastProgress } from '../../utils/toast';
 import Loader from 'src/components/loader';
-import {dateFormat} from 'src/utils/dateformat';
-import {navigate, replace} from 'src/navigation/ref';
+import { dateFormat } from 'src/utils/dateformat';
+import { navigate, replace } from 'src/navigation/ref';
 import RNHTMLtoPDF from 'react-native-html-to-pdf';
-import {useAuth} from '../../context/authContext';
-import {useLang} from 'src/context/langContext';
+import { useAuth } from '../../context/authContext';
+import { useLang } from 'src/context/langContext';
 
-import {deleteLoanCollection} from '../../network/loan-service';
+import { deleteLoanCollection } from '../../network/loan-service';
 
 import {
   aqua,
@@ -61,24 +61,24 @@ import {
   yellowLight,
 } from '../../utils/color';
 import Share from 'react-native-share';
-import {useLoan} from '../../context/loanContext';
-import {getLoanData} from '../../network/loan-service';
+import { useLoan } from '../../context/loanContext';
+import { getLoanData } from '../../network/loan-service';
 import LoanDetailAction from '../../components/loanDetailAction';
 import auth from '@react-native-firebase/auth';
-import {getTotalInterst} from '../../utils/helper';
+import { getTotalInterst } from '../../utils/helper';
 
 const transparent = 'rgba(0,0,0,0.5)';
 
 export default function LoanDetail() {
-  const {user} = useAuth();
-  const {params} = useRoute();
+  const { user } = useAuth();
+  const { params } = useRoute();
   const data = params?.item ?? {};
   const [loading, setLoading] = useState(false);
-  const {loanData = [], getLoan} = useLoan();
+  const { loanData = [], getLoan } = useLoan();
   const isFocused = useIsFocused();
   const personName = data?.name;
 
-  const {amount, interest_rate} = data;
+  const { amount, interest_rate } = data;
 
   useFocusEffect(
     useCallback(() => {
@@ -160,9 +160,9 @@ export default function LoanDetail() {
               <Loader visible={loading} />
               <Button
                 label={strings.delete}
-                btnStyle={{width: '40%', backgroundColor: red}}
+                btnStyle={{ width: '40%', backgroundColor: red }}
                 size={30}
-                style={{color: red, display: __DEV__ ? 'flex' : 'none'}}
+                style={{ color: red, display: __DEV__ ? 'flex' : 'none' }}
                 onPress={async () => {
                   try {
                     setLoading(true);
@@ -178,7 +178,7 @@ export default function LoanDetail() {
               />
               <Button
                 label={strings.cancel}
-                btnStyle={{width: '40%', backgroundColor: gray4}}
+                btnStyle={{ width: '40%', backgroundColor: gray4 }}
                 size={30}
                 onPress={() => setopenModal(false)}
               />
@@ -259,40 +259,22 @@ td {
       <th>${strings.remark}</th>
   </tr>
   ${sortBy(groupedData, (a, b) => moment(b?.date) - moment(a?.date)).map(
-    record => {
-      let date = moment(record?.date).format('YYYY-MM-DD');
-      let start_date = moment(date);
-      let today = moment();
-      let days = today.diff(start_date, 'days');
-      let interest = (
-        ((parseFloat(record?.amount) * (parseFloat(interest_rate) / 100)) /
-          30) *
-        parseInt(days)
-      ).toFixed(2);
-      let final_amount = parseFloat(record?.amount) + parseFloat(interest);
-      let givenAmount =
-        record.giver === auth().currentUser.uid
-          ? currencyFormat(record?.amount)
-          : '-';
-      let takenAmount =
-        record.receiver === auth().currentUser.uid
-          ? currencyFormat(record?.amount)
-          : '-';
+      record => {
 
-//       return `<tr>
-//     <td>${dateFormat(record?.date)}</td>
-//     <td>${days}</td> 
-//     <td>${currencyFormat(parseFloat(interest))}</td>  
-//         <td>${givenAmount}</td>
-//     <td>${takenAmount}</td>
-//     <td>${currencyFormat(final_amount)}
-//     </td>
-//     <td>${record?.detail}</td>
-//       </tr>`;
-//     },
-//   )}
-//   </table>
-  
+        //       return `<tr>
+        //     <td>${dateFormat(record?.date)}</td>
+        //     <td>${days}</td> 
+        //     <td>${currencyFormat(parseFloat(interest))}</td>  
+        //         <td>${givenAmount}</td>
+        //     <td>${takenAmount}</td>
+        //     <td>${currencyFormat(final_amount)}
+        //     </td>
+        //     <td>${record?.detail}</td>
+        //       </tr>`;
+        //     },
+        //   )}
+        //   </table>
+
         let date = moment(record?.date).format('YYYY-MM-DD');
         let start_date = moment(date);
         let today = moment();
@@ -344,7 +326,7 @@ td {
       <Header
         style={styles.header}
         leftComponent={
-          <View style={{flexDirection: 'row'}}>
+          <View style={{ flexDirection: 'row' }}>
             <Icon
               name="back"
               size={28}
@@ -354,12 +336,12 @@ td {
           </View>
         }
         centerComponent={
-          <Text h2 style={{color: white,fontWeight:"bold"}}>
+          <Text h2 style={{ color: white, fontWeight: "bold" }}>
             {data?.name}
           </Text>
         }
         rightComponent={
-          <View style={{flexDirection: 'row'}}>
+          <View style={{ flexDirection: 'row' }}>
             <Icon
               name="edit"
               size={25}
@@ -374,9 +356,9 @@ td {
                 marginRight: 15,
               }}
               onPress={onShare}
-              // onPress={() => {
-              //   ToastProgress(strings.in_progress)
-              // }}
+            // onPress={() => {
+            //   ToastProgress(strings.in_progress)
+            // }}
             />
 
             <TouchableOpacity
@@ -413,45 +395,45 @@ td {
             {currencyFormat(givenAmountWithInterest)}
           </Text>
         </View> */}
-        <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-          <View style={[styles.card, {backgroundColor: gray1}]}>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+          <View style={[styles.card, { backgroundColor: gray1 }]}>
             <Text h4 style={styles.cardtext}>
               {strings.taken_amount}
             </Text>
-            <Text h3 style={{color: greenDark, fontWeight: 'bold'}}>
+            <Text h3 style={{ color: greenDark, fontWeight: 'bold' }}>
               {currencyFormat(takenAmount)}
             </Text>
           </View>
-          <View style={[styles.card, {backgroundColor: gray1}]}>
+          <View style={[styles.card, { backgroundColor: gray1 }]}>
             <Text h4 style={styles.cardtext}>
               {strings.given_amount}
             </Text>
-            <Text h3 style={{color: lightRed, fontWeight: 'bold'}}>
+            <Text h3 style={{ color: lightRed, fontWeight: 'bold' }}>
               {currencyFormat(givenAmount)}
             </Text>
           </View>
         </View>
 
-        <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-          <View style={[styles.card, {backgroundColor: gray1}]}>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+          <View style={[styles.card, { backgroundColor: gray1 }]}>
             <Text h4 style={styles.cardtext}>
               {strings.total_interest}
             </Text>
-            <Text h3 style={{color: greenDark, fontWeight: 'bold'}}>
+            <Text h3 style={{ color: greenDark, fontWeight: 'bold' }}>
               {currencyFormat(takenInterest)}
             </Text>
           </View>
-          <View style={[styles.card, {backgroundColor: gray1}]}>
+          <View style={[styles.card, { backgroundColor: gray1 }]}>
             <Text h4 style={styles.cardtext}>
               {strings.total_interest}
             </Text>
-            <Text h3 style={{color: lightRed, fontWeight: 'bold'}}>
+            <Text h3 style={{ color: lightRed, fontWeight: 'bold' }}>
               {currencyFormat(givenInterest)}
             </Text>
           </View>
         </View>
 
-        <View style={[styles.cardfinal, {backgroundColor: gray1}]}>
+        <View style={[styles.cardfinal, { backgroundColor: gray1 }]}>
           <Text h3>{strings.final}</Text>
           <Text h3>{currencyFormat(finalAmount)}</Text>
         </View>
@@ -476,8 +458,8 @@ td {
           </Text> */}
       </View>
       <ScrollView
-        style={{width: '100%'}}
-        contentContainerStyle={{paddingBottom: '100%'}}
+        style={{ width: '100%' }}
+        contentContainerStyle={{ paddingBottom: '100%' }}
         showsVerticalScrollIndicator={false}>
         {Array.isArray(groupedData) && groupedData.length ? (
           sortBy(groupedData, (a, b) => moment(b?.date) - moment(a?.date)).map(

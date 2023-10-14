@@ -32,20 +32,20 @@ export const getLoanData = () => {
       })
       .catch(error => {
         reject(new Error(error));
-      }
-    });
-  };
-                     
-  export const deleteLoan = async id => {
-    return new Promise(async function (resolve, reject) {
-      try {
-        await firestore().collection('loan').doc(id).delete();
-        resolve('success');
-      } catch (error) {
-        reject(new Error(error));
-      }
-    });
-  };
+      })
+  });
+};
+
+export const deleteLoan = async id => {
+  return new Promise(async function (resolve, reject) {
+    try {
+      await firestore().collection('loan').doc(id).delete();
+      resolve('success');
+    } catch (error) {
+      reject(new Error(error));
+    }
+  });
+};
 
 export const updateLoan = async data => {
   return new Promise(async function (resolve, reject) {
@@ -58,32 +58,32 @@ export const updateLoan = async data => {
     }
   });
 };
-export const updateLoanName = async (name,data) => {
+export const updateLoanName = async (name, data) => {
   return new Promise(async function (resolve, reject) {
     let userId = Auth().currentUser?.uid;
     try {
-        const usersQuerySnapshot = await firestore().collection('loan').where(
-          firestore.Filter.or(
-            firestore.Filter.and(firestore.Filter('giver', '==', userId), firestore.Filter('receiver', '==', name)),
-            firestore.Filter.and(firestore.Filter('giver', '==', name), firestore.Filter('receiver', '==', userId)),
-          ),
-        ).get();
-      console.log(usersQuerySnapshot,'-----usersQuerySnapshot',name)
-        // Create a new batch instance
-        const batch = firestore().batch();
-      
-        usersQuerySnapshot.forEach(documentSnapshot => {
-          batch.update(documentSnapshot.ref,{
-            giver:documentSnapshot.data()?.giver==userId?
-            userId:data?.receiver,
-            receiver:documentSnapshot.data().receiver == userId?userId:data?.receiver,
-            interest_rate:data?.interest_rate,
-            phone:data?.phone
-          });
+      const usersQuerySnapshot = await firestore().collection('loan').where(
+        firestore.Filter.or(
+          firestore.Filter.and(firestore.Filter('giver', '==', userId), firestore.Filter('receiver', '==', name)),
+          firestore.Filter.and(firestore.Filter('giver', '==', name), firestore.Filter('receiver', '==', userId)),
+        ),
+      ).get();
+      console.log(usersQuerySnapshot, '-----usersQuerySnapshot', name)
+      // Create a new batch instance
+      const batch = firestore().batch();
+
+      usersQuerySnapshot.forEach(documentSnapshot => {
+        batch.update(documentSnapshot.ref, {
+          giver: documentSnapshot.data()?.giver == userId ?
+            userId : data?.receiver,
+          receiver: documentSnapshot.data().receiver == userId ? userId : data?.receiver,
+          interest_rate: data?.interest_rate,
+          phone: data?.phone
         });
-      
-         batch.commit();
-      
+      });
+
+      batch.commit();
+
       resolve('success')
     } catch (error) {
       reject(new Error(error));
@@ -92,35 +92,35 @@ export const updateLoanName = async (name,data) => {
 };
 
 
-export const deleteLoanCollection = async (name,data) => {
+export const deleteLoanCollection = async (name, data) => {
   return new Promise(async function (resolve, reject) {
-  let userId = Auth().currentUser?.uid;
-  try {
+    let userId = Auth().currentUser?.uid;
+    try {
 
-    const usersQuerySnapshot = await firestore().collection('loan').where(
-      firestore.Filter.or(
-        firestore.Filter.and(firestore.Filter('giver', '==', userId), firestore.Filter('receiver', '==', name)),
-        firestore.Filter.and(firestore.Filter('giver', '==', name), firestore.Filter('receiver', '==', userId)),
-      ),
-    ).get();
-    console.log(usersQuerySnapshot,'-----usersQuerySnapshot',name)
-    // Create a new batch instance
-    const batch = firestore().batch();
-  
-    usersQuerySnapshot.forEach(documentSnapshot => {
-      batch.delete(documentSnapshot.ref,{
-        giver:documentSnapshot.data()?.giver==userId?
-        userId:data?.receiver,
-        receiver:documentSnapshot.data().receiver == userId?userId:data?.receiver,
+      const usersQuerySnapshot = await firestore().collection('loan').where(
+        firestore.Filter.or(
+          firestore.Filter.and(firestore.Filter('giver', '==', userId), firestore.Filter('receiver', '==', name)),
+          firestore.Filter.and(firestore.Filter('giver', '==', name), firestore.Filter('receiver', '==', userId)),
+        ),
+      ).get();
+      console.log(usersQuerySnapshot, '-----usersQuerySnapshot', name)
+      // Create a new batch instance
+      const batch = firestore().batch();
+
+      usersQuerySnapshot.forEach(documentSnapshot => {
+        batch.delete(documentSnapshot.ref, {
+          giver: documentSnapshot.data()?.giver == userId ?
+            userId : data?.receiver,
+          receiver: documentSnapshot.data().receiver == userId ? userId : data?.receiver,
+        });
+        console.log('-----------',)
       });
-      console.log('-----------',)
-    });
-  
-     batch.commit();
-  
-  resolve('success')
-  } catch (error) {
-    throw new Error(error);
-  }
-});
+
+      batch.commit();
+
+      resolve('success')
+    } catch (error) {
+      throw new Error(error);
+    }
+  });
 };
