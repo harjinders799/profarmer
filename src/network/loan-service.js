@@ -33,7 +33,8 @@ export const getLoanData = () => {
       .catch(error => {
         reject(new Error(error));
       }
-    });
+      );
+    })
   };
                      
   export const deleteLoan = async id => {

@@ -40,7 +40,6 @@ import AddLoan from '../screens/loan/addLoan';
 import AddCredit from '../screens/loan/addCredit';
 import LoanDetail from '../screens/loan/loanDetail';
 import LoanUpdate from '../screens/loan/loanUpdate';
-import GroupDetail from '../screens/picker/groupDetail';
 import PinSecurity from '../screens/auth/pinSecurity';
 import LocalAuth from '../screens/auth/localAuth';
 import AddEvent from '../screens/timeline/addEvent';

@@ -260,25 +260,6 @@ td {
   </tr>
   ${sortBy(groupedData, (a, b) => moment(b?.date) - moment(a?.date)).map(
     record => {
-      let date = moment(record?.date).format('YYYY-MM-DD');
-      let start_date = moment(date);
-      let today = moment();
-      let days = today.diff(start_date, 'days');
-      let interest = (
-        ((parseFloat(record?.amount) * (parseFloat(interest_rate) / 100)) /
-          30) *
-        parseInt(days)
-      ).toFixed(2);
-      let final_amount = parseFloat(record?.amount) + parseFloat(interest);
-      let givenAmount =
-        record.giver === auth().currentUser.uid
-          ? currencyFormat(record?.amount)
-          : '-';
-      let takenAmount =
-        record.receiver === auth().currentUser.uid
-          ? currencyFormat(record?.amount)
-          : '-';
-
 //       return `<tr>
 //     <td>${dateFormat(record?.date)}</td>
 //     <td>${days}</td> 
