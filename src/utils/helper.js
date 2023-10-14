@@ -1,4 +1,5 @@
 import moment from "moment";
+import { WIDTH } from "./constant";
 
 export const getTotalInterst = (data = [],) => {
     let tot_interest = 0;
@@ -32,3 +33,22 @@ export const getInterst = (data = [],) => {
     });
     return tot_interest;
 }
+
+const COL = 4;
+export const MARGIN = 8;
+export const SIZE = WIDTH / 4.2;
+
+export const getPosition = index => {
+    'worklet';
+    return {
+        x: (index % COL) * SIZE,
+        y: Math.floor(index / COL) * SIZE * 2,
+    };
+};
+
+export const getOrder = (x, y) => {
+    'worklet';
+    const row = Math.round(y / SIZE);
+    const col = Math.round(x / SIZE);
+    return row * COL + col;
+};

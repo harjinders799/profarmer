@@ -17,6 +17,7 @@ import { AadtProvider } from './src/context/aadtContext';
 import { LoanProvider } from './src/context/loanContext';
 import { TimelineProvider } from './src/context/timeContext';
 import firestore from '@react-native-firebase/firestore';
+import { TabProvider } from './src/context/tabContext';
 
 export default function App() {
   const [version, setVersion] = useState();
@@ -59,21 +60,23 @@ export default function App() {
           <Text h3>{strings.new_version}</Text>
         </ScrollView>
       </Modal>
-      <AuthProvider>
-        <StoreProvider>
-          <CottonProvider>
-            <AadtProvider>
-              <LoanProvider>
-                <TimelineProvider>
-                  <LangProvider>
-                    <Navigation />
-                  </LangProvider>
-                </TimelineProvider>
-              </LoanProvider>
-            </AadtProvider>
-          </CottonProvider>
-        </StoreProvider>
-      </AuthProvider>
+      <TabProvider>
+        <AuthProvider>
+          <StoreProvider>
+            <CottonProvider>
+              <AadtProvider>
+                <LoanProvider>
+                  <TimelineProvider>
+                    <LangProvider>
+                      <Navigation />
+                    </LangProvider>
+                  </TimelineProvider>
+                </LoanProvider>
+              </AadtProvider>
+            </CottonProvider>
+          </StoreProvider>
+        </AuthProvider>
+      </TabProvider>
       <FlashMessage position="top" />
     </SafeAreaProvider>
   );

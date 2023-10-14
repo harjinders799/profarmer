@@ -44,6 +44,7 @@ import PinSecurity from '../screens/auth/pinSecurity';
 import LocalAuth from '../screens/auth/localAuth';
 import AddEvent from '../screens/timeline/addEvent';
 import TimeDetail from '../screens/timeline/timeDetail';
+import Customize from '../screens/settings/customize';
 
 const Stack = createNativeStackNavigator();
 
@@ -172,6 +173,7 @@ export default function Stacks() {
       <Stack.Screen name="ContactUs" component={ContactUs} />
       <Stack.Screen name="SalectLanguage" component={SalectLanguage} />
       <Stack.Screen name="EditProfile" component={EditProfile} />
+      <Stack.Screen name="Customize" component={Customize} />
     </Stack.Navigator>
   );
 }

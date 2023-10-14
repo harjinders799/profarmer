@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useTheme } from '@react-navigation/native';
@@ -17,55 +17,18 @@ import { isIOS } from '../utils/constant';
 import { PixelRatio } from 'react-native';
 import LoanStack from './loanStack';
 import Timeline from '../screens/timeline';
+import { useTab } from '../context/tabContext';
 
 const Tab = createBottomTabNavigator();
 
 export default function Tabs() {
   const { colors } = useTheme();
   const { lang } = useLang();
-
-  const bottomTabs = [
-    {
-      id: 1,
-      name: 'Picker',
-      title: strings.pickers,
-      component: PickerStack,
-      icon: "flower-poppy",
-      iconType: 'MaterialCommunityIcons',
-    },
-    {
-      id: 2,
-      name: 'LabourStack',
-      title: strings.labour,
-      component: LabourStack,
-      icon: 'solution1',
-    },
-    {
-      id: 3,
-      name: 'CottonStack',
-      title: strings.aadhtiya,
-      component: CottonStack,
-      icon: 'shopping-store',
-      iconType: 'Fontisto',
-    },
-    {
-      id: 4,
-      name: 'LoanStack',
-      title: strings.loan,
-      component: LoanStack,
-      icon: 'sack-percent',
-      iconType: 'MaterialCommunityIcons',
-    },
-    {
-      id: 5,
-      name: 'SettingStack',
-      title: strings.settings,
-      component: SettingStack,
-      icon: 'setting',
-    },
-  ];
-
-
+  const { tabs, getTab } = useTab()
+  useEffect(() => {
+    // getTab()
+  }, [tabs])
+  console.log('-------tav-------tab-------')
   return (
     <Tab.Navigator
       // tabBar={props => <AnimatedTabBar {...props} />}
@@ -85,7 +48,7 @@ export default function Tabs() {
       }}
 
     >
-      {bottomTabs.map(value => {
+      {Array.isArray(tabs) && tabs.slice(0, 4).map(value => {
         return (
           <Tab.Screen
             key={value.id}
