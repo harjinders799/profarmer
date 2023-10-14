@@ -71,11 +71,11 @@ export default function Picker() {
         if (pdata == undefined || (Array.isArray(pdata) && pdata.length == 0)) {
           let wt = await getPickerData();
           if (Array.isArray(wt) && wt.length) {
-            wt.map((o, i) => ({ ...o, id: i + 1 }));
-            await savePickerData(db, wt);
+            let data = wt.map((o, i) => ({ ...o, id: i + 1 }));
+            await savePickerData(db, data);
             let grp = await getPickerGroup();
             let promise = grp.map(o =>
-              o?.pickers.map(
+              Array.isArray(o.pickers) && o.pickers.map(
                 async picker =>
                   await updatePickerGid(db, {
                     uid: o?.uid,
@@ -98,8 +98,8 @@ export default function Picker() {
           setLoading(true);
           let ex = await getAllPickerExpense();
           if (Array.isArray(ex) && ex.length) {
-            ex.map((o, i) => ({ ...o, id: i + 1 }));
-            await savePickerExpenseData(db, ex);
+            let data = ex.map((o, i) => ({ ...o, id: i + 1 }));
+            await savePickerExpenseData(db, data);
             await getPickerExpense();
           }
         }

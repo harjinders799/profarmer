@@ -92,7 +92,7 @@ export const savePickerExpenseData = async (db, items) => {
         items
             .map(
                 i =>
-                    `('${i?.id}', '${i?.fid}', '${i?.uid}', '${i?.amount}', '${i?.picker
+                    `(${i?.id}, '${i?.fid}', '${i?.uid}', '${i?.amount}', '${i?.picker
                     }', '${i?.detail}', ${i?.date},'${i?.fid ? 'done' : 'pending'}')`,
             )
             .join(',');

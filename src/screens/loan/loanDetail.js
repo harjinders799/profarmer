@@ -353,7 +353,7 @@ td {
               <Icon
                 name="delete"
                 size={30}
-                color={black}
+                color={white}
                 type="MaterialCommunityIcons"
               />
             </TouchableOpacity>
