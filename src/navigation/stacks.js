@@ -42,6 +42,8 @@ import LoanDetail from '../screens/loan/loanDetail';
 import LoanUpdate from '../screens/loan/loanUpdate';
 import PinSecurity from '../screens/auth/pinSecurity';
 import LocalAuth from '../screens/auth/localAuth';
+import AddEvent from '../screens/timeline/addEvent';
+import TimeDetail from '../screens/timeline/timeDetail';
 
 const Stack = createNativeStackNavigator();
 
@@ -137,6 +139,7 @@ export default function Stacks() {
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Main" component={Tabs} />
       <Stack.Screen name="Setting" component={Setting} />
+      <Stack.Screen name="AddEvent" component={AddEvent} />
       <Stack.Screen name="AddForm" component={AddForm} />
       <Stack.Screen name="CropDetail" component={CropDetail} />
       <Stack.Screen name="AddPicker" component={AddPicker} />
@@ -161,6 +164,7 @@ export default function Stacks() {
       <Stack.Screen name="AddLoan" component={AddLoan} />
       <Stack.Screen name="AddCredit" component={AddCredit} />
       <Stack.Screen name="LoanDetail" component={LoanDetail} />
+      <Stack.Screen name="TimeDetail" component={TimeDetail} />
       <Stack.Screen name="Analysis" component={Analysis} />
       <Stack.Screen name="Group" component={Group} />
       <Stack.Screen name="GroupDetail" component={GroupDetail} />

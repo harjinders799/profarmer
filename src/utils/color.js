@@ -10,6 +10,7 @@ export const gray8 = '#242526'; // gray2 dark
 export const gray10 = '#B0B3B8'; // gray2 dark
 export const gray9 = '#18191A'; // gray2 dark
 export const gray11 = '#E1E3E8'; // gray5 dark
+export const gray = '#808080';
 export const black = '#000000';
 export const blue = '#2196F3';
 export const cyan = '#56CCF2';
@@ -27,12 +28,14 @@ export const lightGreen = '#bee8ba';
 export const lightOrange = '#ffccaa';
 export const lightBlue = '#bbdffc';
 export const greenLight = '#bff5e9';
-export const lightYellow = '#f4f7b5';
+export const lightYellow = '#FFDB58';
 export const peach = '#f7b9b5';
 export const pink = '#de7e95';
 export const  lightRed= '#e34d5c';
 export const  purple= '#ecd4ff';
 export const  yellowLight = '#feffd4';
 export const parrot = '#84f5a0';
+export const darkYellow = '#FFA500';
+export const brown = '#CD853F';
 
 
