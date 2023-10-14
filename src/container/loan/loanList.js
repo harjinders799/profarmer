@@ -26,7 +26,7 @@ export default function LoanList() {
   let data = [];
 
   const groupedData = groupBy(loanData, d =>
-    d?.giver == auth().currentUser.uid ? d?.receiver.trim() : d?.giver.trim(),
+    d?.giver == auth().currentUser.uid ? d?.receiver : d?.giver,
   );
 
   Object.keys(groupedData).map(o => {

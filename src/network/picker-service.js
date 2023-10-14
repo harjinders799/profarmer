@@ -251,12 +251,12 @@ export const getPickerGroup = async () => {
   return new Promise(async function (resolve, reject) {
     try {
       let userId = Auth().currentUser?.uid;
+      let arr = [];
       await firestore()
         .collection('picker_group')
         .where('uid', '==', userId)
         .get()
         .then(querySnapshot => {
-          let arr = [];
           querySnapshot.forEach(documentSnapshot => {
             arr.push({ ...documentSnapshot.data(), id: documentSnapshot.id });
           });
