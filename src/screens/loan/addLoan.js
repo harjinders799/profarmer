@@ -64,7 +64,7 @@ export default function AddLoan() {
     else AddNew();
   };
   const updateWt = async () => {
-    if (receiver == '') {
+    if (!receiver || receiver.trim() == '') {
       ToastError(strings.receiver_name);
     } else if (interest_rate.trim() == '' || parseInt(interest_rate) <= 0) {
       ToastError(strings.interest_rate);
@@ -72,15 +72,15 @@ export default function AddLoan() {
       setLoading(true);
       await updateLoanName(
         editData?.name,
-        data
+        {...data,receiver:receiver.trim()}
       )
       setLoading(false);
-      ToastSuccess(strings.receiver_added);
+      ToastSuccess(strings.update);
       goBack();
     }
   };
   const AddNew = async () => {
-    if (!receiver || interest_rate.trim() == '') {
+    if (!receiver || receiver.trim() == '') {
       ToastError(strings.receiver_name.trim());
       return;
     }
@@ -90,7 +90,7 @@ export default function AddLoan() {
     }
 
     setLoading(true);
-    await submitLoan({ ...data, date: currentStamp(date), })
+    await submitLoan({ ...data,receiver:receiver.trim(), date: currentStamp(date), })
     setLoading(false);
     ToastSuccess(strings.receiver_added);
     goBack();
@@ -109,10 +109,10 @@ export default function AddLoan() {
             onPress={() => goBack()}
           />
         }
-        centerComponent={<Text h2>{strings.add_loan}</Text>}
+        centerComponent={<Text h2>{editData?.name ?  strings.update : strings.add_loan}</Text>}
         rightComponent={<Text h2> </Text>}
       />
-      <ScrollView style={styles.form}>
+      <ScrollView style={styles.form}keyboardShouldPersistTaps="always">
         <Input
           label={strings.name}
           autoFocus

@@ -103,17 +103,16 @@ export const deleteLoanCollection = async (name, data) => {
           firestore.Filter.and(firestore.Filter('giver', '==', name), firestore.Filter('receiver', '==', userId)),
         ),
       ).get();
-      console.log(usersQuerySnapshot, '-----usersQuerySnapshot', name)
       // Create a new batch instance
       const batch = firestore().batch();
 
       usersQuerySnapshot.forEach(documentSnapshot => {
+        console.log('-----------',)
         batch.delete(documentSnapshot.ref, {
           giver: documentSnapshot.data()?.giver == userId ?
             userId : data?.receiver,
           receiver: documentSnapshot.data().receiver == userId ? userId : data?.receiver,
         });
-        console.log('-----------',)
       });
 
       batch.commit();
