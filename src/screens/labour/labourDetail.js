@@ -208,7 +208,6 @@ export default function LabourDetail({ navigation }) {
           <table style="width:100%">
               <tr>
                   <th style="width:15%">${strings.date}</th>
-                  <th style="width:15%">${strings.labour}</th>
                   <th style="width:10%">${strings.total_labour}</th>
                   <th style="width:10%">${strings.labour_rate}</th>
                   <th style="width:15%">${strings.amount}</th>
@@ -219,7 +218,6 @@ export default function LabourDetail({ navigation }) {
         ? null
         : `<tr>
                   <td style="width:15%">${dateFormat(data?.date)}</td>
-                  <td style="width:15%">${data?.labour}</td>
                   <td style="width:10%">${v?.count}
             </td>
                   <td style="width:10%">${currencyFormat(v?.rate)}</td>

@@ -7,14 +7,14 @@ import { navigate, replace } from 'src/navigation/ref';
 import { strings } from 'src/translations/locale';
 import { ToastError, ToastSuccess } from 'src/utils/toast';
 import Loader from './loader';
-import { dateFormat } from 'src/utils/dateformat';
+import { dateTimeFormat } from 'src/utils/dateformat';
 import { useRoute, useTheme } from '@react-navigation/native';
 import moment from 'moment';
 import { deleteLoan } from 'src/network/loan-service';
 import { currencyFormat } from '../utils/dateformat';
 import { goBack } from '../navigation/ref';
 import auth from '@react-native-firebase/auth';
-import { greenDark } from '../utils/color';
+import { gray4, greenDark } from '../utils/color';
 
 export default function LoanDetailAction({ data }) {
   const [loading, setLoading] = React.useState(false);
@@ -33,25 +33,23 @@ export default function LoanDetailAction({ data }) {
     <View style={[styles.list, { display: amount == '0' ? 'none' : 'flex' }]}>
       <TouchableOpacity onPress={() => navigate('LoanUpdate', { data })}>
         <Loader visible={loading} />
-        <Text h4 numberOfLines={1}>
-          {dateFormat(data?.date)}
+        <Text h5 numberOfLines={1} style={{ color: gray4 }}>
+          {dateTimeFormat(data?.date)}
         </Text>
         <View style={[styles.row, { width: '100%' }]}>
-          <Text
-            style={{
-              width: '40%',
-            }}
-            h4>
-            {strings.day} {days}
-            {'\n'}
-            <Text h4>
-              {strings.total_interest}{' '}
-              {currencyFormat(parseFloat(interest) + parseFloat(amount))}
+          <View style={[styles.row, { width: '40%' }]}>
+            {/* {strings.day} {days}
+            {'\n'} */}
+            <Text h5>
+              {'Interest'}
             </Text>
-          </Text>
+            <Text h5>
+              {currencyFormat(parseFloat(interest))}
+            </Text>
+          </View>
           <View style={[styles.row, { width: '40%' }]}>
             <Text
-              h4
+              h5
               style={{
                 width: '100%',
                 textAlign:
@@ -63,7 +61,7 @@ export default function LoanDetailAction({ data }) {
           </View>
         </View>
 
-        <Text h4>{data?.detail}</Text>
+        <Text h5>{data?.detail}</Text>
       </TouchableOpacity>
     </View>
   );

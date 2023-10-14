@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import BaseView from 'src/container/base';
 import Text from 'src/components/text';
 import {
@@ -10,38 +10,38 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {green, red, white} from 'src/utils/color';
+import { green, red, white } from 'src/utils/color';
 import moment from 'moment';
-import {sortBy, groupBy, sumBy} from 'lodash';
+import { sortBy, groupBy, sumBy } from 'lodash';
 import {
   useFocusEffect,
   useIsFocused,
   useRoute,
   useTheme,
 } from '@react-navigation/native';
-import {strings} from 'src/translations/locale';
+import { strings } from 'src/translations/locale';
 import Button from 'src/components/button';
 import GiverDetailAction from 'src/components/giverDetailAction';
 import Header from '../../components/header';
 import Icon from '../../components/icon';
-import {goBack} from '../../navigation/ref';
-import {currencyFormat} from '../../utils/dateformat';
-import {ToastError, ToastProgress} from '../../utils/toast';
+import { goBack } from '../../navigation/ref';
+import { currencyFormat } from '../../utils/dateformat';
+import { ToastError, ToastProgress } from '../../utils/toast';
 import Loader from 'src/components/loader';
-import {dateFormat} from 'src/utils/dateformat';
-import {navigate, replace} from 'src/navigation/ref';
+import { dateFormat } from 'src/utils/dateformat';
+import { navigate, replace } from 'src/navigation/ref';
 import RNHTMLtoPDF from 'react-native-html-to-pdf';
-import {useAuth} from '../../context/authContext';
-import {useLang} from 'src/context/langContext';
+import { useAuth } from '../../context/authContext';
+import { useLang } from 'src/context/langContext';
 
-import {deleteLoanCollection} from '../../network/loan-service';
+import { deleteLoanCollection } from '../../network/loan-service';
 
 import {
   aqua,
+  black,
   blue,
   cyan,
   gray1,
-  gray11,
   gray2,
   gray3,
   gray4,
@@ -61,24 +61,25 @@ import {
   yellowLight,
 } from '../../utils/color';
 import Share from 'react-native-share';
-import {useLoan} from '../../context/loanContext';
-import {getLoanData} from '../../network/loan-service';
+import { useLoan } from '../../context/loanContext';
+import { getLoanData } from '../../network/loan-service';
 import LoanDetailAction from '../../components/loanDetailAction';
 import auth from '@react-native-firebase/auth';
-import {getTotalInterst} from '../../utils/helper';
+import { getTotalInterst } from '../../utils/helper';
 
 const transparent = 'rgba(0,0,0,0.5)';
 
 export default function LoanDetail() {
-  const {user} = useAuth();
-  const {params} = useRoute();
+  const { user } = useAuth();
+  const { params } = useRoute();
   const data = params?.item ?? {};
   const [loading, setLoading] = useState(false);
-  const {loanData = [], getLoan} = useLoan();
+  const { loanData = [], getLoan } = useLoan();
   const isFocused = useIsFocused();
   const personName = data?.name;
+  const [showDetails, setShowDetails] = useState(false);
 
-  const {amount, interest_rate} = data;
+  const { amount, interest_rate } = data;
 
   useFocusEffect(
     useCallback(() => {
@@ -100,7 +101,7 @@ export default function LoanDetail() {
   const takenAmountWithInterest = getTotalInterst(
     groupedData.filter(entry => entry.giver === personName),
   );
-  const finalAmount = givenAmountWithInterest - takenAmountWithInterest;
+  const finalAmount = takenAmountWithInterest - givenAmountWithInterest;
 
   let givenAmount = 0;
   let takenAmount = 0;
@@ -160,9 +161,9 @@ export default function LoanDetail() {
               <Loader visible={loading} />
               <Button
                 label={strings.delete}
-                btnStyle={{width: '40%', backgroundColor: red}}
+                btnStyle={{ width: '40%', backgroundColor: red }}
                 size={30}
-                style={{color: red, display: __DEV__ ? 'flex' : 'none'}}
+                style={{ color: red, display: __DEV__ ? 'flex' : 'none' }}
                 onPress={async () => {
                   try {
                     setLoading(true);
@@ -178,7 +179,7 @@ export default function LoanDetail() {
               />
               <Button
                 label={strings.cancel}
-                btnStyle={{width: '40%', backgroundColor: gray4}}
+                btnStyle={{ width: '40%', backgroundColor: gray4 }}
                 size={30}
                 onPress={() => setopenModal(false)}
               />
@@ -259,27 +260,15 @@ td {
       <th>${strings.remark}</th>
   </tr>
   ${sortBy(groupedData, (a, b) => moment(b?.date) - moment(a?.date)).map(
-    record => {
-//       return `<tr>
-//     <td>${dateFormat(record?.date)}</td>
-//     <td>${days}</td> 
-//     <td>${currencyFormat(parseFloat(interest))}</td>  
-//         <td>${givenAmount}</td>
-//     <td>${takenAmount}</td>
-//     <td>${currencyFormat(final_amount)}
-//     </td>
-//     <td>${record?.detail}</td>
-//       </tr>`;
-//     },
-//   )}
-//   </table>
-  
+      record => {
         let date = moment(record?.date).format('YYYY-MM-DD');
         let start_date = moment(date);
         let today = moment();
         let days = today.diff(start_date, 'days');
         let interest = (
-          ((parseFloat(record?.amount) * (parseFloat(record?.interest_rate) / 100)) / 30) *
+          ((parseFloat(record?.amount) *
+            (parseFloat(record?.interest_rate) / 100)) /
+            30) *
           parseInt(days)
         ).toFixed(2);
 
@@ -290,7 +279,7 @@ td {
                <td>${currencyFormat(record?.amount)}</td>
                <td>${currencyFormat(interest)}</td>
               <td>${currencyFormat(
-          parseFloat(interest) + parseFloat(record?.amount)
+          parseFloat(interest) + parseFloat(record?.amount),
         )}</td>
               <td>${record?.detail}</td>
           </tr>`;
@@ -325,7 +314,7 @@ td {
       <Header
         style={styles.header}
         leftComponent={
-          <View style={{flexDirection: 'row'}}>
+          <View style={{ flexDirection: 'row' }}>
             <Icon
               name="back"
               size={28}
@@ -335,40 +324,36 @@ td {
           </View>
         }
         centerComponent={
-          <Text h2 style={{color: white,fontWeight:"bold"}}>
+          <Text h2 style={{ color: white, fontWeight: 'bold' }}>
             {data?.name}
           </Text>
         }
         rightComponent={
-          <View style={{flexDirection: 'row'}}>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <Icon
               name="edit"
               size={25}
-              style={{ color: white, marginRight: 10 }}
+              style={{ color: white, marginRight: 15 }}
               onPress={() => replace('AddLoan', { data })}
             />
             <Icon
               name="pdffile1"
-              size={25}
+              size={22}
               color={white}
               style={{
                 marginRight: 15,
               }}
               onPress={onShare}
-              // onPress={() => {
-              //   ToastProgress(strings.in_progress)
-              // }}
             />
 
             <TouchableOpacity
               onPress={() => {
                 setopenModal(true);
-                // ToastProgress(strings.in_progress)
               }}>
               <Icon
                 name="delete"
                 size={30}
-                color={white}
+                color={black}
                 type="MaterialCommunityIcons"
               />
             </TouchableOpacity>
@@ -376,89 +361,149 @@ td {
           </View>
         }
       />
-
-      <View style={[styles.row]}>
-        {/* <View style={[styles.card, {borderColor: greenLight}]}>
-          <Text h4 style={styles.text}>
-            {strings.taken_amount_with_interest}
-          </Text>
-          <Text h3 style={{color: lightRed}}>
-            {currencyFormat(takenAmountWithInterest)}
-          </Text>
-        </View>
-        <View style={[styles.card, {borderColor: peach}]}>
-          <Text h4 style={styles.text}>
-            {strings.given_amount_with_interest}
-          </Text>
-          <Text h3 style={{color: green}}>
-            {currencyFormat(givenAmountWithInterest)}
-          </Text>
-        </View> */}
-        <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-          <View style={[styles.card, {backgroundColor: gray1}]}>
-            <Text h4 style={styles.cardtext}>
-              {strings.taken_amount}
+      <View style={[styles.card, { backgroundColor: red }]}>
+        <View style={styles.row}>
+          <View style={{ alignItems: 'flex-start', padding: 10 }}>
+            <Text h3 style={{ color: white, fontWeight: 'bold' }}>
+              {currencyFormat(givenAmount + givenInterest)}
             </Text>
-            <Text h3 style={{color: greenDark, fontWeight: 'bold'}}>
-              {currencyFormat(takenAmount)}
+            <Text h4 style={{ color: white }}>
+              Given
             </Text>
           </View>
-          <View style={[styles.card, {backgroundColor: gray1}]}>
-            <Text h4 style={styles.cardtext}>
-              {strings.given_amount}
-            </Text>
-            <Text h3 style={{color: lightRed, fontWeight: 'bold'}}>
-              {currencyFormat(givenAmount)}
-            </Text>
+          <View style={{ alignItems: 'flex-end' }}>
+            <View style={styles.innerCard}>
+              <Text h3 style={{ color: white, fontWeight: 'bold' }}>
+                {currencyFormat(givenAmount)}
+              </Text>
+              <Text h5 style={{ color: white }}>
+                {strings.taken_amount}
+              </Text>
+            </View>
+            <View
+              style={[
+                styles.innerCard,
+                {
+                  marginTop: 5,
+                },
+              ]}>
+              <Text h3 style={{ color: white, fontWeight: 'bold' }}>
+                {currencyFormat(givenInterest)}
+              </Text>
+              <Text h5 style={{ color: white }}>
+                {strings.interest}
+              </Text>
+            </View>
           </View>
-        </View>
-
-        <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-          <View style={[styles.card, {backgroundColor: gray1}]}>
-            <Text h4 style={styles.cardtext}>
-              {strings.total_interest}
-            </Text>
-            <Text h3 style={{color: greenDark, fontWeight: 'bold'}}>
-              {currencyFormat(takenInterest)}
-            </Text>
-          </View>
-          <View style={[styles.card, {backgroundColor: gray1}]}>
-            <Text h4 style={styles.cardtext}>
-              {strings.total_interest}
-            </Text>
-            <Text h3 style={{color: lightRed, fontWeight: 'bold'}}>
-              {currencyFormat(givenInterest)}
-            </Text>
-          </View>
-        </View>
-
-        <View style={[styles.cardfinal, {backgroundColor: gray1}]}>
-          <Text h3>{strings.final}</Text>
-          <Text h3>{currencyFormat(finalAmount)}</Text>
         </View>
       </View>
-      <View style={styles.wt}>
-        <Text h2 style={styles.underline}>
-          {strings.loan_record}
+      <View style={[styles.card, { backgroundColor: greenDark }]}>
+        <View style={styles.row}>
+          <View style={{ alignItems: 'flex-start', padding: 10 }}>
+            <Text h3 style={{ color: white, fontWeight: 'bold' }}>
+              {currencyFormat(takenAmount + takenInterest)}
+            </Text>
+            <Text h4 style={{ color: white }}>
+              Taken
+            </Text>
+          </View>
+          <View style={{ alignItems: 'flex-end' }}>
+            <View style={styles.innerCard}>
+              <Text h3 style={{ color: white, fontWeight: 'bold' }}>
+                {currencyFormat(takenAmount)}
+              </Text>
+              <Text h5 style={{ color: white }}>
+                {strings.taken_amount}
+              </Text>
+            </View>
+            <View
+              style={[
+                styles.innerCard,
+                {
+                  marginTop: 5,
+                },
+              ]}>
+              <Text h3 style={{ color: white, fontWeight: 'bold' }}>
+                {currencyFormat(takenInterest)}
+              </Text>
+              <Text h5 style={{ color: white }}>
+                {strings.interest}
+              </Text>
+            </View>
+          </View>
+        </View>
+      </View>
+      <View
+        style={[
+          styles.card,
+          {
+            flexDirection: 'column',
+            alignItems: 'center',
+            overflow: 'hidden',
+            borderWidth: 5,
+            elevation: 0,
+            borderColor: gray2,
+          },
+        ]}>
+        <View
+          style={[
+            styles.row,
+            {
+              elevation: 100,
+              backgroundColor: gray4 + 10,
+              marginVertical: 0,
+            },
+          ]}>
+          <Text
+            h3
+            style={{
+              // color: red,
+              padding: 10,
+              fontWeight: 'bold',
+            }}>
+            Final Amount
+          </Text>
+          <Text
+            h3
+            style={{
+              color: finalAmount > 0 ? greenDark : red,
+              fontWeight: 'bold',
+              padding: 10,
+            }}>
+            {currencyFormat(finalAmount)}
+          </Text>
+        </View>
+        <Text
+          h5
+          style={{
+            color: finalAmount > 0 ? greenDark : red,
+          }}>
+          {finalAmount < 0 ? strings.give : strings.receive}
         </Text>
-
-        {/* <View style={styles.row}> */}
-        {/* <Text style={{width: '20%', textAlign: 'center'}} h3>
-            {strings.date}
-          </Text>
-          <Text style={{width: '15%', textAlign: 'right'}} h3>
-            {strings.day}
-          </Text> */}
-        {/* <Text style={{width: '28%', textAlign: 'right'}} h3>
-            {strings.total_interest}
-          </Text> */}
-        {/* <Text style={{width: '45%', textAlign: 'right'}} h3>
-            {strings.total_amount}
-          </Text> */}
       </View>
+      <TouchableOpacity
+        style={[
+          styles.row,
+          {
+            paddingVertical: 10,
+            borderBottomWidth: showDetails ? 1 : 0,
+            borderColor: gray3,
+          },
+        ]}
+        onPress={() => setShowDetails(!showDetails)}>
+        <Text h4 style={{}}>
+          {/* {strings.loan_record} */}
+          View All Transaction
+        </Text>
+        <Icon name={showDetails ? 'down' : 'right'} color="black" size={20} />
+      </TouchableOpacity>
+
       <ScrollView
-        style={{width: '100%'}}
-        contentContainerStyle={{paddingBottom: '100%'}}
+        style={{ width: '100%' }}
+        contentContainerStyle={{
+          paddingBottom: '100%',
+          display: showDetails ? 'flex' : 'none',
+        }}
         showsVerticalScrollIndicator={false}>
         {Array.isArray(groupedData) && groupedData.length ? (
           sortBy(groupedData, (a, b) => moment(b?.date) - moment(a?.date)).map(
@@ -532,33 +577,14 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     width: '100%',
     marginVertical: 5,
-    flexWrap: 'wrap',
-  },
-  wt: {
-    width: '100%',
-    alignItems: 'center',
-    marginVertical: 5,
-    paddingVertical: 10,
-    // backgroundColor: white,
-    // elevation:5
   },
   card: {
     elevation: 5,
     backgroundColor: white,
-    width: '48%',
+    width: '100%',
     marginVertical: 5,
-    padding: 10,
     borderRadius: 10,
     alignItems: 'center',
-  },
-  cardfinal: {
-    width: '95%',
-    flexDirection: 'row',
-    borderRadius: 10,
-    justifyContent: 'space-between',
-    padding: 15,
-    elevation: 5,
-    marginVertical: 5,
   },
   modal: {
     flex: 1,
@@ -568,12 +594,6 @@ const styles = StyleSheet.create({
   },
   underline: {
     width: '100%',
-    textAlign: 'center',
-    color: green,
-    fontWeight: 'bold',
-    backgroundColor: gray2,
-    // elevation:5,
-    padding: 5,
   },
   text: {
     width: '50%',
@@ -581,6 +601,15 @@ const styles = StyleSheet.create({
   cardtext: {
     width: '80%',
     textAlign: 'center',
+  },
+  innerCard: {
+    backgroundColor: white + 40,
+    borderTopLeftRadius: 20,
+    borderBottomLeftRadius: 20,
+    paddingLeft: 25,
+    paddingRight: 15,
+    padding: 10,
+    paddingVertical: 5,
   },
 });
 // style={{color: finalAmount >= 0 ? green : red}}

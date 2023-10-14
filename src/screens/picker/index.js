@@ -61,55 +61,55 @@ export default function Picker() {
 
   const getData = async () => {
     try {
+      setLoading(true);
       await createCottonPriceTable(db);
       await createPickerTable(db);
       await createPickerExpenseTable(db);
-      let pdata = await getAllItems(db, PCIKER_TABLE)
-      if (
-        pdata == undefined ||
-        (Array.isArray(pdata) && pdata.length == 0)
-      ) {
+      setTimeout(async () => {
         setLoading(true);
-        let wt = await getPickerData();
-        if (Array.isArray(wt) && wt.length) {
-          wt.map((o, i) => ({ ...o, id: i + 1 }));
-          await savePickerData(db, wt);
-          let grp = await getPickerGroup();
-          let promise = grp.map(o =>
-            o?.pickers.map(
-              async picker =>
-                await updatePickerGid(db, {
-                  uid: o?.uid,
-                  gid: o?.id,
-                  gname: o?.name,
-                  picker: picker,
-                }),
-            ),
-          );
-          await Promise.all(promise);
-          await getPickerWeight();
+        let pdata = await getAllItems(db, PCIKER_TABLE);
+        if (pdata == undefined || (Array.isArray(pdata) && pdata.length == 0)) {
+          let wt = await getPickerData();
+          if (Array.isArray(wt) && wt.length) {
+            wt.map((o, i) => ({ ...o, id: i + 1 }));
+            await savePickerData(db, wt);
+            let grp = await getPickerGroup();
+            let promise = grp.map(o =>
+              o?.pickers.map(
+                async picker =>
+                  await updatePickerGid(db, {
+                    uid: o?.uid,
+                    gid: o?.id,
+                    gname: o?.name,
+                    picker: picker,
+                  }),
+              ),
+            );
+            await Promise.all(promise);
+            await getPickerWeight();
+          }
+          setLoading(false);
+        }
+        let pedata = await getAllItems(db, PICKER_EXPENSE_TABLE);
+        if (
+          pedata == undefined ||
+          (Array.isArray(pedata) && pedata.length == 0)
+        ) {
+          setLoading(true);
+          let ex = await getAllPickerExpense();
+          if (Array.isArray(ex) && ex.length) {
+            ex.map((o, i) => ({ ...o, id: i + 1 }));
+            await savePickerExpenseData(db, ex);
+            await getPickerExpense();
+          }
         }
         setLoading(false);
-      }
-      let pedata = await getAllItems(db, PICKER_EXPENSE_TABLE)
-      if (
-        pedata == undefined ||
-        (Array.isArray(pedata) && pedata.length == 0)
-      ) {
-        setLoading(true);
-        let ex = await getAllPickerExpense();
-        if (Array.isArray(ex) && ex.length) {
-          ex.map((o, i) => ({ ...o, id: i + 1 }));
-          await savePickerExpenseData(db, ex);
-          await getPickerExpense();
-        }
-      }
+      }, 5000);
       setLoading(false);
     } catch (error) {
       setLoading(false);
     }
   };
-
   return (
     <BaseView>
       <SyncLocal />
@@ -154,9 +154,8 @@ export default function Picker() {
 
       {!isSearchActive && (
         <>
-          {Array.isArray(pickerWeight) &&
-            pickerWeight.length == 0 ||
-            every(pickerWeight, o => !o?.gname) ? null : (
+          {(Array.isArray(pickerWeight) && pickerWeight.length == 0) ||
+            every(pickerWeight, o => !o?.gname || o?.gname == 'null') ? null : (
             <Header
               leftComponent={
                 <Button
@@ -184,7 +183,8 @@ export default function Picker() {
               }
             />
           )}
-          {(Array.isArray(pickerWeight) && pickerWeight.length == 0) || every(pickerWeight, o => !o?.gname) ||
+          {(Array.isArray(pickerWeight) && pickerWeight.length == 0) ||
+            every(pickerWeight, o => !o?.gname || o?.gname == 'null') ||
             filterBy == 'picker' ? (
             <DateWiseList
               pickerWeight={pickerWeight}
