@@ -1,28 +1,27 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import Text from 'src/components/text';
-import Button from 'src/components/button';
 import {
   FlatList,
-  PixelRatio,
   StyleSheet,
   TouchableOpacity,
   View,
 } from 'react-native';
 import { white } from 'src/utils/color';
-import { reduce, groupBy, sumBy } from 'lodash';
+import { groupBy, maxBy } from 'lodash';
 import { strings } from 'src/translations/locale';
 import { navigate } from 'src/navigation/ref';
 import { currencyFormat } from 'src/utils/dateformat';
-import { ToastError } from '../../utils/toast';
-import { aqua, green, greenDark, greenLight, lightOrange, lightRed, orange, red } from '../../utils/color';
-import Animated from 'react-native-reanimated';
+import {
+  greenDark,
+  red,
+} from '../../utils/color';
 import { useLoan } from '../../context/loanContext';
 import auth from '@react-native-firebase/auth';
 import { getTotalInterst } from '../../utils/helper';
+import moment from 'moment';
 
 export default function LoanList() {
   const { loanData = [] } = useLoan();
-  const [loading, setLoading] = useState(true);
   let data = [];
 
   const groupedData = groupBy(loanData, d =>
@@ -33,12 +32,15 @@ export default function LoanList() {
     data.push({
       name: o,
       interest_rate: groupedData[o][0]?.interest_rate,
+      lastEntry: maxBy(groupedData[o], entry => entry.date),
     });
   });
-
+  console.log(data);
   const renderItem = item => {
     const given = getTotalInterst(
-      groupedData[item?.name].filter(entry => entry.giver === auth().currentUser.uid),
+      groupedData[item?.name].filter(
+        entry => entry.giver === auth().currentUser.uid,
+      ),
     );
     const taken = getTotalInterst(
       groupedData[item?.name].filter(entry => entry.giver === item?.name),
@@ -61,34 +63,7 @@ export default function LoanList() {
             {currencyFormat(taken - given)}
           </Text>
         </View>
-        {/* <View style={{ flexDirection: 'row' }}>
-              <Button
-              />
-              <Button
-              hitSlop={10}
-              label={strings.receive}
-              btnStyle={{
-                backgroundColor: green,
-                marginRight: 10,
-                width: 'auto',
-                paddingHorizontal: 8,
-                height: 25 * PixelRatio.getFontScale(),
-                borderRadius: 5,
-                marginVertical: 0,
-              }}
-              onPress={() =>
-                navigate('AddCredit', {
-                  data: {
-                    giver: auth().currentUser.uid,
-                    receiver: item?.name,
-                    type: 'debt',
-                    interest_rate: item?.interest_rate,
-                  },
-                })
-              }
-              />
-            </View> */}
-        <View style={{ alignSelf: "flex-end" }}>
+        <View style={{ alignSelf: 'flex-end' }}>
           <Text
             numberOfLines={1}
             h3
@@ -106,7 +81,9 @@ export default function LoanList() {
     <FlatList
       style={{ width: '100%' }}
       contentContainerStyle={{ paddingBottom: 150 }}
-      data={data}
+      data={data.sort((a, b) => {
+        return moment(b.lastEntry.date) - moment(a.lastEntry.date);
+      })}
       keyExtractor={item => Math.random().toString()}
       ListEmptyComponent={() => (
         <Text style={{ textAlign: 'center', paddingTop: 30 }}>
@@ -134,7 +111,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     width: '100%',
     marginVertical: 5,
-
   },
   icon: {
     elevation: 1,

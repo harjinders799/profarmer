@@ -12,6 +12,7 @@ import Button from '../../components/button';
 import { ToastSuccess } from '../../utils/toast';
 import { goBack } from '../../navigation/ref';
 import Text from '../../components/text';
+import { getPosition, tabsData } from '../../utils/helper';
 
 const Customize = () => {
     const { tabs, setTab } = useTab();
@@ -19,20 +20,23 @@ const Customize = () => {
     const positions = useSharedValue(
         Object.assign({}, ...tabs.map((item, i) => ({ [item.id]: i }))),
     );
-    useEffect(() => {
-        console.log(positions);
-    }, [positions, update]);
     const refresh = () => {
         setUpdate(!update);
     };
 
     const setup = () => {
-        tabs.sort((a, b) => {
-            const indexA = Object.values(positions.value).indexOf(a.id - 1);
-            const indexB = Object.values(positions.value).indexOf(b.id - 1);
-            return indexA - indexB;
+        let dataArray = tabs.map(tab => ({
+            ...tab,
+            ...getPosition(positions.value[tab.id]),
+        }));
+        dataArray.sort((a, b) => {
+            if (a.y !== b.y) {
+                return a.y - b.y;
+            } else {
+                return a.x - b.x;
+            }
         });
-        setTab(tabs);
+        setTab(dataArray);
         ToastSuccess('Done');
         goBack();
     };

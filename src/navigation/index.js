@@ -26,6 +26,7 @@ import { useCotton } from '../context/cottonContext';
 import Stacks from './stacks';
 import LocalAuth from '../screens/auth/localAuth';
 import PinSecurity from '../screens/auth/pinSecurity';
+import { useTab } from '../context/tabContext';
 
 const Stack = createNativeStackNavigator();
 
@@ -33,11 +34,13 @@ export default function Navigation() {
   const { getLang, fingerLock, authenticate, setAuthenticate } = useLang();
   const { getUser, userVerified, getPin, reset } = useAuth();
   const { db, getDB } = useCotton();
+  const { getTab } = useTab();
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState();
   const [fingerLockAvailable, setFingerLockAvailable] = useState(false);
 
   useEffect(() => {
+    getTab();
     getLang();
     getUser();
     getPin();
@@ -90,7 +93,7 @@ export default function Navigation() {
   return (
     <NavigationContainer theme={themeLight} ref={navigationRef}>
       {user ? (
-        userVerified ? (
+        __DEV__ || userVerified ? (
           <Stacks />
         ) : (
           <Stack.Navigator screenOptions={{ headerShown: false }}>

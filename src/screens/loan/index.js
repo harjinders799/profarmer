@@ -6,12 +6,14 @@ import { useLang } from 'src/context/langContext';
 import Loader from '../../components/loader';
 import { strings } from '../../translations/locale';
 import Button from '../../components/button';
-import { white } from '../../utils/color';
+import { greenDark, red, white } from '../../utils/color';
 
 import { navigate } from 'src/navigation/ref';
 import LoanList from '../../container/loan/loanList';
 import { useLoan } from '../../context/loanContext';
 import { useFocusEffect } from '@react-navigation/native';
+import { calculateTotals } from '../../utils/helper';
+import { commonStyle } from '../../utils/style';
 
 export default function Loan({ navigation }) {
   const { lang } = useLang();
@@ -22,13 +24,32 @@ export default function Loan({ navigation }) {
       getLoan();
     }, [navigation, lang]),
   );
+  const totals = calculateTotals(loanData);
+
   return (
     <BaseView>
       {/* <Loader visible={loading} /> */}
       <Text h2 style={{ padding: 20, textAlign: 'center' }}>
         {strings.loan_record}
       </Text>
-
+      <View style={commonStyle.row_c_j_b}>
+        <View style={[styles.card, { backgroundColor: greenDark }]}>
+          <Text h3 white>
+            {totals?.taken}
+          </Text>
+          <Text h5 white>
+            {strings.taken_amount}
+          </Text>
+        </View>
+        <View style={[styles.card, { backgroundColor: red }]}>
+          <Text h3 white>
+            {totals?.given}
+          </Text>
+          <Text h5 white>
+            {strings.given_amount}
+          </Text>
+        </View>
+      </View>
       <LoanList />
       <Button
         iconName="plus"
@@ -49,4 +70,16 @@ export default function Loan({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  card: {
+    padding: 10,
+    width: '48%',
+    paddingHorizontal: 20,
+    alignItems: 'center',
+    marginBottom: 20,
+    borderRadius: 10,
+    overflow: 'hidden',
+    elevation: 5,
+    backgroundColor: 'white',
+  },
+});

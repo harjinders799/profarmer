@@ -1,34 +1,24 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { useTheme } from '@react-navigation/native';
 import Icon from 'src/components/icon';
-import DashboardStack from './dashboardStack';
-import LabourStack from './labourStack';
-import SettingStack from './settingStack';
-import CottonStack from './cottonStack';
-import AnimatedTabBar from './animateTab';
-import { darkOrange, greenDark, orange, gray5, yellow, green, white, gray6 } from '../utils/color';
-import { strings } from '../translations/locale';
-import { useLang } from '../context/langContext';
-import CropStack from './cropStack';
-import PickerStack from './pickerStack';
+import { orange, gray6, white } from '../utils/color';
 import { isIOS } from '../utils/constant';
-import { PixelRatio } from 'react-native';
-import LoanStack from './loanStack';
-import Timeline from '../screens/timeline';
+import { PixelRatio, View } from 'react-native';
 import { useTab } from '../context/tabContext';
+import { tabsData } from '../utils/helper';
+import More from '../screens/more';
 
 const Tab = createBottomTabNavigator();
 
 export default function Tabs() {
-  const { colors } = useTheme();
-  const { lang } = useLang();
-  const { tabs, getTab } = useTab()
-  useEffect(() => {
-    // getTab()
-  }, [tabs])
-  console.log('-------tav-------tab-------')
+  const { tabs } = useTab();
+
+  const getComponentByName = name => {
+    return tabsData.find(tab => tab?.name == name).component;
+  };
+  let data = [...tabs];
+  data.splice(2, 0, tabsData[5]);
   return (
     <Tab.Navigator
       // tabBar={props => <AnimatedTabBar {...props} />}
@@ -40,36 +30,75 @@ export default function Tabs() {
         unmountOnBlur: true,
         tabBarStyle: {
           backgroundColor: orange,
-          height: isIOS ? 90 * PixelRatio.getFontScale() : 50 * PixelRatio.getFontScale(),
+          height: isIOS
+            ? 90 * PixelRatio.getFontScale()
+            : 50 * PixelRatio.getFontScale(),
         },
         tabBarLabelStyle: {
-          fontSize: 18
-        }
-      }}
-
-    >
-      {Array.isArray(tabs) && tabs.slice(0, 4).map(value => {
-        return (
-          <Tab.Screen
-            key={value.id}
-            name={value.name}
-            component={value.component}
-            options={{
-              title: value?.title,
-              tabBarIcon: ({ color }) => {
-                return (
-                  <Icon
-                    type={value?.iconType}
-                    name={value.icon}
-                    color={color}
-                    size={22 * PixelRatio.getFontScale()}
-                  />
-                );
-              },
-            }}
-          />
-        );
-      })}
+          fontSize: 18,
+        },
+      }}>
+      {Array.isArray(data) &&
+        data.slice(0, 5).map((value, i) => {
+          return i == 2 ? (
+            <Tab.Screen
+              key={value.id}
+              name={'More'}
+              component={More}
+              options={{
+                title: '',
+                tabBarIcon: ({ color }) => {
+                  return (
+                    <View
+                      style={{
+                        position: 'absolute', backgroundColor: orange,
+                        borderRadius: 50,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        width: 80,
+                        height: 80
+                      }}>
+                      <View
+                        style={{
+                          position: 'absolute', backgroundColor: orange,
+                          borderRadius: 50,
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          width: 80,
+                          height: 80
+                        }}>
+                        <Icon
+                          name={'plus'}
+                          color={color}
+                          size={45 * PixelRatio.getFontScale()}
+                        />
+                      </View>
+                    </View>
+                  );
+                },
+              }}
+            />
+          ) : (
+            <Tab.Screen
+              key={value.id}
+              name={value.name}
+              component={getComponentByName(value.name)}
+              options={{
+                title: value?.title,
+                tabBarIcon: ({ color }) => {
+                  return (
+                    <Icon
+                      type={value?.iconType}
+                      name={value.icon}
+                      color={color}
+                      size={22 * PixelRatio.getFontScale()}
+                    />
+                  );
+                },
+              }}
+            />
+          );
+        })}
     </Tab.Navigator>
   );
 }

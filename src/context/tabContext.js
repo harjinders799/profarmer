@@ -6,73 +6,12 @@ import LabourStack from '../navigation/labourStack';
 import CottonStack from '../navigation/cottonStack';
 import LoanStack from '../navigation/loanStack';
 import SettingStack from '../navigation/settingStack';
+import Timeline from '../screens/timeline';
+import { tabsData } from '../utils/helper';
 
 const initialState = {
-  tabs:
-    [
-      {
-        id: 1,
-        name: 'Picker',
-        title: strings.pickers,
-        component: PickerStack,
-        icon: "flower-poppy",
-        iconType: 'MaterialCommunityIcons',
-      },
-      {
-        id: 2,
-        name: 'LabourStack',
-        title: strings.labour,
-        component: LabourStack,
-        icon: 'solution1',
-      },
-      {
-        id: 3,
-        name: 'CottonStack',
-        title: strings.aadhtiya,
-        component: CottonStack,
-        icon: 'shopping-store',
-        iconType: 'Fontisto',
-      },
-      {
-        id: 4,
-        name: 'SettingStack',
-        title: strings.settings,
-        component: SettingStack,
-        icon: 'setting',
-      },
-      {
-        id: 5,
-        name: 'LoanStack',
-        title: strings.loan,
-        component: LoanStack,
-        icon: 'sack-percent',
-        iconType: 'MaterialCommunityIcons',
-      },
-      {
-        id: 6,
-        name: 'CottonStack1',
-        title: strings.aadhtiya,
-        component: CottonStack,
-        icon: 'shopping-store',
-        iconType: 'Fontisto',
-      },
-      {
-        id: 7,
-        name: 'LoanStack2',
-        title: strings.loan,
-        component: LoanStack,
-        icon: 'sack-percent',
-        iconType: 'MaterialCommunityIcons',
-      },
-      {
-        id: 8,
-        name: 'SettingStack3',
-        title: strings.settings,
-        component: SettingStack,
-        icon: 'setting',
-      },
-    ]
-};
+  tabs: tabsData
+}
 
 export const TabContext = React.createContext();
 

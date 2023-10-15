@@ -228,14 +228,14 @@ const LoginMethods = ({ navigation }) => {
           btnStyle={{ backgroundColor: '#db4437' }}
           onPress={signInG}
         />
-        <Button
+        {/* <Button
           label="Sign-In With FaceBook"
           iconName="facebook"
           iconType="FontAwesome"
           iconColor={colors.background}
           btnStyle={{ backgroundColor: '#3b5998' }}
           onPress={onFacebookButtonPress}
-        />
+        /> */}
       </ScrollView>
     </BaseView>
   );
