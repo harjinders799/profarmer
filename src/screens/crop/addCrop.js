@@ -110,7 +110,7 @@ export default function AddCrop() {
           <Icon
             name="back"
             size={28}
-            color={colors.text}
+            color={black}
             onPress={() => goBack()}
           />
         }

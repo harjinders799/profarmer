@@ -23,7 +23,7 @@ export const submitTimeline = async data => {
        await firestore()
         .collection('timeline')
         .where('uid', '==', userId)
-        .where('crop', '==', crop)
+        // .where('crop', '==', crop)
         // .orderBy('date', 'desc')
         .get()
         .then(querySnapshot => {

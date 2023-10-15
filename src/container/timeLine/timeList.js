@@ -1,70 +1,43 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import Text from 'src/components/text';
-import Button from 'src/components/button';
-import {
-  FlatList,
-  PixelRatio,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-  ScrollView,
-} from 'react-native';
-import {white} from 'src/utils/color';
-import {reduce, groupBy, sumBy} from 'lodash';
-import {strings} from 'src/translations/locale';
-import {navigate} from 'src/navigation/ref';
-import {currencyFormat} from 'src/utils/dateformat';
-import {ToastError} from '../../utils/toast';
-import {
-  aqua,
-  gray4,
-  green,
-  greenDark,
-  greenLight,
-  lightOrange,
-  lightRed,
-  red,
-} from '../../utils/color';
-import Animated from 'react-native-reanimated';
-import auth from '@react-native-firebase/auth';
-import {getTotalInterst} from '../../utils/helper';
-import Timeline from 'react-native-timeline-flatlist';
-import {useTimeline} from '../../context/timeContext';
-import moment from 'moment';
+import { FlatList, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { white } from 'src/utils/color';
+import { filter, groupBy, sumBy } from 'lodash';
+import { strings } from 'src/translations/locale';
+import { navigate } from 'src/navigation/ref';
+import { currencyFormat } from 'src/utils/dateformat';
+import Button from '../../components/button';
+import { useRoute } from '@react-navigation/native';
 
-export default function TimeList({data}) {
-  const renderItem = item => {
-    console.log(item,)
-    return (
-      <View style={styles.list}>
-        <Text h5>{moment(item.date).format('DD-MM-YYYY')}</Text>
-        <Text numberOfLines={1} h6>
-          {moment(item.date).format('H:mm')}
-        </Text>
-        <Text h4>{currencyFormat(parseFloat(item.amount))}</Text>
-      </View>
-    );
-  };
-  console.log(data,'----11---222--')
+
+export default function TimeList() {
+  const { params } = useRoute();
+  const crop = params?.data ?? {};
+  console.log(crop,'--555--')
   return (
-    <View style={styles.container}>
-      <Timeline
-        data={data}
-        renderTime={renderItem}
-        // circleSize={20}
-        // circleColor={red}
-        // separator={true}
-        // lineColor={aqua}
-        //   timeContainerStyle={{minWidth: 52, marginTop: -5}}
-        // timeStyle={styles.time}
-        // descriptionStyle={styles.description}
-        // options={{
-        //   style: {paddingTop: 5},
-        // }}
-        // showTime={false}
-        // isUsingFlatlist={true}
-      />
+    <View style={styles.list}>
+      <TouchableOpacity onPress={() => navigate('TimeDetail', { crop })}>
+        <View style={styles.row}>
+          <Text numberOfLines={1} h3 style={{ width: '70%' }}>
+            {crop?.crop}
+            </Text>
+          <Text h5>{strings.view}</Text>
+        </View>
+        <View style={styles.row}>
+          <Text numberOfLines={1} h4>
+            
+          </Text>
+          <Text numberOfLines={1} h4>
+            {currencyFormat(sumBy(crop, o => parseInt(o.amount)))}
+            {/* {currencyFormat(item?.amount)} */}
+          </Text>
+        </View>
+      </TouchableOpacity>
+     
     </View>
+    //     );
+    //   }}
+    // />
   );
 }
 const styles = StyleSheet.create({
@@ -72,8 +45,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     // elevation: 3,
     paddingVertical: 10,
-    width: 50,
-    height: 100,
+    width: '100%',
+    alignSelf: 'center',
   },
   row: {
     flexDirection: 'row',
@@ -90,28 +63,8 @@ const styles = StyleSheet.create({
     textAlignVertical: 'center',
     borderRadius: 5,
   },
-  line: {
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    width: '100%',
-  },
-  container: {
-    backgroundColor: white,
-    flex: 1,
-    width: '100%',
-
-    padding: 20,
-  },
-  time: {
-    textAlign: 'center',
-    backgroundColor: green,
-    color: white,
-    padding: 5,
-    borderRadius: 13,
-    fontSize: 10,
-    overflow: 'hidden',
-  },
-  description: {
-    backgroundColor: gray4,
-    fontSize: 15,
-  },
+  // line: {
+  //   borderBottomWidth: StyleSheet.hairlineWidth,
+  //   width: '100%',
+  // },
 });

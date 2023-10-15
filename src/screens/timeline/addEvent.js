@@ -43,7 +43,7 @@ export default function AddEvent() {
   const [showDate, setShowDate] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
 
-  const {description, amount, title, date} = data;
+  const {description,crop, amount, title, date} = data;
 
   const onChangeValue = (key, value) => {
     if (key == 'amount') {
@@ -123,6 +123,14 @@ export default function AddEvent() {
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}>
         <View style={styles.row}>
+          <Input
+            autoFocus
+            label={strings.crop}
+            placeholder={strings.crop}
+            value={crop}
+            autoCapitalize="words"
+            setValue={value => onChangeValue('crop', value)}
+          />
           <Input
             autoFocus
             label={strings.title}

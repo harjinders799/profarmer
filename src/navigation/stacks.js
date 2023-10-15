@@ -45,6 +45,7 @@ import LocalAuth from '../screens/auth/localAuth';
 import AddEvent from '../screens/timeline/addEvent';
 import TimeDetail from '../screens/timeline/timeDetail';
 import Customize from '../screens/settings/customize';
+import Crops from '../screens/timeline/crops';
 
 const Stack = createNativeStackNavigator();
 
@@ -168,6 +169,7 @@ export default function Stacks() {
       <Stack.Screen name="TimeDetail" component={TimeDetail} />
       <Stack.Screen name="Analysis" component={Analysis} />
       <Stack.Screen name="Group" component={Group} />
+      <Stack.Screen name="Crops" component={Crops} />
       <Stack.Screen name="GroupDetail" component={GroupDetail} />
       <Stack.Screen name="AboutUs" component={AboutUs} />
       <Stack.Screen name="ContactUs" component={ContactUs} />

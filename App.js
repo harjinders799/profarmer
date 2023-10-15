@@ -44,7 +44,7 @@ export default function App() {
   return (
     <SafeAreaProvider>
       <Modal
-        visible={(version?.needsUpdate ? true : false) && visible}
+        visible={__DEV__?false:(version?.needsUpdate ? true : false) && visible}
         setModalVisible={() => setVisible(false)}
         ratioHeight={0.9}>
         <ScrollView

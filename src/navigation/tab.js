@@ -24,10 +24,8 @@ const Tab = createBottomTabNavigator();
 export default function Tabs() {
   const { colors } = useTheme();
   const { lang } = useLang();
-  const { tabs, getTab } = useTab()
-  useEffect(() => {
-    // getTab()
-  }, [tabs])
+  const { tabs} = useTab()
+  
   console.log('-------tav-------tab-------')
   return (
     <Tab.Navigator

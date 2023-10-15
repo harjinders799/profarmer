@@ -1,121 +1,92 @@
-import {StyleSheet, View} from 'react-native';
-import React, {useState, useCallback} from 'react';
+import { StyleSheet,TouchableOpacity, View } from 'react-native';
+import React, { useState, useCallback } from 'react';
 import Text from 'src/components/text';
 import BaseView from 'src/container/base';
-import {useLang} from 'src/context/langContext';
-import Loader from '../../components/loader';
-import {strings} from '../../translations/locale';
+import { useLang } from 'src/context/langContext';
+import { strings } from '../../translations/locale';
 import Button from '../../components/button';
-import {aqua, black, blue, brown, cyan, gray11, gray4, green, lightGreen, lightOrange, lightYellow, orange, parrot, peach, red, white, yellowLight} from '../../utils/color';
-
-import {navigate} from 'src/navigation/ref';
-import LoanList from '../../container/loan/loanList';
-import {useFocusEffect} from '@react-navigation/native';
+import { white } from '../../utils/color';
+import { navigate } from 'src/navigation/ref';
+import { useFocusEffect, useRoute } from '@react-navigation/native';
+import { currencyFormat } from '../../utils/dateformat';
+import { useTimeline } from '../../context/timeContext';
 import TimeList from '../../container/timeLine/timeList';
-import {useTimeline} from '../../context/timeContext';
+import { getTimelineData } from '../../network/time-service';
+import { ToastError } from '../../utils/toast';
 
-export default function Timeline({navigation}) {
-  const crops = [
-    {
-      label: strings.cotton,
-      crop:'cotton',
-      backgroundColor: gray11,
-    },
-    {
-      label: strings.rice,
-      crop:'rice',
-      backgroundColor: gray11,
-    },
-    {
-      label: strings.wheat,
-      crop:'wheat',
-      backgroundColor: brown,
-    },
-    {
-      label: strings.barley,
-      crop:'barley',
-      backgroundColor: orange,
-    },
-    {
-      label: strings.mustard,
-      crop:'mustard',
-      backgroundColor: '#5d421f',
-    },
-    {
-      label: strings.millet,
-      crop:'millet',
-      backgroundColor: gray4,
-    },
-    {
-      label: strings.maize,
-      crop:'maize',
-      backgroundColor: lightYellow,
-    },
+export default function Timeline({navigation,data }) {
+  const { lang } = useLang();
+  const [loading, setLoading] = useState(true);
+  // const [data, setData] = useState([]);
 
-    {
-      label: strings.orange,
-      crop:'orange',
-      backgroundColor: lightOrange,
-    },
-
-    {
-      label: strings.guar,
-      crop:'guar',
-      backgroundColor: lightGreen,
-    },
-
-    {
-      label: strings.vegetable,
-      crop:'vegetable',
-      backgroundColor: parrot,
-    },  
-      {
-      label: strings.fruit,
-      crop:'fruit',
-      backgroundColor: peach,
-    },  
-      {
-      label: strings.other,
-      crop:'other',
-      backgroundColor: cyan,
-    },
-  ];
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     getTimeline();
-  //   }, [navigation, lang]),
-  // );
+ 
+  useFocusEffect(
+    useCallback(() => {
+      // getData();
+      getTimelineData()
+    }, [navigation, lang]),
+  );
+  // const getData = async () => {
+  //   try {
+  //     let res = await getTimelineData();
+  //     if (Array.isArray(res) && res.length) {
+  //      setData(res);
+  //     } else setData([]);
+  //     setLoading(false);
+  //   } catch (error) {
+  //     ToastError(error?.message, 'Crop');
+  //     setLoading(false);
+  //   }
+  // };
+  // console.log(crop,'----crop')
+  console.log(data,'----data')
   return (
     <BaseView>
-      <View style={styles.button}>
-        {crops.map(crop=>(
+    <Text h2 style={{ padding: 20, textAlign: 'center' }}>
+      {strings.add_event}
+    </Text>
+    {/* <TouchableOpacity style={styles.list} onPress={() => navigate('TimeDetail',{data:crop})} >
+    <Loader visible={loading} />
+    
+    <View style={styles.row}>
+    <Text h4>{data?.crop}</Text>
+    <Text numberOfLines={1} h3 style={{ width: '70%' }}>
+            {strings.crop}
+            </Text>
+          <Text h5>{strings.view}</Text>
+        </View>
+        <View style={styles.row}>
+          <Text numberOfLines={1} h4>
+            
+          </Text>
+          <Text
+        style={{ width: '37%', textAlign: 'right' }}
+        h4>
+        {currencyFormat(final_amount)}
+      </Text>
+    <Text h4>{data?.detail}</Text>
+    </View>
+  </TouchableOpacity> */}
 
-        <Button
-        key={crop.label}
-          iconName="plus"
-          iconColor={white}
-          label={crop.label}
-          btnStyle={{
-            width: '47%',
-            height: 50,
-            elevation:3,
-            backgroundColor:crop.backgroundColor,
-            color:black,
-          }}
-          onPress={() => navigate('TimeDetail',{data:crop})}
-        />
-        ))}
-       
-      </View>
+      <TimeList data={data}/>
+
+      <Button
+        iconName="plus"
+        iconColor={white}
+        label={strings.add_crop}
+        btnStyle={{
+          width: 'auto',
+          paddingHorizontal: 15,
+          height: 50,
+          position: 'absolute',
+          bottom: 20,
+          right: 30,
+          zIndex: 999,
+        }}
+        onPress={() => navigate('Crops')}
+      />
     </BaseView>
   );
 }
 
-const styles = StyleSheet.create({
-  button: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    flexWrap:'wrap',
-    width: '100%',
-  },
-});
+const styles = StyleSheet.create({});
