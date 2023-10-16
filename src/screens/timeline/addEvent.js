@@ -58,32 +58,36 @@ export default function AddEvent() {
       });
     }
   };
-  console.log(editData, '---88---');
-  // const onPress = () => {
-  //   if (editData.id) updateWt();
-  //   else AddNew();
-  // };console.log(editData,'---555---')
-  // const updateWt = async () => {
-  //   // if (title.trim() == '') {
+  const onPress = () => {
+    console.log(editData?.crop, '---88---');
+    if (editData?.crop) updateWt();
+    else AddNew();
+  };console.log(editData,'---566---')
+  const updateWt = async () => {
+    if (!crop || crop.trim() == '') {
+      ToastError(strings.crop_name);
+    } else if (title.trim() == '') {
   // if (!title || !title.trim()) {
-  //     ToastError(strings.title);
-  //   } else if (description.trim() == '') {
-  //     ToastError(strings.description);
-  //   } else {
-  //     setLoading(true);
-  //     let res = await updateTimeline({
-  //       ...data,
-  //       date: currentStamp(date),
-  //     });
-  //     setLoading(false);
-  //     ToastSuccess('strings.picker_amt_added', 'ProFarmer');
-  //     goBack();
-  //   }
-  // };
+      ToastError(strings.title);
+    } else if (description.trim() == '') {
+      ToastError(strings.description);
+    } else {
+      setLoading(true);
+      let res = await updateTimeline({
+        ...data,
+        date: currentStamp(date),
+      });
+      setLoading(false);
+      ToastSuccess('strings.picker_amt_added', 'ProFarmer');
+      goBack();
+    }
+  };
 
   const AddNew = async () => {
-    if (!title || !title.trim()) {
-      // if (title.trim() == '' ) {
+    if (!crop || crop.trim() == '') {
+      ToastError(strings.crop_name);
+    // if (!title || !title.trim()) {
+     } else if  (title.trim() == '' ) {
       ToastError(strings.title);
     } else if (description.trim() == '') {
       ToastError(strings.description); 

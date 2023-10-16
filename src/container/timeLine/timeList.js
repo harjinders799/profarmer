@@ -10,16 +10,16 @@ import Button from '../../components/button';
 import { useRoute } from '@react-navigation/native';
 
 
-export default function TimeList() {
-  const { params } = useRoute();
-  const crop = params?.data ?? {};
-  console.log(crop,'--555--')
+export default function TimeList({data}) {
+
+  console.log(data)
+  const renderItem = item => {
   return (
     <View style={styles.list}>
-      <TouchableOpacity onPress={() => navigate('TimeDetail', { crop })}>
+      <TouchableOpacity onPress={() => navigate('TimeDetail', { item })}>
         <View style={styles.row}>
           <Text numberOfLines={1} h3 style={{ width: '70%' }}>
-            {crop?.crop}
+            {item?.crop}
             </Text>
           <Text h5>{strings.view}</Text>
         </View>
@@ -28,8 +28,8 @@ export default function TimeList() {
             
           </Text>
           <Text numberOfLines={1} h4>
-            {currencyFormat(sumBy(crop, o => parseInt(o.amount)))}
-            {/* {currencyFormat(item?.amount)} */}
+            {/* {currencyFormat(sumBy(data, o => parseInt(o.amount)))} */}
+            {currencyFormat(item?.amount)}
           </Text>
         </View>
       </TouchableOpacity>
@@ -39,6 +39,23 @@ export default function TimeList() {
     //   }}
     // />
   );
+}
+
+return (
+  <FlatList
+    style={{ width: '100%' }}
+    contentContainerStyle={{ paddingBottom: 150 }}
+    data={data}
+    keyExtractor={item => Math.random().toString()}
+    ListEmptyComponent={() => (
+      <Text style={{ textAlign: 'center', paddingTop: 30 }}>
+        {strings.no_data}
+      </Text>
+    )}
+    showsVerticalScrollIndicator={false}
+    renderItem={({ item }) => renderItem(item)}
+  />
+);
 }
 const styles = StyleSheet.create({
   list: {

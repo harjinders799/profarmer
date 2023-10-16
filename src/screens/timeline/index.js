@@ -14,30 +14,19 @@ import TimeList from '../../container/timeLine/timeList';
 import { getTimelineData } from '../../network/time-service';
 import { ToastError } from '../../utils/toast';
 
-export default function Timeline({navigation,data }) {
+export default function Timeline({navigation}) {
   const { lang } = useLang();
+  const { getTimeline,timelineData } = useTimeline();
   const [loading, setLoading] = useState(true);
-  // const [data, setData] = useState([]);
+  const [data, setData] = useState([]);
 
  
   useFocusEffect(
     useCallback(() => {
-      // getData();
-      getTimelineData()
+      getTimeline()
     }, [navigation, lang]),
   );
-  // const getData = async () => {
-  //   try {
-  //     let res = await getTimelineData();
-  //     if (Array.isArray(res) && res.length) {
-  //      setData(res);
-  //     } else setData([]);
-  //     setLoading(false);
-  //   } catch (error) {
-  //     ToastError(error?.message, 'Crop');
-  //     setLoading(false);
-  //   }
-  // };
+  
   // console.log(crop,'----crop')
   console.log(data,'----data')
   return (
@@ -68,7 +57,7 @@ export default function Timeline({navigation,data }) {
     </View>
   </TouchableOpacity> */}
 
-      <TimeList data={data}/>
+      <TimeList data={timelineData}/>
 
       <Button
         iconName="plus"

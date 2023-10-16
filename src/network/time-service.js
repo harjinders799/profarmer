@@ -16,10 +16,10 @@ export const submitTimeline = async data => {
     });
   };
 
-  export const getTimelineData = (crop) => {
+  export const getTimelineData = () => {
     return new Promise(async function (resolve, reject) {
       let userId = Auth().currentUser?.uid;
-      console.log('Crop Label:', crop);
+      
        await firestore()
         .collection('timeline')
         .where('uid', '==', userId)

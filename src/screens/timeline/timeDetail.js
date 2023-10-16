@@ -10,7 +10,7 @@ import {gray4, green, red, white} from '../../utils/color';
 import Header from '../../components/header';
 import Icon from '../../components/icon';
 import {ToastError} from '../../utils/toast';
-import {useFocusEffect} from '@react-navigation/native';
+import {useFocusEffect, useIsFocused} from '@react-navigation/native';
 import TimeList from '../../container/timeLine/timeList';
 import {goBack, navigate} from '../../navigation/ref';
 import {useRoute} from '@react-navigation/native';
@@ -23,83 +23,40 @@ import {useTimeline} from '../../context/timeContext';
 
 export default function TimeDetail({navigation}) {
   // const {timelineData: data, getTimeline} = useTimeline();
-  const {lang} = useLang();
   const { params } = useRoute();
-  const crop = params?.crop ?? {};
+  const {getTimeline, timelineData = [] } = useTimeline();
+  const data = params?.item ?? {};
   const [loading, setLoading] = useState(true);
+  const cropName = data?.crop;
+  const { amount, crop,title,description } = data;
+  const isFocused = useIsFocused();
   // export default function TimeList({data}) {
 
   useFocusEffect(
     useCallback(() => {
-      // getTimeline();
-      getData();
-    }, [navigation, lang]),
+      getTimeline();
+      // getData();
+    }, [isFocused]),
   );
-  // const getData = async () => {
-  //   try {
-  //     setFullData(await getTimelineData(crop.crop));
-  //     setLoading(false);
-  //   } catch (error) {
-  //     ToastError(error?.message, 'Crop');
-  //     setLoading(false);
-  //   }
-  // };
-  console.log(crop,'----name--')
-   const getData = async () => {
-    try {
-      let res = await getTimelineData(crop.crop);
-      if (Array.isArray(res) && res.length) {
-       setData(res);
-      } else setData([]);
-      setLoading(false);
-    } catch (error) {
-      ToastError(error?.message, 'Crop');
-      setLoading(false);
-    }
-  };
-  // console.log(data, '----data--');
-    
-  //   return (
-  //     <BaseView>
-  //     <Header
-  //     style={{ marginTop: 10 }}
-  //     leftComponent={
-  //       <Icon name="back" size={28} color={green} onPress={() => goBack()} />
-  //     }
-  //     centerComponent={<Text h2 style={{ color: green, fontWeight: "bold",}}>
-  //         {crop?.crop}</Text>}
-  //     rightComponent={<Text h2> </Text>}
-  // />
-  //       {/* <TimeList data={data}/> */}
-  //       {/* <Button
-  //         iconName="plus"
-  //         iconColor={white}
-  //         label={strings.add_event}
-  //         btnStyle={{
-  //           width: 'auto',
-  //           height: 50,
-  //           position: 'absolute',
-  //           bottom: 20,
-  //           right: 30,
-  //           zIndex: 999,
-  //         }}
-  //         onPress={() => navigate('AddEvent',{crop})}
-  //       /> */}
-  //     </BaseView>
-  //   );
+ 
+  console.log(data,'----data--')
+  
+  
 
-  const renderItem = item => {
-    //  list file  console.log(item,)
-    return (
-      <View style={styles.list}>
-        <Text h5>{moment(item.date).format('DD-MM-YYYY')}</Text>
-        <Text numberOfLines={1} h6>
-          {moment(item.date).format('H:mm')}
-        </Text>
-        <Text h4>{currencyFormat(parseFloat(item.amount))}</Text>
-      </View>
-    );
-  };
+  // const renderItem = item => {
+  //   //  list file  console.log(item,)
+    // return (
+    //   <BaseView>
+    //   <View style={styles.list}>
+    //     <Text h5>{moment(data.date).format('DD-MM-YYYY')}</Text>
+    //     <Text numberOfLines={1} h6>
+    //       {moment(data.date).format('H:mm')}
+    //     </Text>
+    //     <Text h4>{currencyFormat(parseFloat(data.amount))}</Text>
+    //   </View>
+    // </BaseView>
+    // );
+  
   return (
     <BaseView>
       <Header
@@ -109,15 +66,23 @@ export default function TimeDetail({navigation}) {
         }
         centerComponent={
           <Text h2 style={{color: white, fontWeight: 'bold'}}>
-            {strings.timeline}
+            {/* {strings.timeline} */} 
+             {data?.crop}
           </Text>
         }
         rightComponent={<Text h2> </Text>}
       />
       <View style={styles.container}>
+       <View style={styles.list}>
+        <Text h5>{moment(data.date).format('DD-MM-YYYY')}</Text>
+        <Text numberOfLines={1} h6>
+          {moment(data.date).format('H:mm')}
+        </Text>
+        <Text h4>{currencyFormat(parseFloat(data.amount))}</Text>
+      </View>
         <Timeline
-          data={crop?.crop}
-          renderTime={renderItem}
+          data={[data]}
+          // renderTime={renderItem}
           // circleSize={20}
           // circleColor={red}
           // separator={true}
@@ -169,7 +134,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   container: {
-    backgroundColor: white,
+    backgroundColor: red,
     flex: 1,
     width: '100%',
     padding: 20,
