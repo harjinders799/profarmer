@@ -22,13 +22,11 @@ import {getTimelineData} from '../../network/time-service';
 import {useTimeline} from '../../context/timeContext';
 
 export default function TimeDetail({navigation}) {
-  // const {timelineData: data, getTimeline} = useTimeline();
   const { params } = useRoute();
   const {getTimeline, timelineData = [] } = useTimeline();
-  const data = params?.item ?? {};
+  const data = params?.items ?? {};
   const [loading, setLoading] = useState(true);
   const cropName = data?.crop;
-  const { amount, crop,title,description } = data;
   const isFocused = useIsFocused();
   // export default function TimeList({data}) {
 
@@ -39,24 +37,21 @@ export default function TimeDetail({navigation}) {
     }, [isFocused]),
   );
  
-  console.log(data,'----data--')
-  
-  
 
-  // const renderItem = item => {
-  //   //  list file  console.log(item,)
-    // return (
-    //   <BaseView>
-    //   <View style={styles.list}>
-    //     <Text h5>{moment(data.date).format('DD-MM-YYYY')}</Text>
-    //     <Text numberOfLines={1} h6>
-    //       {moment(data.date).format('H:mm')}
-    //     </Text>
-    //     <Text h4>{currencyFormat(parseFloat(data.amount))}</Text>
-    //   </View>
+  const renderItem = item => {
+    return (
+      // <BaseView>
+      <View style={styles.list}>
+        <Text h5>{moment(item.date).format('DD-MM-YYYY')}</Text>
+        <Text numberOfLines={1} h6>
+          {moment(item.date).format('H:mm')}
+        </Text>
+        <Text h4>{currencyFormat(parseFloat(item?.amount))}</Text>
+     
+      </View>
     // </BaseView>
-    // );
-  
+    );
+  }
   return (
     <BaseView>
       <Header
@@ -67,22 +62,18 @@ export default function TimeDetail({navigation}) {
         centerComponent={
           <Text h2 style={{color: white, fontWeight: 'bold'}}>
             {/* {strings.timeline} */} 
-             {data?.crop}
+             {cropName}
           </Text>
         }
-        rightComponent={<Text h2> </Text>}
+        rightComponent={<Text h2>
+          
+          {currencyFormat(sumBy(data, o => parseInt(o.amount)))}
+            </Text>}
       />
       <View style={styles.container}>
-       <View style={styles.list}>
-        <Text h5>{moment(data.date).format('DD-MM-YYYY')}</Text>
-        <Text numberOfLines={1} h6>
-          {moment(data.date).format('H:mm')}
-        </Text>
-        <Text h4>{currencyFormat(parseFloat(data.amount))}</Text>
-      </View>
         <Timeline
-          data={[data]}
-          // renderTime={renderItem}
+          data={data}
+          renderTime={renderItem}
           // circleSize={20}
           // circleColor={red}
           // separator={true}
@@ -107,6 +98,12 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     width: '120%',
   },
+  container: {
+    backgroundColor: white,
+    flex: 1,
+    width: '100%',
+    padding: 20,
+  },
   list: {
     borderRadius: 10,
     // elevation: 3,
@@ -114,31 +111,7 @@ const styles = StyleSheet.create({
     width: 50,
     height: 100,
   },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    width: '100%',
-    marginVertical: 5,
-  },
-  icon: {
-    elevation: 1,
-    width: 30,
-    height: 30,
-    textAlign: 'center',
-    textAlignVertical: 'center',
-    borderRadius: 5,
-  },
-  line: {
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    width: '100%',
-  },
-  container: {
-    backgroundColor: red,
-    flex: 1,
-    width: '100%',
-    padding: 20,
-  },
+  
   time: {
     textAlign: 'center',
     backgroundColor: green,

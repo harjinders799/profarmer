@@ -13,6 +13,9 @@ import LoanList from '../../container/loan/loanList';
 import {useFocusEffect} from '@react-navigation/native';
 import TimeList from '../../container/timeLine/timeList';
 import {useTimeline} from '../../context/timeContext';
+import Header from '../../components/header';
+import Icon from '../../components/icon';
+import { goBack } from '../../navigation/ref';
 
 export default function Crops({navigation}) {
   const crops = [
@@ -87,10 +90,24 @@ export default function Crops({navigation}) {
   // );
   return (
     <BaseView>
+      <Header
+        style={styles.header}
+        leftComponent={
+          <Icon name="back" size={28} color={white} onPress={() => goBack()} />
+        }
+        centerComponent={
+          <Text h2 style={{color: white, fontWeight: 'bold'}}>
+            {/* {strings.timeline} */} 
+             {strings.add_crop}
+          </Text>
+        }
+        rightComponent={<Text h2> </Text>}
+      />
       <View style={styles.button}>
         {crops.map(crop=>(
 
         <Button
+        hitSlop={10}
         key={crop.label}
           iconName="plus"
           iconColor={white}
@@ -112,7 +129,13 @@ export default function Crops({navigation}) {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create({ 
+  header: {
+  backgroundColor: green,
+  paddingHorizontal: 25,
+  paddingVertical: 15,
+  width: '120%',
+},
   button: {
     flexDirection: 'row',
     justifyContent: 'space-between',

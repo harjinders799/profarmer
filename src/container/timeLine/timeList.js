@@ -1,61 +1,58 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import Text from 'src/components/text';
-import { FlatList, StyleSheet, TouchableOpacity, View } from 'react-native';
-import { white } from 'src/utils/color';
-import { filter, groupBy, sumBy } from 'lodash';
-import { strings } from 'src/translations/locale';
-import { navigate } from 'src/navigation/ref';
-import { currencyFormat } from 'src/utils/dateformat';
+import {FlatList, StyleSheet, TouchableOpacity, View} from 'react-native';
+import {white} from 'src/utils/color';
+import {filter, groupBy, sumBy} from 'lodash';
+import {strings} from 'src/translations/locale';
+import {navigate} from 'src/navigation/ref';
+import {currencyFormat} from 'src/utils/dateformat';
 import Button from '../../components/button';
-import { useRoute } from '@react-navigation/native';
+import {useRoute} from '@react-navigation/native';
 
+export default function TimeList({data = []}) {
+  const groupedData = groupBy(data, 'crop');
 
-export default function TimeList({data}) {
-
-  console.log(data)
-  const renderItem = item => {
-  return (
-    <View style={styles.list}>
-      <TouchableOpacity onPress={() => navigate('TimeDetail', { item })}>
-        <View style={styles.row}>
-          <Text numberOfLines={1} h3 style={{ width: '70%' }}>
-            {item?.crop}
+  console.log(data);
+  const renderItem = (crop, items) => {
+    return (
+      <View style={styles.list}>
+        <TouchableOpacity onPress={() => navigate('TimeDetail', {items})}>
+          <View style={styles.row}>
+            <Text numberOfLines={1} h3 style={{width: '70%'}}>
+              {crop}
             </Text>
-          <Text h5>{strings.view}</Text>
-        </View>
-        <View style={styles.row}>
-          <Text numberOfLines={1} h4>
-            
-          </Text>
-          <Text numberOfLines={1} h4>
-            {/* {currencyFormat(sumBy(data, o => parseInt(o.amount)))} */}
-            {currencyFormat(item?.amount)}
-          </Text>
-        </View>
-      </TouchableOpacity>
-     
-    </View>
-    //     );
-    //   }}
-    // />
-  );
-}
+            <Text h5>{strings.view}</Text>
+          </View>
+          <View style={styles.row}>
+            <Text numberOfLines={1} h4></Text>
+            <Text numberOfLines={1} h4>
+               {/* {currencyFormat(items?.amount)} */}
+              {currencyFormat(sumBy(items, o => parseInt(o.amount)))}
+            </Text>
+          </View>
+        </TouchableOpacity>
+      </View>
+      //     );
+      //   }}
+      // />
+    );
+  };
 
-return (
-  <FlatList
-    style={{ width: '100%' }}
-    contentContainerStyle={{ paddingBottom: 150 }}
-    data={data}
-    keyExtractor={item => Math.random().toString()}
-    ListEmptyComponent={() => (
-      <Text style={{ textAlign: 'center', paddingTop: 30 }}>
-        {strings.no_data}
-      </Text>
-    )}
-    showsVerticalScrollIndicator={false}
-    renderItem={({ item }) => renderItem(item)}
-  />
-);
+  return (
+    <FlatList
+      style={{width: '100%'}}
+      contentContainerStyle={{paddingBottom: 150}}
+      data={Object.keys(groupedData)}
+      keyExtractor={(item, index) => index.toString()} // Use index as key
+      ListEmptyComponent={() => (
+        <Text style={{textAlign: 'center', paddingTop: 30}}>
+          {strings.no_data}
+        </Text>
+      )}
+      showsVerticalScrollIndicator={false}
+      renderItem={({item}) => renderItem(item, groupedData[item])}
+    />
+  );
 }
 const styles = StyleSheet.create({
   list: {
