@@ -9,10 +9,10 @@ import Animated, {
 } from 'react-native-reanimated';
 import { MARGIN, getOrder, getPosition } from '../utils/helper';
 
-const Draggable = ({ children, positions, id, refresh }) => {
+const Draggable = ({ children, positions, id, refresh, multilpy = 1 }) => {
     const position = getPosition(positions.value[id]);
     const translateX = useSharedValue(position.x);
-    const translateY = useSharedValue(position.y);
+    const translateY = useSharedValue(position.y * multilpy);
 
     const isGestureActive = useSharedValue(false);
 
@@ -21,7 +21,7 @@ const Draggable = ({ children, positions, id, refresh }) => {
         newOrder => {
             const newPostions = getPosition(newOrder);
             translateX.value = withTiming(newPostions.x);
-            translateY.value = withTiming(newPostions.y);
+            translateY.value = withTiming(newPostions.y * multilpy);
         },
     );
 
@@ -52,7 +52,7 @@ const Draggable = ({ children, positions, id, refresh }) => {
         onEnd: () => {
             const destination = getPosition(positions.value[id]);
             translateX.value = withTiming(destination.x);
-            translateY.value = withTiming(destination.y);
+            translateY.value = withTiming(destination.y * multilpy);
         },
         onFinish: () => {
             isGestureActive.value = false;

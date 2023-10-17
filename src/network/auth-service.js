@@ -15,7 +15,8 @@ export const SignInWithEmailUser = async (email, password) => {
     return await auth().signInWithEmailAndPassword(email, password);
   } catch (error) {
     if (error.code === 'auth/user-not-found') {
-      return SignUpUser(email, password);
+      throw error
+      // return SignUpUser(email, password);
     } else {
       throw error;
     }

@@ -142,6 +142,8 @@ const Login = ({ navigation }) => {
           numberType
           autoFocus
           maxLength={10}
+          textContentType='telephoneNumber'
+          dataDetectorTypes={'phoneNumber'}
           leftComponent={
             <View style={styles.row}>
               <Icon

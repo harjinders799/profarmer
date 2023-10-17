@@ -12,78 +12,77 @@ import Button from '../../components/button';
 import {ToastSuccess} from '../../utils/toast';
 import {goBack} from '../../navigation/ref';
 import Text from '../../components/text';
-import {getPosition} from '../../utils/helper';
+import { getPosition, tabsData } from '../../utils/helper';
 
 const Customize = () => {
-  const {tabs,getTab, setTab} = useTab();
-  const [update, setUpdate] = useState(false);
-  const positions = useSharedValue(
-    Object.assign({}, ...tabs.map((item, i) => ({[item.id]: i}))),
-  );
+    const { tabs, setTab } = useTab();
+    const [update, setUpdate] = useState(false);
+    const positions = useSharedValue(
+        Object.assign({}, ...tabs.map((item, i) => ({ [item.id]: i }))),
+    );
+    const refresh = () => {
+        setUpdate(!update);
+    };
 
-  const refresh = () => {
-    setUpdate(!update);
-  };
-
-  const setup = () => {
-    let dataArray = tabs.map(tab => ({
-      ...tab,
-      ...getPosition(positions.value[tab.id]),
-    }));
-    dataArray.sort((a, b) => {
-      if (a.y !== b.y) {
-        return a.y - b.y;
-      } else {
-        return a.x - b.x;
-      }
-    });
-
-    setTab(dataArray);
-    ToastSuccess('Done');
-    goBack();
-    getTab()
-  };
-  return (
-    <SafeAreaProvider style={styles.container}>
-      <GestureHandlerRootView style={styles.container}>
-        <SafeAreaView style={{flex: 0.7}}>
-          <View style={styles.wrapper}>
-            {tabs.slice(0, 4).map(item => (
-              <Draggable
-                key={item.id}
-                positions={positions}
-                id={item.id}
-                refresh={refresh}>
-                <Box key={item.id} item={item} />
-              </Draggable>
-            ))}
-            {tabs.slice(4, 8).map((item, i) => (
-              <Draggable
-                key={item.id}
-                positions={positions}
-                id={item.id}
-                refresh={refresh}>
-                <Box key={item.id} item={item} />
-              </Draggable>
-            ))}
-          </View>
-          <View
-            style={{
-              position: 'absolute',
-              backgroundColor: orange,
-              width: '100%',
-              height: WIDTH / 3,
-              top: '0%',
-            }}
-          />
-        </SafeAreaView>
-        <Text style={{padding: 20, textAlign: 'center'}}>
-          Drag and Drop frequetly using screens in top section
-        </Text>
-        <Button label={'Done'} onPress={setup} />
-      </GestureHandlerRootView>
-    </SafeAreaProvider>
-  );
+    const setup = () => {
+        let dataArray = tabs.map(tab => ({
+            ...tab,
+            ...getPosition(positions.value[tab.id]),
+        }));
+        dataArray.sort((a, b) => {
+            if (a.y !== b.y) {
+                return a.y - b.y;
+            } else {
+                return a.x - b.x;
+            }
+        });
+        setTab(dataArray);
+        ToastSuccess('Done');
+        goBack();
+    };
+    return (
+        <SafeAreaProvider style={styles.container}>
+            <GestureHandlerRootView style={styles.container}>
+                <SafeAreaView style={{ flex: 0.7 }}>
+                    <View style={styles.wrapper}>
+                        {tabs.slice(0, 4).map(item => (
+                            <Draggable
+                                multilpy={1}
+                                key={item.id}
+                                positions={positions}
+                                id={item.id}
+                                refresh={refresh}>
+                                <Box key={item.id} item={item} />
+                            </Draggable>
+                        ))}
+                        {tabs.slice(4, 6).map((item, i) => (
+                            <Draggable
+                                multilpy={0.7}
+                                key={item.id}
+                                positions={positions}
+                                id={item.id}
+                                refresh={refresh}>
+                                <Box key={item.id} item={item} />
+                            </Draggable>
+                        ))}
+                    </View>
+                    <View
+                        style={{
+                            position: 'absolute',
+                            backgroundColor: orange,
+                            width: '100%',
+                            height: WIDTH / 3,
+                            top: '0%',
+                        }}
+                    />
+                </SafeAreaView>
+                <Text style={{ padding: 20, textAlign: 'center' }}>
+                    Drag and Drop frequetly using screens in top section
+                </Text>
+                <Button label={'Done'} onPress={setup} />
+            </GestureHandlerRootView>
+        </SafeAreaProvider >
+    );
 };
 
 export default Customize;
