@@ -134,11 +134,15 @@
   "enter_pin": "Enter Your PIN",
   "setup_pin": "Setup Your PIN",
   
+  "crop_name": "Crop Name",
+  "harvest": "Harvest",
+  "harvest_amount": " Harvest Amount",
+  "field": " Field",
+  "rate": " Rate",
+  "add_harvest": "Add Harvest",
+  "harvest_added": "Harvest Added",
+  "harvest_record": "Harvest Record",
   
-"seed":"Seed",
-
-
-
   "description": "Description",
   "title": "Title",
   "add_event": "Add Event",
@@ -154,8 +158,9 @@
   "vegetable": "Vegetable",
   "fruit": "Fruit",
   "crop_added": "Crop Added",
+  "seed":"Seed",
   "comming_soon": "We are working on it will come soon!",
-
+  
   "labour_name": "Labour's Name",
   "add_labour": "Add Labour",
   "labour_count": "How Many Labours",

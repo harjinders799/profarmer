@@ -46,7 +46,7 @@ export default function More() {
                     </Text>
                 </TouchableOpacity>
             ))}
-            {/* <TouchableOpacity
+            <TouchableOpacity
                 style={{
                     backgroundColor: orange,
                     margin: 10,
@@ -61,7 +61,7 @@ export default function More() {
                 <Text h4 style={{ color: white }}>
                     {'Customize'}
                 </Text>
-            </TouchableOpacity> */}
+            </TouchableOpacity>
         </View>
     );
 }

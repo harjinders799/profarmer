@@ -2,12 +2,12 @@ import { data } from 'react-native-cheerio/lib/api/attributes';
 import { Auth, firestore } from 'src/service/setup';
 
 
-export const submitTimeline = async data => {
+export const submitHarvest = async data => {
     return new Promise(async function (resolve, reject) {
       try {
         let id = Auth().currentUser?.uid;
         await firestore()
-          .collection('timeline')
+          .collection('harvest')
           .add({...data, uid: id});
         resolve('success');
       } catch (error) {
@@ -16,15 +16,14 @@ export const submitTimeline = async data => {
     });
   };
 
-  export const getTimelineData = () => {
+  export const getHarvestData = () => {
     return new Promise(async function (resolve, reject) {
       let userId = Auth().currentUser?.uid;
       
        await firestore()
-        .collection('timeline')
+        .collection('harvest')
         .where('uid', '==', userId)
         // .where('crop', '==', crop)
-        // .orderBy('date', 'desc')
         .get()
         .then(querySnapshot => {
           let arr = [];
@@ -39,20 +38,20 @@ export const submitTimeline = async data => {
         });
     });
   };
-  export const updateTimeline = async data => {
+  export const updateHarvest = async data => {
     return new Promise(async function (resolve, reject) {
       try {
-        await firestore().collection('timeline').doc(data?.id).update(data);
+        await firestore().collection('harvest').doc(data?.id).update(data);
         resolve('success');
       } catch (error) {
         reject(new Error(error));
       }
     });
   };
-  export const deleteTimeline = async id => {
+  export const deleteHarvest = async id => {
     return new Promise(async function (resolve, reject) {
       try {
-        await firestore().collection('timeline').doc(id).delete();
+        await firestore().collection('harvest').doc(id).delete();
         resolve('success');
       } catch (error) {
         reject(new Error(error));
@@ -60,14 +59,14 @@ export const submitTimeline = async data => {
     });
   };
 
-export const deleteTimelineCollection = async () => {
+export const deleteHarvestCollection = async () => {
     
     try {
       const userId = Auth().currentUser?.uid;
       
       
-      const deleteTimeline = firestore()
-        .collection('timeline')
+      const deleteHarvest = firestore()
+        .collection('harvest')
         .where('uid', '==', userId)
         //  .where('receiver', '==', personName)
         //  .where('giver', '==', userId)
@@ -80,7 +79,7 @@ export const deleteTimelineCollection = async () => {
           });
           return Promise.all(deletePromises);
         });
-      await Promise.all([deleteTimeline]);
+      await Promise.all([deleteHarvest]);
     } catch (error) {
       throw new Error(error);
     }

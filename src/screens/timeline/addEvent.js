@@ -75,7 +75,7 @@ export default function AddEvent() {
         date: currentStamp(date),
       });
       setLoading(false);
-      ToastSuccess('strings.picker_amt_added', 'ProFarmer');
+      ToastSuccess(strings.crop_added,'ProFarmer');
       goBack();
     }
   };

@@ -43,7 +43,9 @@ import LoanUpdate from '../screens/loan/loanUpdate';
 import PinSecurity from '../screens/auth/pinSecurity';
 import LocalAuth from '../screens/auth/localAuth';
 import AddEvent from '../screens/timeline/addEvent';
+import AddHarvest from '../screens/harvest/addHarvest';
 import TimeDetail from '../screens/timeline/timeDetail';
+import HarvestDetail from '../screens/harvest/harvestDetail';
 import Customize from '../screens/settings/customize';
 import Crops from '../screens/timeline/crops';
 
@@ -165,6 +167,8 @@ export default function Stacks() {
       <Stack.Screen name="LoanUpdate" component={LoanUpdate} />
       <Stack.Screen name="AddLoan" component={AddLoan} />
       <Stack.Screen name="AddCredit" component={AddCredit} />
+      <Stack.Screen name="AddHarvest" component={AddHarvest} />
+      <Stack.Screen name="HarvestDetail" component={HarvestDetail} />
       <Stack.Screen name="LoanDetail" component={LoanDetail} />
       <Stack.Screen name="TimeDetail" component={TimeDetail} />
       <Stack.Screen name="Analysis" component={Analysis} />

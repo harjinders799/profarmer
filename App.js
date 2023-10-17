@@ -18,6 +18,7 @@ import { LoanProvider } from './src/context/loanContext';
 import { TimelineProvider } from './src/context/timeContext';
 import firestore from '@react-native-firebase/firestore';
 import { TabProvider } from './src/context/tabContext';
+import { HarvestProvider } from './src/context/harvestContext';
 
 export default function App() {
   const [version, setVersion] = useState();
@@ -67,9 +68,11 @@ export default function App() {
               <AadtProvider>
                 <LoanProvider>
                   <TimelineProvider>
+                  <HarvestProvider>
                     <LangProvider>
                       <Navigation />
                     </LangProvider>
+                  </HarvestProvider>
                   </TimelineProvider>
                 </LoanProvider>
               </AadtProvider>

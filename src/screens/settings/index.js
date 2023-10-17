@@ -145,10 +145,10 @@ export default function Setting({ navigation }) {
         style={{ width: '100%' }}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ height: HEIGHT, paddingBottom: 200 }}>
-        {/* <View style={{ flex: 1 }}>
+        <View style={{ flex: 1 }}>
           <More />
-        </View> */}
-        <View
+        </View>
+        {/* <View
           style={{
             flexDirection: 'row',
             flexWrap: 'wrap',
@@ -174,9 +174,9 @@ export default function Setting({ navigation }) {
               </Text>
             </TouchableOpacity>
           ))}
-        </View>
+        </View> */}
         <View style={styles.footer}>
-          <TouchableOpacity
+          {/* <TouchableOpacity
             style={styles.row}
             onPress={() => navigation.navigate('SalectLanguage')}>
             <Text style={styles.txt}>{strings.lang}</Text>
@@ -193,7 +193,7 @@ export default function Setting({ navigation }) {
             onPress={() => navigation.navigate('AboutUs')}>
             <Text style={styles.txt}>About Us</Text>
             <Icon name="chevron-right" type="Entypo" size={25} />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
           {/* <TouchableOpacity
             style={styles.row}
             onPress={() => navigation.navigate('AboutUs')}

@@ -7,6 +7,7 @@ import CottonStack from '../navigation/cottonStack';
 import SettingStack from '../navigation/settingStack';
 import LoanStack from '../navigation/loanStack';
 import Timeline from '../screens/timeline';
+import Harvest from '../screens/harvest';
 
 export const getTotalInterst = (data = []) => {
     let tot_interest = 0;
@@ -136,7 +137,7 @@ export const tabsData = [
         id: 8,
         name: 'Harvest',
         title: 'Harvest',
-        component: Timeline,
+        component: Harvest,
         icon: 'flower-outline',
         iconType: 'MaterialCommunityIcons',
     },

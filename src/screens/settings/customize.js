@@ -55,7 +55,7 @@ const Customize = () => {
                                 <Box key={item.id} item={item} />
                             </Draggable>
                         ))}
-                        {tabs.slice(4, 6).map((item, i) => (
+                        {tabs.slice(4).map((item, i) => (
                             <Draggable
                                 multilpy={0.7}
                                 key={item.id}
