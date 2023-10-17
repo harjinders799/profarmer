@@ -43,7 +43,7 @@ export default function AddEvent() {
   const [showDate, setShowDate] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
 
-  const {description,crop, amount, title, date} = data;
+  const {description,seed, amount, title, date} = data;
 
   const onChangeValue = (key, value) => {
     if (key == 'amount') {
@@ -64,10 +64,7 @@ export default function AddEvent() {
     else AddNew();
   };console.log(editData,'---566---')
   const updateWt = async () => {
-    if (!crop || crop.trim() == '') {
-      ToastError(strings.crop_name);
-    } else if (title.trim() == '') {
-  // if (!title || !title.trim()) {
+  if (!title || !title.trim()) {
       ToastError(strings.title);
     } else if (description.trim() == '') {
       ToastError(strings.description);
@@ -84,10 +81,7 @@ export default function AddEvent() {
   };
 
   const AddNew = async () => {
-    if (!crop || crop.trim() == '') {
-      ToastError(strings.crop_name);
-    // if (!title || !title.trim()) {
-     } else if  (title.trim() == '' ) {
+    if (!title || !title.trim()) {
       ToastError(strings.title);
     } else if (description.trim() == '') {
       ToastError(strings.description); 
@@ -118,7 +112,7 @@ export default function AddEvent() {
         }
         centerComponent={
           <Text h2 style={{color: green, fontWeight: 'bold'}}>
-            {editData?.crop}
+            {editData?.label}
           </Text>
         }
         rightComponent={<Text h2> </Text>}
@@ -129,11 +123,11 @@ export default function AddEvent() {
         <View style={styles.row}>
           <Input
             autoFocus
-            label={strings.crop}
-            placeholder={strings.crop}
-            value={crop}
+            label={strings.seed}
+            placeholder={strings.seed}
+            value={seed}
             autoCapitalize="words"
-            setValue={value => onChangeValue('crop', value)}
+            setValue={value => onChangeValue('seed', value)}
           />
           <Input
             autoFocus

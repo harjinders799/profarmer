@@ -26,9 +26,7 @@ export default function TimeDetail({navigation}) {
   const {getTimeline, timelineData = [] } = useTimeline();
   const data = params?.items ?? {};
   const [loading, setLoading] = useState(true);
-  const cropName = data?.crop;
   const isFocused = useIsFocused();
-  // export default function TimeList({data}) {
 
   useFocusEffect(
     useCallback(() => {
@@ -52,6 +50,8 @@ export default function TimeDetail({navigation}) {
     // </BaseView>
     );
   }
+
+  console.log(data?.crop,'---crop--')
   return (
     <BaseView>
       <Header
@@ -61,8 +61,7 @@ export default function TimeDetail({navigation}) {
         }
         centerComponent={
           <Text h2 style={{color: white, fontWeight: 'bold'}}>
-            {/* {strings.timeline} */} 
-             {cropName}
+             {data[0]?.crop}
           </Text>
         }
         rightComponent={<Text h2>

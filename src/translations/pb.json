@@ -113,12 +113,6 @@
   "receiver_record": "ਕਰਜ਼ਦਾਰ ਰਿਕਾਰਡ ",
   "giver_record": "ਰਿਣਦਾਤਾ ਰਿਕਾਰਡ",
   "loan": " ਕਰਜ਼ਾ",
-  "enter": " ਦਾਖਲ ਕਰੋ ",
-  "confirm": "ਪੱਕਾ",
-  "confirm_pin": "PIN ਪੱਕਾ ਕਰੋ",
-  "setup_pin": " PIN ਬਣਾਉ",
-  "verify_pin": "PIN ਦੀ ਪੁਸ਼ਟੀ ਕਰੋ",
-  "enter_pin": "PIN ਦਾਖਲ ਕਰੋ ",
   "receiver": " ਕਰਜ਼ਦਾਰ",
   "receiver_added": " ਕਰਜ਼ਦਾਰ ਜੋੜਿਆ ਗਿਆ!",
   "receiver_name": " ਕਰਜ਼ਦਾਰ ਦਾ ਨਾਮ",
@@ -130,8 +124,13 @@
   "given_amount_added": "ਦਿੱਤੀ ਗਈ ਰਕਮ ਜੋੜੀ ਗਈ",
   "given_amount_with_interest": "ਦਿੱਤੀ ਗਈ ਰਕਮ ਵਿਆਜ ਸਮੇਤ",
   "taken_amount_with_interest": "ਲਈ  ਗਈ ਰਕਮ ਵਿਆਜ ਸਮੇਤ",
-
-
+  
+  "enter": " ਦਾਖਲ ਕਰੋ ",
+  "confirm": "ਪੱਕਾ",
+  "confirm_pin": "PIN ਪੱਕਾ ਕਰੋ",
+  "setup_pin": " PIN ਬਣਾਉ",
+  "verify_pin": "PIN ਦੀ ਪੁਸ਼ਟੀ ਕਰੋ",
+  "enter_pin": "PIN ਦਾਖਲ ਕਰੋ ",
 
 "description":"ਵੇਰਵਾ",
 "title":"ਸਿਰਲੇਖ",
@@ -147,7 +146,7 @@
 "orange":"ਸੰਤਰਾ",
 "vegetable":"ਸਬਜ਼ੀ",
 "fruit":"ਫਲ",
-"other":"ਹੋਰ",
+"seed":"ਬੀਜ",
 "crop_added":"ਫਸਲ ਜੋੜੀ ਗਈ",
 
 

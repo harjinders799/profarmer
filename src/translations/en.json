@@ -115,10 +115,6 @@
   "loan": "Loan",
   "enter": "Enter",
   "confirm": "Confirm",
-  "confirm_pin": "Confirm PIN",
-  "verify_pin": "Verify PIN",
-  "enter_pin": "Enter Your PIN",
-  "setup_pin": "Setup Your PIN",
   "add_loan": "Add Loan",
   "giver": "Giver",
   "giver_added": " giver Added !",
@@ -132,7 +128,12 @@
   "given_amount_added": "Given Amount Added",
   "given_amount_with_interest": "Given Amount With Interset",
   "taken_amount_with_interest": "Taken Amount With Interset",
-
+  
+  "confirm_pin": "Confirm PIN",
+  "verify_pin": "Verify PIN",
+  "enter_pin": "Enter Your PIN",
+  "setup_pin": "Setup Your PIN",
+  
 "description":"Description",
 "title":"Title",
 "add_event":"Add Event",
@@ -149,6 +150,7 @@
 "fruit":"Fruit",
 "timeline":"Timeline",
 "crop_added":"Crop Added",
+"seed":"Seed",
 
 
 

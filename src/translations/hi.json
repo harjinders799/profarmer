@@ -111,13 +111,6 @@
   "loan_record": "कर्ज़ अभिलेख",
   "receiver_record": "कर्ज़दार अभिलेख",
   "giver_record": "ऋणदाता अभिलेख",
-  "loan": "कर्ज़ ",
-  "enter_pin": "PIN दर्ज करे",
-  "enter": "दर्ज करे",
-  "confirm": "पक्का",
-  "confirm_pin": "PIN पक्का करे",
-  "verify_pin": "PIN की पुष्टि करे",
-  "setup_pin": "PIN बनाओ",
   "add_loan": " कर्ज़ जोड़ें",
   "receiver": "कर्ज़दार ",
   "receiver_added": " कर्ज़दार जोड़ा गया!",
@@ -132,7 +125,15 @@
   "given_amount_with_interest": "दी गई राशि ब्याज सहित",
   "taken_amount_with_interest": "ली गई राशि ब्याज सहित",
   "group_warning": "यदि आप समूह बनाने के लिए किसी भी समस्या का सामना करते हैं तो कृपया लॉगआउट करें और फिर से लॉगिन करें!",
-
+  
+  "loan": "कर्ज़ ",
+  "enter_pin": "PIN दर्ज करे",
+  "enter": "दर्ज करे",
+  "confirm": "पक्का",
+  "confirm_pin": "PIN पक्का करे",
+  "verify_pin": "PIN की पुष्टि करे",
+  "setup_pin": "PIN बनाओ",
+  
   "description": "विवरण",
   "title": "शीर्षक",
   "add_event": "कार्यक्रम जोड़ें ",
@@ -148,6 +149,7 @@
   "vegetable": "सब्जी",
   "fruit": "फल",
   "other": "अन्य",
+  "seed":"बीज",
   "crop_added": "फसल जोड़ी गई",
 
   "labour_name": "लेबर का नाम",
