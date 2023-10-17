@@ -47,6 +47,7 @@ const Customize = () => {
                     <View style={styles.wrapper}>
                         {tabs.slice(0, 4).map(item => (
                             <Draggable
+                                multilpy={1}
                                 key={item.id}
                                 positions={positions}
                                 id={item.id}
@@ -54,8 +55,9 @@ const Customize = () => {
                                 <Box key={item.id} item={item} />
                             </Draggable>
                         ))}
-                        {tabs.slice(4, 8).map((item, i) => (
+                        {tabs.slice(4, 6).map((item, i) => (
                             <Draggable
+                                multilpy={0.7}
                                 key={item.id}
                                 positions={positions}
                                 id={item.id}
@@ -79,7 +81,7 @@ const Customize = () => {
                 </Text>
                 <Button label={'Done'} onPress={setup} />
             </GestureHandlerRootView>
-        </SafeAreaProvider>
+        </SafeAreaProvider >
     );
 };
 

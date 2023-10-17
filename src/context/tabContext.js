@@ -10,8 +10,8 @@ import Timeline from '../screens/timeline';
 import { tabsData } from '../utils/helper';
 
 const initialState = {
-  tabs: tabsData
-}
+  tabs: tabsData,
+};
 
 export const TabContext = React.createContext();
 
@@ -37,7 +37,7 @@ export const TabProvider = props => {
       },
       getTab: async () => {
         let tabs = JSON.parse(await getAsyncStorage('tab'));
-        dispatch({ type: 'TAB', tabs: tabs });
+        if (Array.isArray(tabs)) dispatch({ type: 'TAB', tabs: tabs });
       },
     }),
     [state],

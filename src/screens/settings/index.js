@@ -15,12 +15,12 @@ import { HEIGHT } from 'src/utils/constant';
 import { useCotton } from 'src/context/cottonContext';
 import { useLang } from '../../context/langContext';
 import Icon from '../../components/icon';
-import { green, black } from '../../utils/color';
+import { green, black, orange, white } from '../../utils/color';
 import { strings } from '../../translations/locale';
 import ReactNativeBiometrics, { BiometryTypes } from 'react-native-biometrics';
 import { useAuth } from '../../context/authContext';
 import NetInfo from '@react-native-community/netinfo';
-import { ToastError } from '../../utils/toast';
+import { ToastError, ToastProgress } from '../../utils/toast';
 import { getAllItems, updatePickerExpenseId, updatePickerId } from '../../sql';
 import { PCIKER_TABLE, PICKER_EXPENSE_TABLE } from '../../sql/tabels';
 import {
@@ -30,22 +30,25 @@ import {
   updatePickerExpense,
 } from '../../network/picker-service';
 import Loader from '../../components/loader';
+import More from '../more';
+import { tabsData } from '../../utils/helper';
 
 const rnBiometrics = new ReactNativeBiometrics();
 
 export default function Setting({ navigation }) {
   const { lang, setFingerLock, fingerLock } = useLang();
-  const [isBiometry, setIsBiometry] = useState(false);
-  const { db, getPickerWeight, pickerWeight = [], pickerExpense = [], getPickerExpense, resetPicker } = useCotton();
+  const {
+    db,
+    getPickerWeight,
+    pickerWeight = [],
+    pickerExpense = [],
+    getPickerExpense,
+    resetPicker,
+  } = useCotton();
   const { user, reset } = useAuth();
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    (async () => {
-      const { available } = await rnBiometrics.isSensorAvailable();
-      setIsBiometry(available);
-    })();
-  }, [lang]);
+  useEffect(() => { }, [lang]);
 
   const onLogOut = async () => {
     try {
@@ -67,7 +70,7 @@ export default function Setting({ navigation }) {
         }, 2000);
       }
     } catch (error) {
-      ToastError("Something Went Wrong!")
+      ToastError('Something Went Wrong!');
       setLoading(false);
     }
   };
@@ -133,15 +136,45 @@ export default function Setting({ navigation }) {
       console.log(error, '--------');
     }
   };
+
   return (
     <BaseView>
       <Loader visible={loading} />
+      <Account />
       <ScrollView
         style={{ width: '100%' }}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ height: HEIGHT, paddingBottom: 200 }}>
-        <Account />
-
+        {/* <View style={{ flex: 1 }}>
+          <More />
+        </View> */}
+        <View
+          style={{
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          {tabsData.slice(5).map(tab => (
+            <TouchableOpacity
+              key={tab.id}
+              style={{
+                backgroundColor: orange,
+                margin: 10,
+                padding: 10,
+                borderRadius: 10,
+                width: '40%',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+              onPress={() => ToastProgress(strings.comming_soon)}>
+              <Icon type={tab?.iconType} name={tab.icon} color={white} size={22} />
+              <Text h4 style={{ color: white }}>
+                {tab?.title}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
         <View style={styles.footer}>
           <TouchableOpacity
             style={styles.row}
@@ -153,12 +186,6 @@ export default function Setting({ navigation }) {
             style={styles.row}
             onPress={() => navigation.navigate('ContactUs')}>
             <Text style={styles.txt}>{strings.contact}</Text>
-            <Icon name="chevron-right" type="Entypo" size={25} />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.row}
-            onPress={() => navigation.navigate('Customize')}>
-            <Text style={styles.txt}>{'Customize'}</Text>
             <Icon name="chevron-right" type="Entypo" size={25} />
           </TouchableOpacity>
           <TouchableOpacity
@@ -227,22 +254,19 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    // paddingHorizontal: 10
+    borderBottomWidth: 1,
+    borderColor: 'grey',
+    paddingVertical: 10,
+    marginBottom: 10,
   },
   txt: {
     fontSize: 20,
     fontWeight: '500',
     // color: black,
-    paddingVertical: 10,
+    // paddingVertical: 10,
   },
   footer: {
-    // elevation: 3,
-    // backgroundColor: white,
     borderRadius: 10,
-    // margin: 20,
     padding: 10,
-    borderWidth: 1,
-    borderColor: 'grey',
-    // margin:100,
   },
 });

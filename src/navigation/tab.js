@@ -18,7 +18,9 @@ export default function Tabs() {
     return tabsData.find(tab => tab?.name == name).component;
   };
   let data = [...tabs];
-  data.splice(2, 0, tabsData[5]);
+  let isSettingExist = data.slice(0, 4).find(o => o.name === tabsData[3].name)
+  if (!isSettingExist?.name) data.splice(3, 0, tabsData[3])
+
   return (
     <Tab.Navigator
       // tabBar={props => <AnimatedTabBar {...props} />}
@@ -40,45 +42,7 @@ export default function Tabs() {
       }}>
       {Array.isArray(data) &&
         data.slice(0, 5).map((value, i) => {
-          return i == 2 ? (
-            <Tab.Screen
-              key={value.id}
-              name={'More'}
-              component={More}
-              options={{
-                title: '',
-                tabBarIcon: ({ color }) => {
-                  return (
-                    <View
-                      style={{
-                        position: 'absolute', backgroundColor: orange,
-                        borderRadius: 50,
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        width: 80,
-                        height: 80
-                      }}>
-                      <View
-                        style={{
-                          position: 'absolute', backgroundColor: orange,
-                          borderRadius: 50,
-                          justifyContent: 'center',
-                          alignItems: 'center',
-                          width: 80,
-                          height: 80
-                        }}>
-                        <Icon
-                          name={'plus'}
-                          color={color}
-                          size={45 * PixelRatio.getFontScale()}
-                        />
-                      </View>
-                    </View>
-                  );
-                },
-              }}
-            />
-          ) : (
+          return (
             <Tab.Screen
               key={value.id}
               name={value.name}

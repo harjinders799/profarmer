@@ -34,21 +34,17 @@ export default function Navigation() {
   const { getLang, fingerLock, authenticate, setAuthenticate } = useLang();
   const { getUser, userVerified, getPin, reset } = useAuth();
   const { db, getDB } = useCotton();
-  const { getTab } = useTab();
+  const { getTab, tabs } = useTab();
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState();
-  const [fingerLockAvailable, setFingerLockAvailable] = useState(false);
 
   useEffect(() => {
     getTab();
     getLang();
     getUser();
     getPin();
-    (async () => {
-      const { available } = await rnBiometrics.isSensorAvailable();
-      setFingerLockAvailable(available);
-    })();
   }, []);
+
   useEffect(() => {
     if (db)
       async () => {
@@ -58,38 +54,24 @@ export default function Navigation() {
       };
   }, [db]);
 
-  // Handle user state changes
+
   function onAuthStateChanged(user) {
     getDB();
     if (user) {
       setUser(user);
       getUser();
+      getTab();
     }
     setUser(user);
     if (initializing) setInitializing(false);
   }
   useEffect(() => {
     const subscriber = Auth().onAuthStateChanged(onAuthStateChanged);
-    return subscriber; // unsubscribe on unmount
+    return subscriber;
   }, [userVerified]);
 
-  if (initializing || !db) return <Loader visible={initializing || !db} />;
-  // if (fingerLock && user && fingerLockAvailable && !authenticate) {
-  //   rnBiometrics
-  //     .simplePrompt({ promptMessage: 'Confirm fingerprint' })
-  //     .then(resultObject => {
-  //       const { success } = resultObject;
-  //       if (!success) {
-  //         BackHandler.exitApp();
-  //       } else {
-  //         setAuthenticate(true);
-  //       }
-  //     })
-  //     .catch(() => {
-  //       console.log('biometrics failed');
-  //     });
-  // }
-  console.log(userVerified, '---11--');
+  if (initializing || !db || !Array.isArray(tabs)) return <Loader visible={initializing || !db} />;
+
   return (
     <NavigationContainer theme={themeLight} ref={navigationRef}>
       {user ? (

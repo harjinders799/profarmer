@@ -103,18 +103,18 @@ export const tabsData = [
     },
     {
         id: 4,
-        name: 'SettingStack',
-        title: strings.settings,
-        component: SettingStack,
-        icon: 'setting',
-    },
-    {
-        id: 5,
         name: 'LoanStack',
         title: strings.loan,
         component: LoanStack,
         icon: 'sack-percent',
         iconType: 'MaterialCommunityIcons',
+    },
+    {
+        id: 5,
+        name: 'SettingStack',
+        title: strings.settings,
+        component: SettingStack,
+        icon: 'setting',
     },
     {
         id: 6,
@@ -129,7 +129,7 @@ export const tabsData = [
         name: 'Reminder',
         title: 'Reminder',
         component: Timeline,
-        icon: 'timeline-text',
+        icon: 'alarm',
         iconType: 'MaterialCommunityIcons',
     },
     {
@@ -137,7 +137,7 @@ export const tabsData = [
         name: 'Harvest',
         title: 'Harvest',
         component: Timeline,
-        icon: 'timeline-text',
+        icon: 'flower-outline',
         iconType: 'MaterialCommunityIcons',
     },
     {
@@ -145,7 +145,7 @@ export const tabsData = [
         name: 'Rent',
         title: 'Rent',
         component: Timeline,
-        icon: 'timeline-text',
+        icon: 'tractor-variant',
         iconType: 'MaterialCommunityIcons',
     },
 ];
