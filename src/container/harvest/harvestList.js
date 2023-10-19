@@ -6,48 +6,29 @@ import {filter, groupBy, sumBy} from 'lodash';
 import {strings} from 'src/translations/locale';
 import {navigate} from 'src/navigation/ref';
 import {currencyFormat} from 'src/utils/dateformat';
+import moment from 'moment';
 import Button from '../../components/button';
 import {useIsFocused, useRoute} from '@react-navigation/native';
 import { useHarvest } from '../../context/harvestContext';
 import { getHarvestData } from '../../network/harvest_service';
 import { useFocusEffect } from '@react-navigation/native';
+import { ToastError, ToastSuccess } from 'src/utils/toast';
+import { greenDark } from '../../utils/color';
 
-export default function HarvestList ({data =[]}) {
-  const {getHarvest, harvestData = [] } = useHarvest();
+export default function HarvestList ({data= []}) {
+  const {getHarvest} = useHarvest();
   const isFocused = useIsFocused();
-  const [rate, setRate] = useState();
+  const [fullData, setFullData] = useState([]);
   const [loading, setLoading] = useState(true);
-  // const groupedData = groupBy(data, 'crop');
-
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     getHarvest();
-  //   }, [isFocused]),
-  // );
-  console.log(data); 
-   useFocusEffect(
+ 
+  useFocusEffect(
     useCallback(() => {
-      getData();
-        }, [isFocused]),
+      getHarvest();
+    }, [isFocused]),
   );
-  let totalamount =
-    sumBy(
-      harvestData,
-      o =>
-        parseFloat(o.amount) * (parseFloat(rate) ));
-
-
-  const getData = async () => {
-    try {
-      setFullData(await getHarvestData(db));
-      setLoading(false);
-    } catch (error) {
-      setLoading(false);
-      ToastError(error?.message, 'Harvest');
-    }
-  };
 
   const renderItem = (item) => {
+let amount = parseInt(item?.field)*parseFloat(item?.rate)
     return (
       <View style={styles.list}>
         <TouchableOpacity onPress={() => navigate('HarvestDetail', {item})}>
@@ -58,11 +39,11 @@ export default function HarvestList ({data =[]}) {
             <Text h5>{strings.view}</Text>
           </View>
           <View style={styles.row}>
-            <Text numberOfLines={1} h4></Text>
+            <Text numberOfLines={1} h4> 
+            </Text>
+           
             <Text numberOfLines={1} h4>
-               {/* {currencyFormat(item?.amount)} */}
-               {currencyFormat(totalamount)}
-              {/* {currencyFormat(sumBy(item, o => parseInt(o.amount)))} */}
+                 {currencyFormat(amount)}
             </Text>
           </View>
         </TouchableOpacity>
@@ -77,9 +58,10 @@ export default function HarvestList ({data =[]}) {
     <FlatList
     style={{ width: '100%' }}
     contentContainerStyle={{ paddingBottom: 150 }}
-    data={data.sort((a, b) => {
-      return moment(b.lastEntry.date) - moment(a.lastEntry.date);
-    })}
+    // data={data.sort((a, b) => {
+    //   return moment(b.lastEntry.date) - moment(a.lastEntry.date);
+    // })}
+        data={data}
     keyExtractor={item => Math.random().toString()}
     ListEmptyComponent={() => (
       <Text style={{ textAlign: 'center', paddingTop: 30 }}>
