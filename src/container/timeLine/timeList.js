@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import Text from 'src/components/text';
 import Button from 'src/components/button';
 import {
@@ -9,12 +9,12 @@ import {
   View,
   ScrollView,
 } from 'react-native';
-import {white} from 'src/utils/color';
-import {reduce, groupBy, sumBy} from 'lodash';
-import {strings} from 'src/translations/locale';
-import {navigate} from 'src/navigation/ref';
-import {currencyFormat} from 'src/utils/dateformat';
-import {ToastError} from '../../utils/toast';
+import { white } from 'src/utils/color';
+import { reduce, groupBy, sumBy } from 'lodash';
+import { strings } from 'src/translations/locale';
+import { navigate } from 'src/navigation/ref';
+import { currencyFormat } from 'src/utils/dateformat';
+import { ToastError } from '../../utils/toast';
 import {
   aqua,
   gray4,
@@ -27,14 +27,14 @@ import {
 } from '../../utils/color';
 import Animated from 'react-native-reanimated';
 import auth from '@react-native-firebase/auth';
-import {getTotalInterst} from '../../utils/helper';
+import { getTotalInterst } from '../../utils/helper';
 import Timeline from 'react-native-timeline-flatlist';
-import {useTimeline} from '../../context/timeContext';
+import { useTimeline } from '../../context/timeContext';
 import moment from 'moment';
 
-export default function TimeList({data}) {
+export default function TimeList({ data }) {
   const renderItem = item => {
-    console.log(item,)
+    // console.log(item,)
     return (
       <View style={styles.list}>
         <Text h5>{moment(item.date).format('DD-MM-YYYY')}</Text>
@@ -45,24 +45,24 @@ export default function TimeList({data}) {
       </View>
     );
   };
-  console.log(data,'----11---222--')
+  // console.log(data,'----11---222--')
   return (
     <View style={styles.container}>
       <Timeline
         data={data}
         renderTime={renderItem}
-        // circleSize={20}
-        // circleColor={red}
-        // separator={true}
-        // lineColor={aqua}
-        //   timeContainerStyle={{minWidth: 52, marginTop: -5}}
-        // timeStyle={styles.time}
-        // descriptionStyle={styles.description}
-        // options={{
-        //   style: {paddingTop: 5},
-        // }}
-        // showTime={false}
-        // isUsingFlatlist={true}
+      // circleSize={20}
+      // circleColor={red}
+      // separator={true}
+      // lineColor={aqua}
+      //   timeContainerStyle={{minWidth: 52, marginTop: -5}}
+      // timeStyle={styles.time}
+      // descriptionStyle={styles.description}
+      // options={{
+      //   style: {paddingTop: 5},
+      // }}
+      // showTime={false}
+      // isUsingFlatlist={true}
       />
     </View>
   );

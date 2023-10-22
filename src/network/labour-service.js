@@ -118,7 +118,6 @@ export const getLabourExpense = async name => {
           });
           resolve(arr);
         });
-      resolve('success');
     } catch (error) {
       reject(new Error(error));
     }
@@ -141,7 +140,6 @@ export const getLabourLeave = async name => {
           });
           resolve(arr);
         });
-      resolve('success');
     } catch (error) {
       reject(new Error(error));
     }
@@ -163,7 +161,6 @@ export const getAllLabourExpense = async name => {
           });
           resolve(arr);
         });
-      resolve('success');
     } catch (error) {
       reject(new Error(error));
     }

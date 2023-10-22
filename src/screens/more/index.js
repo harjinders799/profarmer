@@ -13,7 +13,6 @@ export default function More() {
 
     let data = [...tabs];
     let isSettingExist = data.findIndex(o => o.name === tabsData[3].name)
-    console.log(isSettingExist)
     if (isSettingExist > 4) {
         data.push(tabs[3])
         data.splice(isSettingExist, 0)

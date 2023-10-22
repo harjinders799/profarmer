@@ -26,7 +26,6 @@ export default function AddPicker() {
   const { db, pickerWeight } = useCotton();
   const { params } = useRoute();
   const editData = params?.data ?? {};
-  console.log(editData, '_________data')
   const [data, setData] = React.useState({
     id: editData?.id ?? 0,
     uid: auth().currentUser?.uid,

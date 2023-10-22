@@ -59,7 +59,6 @@ export default function AddLoan() {
     });
   };
   const onPress = () => {
-    console.log(editData?.name)
     if (editData?.name) updateWt();
     else AddNew();
   };
@@ -72,7 +71,7 @@ export default function AddLoan() {
       setLoading(true);
       await updateLoanName(
         editData?.name,
-        {...data,receiver:receiver.trim()}
+        { ...data, receiver: receiver.trim() }
       )
       setLoading(false);
       ToastSuccess(strings.update);
@@ -90,12 +89,11 @@ export default function AddLoan() {
     }
 
     setLoading(true);
-    await submitLoan({ ...data,receiver:receiver.trim(), date: currentStamp(date), })
+    await submitLoan({ ...data, receiver: receiver.trim(), date: currentStamp(date), })
     setLoading(false);
     ToastSuccess(strings.receiver_added);
     goBack();
   };
-  console.log(editData)
   return (
     <BaseView style={styles.container}>
       <Loader visible={loading} />
@@ -109,10 +107,10 @@ export default function AddLoan() {
             onPress={() => goBack()}
           />
         }
-        centerComponent={<Text h2>{editData?.name ?  strings.update : strings.add_loan}</Text>}
+        centerComponent={<Text h2>{editData?.name ? strings.update : strings.add_loan}</Text>}
         rightComponent={<Text h2> </Text>}
       />
-      <ScrollView style={styles.form}keyboardShouldPersistTaps="always">
+      <ScrollView style={styles.form} keyboardShouldPersistTaps="always">
         <Input
           label={strings.name}
           autoFocus

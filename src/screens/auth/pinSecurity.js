@@ -13,15 +13,11 @@ import Text from 'src/components/text';
 import Button from 'src/components/button';
 import { strings } from 'src/translations/locale';
 import { black, cyan, green, red, white } from '../../utils/color';
-import { useLang } from '../../context/langContext';
 import { useAuth } from '../../context/authContext';
-
-import ReactNativeBiometrics, { BiometryTypes } from 'react-native-biometrics';
 import { ToastError, ToastSuccess } from 'src/utils/toast';
 import BaseView from '../../container/base';
 import { WIDTH } from '../../utils/constant';
 
-const rnBiometrics = new ReactNativeBiometrics();
 
 export default function PinSecurity({ navigation }) {
   const { getPin, pin, reset, setUserVerified, setPin } = useAuth();
@@ -29,7 +25,6 @@ export default function PinSecurity({ navigation }) {
   const [confirmPin, setConfirmPin] = useState('');
   const [verifiedPin, setVerifiedPin] = useState('');
   const [label, setLabel] = useState(pin ? 'Verify' : 'Enter');
-  const [isBiometry, setIsBiometry] = useState(false);
   const [attempt, setAttempt] = useState(3);
 
   useEffect(() => {
@@ -38,27 +33,32 @@ export default function PinSecurity({ navigation }) {
       setConfirmPin('');
     }
 
-    if (label === 'Confirm' && confirmPin.length === 4) {
-      if (enteredPin === confirmPin) {
-        setPin(enteredPin);
-        setUserVerified();
-        // navigation.replace('AddForm');
-      } else {
-        ToastError('PIN does not match');
+    const timer = setTimeout(() => {
+      if (label === 'Confirm' && confirmPin.length === 4) {
+        if (enteredPin === confirmPin) {
+          setPin(enteredPin);
+          setUserVerified();
+          // navigation.replace('AddForm');
+        } else {
+          ToastError('PIN does not match');
+        }
       }
-    }
-    if (verifiedPin.length === 4 && label === 'Verify') {
-      if (verifiedPin === pin) {
-        setUserVerified();
-        // navigation.replace('AddForm'); // Navigate to the next screen
-      } else {
-        if (attempt <= 1) {
-          ToastError('You have exceed max attempt');
-          reset();
-        } else ToastError('Pin Not match');
-        setAttempt(attempt - 1);
+      if (verifiedPin.length === 4 && label === 'Verify') {
+        if (verifiedPin === pin) {
+          setUserVerified();
+        } else {
+          if (attempt <= 1) {
+            ToastError('You have exceed max attempt');
+            reset();
+          } else {
+            ToastError('Pin Not match');
+            setVerifiedPin('')
+          }
+          setAttempt(attempt - 1);
+        }
       }
-    }
+    }, 800);
+    return () => clearTimeout(timer);
   }, [enteredPin, confirmPin, verifiedPin, label]);
   // console.log('--------------------------', attempt);
 
@@ -86,7 +86,6 @@ export default function PinSecurity({ navigation }) {
   if (attempt == 0) {
     reset();
   }
-  console.log(enteredPin, confirmPin)
   return (
     <BaseView style={styles.container}>
       <Text h2 style={{ color: green }}>

@@ -71,7 +71,6 @@ export const getAllPickerExpense = async name => {
           });
           resolve(arr);
         });
-      resolve('success');
     } catch (error) {
       reject(new Error(error));
     }
@@ -154,7 +153,6 @@ export const getPickerExpense = async name => {
           });
           resolve(arr);
         });
-      resolve('success');
     } catch (error) {
       reject(new Error(error));
     }
@@ -262,7 +260,6 @@ export const getPickerGroup = async () => {
           });
           resolve(arr);
         });
-      resolve('success');
     } catch (error) {
       reject(new Error(error));
     }

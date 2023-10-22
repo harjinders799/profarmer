@@ -45,7 +45,6 @@ export default function GroupDetail() {
     const [loading, setLoading] = useState(true);
     const [isSearchActive, setSearchActive] = useState(false);
     const { user } = useAuth();
-    console.log(data)
     useFocusEffect(
         useCallback(() => {
             getPickerWeight();

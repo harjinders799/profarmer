@@ -14,6 +14,7 @@ import { useLoan } from '../../context/loanContext';
 import { useFocusEffect } from '@react-navigation/native';
 import { calculateTotals } from '../../utils/helper';
 import { commonStyle } from '../../utils/style';
+import { currencyFormat } from '../../utils/dateformat';
 
 export default function Loan({ navigation }) {
   const { lang } = useLang();
@@ -35,7 +36,7 @@ export default function Loan({ navigation }) {
       <View style={commonStyle.row_c_j_b}>
         <View style={[styles.card, { backgroundColor: greenDark }]}>
           <Text h3 white>
-            {totals?.taken}
+            {currencyFormat(totals?.taken ?? 0)}
           </Text>
           <Text h5 white>
             {strings.taken_amount}
@@ -43,7 +44,7 @@ export default function Loan({ navigation }) {
         </View>
         <View style={[styles.card, { backgroundColor: red }]}>
           <Text h3 white>
-            {totals?.given}
+            {currencyFormat(totals?.given ?? 0)}
           </Text>
           <Text h5 white>
             {strings.given_amount}

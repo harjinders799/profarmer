@@ -18,17 +18,22 @@ export const submitLoan = async data => {
 
 export const getLoanData = () => {
   return new Promise(function (resolve, reject) {
-    let userId = Auth().currentUser?.uid;
-    firestore()
-      .collection('loan')
-      .where('uid', '==', userId)
-      .onSnapshot(querySnapshot => {
-        let arr = [];
-        querySnapshot.forEach(documentSnapshot => {
-          arr.push({ ...documentSnapshot.data(), id: documentSnapshot.id });
-        });
-        resolve(arr);
-      })
+    try {
+      let userId = Auth().currentUser?.uid;
+      firestore()
+        .collection('loan')
+        .where('uid', '==', userId)
+        .onSnapshot(querySnapshot => {
+          let arr = [];
+          querySnapshot.forEach(documentSnapshot => {
+            arr.push({ ...documentSnapshot.data(), id: documentSnapshot.id });
+          });
+          resolve(arr);
+        })
+    } catch (error) {
+      console.log(error)
+      reject(error);
+    }
   });
 };
 
@@ -47,8 +52,7 @@ export const updateLoan = async data => {
   return new Promise(async function (resolve, reject) {
     try {
       await firestore().collection('loan').doc(data?.id).update(data);
-      resolve(data?.fid);
-      // resolve('success')
+      resolve('success')
     } catch (error) {
       reject(new Error(error));
     }

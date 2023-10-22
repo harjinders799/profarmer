@@ -16,34 +16,9 @@ import { deletePickerData } from '../../sql';
 import { useCotton } from '../../context/cottonContext';
 import { sumBy } from 'lodash';
 
-export default function PickerDetailAction({ data, rate, pickerData, picker }) {
+export default function PickerDetailAction({ data, rate }) {
   const [loading, setLoading] = React.useState(false);
-  const { db, getPickerWeight } = useCotton();
 
-  const delteData = async () => {
-    Alert.alert(
-      strings.weight,
-      `${strings.delete_wt} ${(data, rate?.weight)}Kg`,
-      [
-        {
-          text: 'Yes',
-          onPress: async () => {
-            setLoading(true);
-            await deletePickerData(db, data, rate);
-            if ((data, rate?.fid)) await deletePicker(data, rate?.fid);
-            getPickerWeight();
-            setLoading(false);
-            ToastSuccess(strings.weight_delete, 'Weight');
-            // goBack()
-          },
-        },
-        {
-          text: 'No',
-        },
-      ],
-      { cancelable: true },
-    );
-  };
 
   return (
     <View style={[styles.list, { display: data?.weight != 0 ? 'flex' : 'none' }]}>

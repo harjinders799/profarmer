@@ -16,7 +16,16 @@ import { goBack, navigate } from '../../navigation/ref';
 import Logo from '../../container/logo';
 import { logoFull, logoTag } from '../../utils/images';
 import Button from 'src/components/button';
-import { gray4, blue, black, gray6, green, cyan, white } from '../../utils/color';
+import {
+  gray4,
+  blue,
+  black,
+  gray6,
+  green,
+  cyan,
+  white,
+  orange,
+} from '../../utils/color';
 
 import { primary, background } from '../../utils/themes';
 import { strings } from '../../translations/locale';
@@ -24,19 +33,17 @@ const rnBiometrics = new ReactNativeBiometrics();
 
 export default function LocalAuth() {
   const { user, pin, setUserVerified } = useAuth();
-  const [isSensorAvailable, setIsSensorAvailable] = useState(false);
   const [biometricData, setBiometricData] = useState({});
   const [maxAttempt, setMaxAttempt] = useState(3);
 
   useEffect(() => {
     if (pin) checkSensor();
-  }, []);
-  console.log(pin, '---');
+  }, [pin]);
+
   const checkSensor = () => {
     rnBiometrics.isSensorAvailable().then(resultObject => {
       console.log(resultObject, '--------rewsult ');
       const { available, biometryType } = resultObject;
-      setIsSensorAvailable(available);
       setBiometricData(resultObject);
       if (available) scanFinger();
       console.log(biometryType, 'biometry type ', available);
@@ -55,7 +62,6 @@ export default function LocalAuth() {
         console.log(error, '------error biometric', success, maxAttempt);
         if (success) {
           setUserVerified();
-          // replace('Dashboard');
           return;
         }
         if (error == 'User cancellation') {
@@ -74,12 +80,14 @@ export default function LocalAuth() {
       });
   };
   if (maxAttempt == 0) navigate('PinSecurity');
+
   return (
-    <BaseView style={{ justifyContent: 'center' }}>
-      <Logo
-        img={logoTag}
-        style={[styles.logoHeader]}
-      />
+    <BaseView>
+      <Text h3 style={{ marginVertical: 20, color: orange }}>
+        {strings.security}
+      </Text>
+
+      <Logo img={logoTag} style={[styles.logoHeader]} />
       <Text h3> {user?.name}</Text>
       <Button
         iconName={'finger-print'}
@@ -110,7 +118,7 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
     width: '70%',
     height: 200,
-    marginTop: -20,
+    marginTop: 20,
   },
   finger: {
     borderWidth: 1,

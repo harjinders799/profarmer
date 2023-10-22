@@ -364,19 +364,19 @@ td {
       <View style={[styles.card, { backgroundColor: red }]}>
         <View style={styles.row}>
           <View style={{ alignItems: 'flex-start', padding: 10 }}>
-            <Text h3 style={{ color: white, fontWeight: 'bold' }}>
+            <Text h4 style={{ color: white, fontWeight: 'bold' }}>
               {currencyFormat(givenAmount + givenInterest)}
             </Text>
-            <Text h4 style={{ color: white }}>
+            <Text h5 style={{ color: white }}>
               Given
             </Text>
           </View>
           <View style={{ alignItems: 'flex-end' }}>
             <View style={styles.innerCard}>
-              <Text h3 style={{ color: white, fontWeight: 'bold' }}>
+              <Text h4 style={{ color: white, fontWeight: 'bold' }}>
                 {currencyFormat(givenAmount)}
               </Text>
-              <Text h5 style={{ color: white }}>
+              <Text h6 style={{ color: white }}>
                 {strings.taken_amount}
               </Text>
             </View>
@@ -387,10 +387,10 @@ td {
                   marginTop: 5,
                 },
               ]}>
-              <Text h3 style={{ color: white, fontWeight: 'bold' }}>
+              <Text h4 style={{ color: white, fontWeight: 'bold' }}>
                 {currencyFormat(givenInterest)}
               </Text>
-              <Text h5 style={{ color: white }}>
+              <Text h6 style={{ color: white }}>
                 {strings.interest}
               </Text>
             </View>
@@ -400,19 +400,19 @@ td {
       <View style={[styles.card, { backgroundColor: greenDark }]}>
         <View style={styles.row}>
           <View style={{ alignItems: 'flex-start', padding: 10 }}>
-            <Text h3 style={{ color: white, fontWeight: 'bold' }}>
+            <Text h4 style={{ color: white, fontWeight: 'bold' }}>
               {currencyFormat(takenAmount + takenInterest)}
             </Text>
-            <Text h4 style={{ color: white }}>
+            <Text h5 style={{ color: white }}>
               Taken
             </Text>
           </View>
           <View style={{ alignItems: 'flex-end' }}>
             <View style={styles.innerCard}>
-              <Text h3 style={{ color: white, fontWeight: 'bold' }}>
+              <Text h4 style={{ color: white, fontWeight: 'bold' }}>
                 {currencyFormat(takenAmount)}
               </Text>
-              <Text h5 style={{ color: white }}>
+              <Text h6 style={{ color: white }}>
                 {strings.taken_amount}
               </Text>
             </View>
@@ -423,10 +423,10 @@ td {
                   marginTop: 5,
                 },
               ]}>
-              <Text h3 style={{ color: white, fontWeight: 'bold' }}>
+              <Text h4 style={{ color: white, fontWeight: 'bold' }}>
                 {currencyFormat(takenInterest)}
               </Text>
-              <Text h5 style={{ color: white }}>
+              <Text h6 style={{ color: white }}>
                 {strings.interest}
               </Text>
             </View>
@@ -455,7 +455,7 @@ td {
             },
           ]}>
           <Text
-            h3
+            h4
             style={{
               // color: red,
               padding: 10,
@@ -464,7 +464,7 @@ td {
             Final Amount
           </Text>
           <Text
-            h3
+            h4
             style={{
               color: finalAmount > 0 ? greenDark : red,
               fontWeight: 'bold',
@@ -474,7 +474,7 @@ td {
           </Text>
         </View>
         <Text
-          h5
+          h6
           style={{
             color: finalAmount > 0 ? greenDark : red,
           }}>

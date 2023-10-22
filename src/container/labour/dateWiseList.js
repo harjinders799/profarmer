@@ -52,13 +52,16 @@ export default function DateWiseList({ data }) {
       let result = [];
       await Promise.all(
         Object.keys(grp).map(async v => {
+          // console.log(v, '-----')
           let res = await getLabourExpense(v);
           let expense = [];
-          let grp = groupBy(res, v => v.labour);
-          Object.keys(grp).map(v =>
+          // console.log(grp, '--------2', res)
+          let grp1 = groupBy(res, v => v.labour);
+          // console.log(grp1, '--------3')
+          Object.keys(grp1).map(v =>
             expense.push({
               labour: v,
-              amount: sumBy(grp[v], o => parseInt(o.amount)),
+              amount: sumBy(grp1[v], o => parseInt(o.amount)),
             }),
           );
           let leave = [];

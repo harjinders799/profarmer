@@ -27,6 +27,7 @@ import {
   lightGreen,
   lightOrange,
   lightGrey,
+  blue,
 } from '../../utils/color';
 import { currencyFormat, dateFormat } from '../../utils/dateformat';
 import PickerDetailAction from '../../container/picker/pickerDetailAction';
@@ -54,7 +55,7 @@ export default function PickerDetail({ navigation }) {
   const [loading, setLoading] = useState(false);
   const data = params?.item ?? [];
   const [rate, setRate] = useState();
- 
+
   const isFocused = useIsFocused();
   const {
     db,
@@ -73,7 +74,7 @@ export default function PickerDetail({ navigation }) {
       getPickerExpense();
       let baseRate = pickerData[pickerData.length - 1].rate;
       let pRate = pickerData.every(o => baseRate == o.rate || o.weight == '0');
-      if (pRate) setRate(baseRate);
+      // if (pRate) setRate(baseRate);
     }, [isFocused]),
   );
 
@@ -324,7 +325,7 @@ td {
           </Text>
         }
         rightComponent={
-          <View style={{ flexDirection: 'row',alignItems:"center" }}>
+          <View style={{ flexDirection: 'row', alignItems: "center" }}>
             {/* <Icon
               name="search1"
               color={white}
@@ -495,7 +496,7 @@ td {
       </ScrollView>
       <Header
         style={{ paddingHorizontal: 20 }}
-        leftComponent={
+        rightComponent={
           <Button
             label={strings.add_weight}
             btnStyle={{ width: '40%' }}
@@ -503,16 +504,16 @@ td {
               navigate('AddPickerWeight', {
                 data: {
                   picker: data?.picker,
-                  rate: pickerData[pickerData.length - 1]?.rate,
+                  rate: pickerData[0]?.rate,
                 },
               })
             }
           />
         }
-        rightComponent={
+        leftComponent={
           <Button
             label={strings.add_expense}
-            btnStyle={{ width: '40%' }}
+            btnStyle={{ width: '40%', backgroundColor: blue }}
             onPress={() =>
               navigate('AddPickerExpense', { data: { picker: data?.picker } })
             }
