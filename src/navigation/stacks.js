@@ -40,6 +40,10 @@ import AddCredit from '../screens/loan/addCredit';
 import LoanDetail from '../screens/loan/loanDetail';
 import LoanUpdate from '../screens/loan/loanUpdate';
 import GroupDetail from '../screens/picker/groupDetail';
+import Documents from '../screens/documents';
+import Uploade from '../screens/documents/uploade';
+import AddDocument from '../screens/documents/documentUpdate';
+import DocumentUpdate from '../screens/documents/documentUpdate';
 
 const Stack = createNativeStackNavigator();
 
@@ -172,9 +176,14 @@ export default function Stacks() {
         component={GroupDetail}
       />
       <Stack.Screen name="AboutUs" component={AboutUs} />
+      <Stack.Screen name="Documents" component={Documents} />
+      <Stack.Screen name="Uploade" component={Uploade} />
+
       <Stack.Screen name="ContactUs" component={ContactUs} />
       <Stack.Screen name="SalectLanguage" component={SalectLanguage} />
       <Stack.Screen name="EditProfile" component={EditProfile} />
+      <Stack.Screen name="DocumentUpdate" component={DocumentUpdate} />
+
     </Stack.Navigator>
   );
 }

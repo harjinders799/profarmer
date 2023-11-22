@@ -141,6 +141,12 @@ export default function Setting({ navigation }) {
             <Text style={styles.txt}>About Us</Text>
             <Icon name="chevron-right" type="Entypo" size={25} />
           </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.row}
+            onPress={() => navigation.navigate('Documents')}>
+            <Text style={styles.txt}>Reminder</Text>
+            <Icon name="chevron-right" type="Entypo" size={25} />
+          </TouchableOpacity>
           {/* <TouchableOpacity
             style={styles.row}
             onPress={() => navigation.navigate('AboutUs')}

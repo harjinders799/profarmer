@@ -16,6 +16,7 @@ import PickerStack from './pickerStack';
 import { isIOS } from '../utils/constant';
 import { PixelRatio } from 'react-native';
 import LoanStack from './loanStack';
+import DocumentStack from './documentStack';
 
 const Tab = createBottomTabNavigator();
 
@@ -47,8 +48,16 @@ export default function Tabs() {
       icon: 'shopping-store',
       iconType: 'Fontisto',
     },
+    // {
+    //   id: 4,
+    //   name: 'DocumentStack',
+    //   title: strings.document_details,
+    //   component: DocumentStack,
+    //   icon: 'sack-percent',
+    //   iconType: 'MaterialCommunityIcons',
+    // },
     {
-      id: 4,
+      id: 5,
       name: 'LoanStack',
       title: strings.loan,
       component: LoanStack,
@@ -56,7 +65,7 @@ export default function Tabs() {
       iconType: 'MaterialCommunityIcons',
     },
     {
-      id: 5,
+      id: 6,
       name: 'SettingStack',
       title: strings.settings,
       component: SettingStack,

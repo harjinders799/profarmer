@@ -95,6 +95,17 @@
   "search": "ਖੋਜ ਕਰੋ",
   "no_record_found": "ਕੋਈ ਰਿਕਾਰਡ ਨਹੀਂ ਮਿਲਿਆ",
 
+  "day_ago":"ਦਿਨ ਪਹਿਲਾਂ",
+  "document_name":"ਦਸਤਾਵੇਜ਼ ਦਾ ਨਾਮ",
+  "expire_date":"ਦਸਤਾਵੇਜ਼ ਦੀ ਵੈਧ ਮਿਤੀ",
+  "submit":"ਜਮ੍ਹਾਂ ਕਰੋ",
+  "uploade":"ਅੱਪਲੋਡ",
+  "document_details":"ਦਸਤਾਵੇਜ਼ ਵੇਰਵੇ",
+  "reminder_time":"ਵੈਧ ਮਿਤੀ ਨੂੰ ਯਾਦ ਕਰਾਓ",
+  "renew":"ਨਵੀਂ ਤਾਰੀਖ",
+  "remaining_day":"ਬਾਕੀ ਦਿਨ",
+
+
   "start_date": "ਸ਼ੁਰੂ ਤਾਰੀਖ",
   "total_days_from_start": "ਸ਼ੁਰੂਆਤ ਤੋਂ ਕੁੱਲ ਦਿਨ",
   "labour_day": "ਮਜ਼ਦੂਰੀ ਦਿਨ",

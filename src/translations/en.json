@@ -108,6 +108,19 @@
   "crop_hisab": "Crop's Calculation",
   "other":"Other",
 
+  "uploade":"uploade",
+  "expire_date":"Expire Date",
+  "document_name":"Document Name",
+  "reminder_time":"Reminder Time",
+  "day_ago":"Day Ago",
+  "document_details":"Document Details",
+  "submit":"Submit",
+  "renew":"Renew",
+  "remaining_day":"Remaining Day",
+
+
+
+
   "loan_record": "Loan Record",
   "loan": "Loan",
   "add_loan": "Add Loan",

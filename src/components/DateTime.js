@@ -21,6 +21,7 @@ const DateTimePick = props => {
         <DateTimePickerModal
           isVisible={show}
           mode={'date'}
+          date={date}
           onConfirm={onChange}
           onCancel={hideDatePicker}
         />

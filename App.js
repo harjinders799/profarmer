@@ -15,6 +15,7 @@ import {orange} from 'src/utils/color';
 import {AuthProvider} from './src/context/authContext';
 import {AadtProvider} from './src/context/aadtContext';
 import {LoanProvider} from './src/context/loanContext';
+import { DocumentProvider } from './src/context/docContext';
 
 export default function App() {
   const [version, setVersion] = useState();
@@ -58,9 +59,11 @@ export default function App() {
           <CottonProvider>
             <AadtProvider>
               <LoanProvider>
+                <DocumentProvider>
                 <LangProvider>
                   <Navigation />
                 </LangProvider>
+                </DocumentProvider>
               </LoanProvider>
             </AadtProvider>
           </CottonProvider>
