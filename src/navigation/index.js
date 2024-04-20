@@ -11,7 +11,7 @@ import { navigationRef } from './ref';
 import DashBoard from 'src/screens/aadtiya';
 import AddForm from 'src/screens/aadtiya/addForm';
 import Detail from 'src/screens/aadtiya/detail';
-import { Auth } from 'src/service/setup';
+import auth from '@react-native-firebase/auth';
 import Loader from 'src/components/loader';
 import Tabs from './tab';
 import { useAuth } from '../context/authContext';
@@ -66,7 +66,7 @@ export default function Navigation() {
     if (initializing) setInitializing(false);
   }
   useEffect(() => {
-    const subscriber = Auth().onAuthStateChanged(onAuthStateChanged);
+    const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
     return subscriber;
   }, [userVerified]);
 

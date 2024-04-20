@@ -1,13 +1,12 @@
 import React from 'react';
-import {Auth, database} from 'src/service/setup';
-import {firestore} from '../service/setup';
 import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
 import {
   clearAsyncStorage,
   getAsyncStorage,
   setAsyncStorage,
 } from '../network/AsyncStorage';
-import {deleteDBConnectionDB} from '../sql';
+import { deleteDBConnectionDB } from '../sql';
 
 const initialState = {
   user: undefined,
@@ -62,21 +61,21 @@ export const AuthProvider = props => {
       ...state,
       getUser: async () => {
         try {
-          let id = Auth().currentUser?.uid;
+          let id = auth().currentUser?.uid;
           if (id) {
             let user = await firestore().collection('users').doc(id).get();
             if (user.exists) {
-              dispatch({type: 'USER', user: user.data()});
+              dispatch({ type: 'USER', user: user.data() });
             } else {
-              // console.log(Auth().currentUser);
+              // console.log(auth().currentUser);
               let data = {
-                name: Auth().currentUser?.displayName,
-                phone: Auth().currentUser?.phoneNumber,
-                email: Auth().currentUser?.email,
-                id: Auth().currentUser?.uid,
+                name: auth().currentUser?.displayName,
+                phone: auth().currentUser?.phoneNumber,
+                email: auth().currentUser?.email,
+                id: auth().currentUser?.uid,
               };
               await firestore().collection('users').doc(id).set(data);
-              dispatch({type: 'USER', user: data});
+              dispatch({ type: 'USER', user: data });
             }
           }
         } catch (error) {
@@ -85,14 +84,14 @@ export const AuthProvider = props => {
       },
       getPin: async () => {
         let value = JSON.parse(await getAsyncStorage('pin'));
-        dispatch({type: 'PIN', pin: value});
+        dispatch({ type: 'PIN', pin: value });
       },
       setPin: async value => {
         await setAsyncStorage('pin', JSON.stringify(value));
-        dispatch({type: 'PIN', pin: value});
+        dispatch({ type: 'PIN', pin: value });
       },
       setUserVerified: () => {
-        dispatch({type: 'SET_USER_VERIFIED'});
+        dispatch({ type: 'SET_USER_VERIFIED' });
       },
       reset: () => {
         // console.log('reset')
@@ -101,7 +100,7 @@ export const AuthProvider = props => {
           auth()
             .signOut()
             .then(async () => {
-              dispatch({type: 'RESET'});
+              dispatch({ type: 'RESET' });
               // await clearAsyncStorage();
               // replace("Login")
             });
@@ -112,7 +111,7 @@ export const AuthProvider = props => {
   );
 
   return (
-    <AuthContext.Provider value={{...value}}>
+    <AuthContext.Provider value={{ ...value }}>
       {props.children}
     </AuthContext.Provider>
   );

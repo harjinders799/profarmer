@@ -1,10 +1,10 @@
-import { Auth, storage } from 'src/service/setup';
+import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 
 export const submitPicker = async data => {
   return new Promise(async function (resolve, reject) {
     try {
-      let id = Auth().currentUser?.uid;
+      let id = auth().currentUser?.uid;
       firestore()
         .collection('picker')
         .add({ ...data, uid: id })
@@ -17,7 +17,7 @@ export const submitPicker = async data => {
 
 export const getPickerData = () => {
   return new Promise(async function (resolve, reject) {
-    let userId = Auth().currentUser?.uid;
+    let userId = auth().currentUser?.uid;
     await firestore()
       .collection('picker')
       .where('uid', '==', userId)
@@ -37,7 +37,7 @@ export const getPickerData = () => {
 
 export const getPickerByName = name => {
   return new Promise(async function (resolve, reject) {
-    let userId = Auth().currentUser?.uid;
+    let userId = auth().currentUser?.uid;
     await firestore()
       .collection('picker')
       .where('uid', '==', userId)
@@ -59,7 +59,7 @@ export const getPickerByName = name => {
 export const getAllPickerExpense = async name => {
   return new Promise(async function (resolve, reject) {
     try {
-      let userId = Auth().currentUser?.uid;
+      let userId = auth().currentUser?.uid;
       await firestore()
         .collection('picker_expense')
         .where('uid', '==', userId)
@@ -126,7 +126,7 @@ export const deletePicker = async id => {
 export const submitPickerExpense = async data => {
   return new Promise(async function (resolve, reject) {
     try {
-      let id = Auth().currentUser?.uid;
+      let id = auth().currentUser?.uid;
       firestore()
         .collection('picker_expense')
         .add({ ...data, uid: id })
@@ -140,7 +140,7 @@ export const submitPickerExpense = async data => {
 export const getPickerExpense = async name => {
   return new Promise(async function (resolve, reject) {
     try {
-      let userId = Auth().currentUser?.uid;
+      let userId = auth().currentUser?.uid;
       await firestore()
         .collection('picker_expense')
         .where('uid', '==', userId)
@@ -161,7 +161,7 @@ export const getPickerExpense = async name => {
 
 export const getCottonByPicker = search => {
   return new Promise(async function (resolve, reject) {
-    let userId = Auth().currentUser?.uid;
+    let userId = auth().currentUser?.uid;
     await firestore()
       .collection('cotton')
       .where('uid', '==', userId)
@@ -182,7 +182,7 @@ export const getCottonByPicker = search => {
 
 export const deletePickerCollection = async (name) => {
   try {
-    const userId = Auth().currentUser?.uid;
+    const userId = auth().currentUser?.uid;
 
     const deletePicker = firestore()
       .collection('picker')
@@ -220,7 +220,7 @@ export const deletePickerCollection = async (name) => {
 export const createGroup = async data => {
   return new Promise(async function (resolve, reject) {
     try {
-      let id = Auth().currentUser?.uid;
+      let id = auth().currentUser?.uid;
       firestore()
         .collection('picker_group')
         .add({ ...data, uid: id })
@@ -233,7 +233,7 @@ export const createGroup = async data => {
 export const updateGroup = async data => {
   return new Promise(async function (resolve, reject) {
     try {
-      let id = Auth().currentUser?.uid;
+      let id = auth().currentUser?.uid;
       firestore()
         .collection('picker_group')
         .doc(data?.id)
@@ -248,7 +248,7 @@ export const updateGroup = async data => {
 export const getPickerGroup = async () => {
   return new Promise(async function (resolve, reject) {
     try {
-      let userId = Auth().currentUser?.uid;
+      let userId = auth().currentUser?.uid;
       let arr = [];
       await firestore()
         .collection('picker_group')

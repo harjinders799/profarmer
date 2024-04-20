@@ -1,10 +1,10 @@
-import { Auth, storage } from 'src/service/setup';
+import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 
 export const submitPrice = async data => {
   return new Promise(async function (resolve, reject) {
     try {
-      let id = Auth().currentUser?.uid;
+      let id = auth().currentUser?.uid;
       firestore()
         .collection('prices')
         .add({ ...data, uid: id })
@@ -17,7 +17,7 @@ export const submitPrice = async data => {
 
 export const getPriceData = () => {
   return new Promise(async function (resolve, reject) {
-    let userId = Auth().currentUser?.uid;
+    let userId = auth().currentUser?.uid;
     await firestore()
       .collection('prices')
       .orderBy('date', 'desc')
@@ -37,7 +37,7 @@ export const getPriceData = () => {
 
 export const getPriceByName = name => {
   return new Promise(async function (resolve, reject) {
-    let userId = Auth().currentUser?.uid;
+    let userId = auth().currentUser?.uid;
     await firestore()
       .collection('prices')
       .where('uid', '==', userId)

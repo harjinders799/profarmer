@@ -9,6 +9,7 @@ target 'ProFarmer' do
   pod 'FirebaseCore', :modular_headers => true
   pod 'FirebaseCoreInternal', :modular_headers => true
   pod 'GoogleUtilities', :modular_headers => true
+  pod 'MQTTClient'
   config = use_native_modules!
 
   # Flags change depending on the env values.

@@ -11,7 +11,7 @@ import BaseView from 'src/container/base';
 import { WIDTH } from 'src/utils/constant';
 import Input from 'src/components/input';
 import Button from 'src/components/button';
-import { Auth } from 'src/service/setup';
+import auth from '@react-native-firebase/auth';
 import Logo from 'src/container/logo';
 import Text from 'src/components/text';
 import Loader from 'src/components/loader';
@@ -66,10 +66,10 @@ const LoginMethods = ({ navigation }) => {
       await GoogleSignin.hasPlayServices();
       const { idToken } = await GoogleSignin.signIn();
       // Create a Google credential with the token
-      const googleCredential = Auth.GoogleAuthProvider.credential(idToken);
+      const googleCredential = auth.GoogleAuthProvider.credential(idToken);
 
       // Sign-in the user with the credential
-      Auth().signInWithCredential(googleCredential);
+      auth().signInWithCredential(googleCredential);
       // replace('Main');
       // this.setState({ userInfo });
       setLoading(false)
@@ -120,12 +120,12 @@ const LoginMethods = ({ navigation }) => {
     }
 
     // Create a Firebase credential with the AccessToken
-    const facebookCredential = Auth.FacebookAuthProvider.credential(
+    const facebookCredential = auth.FacebookAuthProvider.credential(
       data.accessToken,
     );
 
     // Sign-in the user with the credential
-    await Auth()
+    await auth()
       .signInWithCredential(facebookCredential)
       .then(res => {
         ToastSuccess(`Yay! Success`, 'Login');
@@ -137,7 +137,7 @@ const LoginMethods = ({ navigation }) => {
         ) {
           const email = await getFacebookEmail();
           if (email) {
-            let provider = await Auth().fetchSignInMethodsForEmail(email);
+            let provider = await auth().fetchSignInMethodsForEmail(email);
             if (provider[0] == 'google.com') {
               ToastError(
                 `You have already used "${email}". Please continue with Google login.`,

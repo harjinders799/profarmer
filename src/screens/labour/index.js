@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import Text from 'src/components/text';
 import BaseView from 'src/container/base';
-import { Auth } from 'src/service/setup';
+import auth from '@react-native-firebase/auth';
 import { useLang } from 'src/context/langContext';
 import Header from 'src/components/header';
 import { useFocusEffect } from '@react-navigation/native';
@@ -42,7 +42,7 @@ export default function Labour() {
 
   useEffect(() => {
     if (
-      Auth()?.currentUser?.uid &&
+      auth()?.currentUser?.uid &&
       Array.isArray(labours) &&
       labours.length < 1 &&
       Array.isArray(data) &&

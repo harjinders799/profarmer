@@ -6,7 +6,6 @@ import {
   View,
 } from 'react-native';
 import React, { useEffect, useState } from 'react';
-import { load } from 'react-native-cheerio';
 import Text from '../../components/text';
 import { strings } from 'src/translations/locale';
 import { green, red, white } from '../../utils/color';

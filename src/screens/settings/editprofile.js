@@ -6,7 +6,7 @@ import Text from '../../components/text';
 import Loader from 'src/components/loader';
 import BaseView from 'src/container/base';
 import Profile from 'src/container/profile';
-import { Auth } from 'src/service/setup';
+import auth from '@react-native-firebase/auth';
 import { ToastError, ToastSuccess } from 'src/utils/toast';
 import React, { useEffect } from 'react';
 import Header from '../../components/header';
@@ -22,8 +22,8 @@ export default function EditProfile({ navigation }) {
     const [loading, setLoading] = React.useState(false);
     const [user, setUser] = React.useState({
         name: data?.name ?? '',
-        phone: data?.phone ?? Auth().currentUser?.phoneNumber ?? '',
-        email: data?.email ?? Auth().currentUser?.email,
+        phone: data?.phone ?? auth().currentUser?.phoneNumber ?? '',
+        email: data?.email ?? auth().currentUser?.email,
         // img: data?.profile ?? '',
     });
 

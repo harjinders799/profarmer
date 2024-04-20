@@ -7,7 +7,7 @@ import { F18, FBOLD } from 'src/utils/typograpy';
 import { black, gray } from 'src/utils/color';
 import Loader from 'src/components/loader';
 import Profile from 'src/container/profile';
-import { Auth } from 'src/service/setup';
+import auth from '@react-native-firebase/auth';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import Text from '../../components/text';
 import Feather from 'react-native-vector-icons/Feather';
@@ -43,7 +43,7 @@ const Account = ({ }) => {
       <Profile
         // style={{ alignSelf: 'center' }}
         small
-        img={user?.img?.uri ?? Auth().currentUser?.photoURL}
+        img={user?.img?.uri ?? auth().currentUser?.photoURL}
         name={user?.name}
         setImg={v => updateData('img', v)}
       />

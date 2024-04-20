@@ -4,13 +4,13 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { black, blue, white } from '../utils/color';
 import { WIDTH } from '../utils/constant';
 import { useTheme } from '@react-navigation/native';
-import { Auth } from 'src/service/setup';
+import auth from '@react-native-firebase/auth';
 
 export default ({
   small,
   style,
-  img = Auth()?.currentUser?.photoURL,
-  name = Auth()?.currentUser?.displayName,
+  img = auth()?.currentUser?.photoURL,
+  name = auth()?.currentUser?.displayName,
   onImgTap,
   imgEdit,
 }) => {

@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import Text from 'src/components/text';
 import { FlatList, StyleSheet, TouchableOpacity, View } from 'react-native';
-import { white } from 'src/utils/color';
 import _, { every, filter, find, groupBy, some, sumBy } from 'lodash';
 import { strings } from '../../translations/locale';
 import { navigate } from 'src/navigation/ref';
 import {
-  getAllLabourExpense,
   getLabourExpense,
   getLabourLeave,
 } from '../../network/labour-service';
@@ -15,71 +13,39 @@ import { green, greenDark, navy, red } from '../../utils/color';
 import { currencyFormat, dayCount } from '../../utils/dateformat';
 import Button from '../../components/button';
 import { WIDTH } from '../../utils/constant';
-import Animated, {
-  BounceInDown,
-  FadeIn,
-  FadeInDown,
-  FadeInUp,
-  Layout,
-  LightSpeedInLeft,
-  LightSpeedInRight,
-  LightSpeedOutLeft,
-} from 'react-native-reanimated';
+import Animated from 'react-native-reanimated';
 
 export default function DateWiseList({ data }) {
   const [fullData, setFullData] = useState([]);
   const [loading, setLoading] = useState(true);
-
+  console.log(fullData);
   useEffect(() => {
     if (data.length) getExpense();
     else setFullData([]);
   }, [data]);
 
   const getExpense = async () => {
-    let arr = [];
-    setLoading(true);
-    let grp = groupBy(data, v => v.labour);
-    Object.keys(grp).map(v =>
-      arr.push({
-        labour: v,
-        total: sumBy(grp[v], o => parseInt(o.count)),
-        is_regulare: some(grp[v], o => o?.is_regulare),
-        data: grp[v],
-      }),
-    );
-    setFullData(arr);
     try {
-      let result = [];
-      await Promise.all(
-        Object.keys(grp).map(async v => {
-          // console.log(v, '-----')
-          let res = await getLabourExpense(v);
-          let expense = [];
-          // console.log(grp, '--------2', res)
-          let grp1 = groupBy(res, v => v.labour);
-          // console.log(grp1, '--------3')
-          Object.keys(grp1).map(v =>
-            expense.push({
-              labour: v,
-              amount: sumBy(grp1[v], o => parseInt(o.amount)),
-            }),
-          );
-          let leave = [];
-          let lev = await getLabourLeave(v);
-          let grpLeave = groupBy(lev, v => v.labour);
-          Object.keys(grpLeave).map(v =>
-            leave.push({
-              labour: v,
-              leaves: sumBy(grpLeave[v], o => parseInt(o.count)),
-            }),
-          );
-          result.push({
-            ...expense[0],
-            ...leave[0],
-            ...find(arr, o => o.labour == v),
-          });
+      setLoading(true);
+      const groupedLabour = groupBy(data, 'labour');
+      console.log(JSON.stringify(groupedLabour));
+
+      const labourData = Object.keys(groupedLabour).map(labour => ({
+        labour,
+        total: sumBy(groupedLabour[labour], o => parseInt(o.count)),
+        is_regulare: some(groupedLabour[labour], { is_regulare: true }),
+        data: groupedLabour[labour],
+      }));
+
+      const result = await Promise.all(
+        labourData.map(async ({ labour }) => {
+          const expense = await calculateExpense(labour);
+          const leave = await calculateLeave(labour);
+          const labourInfo = find(labourData, { labour });
+          return { ...expense, ...leave, ...labourInfo };
         }),
       );
+
       setFullData(result);
       setLoading(false);
     } catch (error) {
@@ -88,8 +54,23 @@ export default function DateWiseList({ data }) {
     }
   };
 
+  const calculateExpense = async labour => {
+    const expenses = await getLabourExpense(labour);
+    const groupedExpenses = groupBy(expenses, v => v.labour);
+    const totalAmount = sumBy(groupedExpenses[labour], o => parseInt(o.amount));
+    return { amount: totalAmount };
+  };
+
+  const calculateLeave = async labour => {
+    const leaves = await getLabourLeave(labour);
+    const groupedLeaves = groupBy(leaves, v => v.labour);
+    const totalLeaves = sumBy(groupedLeaves[labour], o => parseInt(o.count));
+    return { leaves: totalLeaves };
+  };
+
   const renderItem = item => {
     let tot = 0;
+    console.log({ item })
     if (item.data) {
       item.data.map(v => {
         tot +=
@@ -144,9 +125,7 @@ export default function DateWiseList({ data }) {
             {/* <Text h5>{strings.view}</Text> */}
           </View>
           {!item?.is_regulare ? (
-            <Animated.View
-              style={styles.row}
-            >
+            <Animated.View style={styles.row}>
               {/* // entering={FadeInUp}
               // layout={Layout.springify}> */}
               {/* <Text numberOfLines={1} h4>
@@ -195,9 +174,7 @@ export default function DateWiseList({ data }) {
           ) : null}
           {item?.is_regulare ? (
             <>
-              <Animated.View
-                style={styles.row}
-              >
+              <Animated.View style={styles.row}>
                 {/* // entering={FadeInUp}
                 // layout={Layout.damping}> */}
                 {/* <Text numberOfLines={1} h4>
@@ -238,7 +215,9 @@ export default function DateWiseList({ data }) {
                       marginVertical: 0,
                     }}
                     onPress={() =>
-                      navigate('AddLabourExpense', { data: { labour: item?.labour } })
+                      navigate('AddLabourExpense', {
+                        data: { labour: item?.labour },
+                      })
                     }
                   />
                 </View>

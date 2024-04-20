@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { ScrollView, View } from 'react-native';
 import Text from 'src/components/text';
 import BaseView from 'src/container/base';
-import { Auth } from 'src/service/setup';
 import { useLang } from 'src/context/langContext';
 import Header from 'src/components/header';
 import { getInterstAmount } from 'src/network/interest-service';

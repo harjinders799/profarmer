@@ -1,9 +1,10 @@
-import { Auth, firestore } from 'src/service/setup';
+import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
 
 export const submitInterestAmount = async data => {
   return new Promise(async function (resolve, reject) {
     try {
-      let id = Auth().currentUser?.uid;
+      let id = auth().currentUser?.uid;
       firestore()
         .collection('interest_amount')
         .add({ ...data, uid: id });
@@ -40,7 +41,7 @@ export const deleteIneterstAmt = async id => {
 
 export const getInterstAmount = () => {
   return new Promise(async function (resolve, reject) {
-    let userId = Auth().currentUser?.uid;
+    let userId = auth().currentUser?.uid;
     firestore()
       .collection('interest_amount')
       .where('uid', '==', userId)
@@ -61,7 +62,7 @@ export const getInterstAmount = () => {
 export const submitCrop = async data => {
   return new Promise(async function (resolve, reject) {
     try {
-      let id = Auth().currentUser?.uid;
+      let id = auth().currentUser?.uid;
       firestore()
         .collection('crop')
         .add({ ...data, uid: id });
@@ -94,7 +95,7 @@ export const deleteCrop = async id => {
 };
 export const getCrops = () => {
   return new Promise(async function (resolve, reject) {
-    let userId = Auth().currentUser?.uid;
+    let userId = auth().currentUser?.uid;
     firestore()
       .collection('crop')
       .where('uid', '==', userId)
@@ -114,7 +115,7 @@ export const getCrops = () => {
 export const deleteCropCollection = async name => {
   return new Promise(async function (resolve, reject) {
     try {
-      let userId = Auth().currentUser?.uid;
+      let userId = auth().currentUser?.uid;
       firestore()
         .collection('crop')
         .where('uid', '==', userId)
@@ -134,7 +135,7 @@ export const deleteCropCollection = async name => {
 export const deleteGiverCollection = async (name) => {
 
   try {
-    const userId = Auth().currentUser?.uid;
+    const userId = auth().currentUser?.uid;
 
     const deleteGiver = firestore()
       .collection('interest_amount')
@@ -156,7 +157,7 @@ export const deleteGiverCollection = async (name) => {
 // export const deleteDebtorCollection = async (name) => {
 //   x
 //   try {
-//     const userId = Auth().currentUser?.uid;
+//     const userId = auth().currentUser?.uid;
 
 //     const deleteDebtor = firestore()
 //       .collection('interest_amount')

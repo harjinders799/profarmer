@@ -3,7 +3,6 @@ import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import Text from 'src/components/text';
 import BaseView from 'src/container/base';
 import Profile from 'src/container/profile';
-import { Auth } from 'src/service/setup';
 import { commonStyle } from 'src/utils/style';
 import Logo from 'src/container/logo';
 import { useLang } from 'src/context/langContext';

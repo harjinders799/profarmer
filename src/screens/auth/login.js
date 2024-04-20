@@ -12,7 +12,7 @@ import BaseView from 'src/container/base';
 import { WIDTH } from 'src/utils/constant';
 import Input from 'src/components/input';
 import Button from 'src/components/button';
-import { Auth } from 'src/service/setup';
+import auth from '@react-native-firebase/auth';
 import Logo from 'src/container/logo';
 import Text from 'src/components/text';
 import Loader from 'src/components/loader';
@@ -104,12 +104,12 @@ const Login = ({ navigation }) => {
       try {
         setLoading(true);
         // await confirm.confirm(otpCode);
-        const phoneCredentials = Auth.PhoneAuthProvider.credential(
+        const phoneCredentials = auth.PhoneAuthProvider.credential(
           confirm.verificationId,
           otpCode,
         );
         // Try to sign in with the phone credentials
-        Auth()
+        auth()
           .signInWithCredential(phoneCredentials)
           .then(userCredentials => {
             setLoading(false);

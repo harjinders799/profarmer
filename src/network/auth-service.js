@@ -1,10 +1,10 @@
 import auth from '@react-native-firebase/auth';
-import { Auth, firestore } from 'src/service/setup';
+import firestore from '@react-native-firebase/firestore';
 import { ToastSuccess } from 'src/utils/toast';
 
 export const SignUpUser = async (email, password) => {
   try {
-    return await Auth().createUserWithEmailAndPassword(email, password);
+    return await auth().createUserWithEmailAndPassword(email, password);
   } catch (error) {
     throw error;
   }
@@ -55,7 +55,7 @@ export const SignInUser = phone => {
 export const submitUser = async data => {
   return new Promise(async function (resolve, reject) {
     try {
-      let id = Auth().currentUser?.uid;
+      let id = auth().currentUser?.uid;
       await firestore().collection('users').doc(id).set({
         name: data?.name,
         phone: data?.phone,
@@ -72,7 +72,7 @@ export const submitUser = async data => {
 
 export const UpdateUser = async data => {
   try {
-    let id = Auth().currentUser?.uid;
+    let id = auth().currentUser?.uid;
     return await firestore().collection('users').doc(id)
       .update({
         name: data?.name,
@@ -88,7 +88,7 @@ export const UpdateUser = async data => {
 
 export const logout = async () => {
   try {
-    return await Auth().signOut();
+    return await auth().signOut();
   } catch (error) {
     return error;
   }

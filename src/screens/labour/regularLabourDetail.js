@@ -33,8 +33,6 @@ import { useAuth } from '../../context/authContext';
 import Share from 'react-native-share';
 import RNHTMLtoPDF from 'react-native-html-to-pdf';
 import { ToastError } from '../../utils/toast';
-import { deletePickerNameWise } from '../../sql';
-import auth from '@react-native-firebase/auth';
 
 const transparent = 'rgba(0,0,0,0.5)';
 

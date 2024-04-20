@@ -37,32 +37,13 @@ import { useLang } from 'src/context/langContext';
 import { deleteLoanCollection } from '../../network/loan-service';
 
 import {
-  aqua,
-  black,
-  blue,
-  cyan,
-  gray1,
   gray2,
   gray3,
   gray4,
   greenDark,
-  greenLight,
-  lightBlue,
-  lightGreen,
-  lightOrange,
-  lightRed,
-  lightYellow,
-  parrot,
-  peach,
-  pink,
-  purple,
-  redLight,
-  skyBlue,
-  yellowLight,
 } from '../../utils/color';
 import Share from 'react-native-share';
 import { useLoan } from '../../context/loanContext';
-import { getLoanData } from '../../network/loan-service';
 import LoanDetailAction from '../../components/loanDetailAction';
 import auth from '@react-native-firebase/auth';
 import { getTotalInterst } from '../../utils/helper';
@@ -105,15 +86,25 @@ export default function LoanDetail() {
 
   let givenAmount = 0;
   let takenAmount = 0;
+  let takenAmountInterest = 0;
+  let today = moment();
   groupedData.forEach(entry => {
+    let date = moment(entry?.date).format('YYYY-MM-DD');
+    let start_date = moment(date);
+    let days = today.diff(start_date, 'days');
+    let interest = (
+      ((parseFloat(entry.amount) * (parseFloat(entry.interest_rate) / 100)) / 30) *
+      parseInt(days)
+    );
     if (entry.giver === auth().currentUser.uid) {
       takenAmount += parseInt(entry.amount);
+      takenAmountInterest += interest;
     } else if (entry.receiver === auth().currentUser.uid) {
       givenAmount += parseInt(entry.amount);
     }
   });
   const givenInterest = (givenAmount * interest_rate) / 100;
-  const takenInterest = (takenAmount * interest_rate) / 100;
+  const takenInterest = takenAmountInterest;
   // const finalAmount = givenAmount - takenAmount;
 
   const [openModal, setopenModal] = useState(false);

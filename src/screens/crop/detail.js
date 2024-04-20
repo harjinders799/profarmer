@@ -31,7 +31,6 @@ import {
   peach,
 } from '../../utils/color';
 import { useAuth } from '../../context/authContext';
-import { Auth } from '../../service/setup';
 import { deleteCropCollection } from '../../network/interest-service';
 import RNHTMLtoPDF from 'react-native-html-to-pdf';
 import Share from 'react-native-share';

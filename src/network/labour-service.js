@@ -1,279 +1,119 @@
-import { Auth, firestore, storage } from 'src/service/setup';
+import firestore from '@react-native-firebase/firestore';
+import auth from '@react-native-firebase/auth';
 
-export const submitLabour = async data => {
-  return new Promise(async function (resolve, reject) {
-    try {
-      let id = Auth().currentUser?.uid;
-      firestore()
-        .collection('labour')
-        .add({ ...data, uid: id });
-      resolve('success');
-    } catch (error) {
-      reject(new Error(error));
-    }
-  });
-};
-export const submitLabourExpense = async data => {
-  return new Promise(async function (resolve, reject) {
-    try {
-      let id = Auth().currentUser?.uid;
-      firestore()
-        .collection('labour_expense')
-        .add({ ...data, uid: id });
-      resolve('success');
-    } catch (error) {
-      reject(new Error(error));
-    }
-  });
-};
+const getCurrentUserId = () => auth().currentUser?.uid;
 
-export const submitLabourLeave = async data => {
-  return new Promise(async function (resolve, reject) {
-    try {
-      let id = Auth().currentUser?.uid;
-      firestore()
-        .collection('labour_leave')
-        .add({ ...data, uid: id });
-      resolve('success');
-    } catch (error) {
-      reject(new Error(error));
-    }
-  });
-};
-export const getLabourData = () => {
-  return new Promise(async function (resolve, reject) {
-    let userId = Auth().currentUser?.uid;
-    firestore()
-      .collection('labour')
-      .where('uid', '==', userId)
-      .get()
-      .then(querySnapshot => {
-        let arr = [];
-        querySnapshot.forEach(documentSnapshot => {
-          arr.push({ ...documentSnapshot.data(), id: documentSnapshot.id });
-        });
-        resolve(arr);
-      })
-      .catch(error => {
-        reject(new Error(error));
-      });
-  });
-};
-
-export const getLabourRagular = name => {
-  return new Promise(async function (resolve, reject) {
-    let userId = Auth().currentUser?.uid;
-    firestore()
-      .collection('labour')
-      .where('uid', '==', userId)
-      .where('labour', '==', name)
-      .where('is_regulare', '==', true)
-      .get()
-      .then(querySnapshot => {
-        let arr = [];
-        querySnapshot.forEach(documentSnapshot => {
-          arr.push({ ...documentSnapshot.data(), id: documentSnapshot.id });
-        });
-        resolve(arr);
-      })
-      .catch(error => {
-        reject(new Error(error));
-      });
-  });
-};
-export const getLabourByName = name => {
-  return new Promise(async function (resolve, reject) {
-    let userId = Auth().currentUser?.uid;
-    firestore()
-      .collection('labour')
-      .where('uid', '==', userId)
-      .where('labour', '==', name)
-      .get()
-      .then(querySnapshot => {
-        let arr = [];
-        querySnapshot.forEach(documentSnapshot => {
-          arr.push({ ...documentSnapshot.data(), id: documentSnapshot.id });
-        });
-        resolve(arr);
-      })
-      .catch(error => {
-        reject(new Error(error));
-      });
-  });
-};
-
-export const getLabourExpense = async name => {
-  return new Promise(async function (resolve, reject) {
-    try {
-      let userId = Auth().currentUser?.uid;
-      firestore()
-        .collection('labour_expense')
-        .where('uid', '==', userId)
-        .where('labour', '==', name)
-        .get()
-        .then(querySnapshot => {
-          let arr = [];
-          querySnapshot.forEach(documentSnapshot => {
-            arr.push({ ...documentSnapshot.data(), id: documentSnapshot.id });
-          });
-          resolve(arr);
-        });
-    } catch (error) {
-      reject(new Error(error));
-    }
-  });
-};
-
-export const getLabourLeave = async name => {
-  return new Promise(async function (resolve, reject) {
-    try {
-      let userId = Auth().currentUser?.uid;
-      firestore()
-        .collection('labour_leave')
-        .where('uid', '==', userId)
-        .where('labour', '==', name)
-        .get()
-        .then(querySnapshot => {
-          let arr = [];
-          querySnapshot.forEach(documentSnapshot => {
-            arr.push({ ...documentSnapshot.data(), id: documentSnapshot.id });
-          });
-          resolve(arr);
-        });
-    } catch (error) {
-      reject(new Error(error));
-    }
-  });
-};
-
-export const getAllLabourExpense = async name => {
-  return new Promise(async function (resolve, reject) {
-    try {
-      let userId = Auth().currentUser?.uid;
-      firestore()
-        .collection('labour_expense')
-        .where('uid', '==', userId)
-        .get()
-        .then(querySnapshot => {
-          let arr = [];
-          querySnapshot.forEach(documentSnapshot => {
-            arr.push({ ...documentSnapshot.data(), id: documentSnapshot.id });
-          });
-          resolve(arr);
-        });
-    } catch (error) {
-      reject(new Error(error));
-    }
-  });
-};
-
-export const deleteLabourExpense = async id => {
-  return new Promise(async function (resolve, reject) {
-    try {
-      firestore().collection('labour_expense').doc(id).delete();
-      resolve('success');
-    } catch (error) {
-      reject(new Error(error));
-    }
-  });
-};
-export const updateLabour = async data => {
-  return new Promise(async function (resolve, reject) {
-    try {
-      firestore().collection('labour').doc(data?.id).update(data);
-      resolve('success');
-    } catch (error) {
-      reject(new Error(error));
-    }
-  });
-};
-
-export const updateLabourLeave = async data => {
-  return new Promise(async function (resolve, reject) {
-    try {
-      firestore().collection('labour_leave').doc(data?.id).update(data);
-      resolve('success');
-    } catch (error) {
-      reject(new Error(error));
-    }
-  });
-};
-
-export const updateLabourExpense = async data => {
-  return new Promise(async function (resolve, reject) {
-    try {
-      firestore().collection('labour_expense').doc(data?.id).update(data);
-      resolve('success');
-    } catch (error) {
-      reject(new Error(error));
-    }
-  });
-};
-export const deleteLabour = async id => {
-  return new Promise(async function (resolve, reject) {
-    try {
-      firestore().collection('labour').doc(id).delete();
-      resolve('success');
-    } catch (error) {
-      reject(new Error(error));
-    }
-  });
-};
-
-export const deleteLabourLeave = async id => {
-  return new Promise(async function (resolve, reject) {
-    try {
-      firestore().collection('labour_leave').doc(id).delete();
-      resolve('success');
-    } catch (error) {
-      reject(new Error(error));
-    }
-  });
-};
-export const deleteLabourCollection = async (name) => {
+const addDocumentToCollection = async (collectionName, data) => {
   try {
-    const userId = Auth().currentUser?.uid;
+    const userId = getCurrentUserId();
+    await firestore()
+      .collection(collectionName)
+      .add({ ...data, uid: userId });
+    return 'success';
+  } catch (error) {
+    throw new Error(error);
+  }
+};
 
-    const deleteLabour = firestore()
-      .collection('labour')
-      .where('uid', '==', userId)
-      .where('labour', '==', name)
-      .get()
-      .then((querySnapshot) => {
-        const deletePromises = [];
-        querySnapshot.forEach((documentSnapshot) => {
-          deletePromises.push(documentSnapshot.ref.delete());
-        });
-        return Promise.all(deletePromises);
-      });
+const getDocumentsFromCollection = async (
+  collectionName,
+  name,
+  isRegular = false,
+) => {
+  try {
+    const userId = getCurrentUserId();
+    let query = firestore()
+      .collection(collectionName)
+      .where('uid', '==', userId);
+    if (name) {
+      query = query.where('labour', '==', name);
+      if (isRegular) {
+        query = query.where('is_regular', '==', true);
+      }
+    }
+    const querySnapshot = await query.get();
+    return querySnapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
+  } catch (error) {
+    throw new Error(error);
+  }
+};
 
-    const deleteLabourExpense = firestore()
-      .collection('labour_expense')
-      .where('uid', '==', userId)
-      .where('labour', '==', name)
-      .get()
-      .then((querySnapshot) => {
-        const deletePromises = [];
-        querySnapshot.forEach((documentSnapshot) => {
-          deletePromises.push(documentSnapshot.ref.delete());
-        });
-        return Promise.all(deletePromises);
-      });
+const deleteDocumentById = async (collectionName, id) => {
+  try {
+    await firestore().collection(collectionName).doc(id).delete();
+    return 'success';
+  } catch (error) {
+    throw new Error(error);
+  }
+};
 
-    const deleteLabourLeave = firestore()
-      .collection('labour_leave')
-      .where('uid', '==', userId)
-      .where('labour', '==', name)
-      .get()
-      .then((querySnapshot) => {
-        const deletePromises = [];
-        querySnapshot.forEach((documentSnapshot) => {
-          deletePromises.push(documentSnapshot.ref.delete());
-        });
-        return Promise.all(deletePromises);
-      });
+const updateDocument = async (collectionName, data) => {
+  try {
+    await firestore().collection(collectionName).doc(data?.id).update(data);
+    return 'success';
+  } catch (error) {
+    throw new Error(error);
+  }
+};
 
-    await Promise.all([deleteLabour, deleteLabourExpense, deleteLabourLeave]);
+export const submitLabour = async data =>
+  addDocumentToCollection('labour', data);
+export const submitLabourExpense = async data =>
+  addDocumentToCollection('labour_expense', data);
+export const submitLabourLeave = async data =>
+  addDocumentToCollection('labour_leave', data);
+
+export const getLabourData = async () => getDocumentsFromCollection('labour');
+
+export const getLabourRegular = async name =>
+  getDocumentsFromCollection('labour', name, true);
+export const getLabourByName = async name =>
+  getDocumentsFromCollection('labour', name);
+
+export const getLabourExpense = async name =>
+  getDocumentsFromCollection('labour_expense', name);
+export const getLabourLeave = async name =>
+  getDocumentsFromCollection('labour_leave', name);
+
+export const getAllLabourExpense = async () =>
+  getDocumentsFromCollection('labour_expense');
+
+export const updateLabour = async data => updateDocument('labour', data);
+
+export const updateLabourLeave = async data =>
+  updateDocument('labour_leave', data);
+
+export const updateLabourExpense = async data =>
+  updateDocument('labour_expense', data);
+export const deleteLabourExpense = async id =>
+  deleteDocumentById('labour_expense', id);
+export const deleteLabour = async id => deleteDocumentById('labour', id);
+export const deleteLabourLeave = async id =>
+  deleteDocumentById('labour_leave', id);
+
+export const deleteLabourCollection = async name => {
+  try {
+    const deletePromises = [];
+    const userId = getCurrentUserId();
+
+    ['labour', 'labour_expense', 'labour_leave'].forEach(collectionName => {
+      const query = firestore()
+        .collection(collectionName)
+        .where('uid', '==', userId)
+        .where('labour', '==', name);
+      deletePromises.push(
+        query.get().then(querySnapshot => {
+          const subDeletePromises = [];
+          querySnapshot.forEach(doc =>
+            subDeletePromises.push(doc.ref.delete()),
+          );
+          return Promise.all(subDeletePromises);
+        }),
+      );
+    });
+
+    await Promise.all(deletePromises);
+    return 'success';
   } catch (error) {
     throw new Error(error);
   }
