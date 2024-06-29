@@ -16,7 +16,6 @@ import { AuthProvider } from './src/context/authContext';
 import { AadtProvider } from './src/context/aadtContext';
 import { LoanProvider } from './src/context/loanContext';
 import { TimelineProvider } from './src/context/timeContext';
-import firestore from '@react-native-firebase/firestore';
 import { TabProvider } from './src/context/tabContext';
 
 export default function App() {
@@ -28,10 +27,6 @@ export default function App() {
         platform: 'android',
       });
       setVersion(res);
-      firestore().settings({
-        persistence: true, // Enable offline persistence
-        cacheSizeBytes: firestore.CACHE_SIZE_UNLIMITED
-      });
     })();
     setTimeout(() => {
       setVisible(true);

@@ -13,11 +13,7 @@ export default function SettingStack() {
       <Stack.Screen
         name="Setting"
         component={Setting}
-
       />
-
-
-
     </Stack.Navigator>
   );
 }

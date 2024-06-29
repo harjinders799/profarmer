@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useState } from 'react';
 import BaseView from 'src/container/base';
 import Text from 'src/components/text';
 import {
-  FlatList,
   ScrollView,
   StyleSheet,
   Modal,
@@ -87,6 +86,7 @@ export default function LoanDetail() {
   let givenAmount = 0;
   let takenAmount = 0;
   let takenAmountInterest = 0;
+  let givenAmountInterest = 0;
   let today = moment();
   groupedData.forEach(entry => {
     let date = moment(entry?.date).format('YYYY-MM-DD');
@@ -101,9 +101,10 @@ export default function LoanDetail() {
       takenAmountInterest += interest;
     } else if (entry.receiver === auth().currentUser.uid) {
       givenAmount += parseInt(entry.amount);
+      givenAmountInterest += interest
     }
   });
-  const givenInterest = (givenAmount * interest_rate) / 100;
+  const givenInterest = givenAmountInterest;
   const takenInterest = takenAmountInterest;
   // const finalAmount = givenAmount - takenAmount;
 

@@ -1,7 +1,6 @@
 import React from 'react';
 import { getAsyncStorage, setAsyncStorage } from 'src/network/AsyncStorage';
 import { strings } from 'src/translations/locale';
-import useLocalStorage from '../utils/useLocalStore';
 
 const initialState = {
   lang: undefined,
