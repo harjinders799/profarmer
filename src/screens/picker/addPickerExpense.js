@@ -5,25 +5,14 @@ import Button from 'src/components/button';
 import Input from 'src/components/input';
 import DateTimePick from 'src/components/DateTime';
 import { currentStamp, dateFormat } from 'src/utils/dateformat';
-import { submitInterestAmount } from 'src/network/interest-service';
 import Loader from 'src/components/loader';
 import BaseView from 'src/container/base';
 import { ToastError, ToastSuccess } from 'src/utils/toast';
-import DataPicker from 'src/components/dataPicker';
 import { strings } from 'src/translations/locale';
-import { navigate } from 'src/navigation/ref';
-import { useStore } from 'src/context/context';
 import { goBack } from 'src/navigation/ref';
-import { updateIneterstAmt } from 'src/network/interest-service';
-import {
-  getPickerByName,
-  submitPicker,
-  submitPickerExpense,
-  updatePickerExpense,
-} from '../../network/picker-service';
 import Header from '../../components/header';
 import Icon from '../../components/icon';
-import { currencyFormat, currencyInput } from '../../utils/dateformat';
+import { currencyInput } from '../../utils/dateformat';
 import { useCotton } from '../../context/cottonContext';
 import Text from '../../components/text';
 import { savePickerExpenseData, updatePickerExpenseData } from '../../sql';
@@ -163,7 +152,7 @@ export default function AddPickerExpense() {
         }}
       /> */}
         <Input
-        label={strings.given_amount}
+          label={strings.given_amount}
           refs={refAmt}
           autoFocus
           placeholder={strings.given_amount_to_picker}
@@ -172,7 +161,7 @@ export default function AddPickerExpense() {
           setValue={value => onChangeValue('amount', value)}
         />
         <Input
-        label={strings.remark}
+          label={strings.remark}
           placeholder={strings.remark}
           multiline
           autoCapitalize="words"
@@ -180,13 +169,13 @@ export default function AddPickerExpense() {
           setValue={value => onChangeValue('detail', value)}
         />
         <Text
-              style={{
-                color: gray10,
-                fontSize: 18,
-                paddingTop: 5,
-              }}>
-              {strings.date}
-            </Text>
+          style={{
+            color: gray10,
+            fontSize: 18,
+            paddingTop: 5,
+          }}>
+          {strings.date}
+        </Text>
         <TouchableOpacity
           style={[styles.date, { borderColor: gray3 }]}
           onPress={() => setShowDate(true)}>
