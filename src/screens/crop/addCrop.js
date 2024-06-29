@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, Keyboard, ScrollView } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { useRoute, useTheme } from '@react-navigation/native';
 import Button from 'src/components/button';
 import Input from 'src/components/input';
@@ -10,13 +10,12 @@ import Loader from 'src/components/loader';
 import BaseView from 'src/container/base';
 import { ToastError, ToastSuccess } from 'src/utils/toast';
 import { strings } from 'src/translations/locale';
-import { useStore } from 'src/context/context';
 import { goBack } from 'src/navigation/ref';
 import Header from '../../components/header';
 import Icon from '../../components/icon';
 import { submitCrop, updateCrop } from '../../network/interest-service';
 import { currencyInput } from '../../utils/dateformat';
-import { black, gray3, green, white } from '../../utils/color';
+import { gray3 } from '../../utils/color';
 
 export default function AddCrop() {
   const { colors } = useTheme();

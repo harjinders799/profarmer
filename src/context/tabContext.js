@@ -1,12 +1,5 @@
 import React from 'react';
 import { getAsyncStorage, setAsyncStorage } from 'src/network/AsyncStorage';
-import { strings } from 'src/translations/locale';
-import PickerStack from '../navigation/pickerStack';
-import LabourStack from '../navigation/labourStack';
-import CottonStack from '../navigation/cottonStack';
-import LoanStack from '../navigation/loanStack';
-import SettingStack from '../navigation/settingStack';
-import Timeline from '../screens/timeline';
 import { tabsData } from '../utils/helper';
 
 const initialState = {

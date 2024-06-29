@@ -58,17 +58,17 @@ export default function App() {
       <TabProvider>
         <AuthProvider>
           <StoreProvider>
-            <CottonProvider>
-              <AadtProvider>
-                <LoanProvider>
-                  <TimelineProvider>
-                    <LangProvider>
-                      <Navigation />
-                    </LangProvider>
-                  </TimelineProvider>
-                </LoanProvider>
-              </AadtProvider>
-            </CottonProvider>
+            {/* <CottonProvider> */}
+            {/* <AadtProvider> */}
+            {/* <LoanProvider> */}
+            {/* <TimelineProvider> */}
+            <LangProvider>
+              <Navigation />
+            </LangProvider>
+            {/* </TimelineProvider> */}
+            {/* </LoanProvider> */}
+            {/* </AadtProvider> */}
+            {/* </CottonProvider> */}
           </StoreProvider>
         </AuthProvider>
       </TabProvider>

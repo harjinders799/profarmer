@@ -1,7 +1,7 @@
 import moment from 'moment';
 import { WIDTH } from './constant';
 import { strings } from '../translations/locale';
-import PickerStack from '../navigation/pickerStack';
+// import PickerStack from '../navigation/pickerStack';
 import LabourStack from '../navigation/labourStack';
 import CottonStack from '../navigation/cottonStack';
 import SettingStack from '../navigation/settingStack';

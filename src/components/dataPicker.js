@@ -2,18 +2,12 @@ import * as React from 'react';
 import { FlatList, View, StyleSheet, TouchableOpacity } from 'react-native';
 import { findIndex, flatten, includes } from 'lodash';
 import { useTheme } from '@react-navigation/native';
-import { useAuth } from 'src/context/context';
 import Text from 'src/components/text';
 import Icon from 'src/components/icon';
-import Modal from 'src/components/Modal';
 import Input from 'src/components/input';
-import Button from 'src/components/button';
-import Header from 'src/components/header';
 import { HEIGHT } from 'src/utils/constant';
 import { strings } from 'src/translations/locale';
 import { commonStyle } from 'src/utils/style';
-import { useStore } from 'src/context/context';
-import { red } from 'src/utils/color';
 import { gray1 } from '../utils/color';
 
 export default function DataPicker(props) {

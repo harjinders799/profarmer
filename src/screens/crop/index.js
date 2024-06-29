@@ -1,25 +1,20 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import React, { useCallback, useState } from 'react';
+import { StyleSheet } from 'react-native';
 import Text from 'src/components/text';
 import BaseView from 'src/container/base';
-import Profile from 'src/container/profile';
 import { commonStyle } from 'src/utils/style';
-import Logo from 'src/container/logo';
 import { useLang } from 'src/context/langContext';
 import Header from 'src/components/header';
 import { useFocusEffect } from '@react-navigation/native';
 import { groupBy, sumBy } from 'lodash';
 import moment from 'moment';
 import { strings } from 'src/translations/locale';
-import { useStore } from 'src/context/context';
 import List from 'src/container/crop/list';
 import Loader from '../../components/loader';
 import { ToastError } from '../../utils/toast';
 import Button from '../../components/button';
 import { navigate } from '../../navigation/ref';
 import { getCrops } from '../../network/interest-service';
-import { currencyFormat } from '../../utils/dateformat';
-import { navy } from '../../utils/color';
 
 export default function Crop({ navigation }) {
   const { lang } = useLang();

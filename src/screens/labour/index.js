@@ -3,7 +3,6 @@ import Text from 'src/components/text';
 import BaseView from 'src/container/base';
 import auth from '@react-native-firebase/auth';
 import { useLang } from 'src/context/langContext';
-import Header from 'src/components/header';
 import { useFocusEffect } from '@react-navigation/native';
 import { strings } from 'src/translations/locale';
 import { useStore } from 'src/context/context';

@@ -3,32 +3,29 @@ import {
   View,
   StyleSheet,
   TouchableOpacity,
-  TouchableWithoutFeedback,
-  Keyboard,
   ScrollView,
 } from 'react-native';
-import {useRoute, useTheme} from '@react-navigation/native';
+import { useRoute, useTheme } from '@react-navigation/native';
 import Button from 'src/components/button';
 import Input from 'src/components/input';
 import Text from 'src/components/text';
 import DateTimePick from 'src/components/DateTime';
-import {currentStamp, dateFormat} from 'src/utils/dateformat';
+import { currentStamp, dateFormat } from 'src/utils/dateformat';
 import Loader from 'src/components/loader';
 import BaseView from 'src/container/base';
-import {ToastError, ToastSuccess} from 'src/utils/toast';
-import {strings} from 'src/translations/locale';
-import {useStore} from 'src/context/context';
-import {goBack} from 'src/navigation/ref';
+import { ToastError, ToastSuccess } from 'src/utils/toast';
+import { strings } from 'src/translations/locale';
+import { goBack } from 'src/navigation/ref';
 import Header from '../../components/header';
 import Icon from '../../components/icon';
-import {currencyInput} from '../../utils/dateformat';
-import {black, gray3, green, white} from '../../utils/color';
+import { currencyInput } from '../../utils/dateformat';
+import { black, gray3, green, white } from '../../utils/color';
 import auth from '@react-native-firebase/auth';
-import {submitTimeline, updateTimeline} from '../../network/time-service';
+import { submitTimeline, updateTimeline } from '../../network/time-service';
 
 export default function AddEvent() {
-  const {colors} = useTheme();
-  const {params} = useRoute();
+  const { colors } = useTheme();
+  const { params } = useRoute();
   const editData = params?.crop ?? {};
   const refAmt = React.useRef();
   const [data, setData] = React.useState({
@@ -43,7 +40,7 @@ export default function AddEvent() {
   const [showDate, setShowDate] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
 
-  const {description, amount, title, date} = data;
+  const { description, amount, title, date } = data;
 
   const onChangeValue = (key, value) => {
     if (key == 'amount') {
@@ -86,10 +83,10 @@ export default function AddEvent() {
       // if (title.trim() == '' ) {
       ToastError(strings.title);
     } else if (description.trim() == '') {
-      ToastError(strings.description); 
-    } else if ( amount.trim() == '' ||
-    parseInt(amount) <= 0 ) {
-        ToastError(strings.amount);
+      ToastError(strings.description);
+    } else if (amount.trim() == '' ||
+      parseInt(amount) <= 0) {
+      ToastError(strings.amount);
     } else {
       setLoading(true);
       let res = await submitTimeline({
@@ -103,17 +100,17 @@ export default function AddEvent() {
   };
   console.log(amount, '---555---');
 
-  console.log(editData, title, amount,'------666---',editData?.crop);
+  console.log(editData, title, amount, '------666---', editData?.crop);
   return (
     <BaseView style={styles.container}>
       <Loader visible={loading} />
       <Header
-        style={{marginTop: 10}}
+        style={{ marginTop: 10 }}
         leftComponent={
           <Icon name="back" size={28} color={green} onPress={() => goBack()} />
         }
         centerComponent={
-          <Text h2 style={{color: green, fontWeight: 'bold'}}>
+          <Text h2 style={{ color: green, fontWeight: 'bold' }}>
             {editData?.crop}
           </Text>
         }

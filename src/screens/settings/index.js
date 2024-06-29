@@ -12,7 +12,6 @@ import BaseView from 'src/container/base';
 import Account from './account';
 import Text from 'src/components/text';
 import { HEIGHT } from 'src/utils/constant';
-import { useCotton } from 'src/context/cottonContext';
 import { useLang } from '../../context/langContext';
 import Icon from '../../components/icon';
 import { green, black, orange, white } from '../../utils/color';
@@ -21,14 +20,6 @@ import ReactNativeBiometrics, { BiometryTypes } from 'react-native-biometrics';
 import { useAuth } from '../../context/authContext';
 import NetInfo from '@react-native-community/netinfo';
 import { ToastError, ToastProgress } from '../../utils/toast';
-import { getAllItems, updatePickerExpenseId, updatePickerId } from '../../sql';
-import { PCIKER_TABLE, PICKER_EXPENSE_TABLE } from '../../sql/tabels';
-import {
-  submitPicker,
-  submitPickerExpense,
-  updatePicker,
-  updatePickerExpense,
-} from '../../network/picker-service';
 import Loader from '../../components/loader';
 import More from '../more';
 import { tabsData } from '../../utils/helper';
@@ -37,14 +28,6 @@ const rnBiometrics = new ReactNativeBiometrics();
 
 export default function Setting({ navigation }) {
   const { lang, setFingerLock, fingerLock } = useLang();
-  const {
-    db,
-    getPickerWeight,
-    pickerWeight = [],
-    pickerExpense = [],
-    getPickerExpense,
-    resetPicker,
-  } = useCotton();
   const { user, reset } = useAuth();
   const [loading, setLoading] = useState(false);
 
@@ -53,89 +36,28 @@ export default function Setting({ navigation }) {
   const onLogOut = async () => {
     try {
       setLoading(true);
-      let existWt = pickerWeight.some(o => o?.sync == 'pending');
-      let existEx = pickerExpense.some(o => o?.sync == 'pending');
-      if (existWt || existEx) {
-        NetInfo.fetch().then(state => {
-          if (state.isConnected && state.isInternetReachable) fetchData();
-          else ToastError(strings.offline_warning);
-        });
+      // let existWt = pickerWeight.some(o => o?.sync == 'pending');
+      // let existEx = pickerExpense.some(o => o?.sync == 'pending');
+      // if (existWt || existEx) {
+      //   NetInfo.fetch().then(state => {
+      //     if (state.isConnected && state.isInternetReachable) fetchData();
+      //     else ToastError(strings.offline_warning);
+      //   });
+      //   setLoading(false);
+      //   return;
+      // } else {
+      setTimeout(() => {
+        // resetPicker();
+        reset();
         setLoading(false);
-        return;
-      } else {
-        setTimeout(() => {
-          resetPicker();
-          reset();
-          setLoading(false);
-        }, 2000);
-      }
+      }, 2000);
+      // }
     } catch (error) {
       ToastError('Something Went Wrong!');
       setLoading(false);
     }
   };
 
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      if (Array.isArray(pickerWeight) && pickerWeight.length) {
-        let unsyncData = await getAllItems(
-          db,
-          PCIKER_TABLE,
-          `WHERE sync='pending'`,
-        );
-        let promise = unsyncData.map(async (item, index) => {
-          delete item.sync;
-          let api = item?.fid && item?.fid != '' ? updatePicker : submitPicker;
-          let res = await api(item);
-          // console.log(res, '--------pick wt');
-          if (res) {
-            await updatePickerId(db, {
-              ...item,
-              fid: res,
-            });
-          }
-        });
-        await Promise.all(promise);
-        getPickerWeight();
-        setLoading(false);
-      }
-      if (Array.isArray(pickerExpense) && pickerExpense.length) {
-        let unsyncData = await getAllItems(
-          db,
-          PICKER_EXPENSE_TABLE,
-          `WHERE sync='pending'`,
-        );
-        // console.log(unsyncData.length, '-------exp');
-        let promise = unsyncData.map(async (item, index) => {
-          delete item.sync;
-          let api =
-            item?.fid && item?.fid != ''
-              ? updatePickerExpense
-              : submitPickerExpense;
-          let res = await api(item);
-          // console.log(res, '--------pick wt');
-          if (res) {
-            await updatePickerExpenseId(db, {
-              ...item,
-              fid: res,
-            });
-          }
-        });
-        await Promise.all(promise);
-        getPickerExpense();
-        setLoading(false);
-      }
-      setTimeout(() => {
-        resetPicker();
-        reset();
-      }, 2000);
-      setLoading(false);
-    } catch (error) {
-      setLoading(false);
-      console.log(error, '--------');
-    }
-  };
 
   return (
     <BaseView>

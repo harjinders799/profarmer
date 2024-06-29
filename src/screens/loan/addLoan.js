@@ -1,9 +1,6 @@
 import React from 'react';
 import {
-  View,
   StyleSheet,
-  TouchableOpacity,
-  Keyboard,
   ScrollView,
 } from 'react-native';
 import { useRoute, useTheme } from '@react-navigation/native';
@@ -11,8 +8,6 @@ import Button from 'src/components/button';
 import Input from 'src/components/input';
 import Text from 'src/components/text';
 import BaseView from 'src/container/base';
-import { navigate } from 'src/navigation/ref';
-import { submitInterestAmount } from 'src/network/interest-service';
 import { goBack } from 'src/navigation/ref';
 import { strings } from 'src/translations/locale';
 import Header from '../../components/header';
@@ -20,9 +15,8 @@ import Icon from '../../components/icon';
 import auth from '@react-native-firebase/auth';
 import { currentStamp } from 'src/utils/dateformat';
 import Loader from 'src/components/loader';
-import { useStore } from 'src/context/context';
 import { ToastError, ToastSuccess } from 'src/utils/toast';
-import { submitLoan, updateLoan, updateLoanName, updateReceiver } from '../../network/loan-service';
+import { submitLoan, updateLoanName } from '../../network/loan-service';
 import { black } from '../../utils/color';
 
 

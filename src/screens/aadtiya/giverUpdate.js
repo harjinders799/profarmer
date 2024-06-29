@@ -3,31 +3,20 @@ import React, { useCallback } from 'react';
 import Icon from '../../components/icon';
 import {
   cyan,
-  gray1,
   gray4,
   green,
   greenLight,
-  lightBlue,
-  lightGreen,
-  lightGrey,
   lightOrange,
   lightRed,
-  lightYellow,
-  orange,
   peach,
-  red,
   white,
-  yellow,
 } from '../../utils/color';
-import { ToastError, ToastSuccess } from '../../utils/toast';
-import { deletePickerData, savePickerData, updatePickerData } from '../../sql';
-import { useCotton } from '../../context/cottonContext';
-import { deletePicker } from '../../network/picker-service';
+import { ToastSuccess } from '../../utils/toast';
 import Loader from '../../components/loader';
-import { useFocusEffect, useRoute, useTheme } from '@react-navigation/native';
-import { goBack, navigate, replace } from '../../navigation/ref';
+import { useRoute, useTheme } from '@react-navigation/native';
+import { goBack, replace } from '../../navigation/ref';
 import Text from '../../components/text';
-import { currencyFormat, currentStamp, dateFormat } from '../../utils/dateformat';
+import { currencyFormat, dateFormat } from '../../utils/dateformat';
 import Header from '../../components/header';
 import Button from '../../components/button';
 import { strings } from '../../translations/locale';
@@ -99,7 +88,7 @@ export default function GiverUpdate() {
           {dateFormat(data?.date)}
         </Text>
         <View
-          style={[styles.card, { borderColor: gray4+80, borderWidth: 2 }]}>
+          style={[styles.card, { borderColor: gray4 + 80, borderWidth: 2 }]}>
           <Text h3 style={{ fontWeight: 'bold' }}>
             {strings.total_principal}
           </Text>
@@ -133,7 +122,7 @@ export default function GiverUpdate() {
           </Text>
         </View>
         <View
-          style={[styles.card, { borderColor: greenLight , borderWidth: 2 }]}>
+          style={[styles.card, { borderColor: greenLight, borderWidth: 2 }]}>
           <Text h3 style={{ fontWeight: 'bold' }}>
             {' '}
             {strings.total_amount}
