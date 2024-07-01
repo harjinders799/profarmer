@@ -1,15 +1,15 @@
-import { View, Modal } from 'react-native';
-import React, { useState } from 'react';
-import { common } from '@utils/style';
-import { useTheme } from '@react-navigation/native';
+import React, { useState, useCallback } from 'react';
+import { View, Modal, StyleSheet } from 'react-native';
 import Text from '@components/text';
-import { strings } from '@translations/locale';
 import Button from '@components/button';
+import { useTheme } from '@react-navigation/native';
+import { strings } from '@translations/locale';
 import { deleteLabourCollection } from '@network/labour-service';
 import { goBack } from '@navigation/ref';
 import { ToastError } from '@utils/toast';
+import { common } from '@utils/style';
 
-export default function LabourDeleteModal({
+function LabourDeleteModal({
     openModal,
     setOpenModal,
     data,
@@ -17,7 +17,7 @@ export default function LabourDeleteModal({
     const { colors } = useTheme();
     const [loading, setLoading] = useState(false);
 
-    const onDelete = async () => {
+    const onDelete = useCallback(async () => {
         try {
             setLoading(true);
             await deleteLabourCollection(data?.id);
@@ -28,31 +28,31 @@ export default function LabourDeleteModal({
             setLoading(false);
             ToastError(error?.message);
         }
-    }
+    }, [data, setOpenModal]);
 
     return (
         <Modal visible={openModal} animationType="slide" transparent={true}>
-            <View style={[common.modalBack, { backgroundColor: colors.border + 50 }]}>
-                <View style={[common.modalView, { backgroundColor: colors.background }]}>
+            <View style={[styles.container, { backgroundColor: colors.border + 50 }]}>
+                <View style={[styles.modalView, { backgroundColor: colors.background }]}>
                     <Text h2 bold>
                         {strings.are_you_sure}
                     </Text>
-                    <Text h3 style={{ marginTop: 10 }}>
+                    <Text h3 style={styles.text}>
                         <Text h2 style={{ color: colors.error }}>
                             {data?.name}
                         </Text>
                         {strings.alert}
                     </Text>
-                    <View style={[common.row_btw]}>
+                    <View style={styles.buttonContainer}>
                         <Button
                             label={strings.delete}
                             loading={loading}
-                            btnStyle={{ width: '40%', backgroundColor: colors.error }}
+                            btnStyle={[styles.button, { backgroundColor: colors.error }]}
                             onPress={onDelete}
                         />
                         <Button
                             label={strings.cancel}
-                            btnStyle={{ width: '40%', backgroundColor: colors.border }}
+                            btnStyle={[styles.button, { backgroundColor: colors.border }]}
                             onPress={() => setOpenModal(false)}
                         />
                     </View>
@@ -61,3 +61,29 @@ export default function LabourDeleteModal({
         </Modal>
     );
 }
+
+const styles = StyleSheet.create({
+    container: {
+        ...StyleSheet.absoluteFillObject,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    modalView: {
+        ...common.modalView,
+        width: '80%',
+        padding: 20,
+    },
+    text: {
+        marginTop: 10,
+    },
+    buttonContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginTop: 20,
+    },
+    button: {
+        width: '40%',
+    },
+});
+
+export default React.memo(LabourDeleteModal);

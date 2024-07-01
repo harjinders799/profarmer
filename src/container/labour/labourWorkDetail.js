@@ -1,55 +1,45 @@
-import {
-  View,
-  StyleSheet,
-  Pressable,
-} from 'react-native';
-import React from 'react';
-import Text from 'src/components/text';
-import { navigate } from 'src/navigation/ref';
-import { strings } from 'src/translations/locale';
-import { dateFormat } from 'src/utils/dateformat';
+import React, { useCallback } from 'react';
+import { View, StyleSheet, Pressable } from 'react-native';
+import Text from '@components/text';
+import { navigate } from '@navigation/ref';
+import { strings } from '@translations/locale';
+import { dateFormat } from '@utils/dateformat';
 import { useTheme } from '@react-navigation/native';
-import { currencyFormat } from '../../utils/dateformat';
+import { currencyFormat } from '@utils/dateformat';
 import { common } from '@utils/style';
 
-export default function LabourWorkDetail({ data, work }) {
+function LabourWorkDetail({ data, work }) {
   const { colors } = useTheme();
 
+  const handleNavigate = useCallback((item) => {
+    navigate('AddLabour', { item, data });
+  }, [data]);
+
   return (
-    <View
-      style={[
-        styles.list,
-        {
-          backgroundColor: colors.background,
-          display: data?.is_regular ? 'none' : 'flex',
-        },
-      ]}>
+    <View style={[styles.container, { backgroundColor: colors.background, display: data?.is_regular ? 'none' : 'flex' }]}>
       <Text h4 bold center>
         {strings.labour_record}
       </Text>
       {Array.isArray(work) && work.length && !data?.is_regular ? (
-        work.map((v, i) => (
+        work.map((item, index) => (
           <Pressable
-            key={i}
-            style={[work.length !== i + 1 && common.underline]}
-            onPress={() => navigate('AddLabour', { item: v, data })}>
-            <View style={[styles.row]}>
-              <Text h4>{dateFormat(v?.date)}</Text>
+            key={index}
+            style={index !== work.length - 1 && common.underline}
+            onPress={() => handleNavigate(item)}>
+            <View style={styles.row}>
+              <Text h4>{dateFormat(item?.date)}</Text>
               <Text h4>
-                {v?.count}
-                {' ' + strings.labour}
+                {item?.count} {strings.labour}
               </Text>
-              {/* <Text h4>
-                    {currencyFormat(v?.rate)}</Text> */}
               <Text h4>
-                {currencyFormat(parseFloat(v?.rate) * parseFloat(v?.count))}
+                {currencyFormat(parseFloat(item?.rate) * parseFloat(item?.count))}
               </Text>
+              {item?.detail && (
+                <Text h5 center style={styles.detail}>
+                  {item.detail}
+                </Text>
+              )}
             </View>
-            {v?.detail ? (
-              <Text h5 center style={{ paddingTop: 10, fontStyle: 'italic' }}>
-                {v?.detail}
-              </Text>
-            ) : null}
           </Pressable>
         ))
       ) : (
@@ -57,34 +47,12 @@ export default function LabourWorkDetail({ data, work }) {
           {strings.no_record}
         </Text>
       )}
-      {/* <View style={styles.icons}>
-          <Icon
-          name="edit"
-          size={20}
-          color={orange}
-          style={[styles.icon, { backgroundColor: gray2 }]}
-          onPress={() => navigate('AddLabour', { data: { ...data, edit: true } })}
-        />
-        {data?.is_regulare ? (
-          <Text h3 style={{ color: green, marginTop: 15 }}>
-            {strings.regular}
-          </Text>
-        ) : null}
-        {totalExpense < 1 || totalLabour > 1 ? (
-          <Icon
-            name="delete"
-            size={20}
-            color={red}
-            style={[styles.icon, { backgroundColor: gray2 }]}
-            onPress={delteData}
-          />
-        ) : null}
-        </View> */}
     </View>
   );
 }
+
 const styles = StyleSheet.create({
-  list: {
+  container: {
     ...common.shadow,
     ...common.card,
     margin: '5%',
@@ -96,4 +64,10 @@ const styles = StyleSheet.create({
     ...common.row_btw,
     marginTop: 20,
   },
+  detail: {
+    paddingTop: 10,
+    fontStyle: 'italic',
+  },
 });
+
+export default React.memo(LabourWorkDetail);

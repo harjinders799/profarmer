@@ -1,15 +1,17 @@
 import React, { useCallback, useMemo } from 'react';
 import { FlatList, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { useTheme } from '@react-navigation/native';
-import Text from 'src/components/text';
-import Button from '../../components/button';
-import { strings } from '../../translations/locale';
-import { navigate } from 'src/navigation/ref';
-import { updateLabourDataCalculation } from '../../network/labour-service';
-import { green, greenDark, lightRed, navy, red } from '../../utils/colors';
-import { currencyFormat, dayCount } from '../../utils/dateformat';
+import Text from '@components/text';
+import Button from '@components/button';
+import { strings } from '@translations/locale';
+import { navigate } from '@navigation/ref';
+import { updateLabourDataCalculation } from '@network/labour-service';
+import { green, greenDark, lightRed, navy, red } from '@utils/colors';
+import { currencyFormat, dayCount } from '@utils/dateformat';
 import Animated, { FadeInUp } from 'react-native-reanimated';
 import { common } from '@utils/style';
+
+const ITEM_HEIGHT = 100;
 
 const LabourList = React.memo(({ data }) => {
   const { colors } = useTheme();
@@ -22,9 +24,7 @@ const LabourList = React.memo(({ data }) => {
       parseFloat(item?.total_leave) * parseFloat(item?.labour_rate)
       : parseFloat(item?.total_labour_amount);
 
-    const total_labour_given = item?.is_regular
-      ? parseFloat(item?.given_amount)
-      : parseFloat(item?.given_amount);
+    const total_labour_given = parseFloat(item?.given_amount);
 
     const balanceColor =
       total_labour_amount - total_labour_given > 0 ? greenDark : red;
@@ -97,10 +97,10 @@ const LabourList = React.memo(({ data }) => {
     );
   }, []);
 
-  const keyExtractor = useCallback(item => item.id, []);
+  const keyExtractor = useCallback(item => item.id.toString(), []);
 
   const getItemLayout = useCallback(
-    (data, index) => ({
+    (_, index) => ({
       length: ITEM_HEIGHT,
       offset: ITEM_HEIGHT * index,
       index,
@@ -108,17 +108,19 @@ const LabourList = React.memo(({ data }) => {
     []
   );
 
+  const memoizedEmptyComponent = useMemo(() => (
+    <Text style={styles.noDataText}>
+      {strings.no_data}
+    </Text>
+  ), []);
+
   return (
     <FlatList
-      style={{ width: '100%', paddingHorizontal: 20 }}
-      contentContainerStyle={{ paddingBottom: 100 }}
+      style={styles.flatList}
+      contentContainerStyle={styles.contentContainer}
       data={data}
       keyExtractor={keyExtractor}
-      ListEmptyComponent={() => (
-        <Text style={{ textAlign: 'center', paddingTop: 30 }}>
-          {strings.no_data}
-        </Text>
-      )}
+      ListEmptyComponent={memoizedEmptyComponent}
       initialNumToRender={10}
       maxToRenderPerBatch={10}
       getItemLayout={getItemLayout}
@@ -128,9 +130,14 @@ const LabourList = React.memo(({ data }) => {
   );
 });
 
-const ITEM_HEIGHT = 100;
-
 const styles = StyleSheet.create({
+  flatList: {
+    width: '100%',
+    paddingHorizontal: 20,
+  },
+  contentContainer: {
+    paddingBottom: 100,
+  },
   list: {
     marginTop: 20,
     width: '100%',
@@ -139,6 +146,10 @@ const styles = StyleSheet.create({
   row: {
     ...common.row_btw,
     marginVertical: 5,
+  },
+  noDataText: {
+    textAlign: 'center',
+    paddingTop: 30,
   },
 });
 

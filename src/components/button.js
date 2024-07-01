@@ -11,6 +11,9 @@ import { common } from '@utils/style';
 import Animated, { FadeInUp } from 'react-native-reanimated';
 import { useTheme } from '@react-navigation/native';
 
+// Memoize Button component to prevent unnecessary re-renders
+// export const MemoizedButton = memo(Button);
+
 const Button = ({
   btnStyle,
   txtStyle,

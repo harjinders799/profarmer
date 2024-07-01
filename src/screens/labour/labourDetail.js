@@ -1,46 +1,45 @@
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
-import React, { useEffect, useState } from 'react';
-import BaseView from 'src/container/base';
-import Text from 'src/components/text';
-import Loader from 'src/components/loader';
-import { green, red, white, greenDark } from '../../utils/colors';
-import { sumBy } from 'lodash';
 import { useRoute, useTheme } from '@react-navigation/native';
-import { strings } from 'src/translations/locale';
-import { common } from 'src/utils/style';
-import { getLabourExpense, getLabourWork } from '../../network/labour-service';
-import { ToastError } from '../../utils/toast';
-import LabourExpenseDetail from '../../container/labour/labourExpenseDetail';
-import Header from '../../components/header';
-import { navigate } from '../../navigation/ref';
-import { currencyFormat } from '../../utils/dateformat';
-import RNHTMLtoPDF from 'react-native-html-to-pdf';
-import { useAuth } from '../../context/authContext';
 import Share from 'react-native-share';
+import RNHTMLtoPDF from 'react-native-html-to-pdf';
+import { sumBy } from 'lodash';
+
+import BaseView from '@container/base';
+import Text from '@components/text';
+import Loader from '@components/loader';
+import Header from '@components/header';
+import LabourExpenseDetail from '@container/labour/labourExpenseDetail';
 import LabourWorkDetail from '@container/labour/labourWorkDetail';
-import { laborHTMLFormat } from '@html/labour';
 import LabourDeleteModal from '@container/labour/labourDeleteModal';
 
-const transparent = 'rgba(0,0,0,0.5)';
+import { red, greenDark, } from '@utils/colors';
+import { common } from '@utils/style';
+import { currencyFormat } from '@utils/dateformat';
+import { ToastError } from '@utils/toast';
+import { getLabourExpense, getLabourWork } from '@network/labour-service';
+import { strings } from '@translations/locale';
+import { laborHTMLFormat } from '@html/labour';
+import { useAuth } from '@context/authContext';
+import { navigate } from '@navigation/ref';
 
-export default function LabourDetail({ navigation }) {
+const LabourDetail = ({ navigation }) => {
   const { params } = useRoute();
   const { colors } = useTheme();
   const { user } = useAuth();
-  const [loading, setLoading] = useState(false);
   const data = params?.item ?? [];
+
+  const [loading, setLoading] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [work, setWork] = useState([]);
   const [expense, setExpense] = useState([]);
 
   useEffect(() => {
     const unsubscribeWork = getLabourWork(data?.id, updatedWork => {
-      console.log({ updatedWork });
       setWork(updatedWork);
       setLoading(false);
     });
     const unsubscribeExpense = getLabourExpense(data?.id, updatedExpense => {
-      console.log({ updatedExpense });
       setExpense(updatedExpense);
       setLoading(false);
     });
@@ -50,16 +49,21 @@ export default function LabourDetail({ navigation }) {
     };
   }, [data]);
 
-  const onShare = async () => {
+  const totalLabour = useMemo(() => sumBy(work, o => parseFloat(o?.count)), [work]);
+  const labourAmount = useMemo(() => currencyFormat(sumBy(work, o => parseFloat(o?.count) * parseFloat(o?.rate))), [work]);
+  const givenAmount = useMemo(() => currencyFormat(sumBy(expense, o => parseFloat(o?.amount))), [expense]);
+  const finalAmount = useMemo(() => currencyFormat(totalLabour * parseFloat(work?.[0]?.rate) - sumBy(expense, o => parseFloat(o?.amount))), [totalLabour, expense]);
+
+  const handleShare = useCallback(async () => {
     if (!user?.name) {
       ToastError('Please Complete your profile');
       navigate('EditProfile');
       return;
     }
-    let html = laborHTMLFormat(strings, user, data, work, expense);
 
+    const html = laborHTMLFormat(strings, user, data, work, expense);
     const options = {
-      html: html,
+      html,
       base64: true,
       fileName: data?.name,
       directory: 'Documents',
@@ -73,73 +77,41 @@ export default function LabourDetail({ navigation }) {
       saveToFiles: true,
       showAppsToView: true,
       filename: data?.name,
-    })
-      .then(res => console.log(res, '---res'))
-      .catch(err => console.log(err, '----err'));
-  };
+    }).catch(err => console.log(err));
+  }, [user, data, work, expense]);
 
   return (
     <BaseView style={{ paddingHorizontal: 0 }}>
       <Loader visible={loading} />
-
       <Header
         back
         label={data?.name}
         deleteIcon
         share
-        onDeletePress={() => {
-          setOpenModal(true);
-        }}
-        onSharePress={onShare}
+        onDeletePress={() => setOpenModal(true)}
+        onSharePress={handleShare}
       />
-
       <ScrollView
         style={{ width: '100%' }}
         contentContainerStyle={{ paddingBottom: 150 }}
-        showsVerticalScrollIndicator={false}>
-        <View style={[styles.row]}>
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={[styles.row, { backgroundColor: colors.background }]}>
           <View style={[styles.card, { backgroundColor: '#bbdffc' }]}>
-            <Text h2 style={{ fontWeight: 'bold' }}>
-              {sumBy(work, o => parseFloat(o?.count))}
-              {/* {parseFloat(data?.total_labour_count)} */}
-            </Text>
+            <Text h2 bold>{totalLabour}</Text>
             <Text h3>{strings.total_labour}</Text>
           </View>
           <View style={[styles.card, { backgroundColor: '#ffccaa' }]}>
-            {/* <Text h3 style={{ color: green }}> */}
-            <Text h2 style={{ fontWeight: 'bold' }}>
-              {currencyFormat(
-                sumBy(work, o => parseFloat(o?.count) * parseFloat(o?.rate)),
-              )}
-              {/* {currencyFormat(data?.total_labour_amount)} */}
-            </Text>
+            <Text h2 bold>{labourAmount}</Text>
             <Text h3>{strings.labour_amount}</Text>
           </View>
           <View style={[styles.card, { backgroundColor: '#bee8ba' }]}>
-            {/* <Text h3>{strings.given_amount}</Text> */}
-            {/* <Text h3 style={{ color: red }}> */}
-            <Text h2 style={{ fontWeight: 'bold' }}>
-              {currencyFormat(sumBy(expense, o => parseFloat(o?.amount)))}
-              {/* {currencyFormat(data?.given_amount)} */}
-            </Text>
+            <Text h2 bold>{givenAmount}</Text>
             <Text h3>{strings.given_amount}</Text>
           </View>
           <View style={[styles.card, { backgroundColor: '#e5e5e5' }]}>
-            <Text
-              h2
-              style={{
-                fontWeight: 'bold',
-                color:
-                  sumBy(work, o => parseFloat(o?.count) * parseFloat(o?.rate)) -
-                    sumBy(expense, o => parseFloat(o?.amount)) >
-                    0
-                    ? greenDark
-                    : red,
-              }}>
-              {currencyFormat(
-                sumBy(work, o => parseFloat(o?.count) * parseFloat(o?.rate)) -
-                sumBy(expense, o => parseFloat(o?.amount)),
-              )}
+            <Text h2 bold color={totalLabour - sumBy(expense, o => parseFloat(o?.amount)) > 0 ? greenDark : red}>
+              {finalAmount}
             </Text>
             <Text h3>{strings.final}</Text>
           </View>
@@ -154,23 +126,9 @@ export default function LabourDetail({ navigation }) {
       />
     </BaseView>
   );
-}
+};
+
 const styles = StyleSheet.create({
-  list: {
-    borderRadius: 10,
-    elevation: 3,
-    backgroundColor: white,
-    padding: 10,
-    marginVertical: 10,
-    width: '98%',
-    alignSelf: 'center',
-  },
-  header: {
-    backgroundColor: green,
-    paddingHorizontal: 15,
-    paddingVertical: 15,
-    elevation: 15,
-  },
   row: {
     ...common.row_btw,
     marginVertical: 5,
@@ -178,36 +136,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   card: {
-    elevation: 5,
-    backgroundColor: white,
+    ...common.card,
+    ...common.shadow,
     width: '48%',
     marginVertical: 5,
     padding: 10,
-    borderRadius: 10,
-    alignItems: 'center',
-  },
-  underline: {
-    // borderBottomWidth: 1,
-    paddingVertical: 10,
-    borderStyle: 'dotted',
-  },
-  wt: {
-    width: '100%',
-    alignItems: 'center',
-    marginVertical: 10,
-  },
-  icon: {
-    elevation: 1,
-    width: 30,
-    height: 30,
-    textAlign: 'center',
-    textAlignVertical: 'center',
-    borderRadius: 5,
-  },
-  modal: {
-    flexShrink: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: transparent,
   },
 });
+
+export default LabourDetail;

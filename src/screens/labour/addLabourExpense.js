@@ -7,23 +7,22 @@ import {
   Pressable,
 } from 'react-native';
 import { useRoute, useTheme } from '@react-navigation/native';
-import Button from 'src/components/button';
-import Input from 'src/components/input';
-import DateTimePick from 'src/components/DateTime';
-import { currentStamp, dateFormat } from 'src/utils/dateformat';
-import Loader from 'src/components/loader';
-import BaseView from 'src/container/base';
-import { ToastError, ToastSuccess } from 'src/utils/toast';
-import { strings } from 'src/translations/locale';
-import { navigate } from 'src/navigation/ref';
-import { goBack } from 'src/navigation/ref';
+import Button from '@components/button';
+import Input from '@components/input';
+import DateTimePick from '@components/DateTime';
+import { currentStamp, dateFormat } from '@utils/dateformat';
+import Loader from '@components/loader';
+import BaseView from '@container/base';
+import { ToastError, ToastSuccess } from '@utils/toast';
+import { strings } from '@translations/locale';
+import { goBack } from '@navigation/ref';
 import {
   deleteLabourExpense,
   submitLabourExpense,
   updateLabourExpense,
-} from '../../network/labour-service';
-import Header from '../../components/header';
-import { currencyFormat, currencyInput } from '../../utils/dateformat';
+} from '@network/labour-service';
+import Header from '@components/header';
+import { currencyInput } from '@utils/dateformat';
 import { FadeInDown } from 'react-native-reanimated';
 
 export default function AddLabourExpense() {
@@ -31,16 +30,18 @@ export default function AddLabourExpense() {
   const { params } = useRoute();
   const labourData = params?.data ?? {};
   const editData = params?.item ?? {};
-  const refAmt = React.useRef();
+
   const [data, setData] = React.useState({
     detail: editData?.detail ?? '',
     amount: editData?.amount ?? '',
     date: editData?.date ? new Date(editData?.date) : new Date(),
   });
+
   const [showDate, setShowDate] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const { detail, amount, date } = data;
 
+  // Handle input changes
   const onChangeValue = (key, value, isNumberOnly = false) => {
     setData({
       ...data,
@@ -48,12 +49,18 @@ export default function AddLabourExpense() {
     });
   };
 
-  const onPress = () => {
-    if (editData.date && editData?.amount && editData?.cid) updateData();
-    else AddNew();
-  };
-  const updateData = async () => {
-    if (amount.trim() == '' || amount < 0) {
+  // Handle form submission
+  const handleSubmit = React.useCallback(async () => {
+    if (editData.date && editData?.amount && editData?.cid) {
+      updateData();
+    } else {
+      addNewData();
+    }
+  }, [editData, data, labourData]);
+
+  // Update existing data
+  const updateData = React.useCallback(async () => {
+    if (amount.trim() === '' || amount < 0) {
       return ToastError(strings.given_amount_to_labour, strings.labour);
     }
     try {
@@ -75,10 +82,11 @@ export default function AddLabourExpense() {
       setLoading(false);
       ToastError(error?.message, strings.labour);
     }
-  };
-  console.log(parseFloat(amount), amount)
-  const AddNew = async () => {
-    if (amount.trim() == '' || amount <= 0) {
+  }, [data, editData, labourData, amount, date]);
+
+  // Add new data
+  const addNewData = React.useCallback(async () => {
+    if (amount.trim() === '' || amount <= 0) {
       return ToastError(strings.given_amount_to_labour, strings.labour);
     }
     try {
@@ -98,9 +106,10 @@ export default function AddLabourExpense() {
       setLoading(false);
       ToastError(error?.message, strings.labour);
     }
-  };
+  }, [data, labourData, amount, date]);
 
-  const onDelete = async () => {
+  // Delete existing data
+  const handleDelete = React.useCallback(async () => {
     try {
       setLoading(true);
       await deleteLabourExpense(editData);
@@ -109,9 +118,7 @@ export default function AddLabourExpense() {
       setLoading(false);
       ToastError(error?.message, strings.labour);
     }
-  };
-  console.log({ labourData })
-  console.log({ editData })
+  }, [editData]);
 
   return (
     <BaseView style={styles.container}>
@@ -122,7 +129,6 @@ export default function AddLabourExpense() {
           <Input
             entering={FadeInDown.delay(300)}
             label={strings.given_amount_to_labour}
-            refs={refAmt}
             autoFocus
             placeholder={strings.given_amount_to_labour}
             value={currencyInput(amount)}
@@ -142,7 +148,8 @@ export default function AddLabourExpense() {
             onPress={() => {
               setShowDate(true);
               Keyboard.dismiss();
-            }}>
+            }}
+          >
             <Input
               entering={FadeInDown.delay(500)}
               label={strings.date}
@@ -160,7 +167,7 @@ export default function AddLabourExpense() {
           <Button
             entering={FadeInDown.delay(600)}
             label={strings.save}
-            onPress={onPress}
+            onPress={handleSubmit}
           />
           <Button
             entering={FadeInDown.delay(700)}
@@ -169,31 +176,15 @@ export default function AddLabourExpense() {
               backgroundColor: colors.error,
               display: editData?.cid && editData?.id ? 'flex' : 'none',
             }}
-            onPress={onDelete}
+            onPress={handleDelete}
           />
         </View>
       </TouchableWithoutFeedback>
     </BaseView>
   );
 }
+
 const styles = StyleSheet.create({
-  container: {},
-  type: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-around',
-    paddingBottom: 20,
-  },
-  date: {
-    borderWidth: 1,
-    height: 50,
-    width: '100%',
-    borderRadius: 10,
-    marginVertical: 5,
-    marginBottom: 30,
-    justifyContent: 'center',
-    paddingHorizontal: 10,
-  },
   form: {
     paddingVertical: 25,
     width: '100%',

@@ -1,23 +1,17 @@
-import * as React from 'react';
-import { View, StyleSheet, ScrollView, Pressable } from 'react-native';
-import { Keyboard } from 'react-native';
+import React, { useCallback, useState } from 'react';
+import { View, StyleSheet, ScrollView, Pressable, Keyboard } from 'react-native';
 import { useRoute, useTheme } from '@react-navigation/native';
-import Button from 'src/components/button';
-import Input from 'src/components/input';
-import DateTimePick from 'src/components/DateTime';
-import { currentStamp, dateFormat } from 'src/utils/dateformat';
-import Loader from 'src/components/loader';
-import BaseView from 'src/container/base';
-import { ToastError, ToastSuccess } from 'src/utils/toast';
-import { strings } from 'src/translations/locale';
-import { goBack } from 'src/navigation/ref';
-import {
-  deleteLabour,
-  submitLabour,
-  updateLabour,
-} from '../../network/labour-service';
-import Header from '../../components/header';
-import { currencyInput } from '../../utils/dateformat';
+import Button from '@components/button';
+import Input from '@components/input';
+import DateTimePick from '@components/DateTime';
+import { currentStamp, dateFormat, currencyInput } from '@utils/dateformat';
+import Loader from '@components/loader';
+import BaseView from '@container/base';
+import { ToastError, ToastSuccess } from '@utils/toast';
+import { strings } from '@translations/locale';
+import { goBack } from '@navigation/ref';
+import { deleteLabour, submitLabour, updateLabour } from '@network/labour-service';
+import Header from '@components/header';
 import { FadeInDown } from 'react-native-reanimated';
 import { common } from '@utils/style';
 
@@ -26,36 +20,40 @@ export default function AddLabour() {
   const { params } = useRoute();
   const labourData = params?.data ?? {};
   const editData = params?.item ?? {};
-  const [data, setData] = React.useState({
+
+  const [data, setData] = useState({
     detail: editData?.detail ?? '',
     rate: editData?.rate ?? parseInt(labourData?.labour_rate).toString() ?? '',
     count: editData?.count ?? '',
     date: editData?.date ? new Date(editData?.date) : new Date(),
   });
-  const [showDate, setShowDate] = React.useState(false);
-  const [loading, setLoading] = React.useState(false);
+  const [showDate, setShowDate] = useState(false);
+  const [loading, setLoading] = useState(false);
   const { detail, rate, date, count } = data;
-  console.log(editData);
-  console.log(labourData);
+
   const onChangeValue = (key, value, isNumberOnly = false) => {
-    setData({
-      ...data,
+    setData(prevData => ({
+      ...prevData,
       [key]: isNumberOnly ? value.replace(/[^0-9]/g, '') : value,
-    });
+    }));
   };
 
-  const onPress = async () => {
-    if (editData?.date && editData?.count && editData?.cid) updateData();
-    else AddNew();
-  };
+  const handleSubmit = useCallback(async () => {
+    if (editData?.date && editData?.count && editData?.cid) {
+      await updateData();
+    } else {
+      await addNewData();
+    }
+  }, [editData, data, labourData]);
 
-  const updateData = async () => {
-    if (rate.trim() == '' || parseInt(rate) <= 0) {
+  const updateData = useCallback(async () => {
+    if (rate.trim() === '' || parseInt(rate) <= 0) {
       return ToastError(strings.rate, strings.labour);
     }
-    if (count.trim() == '' || parseInt(count) <= 0) {
+    if (count.trim() === '' || parseInt(count) <= 0) {
       return ToastError(strings.labour_count, strings.labour);
     }
+
     try {
       setLoading(true);
       await updateLabour({
@@ -81,13 +79,13 @@ export default function AddLabour() {
       setLoading(false);
       ToastError(error?.message, strings.labour);
     }
-  };
+  }, [data, editData, labourData, rate, count, date]);
 
-  const AddNew = async () => {
+  const addNewData = useCallback(async () => {
     try {
-      if (rate.trim() == '' || parseInt(rate) <= 0) {
+      if (rate.trim() === '' || parseInt(rate) <= 0) {
         ToastError(strings.rate, strings.labour);
-      } else if (count.trim() == '' || parseInt(count) <= 0) {
+      } else if (count.trim() === '' || parseInt(count) <= 0) {
         ToastError(strings.labour_count, strings.labour);
       } else {
         setLoading(true);
@@ -111,9 +109,9 @@ export default function AddLabour() {
       setLoading(false);
       ToastError(error?.message);
     }
-  };
+  }, [data, labourData, rate, count, date]);
 
-  const onDelete = async () => {
+  const handleDelete = useCallback(async () => {
     try {
       setLoading(true);
       await deleteLabour(editData);
@@ -122,8 +120,8 @@ export default function AddLabour() {
       setLoading(false);
       ToastError(error?.message, strings.labour);
     }
-  };
-  console.log({ editData });
+  }, [editData]);
+
   return (
     <BaseView style={styles.container}>
       <Loader visible={loading} />
@@ -132,7 +130,8 @@ export default function AddLabour() {
         keyboardShouldPersistTaps="always"
         automaticallyAdjustKeyboardInsets
         contentContainerStyle={{ paddingHorizontal: 20 }}
-        showsVerticalScrollIndicator={false}>
+        showsVerticalScrollIndicator={false}
+      >
         <View style={styles.form}>
           <View style={common.row_btw}>
             <Input
@@ -167,7 +166,8 @@ export default function AddLabour() {
             onPress={() => {
               setShowDate(true);
               Keyboard.dismiss();
-            }}>
+            }}
+          >
             <Input
               entering={FadeInDown.delay(500)}
               label={strings.date}
@@ -185,55 +185,27 @@ export default function AddLabour() {
           <Button
             entering={FadeInDown.delay(600)}
             label={strings.save}
-            onPress={onPress}
+            onPress={handleSubmit}
           />
-          <Button
-            entering={FadeInDown.delay(700)}
-            label={strings.delete}
-            btnStyle={{
-              backgroundColor: colors.error,
-              display: editData?.cid && editData?.id ? 'flex' : 'none',
-            }}
-            onPress={onDelete}
-          />
+          {editData?.cid && editData?.id && (
+            <Button
+              entering={FadeInDown.delay(700)}
+              label={strings.delete}
+              btnStyle={{
+                backgroundColor: colors.error,
+              }}
+              onPress={handleDelete}
+            />
+          )}
         </View>
       </ScrollView>
     </BaseView>
   );
 }
+
 const styles = StyleSheet.create({
-  container: {},
-  type: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-around',
-    paddingBottom: 20,
-  },
-  date: {
-    borderWidth: 1,
-    height: 50,
-    width: '100%',
-    borderRadius: 10,
-    marginVertical: 5,
-    marginBottom: 30,
-    justifyContent: 'center',
-    paddingHorizontal: 10,
-  },
   form: {
     paddingVertical: 25,
     width: '100%',
-  },
-  text: {
-    // backgroundColor:"pink",
-    marginTop: 5,
-  },
-  label: {
-    flexDirection: 'row',
-    width: '100%',
-    alignItems: 'center',
-    marginTop: 10,
-  },
-  button: {
-    marginLeft: 20,
   },
 });
