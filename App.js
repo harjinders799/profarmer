@@ -11,7 +11,7 @@ import { LangProvider } from 'src/context/langContext';
 import { strings } from 'src/translations/locale';
 import Navigation from 'src/navigation';
 import Modal from 'src/components/Modal';
-import { orange } from 'src/utils/color';
+import { orange } from 'src/utils/colors';
 import { AuthProvider } from './src/context/authContext';
 import { AadtProvider } from './src/context/aadtContext';
 import { LoanProvider } from './src/context/loanContext';

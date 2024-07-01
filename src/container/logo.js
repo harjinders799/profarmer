@@ -1,9 +1,9 @@
 import React from 'react';
-import {Image, StatusBar, StyleSheet, View} from 'react-native';
+import { Image, StatusBar, StyleSheet, View } from 'react-native';
 import Text from 'src/components/text';
-import {HEIGHT, WIDTH} from 'src/utils/constant';
+import { HEIGHT, WIDTH } from 'src/utils/constants';
 
-const Logo = ({style, splash}) => (
+const Logo = ({ style, splash }) => (
   <Image
     source={require('../assets/logo.png')}
     style={[splash ? styles.splash : styles.logo, style]}

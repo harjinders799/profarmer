@@ -1,46 +1,26 @@
 import React, { useEffect } from 'react';
 import {
   ScrollView,
-  Image,
   StyleSheet,
-  BackHandler,
-  Alert,
-  View,
 } from 'react-native';
 import BaseView from 'src/container/base';
-import { WIDTH } from 'src/utils/constant';
-import Input from 'src/components/input';
+import { WIDTH } from 'src/utils/constants';
 import Button from 'src/components/button';
 import auth from '@react-native-firebase/auth';
 import Logo from 'src/container/logo';
 import Text from 'src/components/text';
 import Loader from 'src/components/loader';
 import { useIsFocused, useRoute, useTheme } from '@react-navigation/native';
-import { SignInUser } from 'src/network/auth-service';
 import { ToastError, ToastSuccess } from 'src/utils/toast';
 import LanguagePicker from 'src/components/languagePicker';
 import { strings } from 'src/translations/locale';
 import { useLang } from 'src/context/langContext';
-import OtpInputs from 'react-native-otp-inputs';
-import Icon from 'src/components/icon';
-import { replace } from 'src/navigation/ref';
 
 import {
-  LoginButton,
-  AccessToken,
-  LoginManager,
-  GraphRequest,
-  GraphRequestManager,
-} from 'react-native-fbsdk-next';
-import {
   GoogleSignin,
-  GoogleSigninButton,
   statusCodes,
 } from '@react-native-google-signin/google-signin';
-import { blue } from 'src/utils/color';
 import { navigate } from '../../navigation/ref';
-import { createCottonPriceTable, createPickerExpenseTable, createPickerTable } from '../../sql';
-import { useCotton } from '../../context/cottonContext';
 
 GoogleSignin.configure({
   webClientId:
@@ -49,16 +29,7 @@ GoogleSignin.configure({
 const LoginMethods = ({ navigation }) => {
   const { colors } = useTheme();
   const { lang } = useLang();
-  const { db } = useCotton()
-  const isFocused = useIsFocused();
   const [loading, setLoading] = React.useState(false);
-  useEffect(() => {
-    (async () => {
-      await createPickerTable(db);
-      await createPickerExpenseTable(db);
-      await createCottonPriceTable(db);
-    })
-  }, [isFocused])
 
   const signInG = async () => {
     try {
@@ -87,77 +58,9 @@ const LoginMethods = ({ navigation }) => {
       }
     }
   };
+  ;
 
-  const getFacebookEmail = () =>
-    new Promise(resolve => {
-      const infoRequest = new GraphRequest(
-        '/me?fields=email',
-        null,
-        (error, result) => {
-          if (error) {
-            resolve(null);
-            return;
-          }
 
-          resolve(result.email);
-        },
-      );
-      new GraphRequestManager().addRequest(infoRequest).start();
-    });
-
-  async function onFacebookButtonPress() {
-    // Attempt login with permissions
-    const result = await LoginManager.logInWithPermissions([
-      'public_profile',
-      'email',
-    ]);
-
-    // Once signed in, get the users AccesToken
-    const data = await AccessToken.getCurrentAccessToken();
-
-    if (!data) {
-      ToastError('Something went wrong obtaining access token', 'Login');
-    }
-
-    // Create a Firebase credential with the AccessToken
-    const facebookCredential = auth.FacebookAuthProvider.credential(
-      data.accessToken,
-    );
-
-    // Sign-in the user with the credential
-    await auth()
-      .signInWithCredential(facebookCredential)
-      .then(res => {
-        ToastSuccess(`Yay! Success`, 'Login');
-      })
-      .catch(async error => {
-        if (
-          error.code &&
-          error.code === 'auth/account-exists-with-different-credential'
-        ) {
-          const email = await getFacebookEmail();
-          if (email) {
-            let provider = await auth().fetchSignInMethodsForEmail(email);
-            if (provider[0] == 'google.com') {
-              ToastError(
-                `You have already used "${email}". Please continue with Google login.`,
-                'Facebook',
-              );
-              signInG();
-              return;
-            }
-            if (provider[0]) {
-              signInG();
-              ToastError(
-                `You have already used "${email}". Please continue with Email and Password or Try with Google Login.`,
-                'Facebook',
-              );
-            }
-          }
-        }
-      });
-    // replace('Main');
-  }
   return (
     <BaseView>
       <Loader visible={loading} />

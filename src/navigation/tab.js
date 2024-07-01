@@ -2,8 +2,8 @@ import React from 'react';
 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from 'src/components/icon';
-import { orange, gray6, white } from '../utils/color';
-import { isIOS } from '../utils/constant';
+import { orange, gray6, white } from '../utils/colors';
+import { isIOS } from '../utils/constants';
 import { PixelRatio, View } from 'react-native';
 import { useTab } from '../context/tabContext';
 import { tabsData } from '../utils/helper';
@@ -18,8 +18,8 @@ export default function Tabs() {
     return tabsData.find(tab => tab?.name == name).component;
   };
   let data = [...tabs];
-  let isSettingExist = data.slice(0, 4).find(o => o.name === tabsData[3].name)
-  if (!isSettingExist?.name) data.splice(3, 0, tabsData[3])
+  // let isSettingExist = data.slice(0, 4).find(o => o.name === tabsData[3].name)
+  // if (!isSettingExist?.name) data.splice(3, 0, tabsData[3])
 
   return (
     <Tab.Navigator

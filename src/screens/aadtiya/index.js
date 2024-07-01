@@ -25,7 +25,7 @@ import {
   orange,
   red,
   white,
-} from '../../utils/color';
+} from '../../utils/colors';
 import { sortBy, sumBy } from 'lodash';
 import { useAadt } from '../../context/aadtContext';
 import { getInterst, getTotalInterst } from '../../utils/helper';

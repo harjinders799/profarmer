@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { green, red, white } from 'src/utils/color';
+import { green, red, white } from 'src/utils/colors';
 import moment from 'moment';
 import { sortBy, sumBy } from 'lodash';
 import { useFocusEffect, useRoute, useTheme } from '@react-navigation/native';
@@ -29,7 +29,7 @@ import {
   greenlight,
   lightYellow,
   peach,
-} from '../../utils/color';
+} from '../../utils/colors';
 import { useAuth } from '../../context/authContext';
 import { deleteCropCollection } from '../../network/interest-service';
 import RNHTMLtoPDF from 'react-native-html-to-pdf';

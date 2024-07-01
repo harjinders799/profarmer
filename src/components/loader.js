@@ -1,31 +1,44 @@
-import { useTheme } from '@react-navigation/native';
 import React from 'react';
-import { ActivityIndicator, StyleSheet } from 'react-native';
-import { HEIGHT, WIDTH } from 'src/utils/constant';
-import { black, green } from '../utils/color';
+import { ActivityIndicator, View, StyleSheet, Platform } from 'react-native';
+import { useTheme } from '@react-navigation/native';
 
-const Loader = ({ size = 'large', small = false, color, visible, style }) => {
+const styles = StyleSheet.create({
+  container: {
+    zIndex: 99,
+    height: '100%',
+    width: '100%',
+    position: 'absolute',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  small: {
+    zIndex: 99,
+    position: 'relative',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
+
+const Loader = ({ visible, small = false, style }) => {
   const { colors } = useTheme();
   return visible ? (
-    <ActivityIndicator
-      size={size}
-      color={color ? color : black}
-      style={[styles.loader, small && styles.small, { backgroundColor: 'transparent' }, style]}
-    />
+    <View
+      style={[
+        small ? styles.small : styles.container,
+        { backgroundColor: colors.background + 30 },
+        style,
+      ]}>
+      <ActivityIndicator
+        size="large"
+        animating={visible}
+        color={colors.text}
+        style={{
+          left: Platform.OS === 'ios' ? 1 : 0,
+          top: Platform.OS === 'ios' ? 1 : 0,
+        }}
+      />
+    </View>
   ) : null;
 };
 
-const styles = StyleSheet.create({
-  loader: {
-    width: WIDTH,
-    height: HEIGHT,
-    position: 'absolute',
-    zIndex: 99,
-  },
-  small: {
-    width: 20,
-    height: 20,
-    position: 'relative',
-  }
-});
 export default Loader;

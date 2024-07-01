@@ -2,7 +2,7 @@ import { View, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import React from 'react';
 import Icon from './icon';
 import Text from './text';
-import { orange, red } from 'src/utils/color';
+import { orange, red } from 'src/utils/colors';
 import { navigate, replace } from 'src/navigation/ref';
 import { strings } from 'src/translations/locale';
 import { ToastError, ToastSuccess } from 'src/utils/toast';
@@ -13,7 +13,7 @@ import moment from 'moment';
 import { deleteIneterstAmt } from 'src/network/interest-service';
 import { currencyFormat } from '../utils/dateformat';
 import { goBack } from '../navigation/ref';
-import { gray3, green, lightGreen, lightOrange, white } from '../utils/color';
+import { gray3, green, lightGreen, lightOrange, white } from '../utils/colors';
 
 export default function GiverDetailAction({ data }) {
   const [loading, setLoading] = React.useState(false);

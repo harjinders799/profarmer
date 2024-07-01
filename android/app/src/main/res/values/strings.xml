@@ -1,6 +1,3 @@
 <resources>
     <string name="app_name">ProFarmer</string>
-     <string name="facebook_app_id">891977301784160</string>
-    <string name="facebook_client_token">3dd72ffc70d2314d4c6150b01b617b53</string>
-   
 </resources>

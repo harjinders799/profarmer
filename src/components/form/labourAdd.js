@@ -9,7 +9,7 @@ import DateTimePick from 'src/components/DateTime';
 import moment from 'moment';
 import { dateFormat } from 'src/utils/dateformat';
 import BaseView from 'src/container/base';
-import { WIDTH } from 'src/utils/constant';
+import { WIDTH } from 'src/utils/constants';
 import Header from 'src/components/header';
 import Profile from 'src/container/profile';
 import Icon from 'src/components/icon';

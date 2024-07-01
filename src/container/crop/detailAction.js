@@ -2,7 +2,7 @@ import { View, StyleSheet, Alert, TouchableOpacity, ScrollView } from 'react-nat
 import React from 'react';
 import Icon from 'src/components/icon';
 import Text from 'src/components/text';
-import { orange, red } from 'src/utils/color';
+import { orange, red } from 'src/utils/colors';
 import { navigate, replace } from 'src/navigation/ref';
 import { strings } from 'src/translations/locale';
 import { ToastError, ToastSuccess } from 'src/utils/toast';
@@ -13,7 +13,7 @@ import moment from 'moment';
 import { deleteCrop } from 'src/network/interest-service';
 import { currencyFormat } from 'src/utils/dateformat';
 import { goBack } from 'src/navigation/ref';
-import { gray2, green, white } from '../../utils/color';
+import { gray2, green, white } from '../../utils/colors';
 
 export default function CropDetailAction({ data }) {
   const [loading, setLoading] = React.useState(false);

@@ -1,46 +1,28 @@
 import { useTheme } from '@react-navigation/native';
 import React from 'react';
 import { StatusBar, StyleSheet, TouchableOpacity, View } from 'react-native';
-import AdBanner from 'src/components/adBanner';
-import Icon from 'src/components/icon';
-import { orange } from 'src/utils/color';
-import { commonStyle } from 'src/utils/style';
-import { darkOrange, green, white } from '../utils/color';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { WIDTH, isIOS } from '../utils/constant';
+import { common } from 'src/utils/style';
+import { WIDTH, isIOS } from '../utils/constants';
 
-const BaseView = ({ style, addBtn, onPress, children }) => {
-  const { colors } = useTheme();
+const BaseView = ({ style, space = false, addBtn, onPress, children }) => {
+  const { colors, dark } = useTheme();
   return (
     <View
       style={[
-        commonStyle.centerAligned,
-        commonStyle.p_h_20,
+        common.centerAligned,
         styles.base,
-        { backgroundColor: white },
+        { backgroundColor: colors.background },
+        space && { paddingHorizontal: 20 },
         style,
       ]}>
       {isIOS ? (
-        <View style={{ backgroundColor: green, height: 50, width: WIDTH }} >
-          <StatusBar backgroundColor={green} barStyle="light-content" />
+        <View style={{ backgroundColor: colors.background, height: 50, width: WIDTH }} >
+          <StatusBar backgroundColor={colors.background} barStyle="light-content" />
         </View>
       ) : (
-        <StatusBar backgroundColor={green} barStyle="light-content" />
+        <StatusBar backgroundColor={colors.background} barStyle={dark ? 'light-content' : 'dark-content'} />
       )}
       {children}
-      {addBtn ? (
-        <TouchableOpacity
-          style={[
-            commonStyle.centerAlignedJustify,
-            styles.icon,
-            { backgroundColor: colors.primary },
-          ]}
-          onPress={onPress}>
-          <Icon name="plus" size={30} color={white} onPress={onPress} />
-        </TouchableOpacity>
-      ) : null}
-
-      {/* {addBtn ? <AdBanner /> : null} */}
     </View>
   );
 };

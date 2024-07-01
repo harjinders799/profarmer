@@ -11,7 +11,7 @@ import {
   lightYellow,
   peach,
   white,
-} from '../../utils/color';
+} from '../../utils/colors';
 import { ToastError, ToastSuccess } from '../../utils/toast';
 import Loader from '../../components/loader';
 import { useFocusEffect, useRoute, useTheme } from '@react-navigation/native';

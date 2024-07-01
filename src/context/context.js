@@ -1,8 +1,4 @@
 import React from 'react';
-import {
-  clearAsyncStorage,
-  setAsyncStorage,
-} from '../network/AsyncStorage';
 import auth from '@react-native-firebase/auth';
 
 const initialState = {
@@ -40,15 +36,12 @@ export const StoreProvider = props => {
     () => ({
       ...state,
       setGivers: async value => {
-        await setAsyncStorage('givers', JSON.stringify(value));
         dispatch({ type: 'SET_GIVERS', givers: value });
       },
       setLabours: async value => {
-        await setAsyncStorage('labours', JSON.stringify(value));
         dispatch({ type: 'SET_LABOURS', labours: value });
       },
       setInterstRate: async value => {
-        await setAsyncStorage('rate', value);
         dispatch({ type: 'SET_INTEREST_RATE', interest_rate: value });
       },
       resetGivers: async () => {
@@ -57,7 +50,6 @@ export const StoreProvider = props => {
             .signOut()
             .then(async () => {
               dispatch({ type: 'RESET' });
-              await clearAsyncStorage('givers');
               replace('Login');
             });
         }

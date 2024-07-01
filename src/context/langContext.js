@@ -1,6 +1,6 @@
 import React from 'react';
-import { getAsyncStorage, setAsyncStorage } from 'src/network/AsyncStorage';
 import { strings } from 'src/translations/locale';
+import { storage } from '@utils/helper';
 
 const initialState = {
   lang: undefined,
@@ -38,19 +38,21 @@ export const LangProvider = props => {
       ...state,
       setLang: async value => {
         strings.setLanguage(value.code);
-        await setAsyncStorage('lang', JSON.stringify(value));
+        storage.set('lang', JSON.stringify(value))
         dispatch({ type: 'LANG', lang: value });
       },
       setFingerLock: async value => {
-        await setAsyncStorage('fingerLock', JSON.stringify(value));
+        storage.set('fingerLock', JSON.stringify(value))
         dispatch({ type: 'FINGER', fingerLock: value });
       },
       setAuthenticate: async value => {
         dispatch({ type: 'AUTHENTICATE', authenticate: value });
       },
       getLang: async () => {
-        let lang = JSON.parse(await getAsyncStorage('lang'));
-        let lock = JSON.parse(await getAsyncStorage('fingerLock'));
+        const jsonLang = storage.getString('lang')
+        const lang = jsonLang ? JSON.parse(jsonLang) : null
+        const jsonLock = storage.getString('fingerLock')
+        const lock = jsonLock ? JSON.parse(jsonLock) : null
         if (lang?.code) strings.setLanguage(lang.code);
         dispatch({ type: 'FINGER', fingerLock: lock });
         dispatch({ type: 'LANG', lang: lang });

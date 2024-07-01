@@ -1,154 +1,136 @@
 import * as React from 'react';
-import { View, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  TouchableWithoutFeedback,
+  Keyboard,
+  Pressable,
+} from 'react-native';
 import { useRoute, useTheme } from '@react-navigation/native';
 import Button from 'src/components/button';
 import Input from 'src/components/input';
-import Text from 'src/components/text';
 import DateTimePick from 'src/components/DateTime';
 import { currentStamp, dateFormat } from 'src/utils/dateformat';
-import { submitInterestAmount } from 'src/network/interest-service';
 import Loader from 'src/components/loader';
 import BaseView from 'src/container/base';
 import { ToastError, ToastSuccess } from 'src/utils/toast';
-import DataPicker from 'src/components/dataPicker';
 import { strings } from 'src/translations/locale';
 import { navigate } from 'src/navigation/ref';
-import { useStore } from 'src/context/context';
 import { goBack } from 'src/navigation/ref';
-import { updateIneterstAmt } from 'src/network/interest-service';
 import {
-  getLabourByName,
-  submitLabour,
+  deleteLabourExpense,
   submitLabourExpense,
   updateLabourExpense,
 } from '../../network/labour-service';
 import Header from '../../components/header';
-import Icon from '../../components/icon';
 import { currencyFormat, currencyInput } from '../../utils/dateformat';
-import { gray10, gray3 } from '../../utils/color';
+import { FadeInDown } from 'react-native-reanimated';
 
 export default function AddLabourExpense() {
   const { colors } = useTheme();
-  const { setLabours, labours } = useStore();
   const { params } = useRoute();
-  const editData = params?.data ?? {};
+  const labourData = params?.data ?? {};
+  const editData = params?.item ?? {};
   const refAmt = React.useRef();
   const [data, setData] = React.useState({
-    id: editData?.id ?? '',
-    labour: editData?.labour ?? '',
     detail: editData?.detail ?? '',
     amount: editData?.amount ?? '',
     date: editData?.date ? new Date(editData?.date) : new Date(),
   });
   const [showDate, setShowDate] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
+  const { detail, amount, date } = data;
 
-  const { labour, detail, amount, date } = data;
-
-  const onChangeValue = (key, value) => {
-    if (key == 'amount') {
-      setData({
-        ...data,
-        amount: value.replace(/[^0-9]/g, ''),
-      });
-    } else {
-      setData({
-        ...data,
-        [key]: value,
-      });
-    }
-    if (key == 'labour' && Array.isArray(labours) && labours.length)
-      refAmt.current.focus();
+  const onChangeValue = (key, value, isNumberOnly = false) => {
+    setData({
+      ...data,
+      [key]: isNumberOnly ? value.replace(/[^0-9]/g, '') : value,
+    });
   };
 
   const onPress = () => {
-    if (editData.edit) updateWt();
+    if (editData.date && editData?.amount && editData?.cid) updateData();
     else AddNew();
   };
-  const updateWt = async () => {
-    if (labour == '') {
-      ToastError(strings.labour_name, strings.labour);
-    } else if (amount.trim() == '' || amount < 0) {
-      ToastError(strings.given_amount_to_labour, strings.labour);
-    } else {
+  const updateData = async () => {
+    if (amount.trim() == '' || amount < 0) {
+      return ToastError(strings.given_amount_to_labour, strings.labour);
+    }
+    try {
       setLoading(true);
-      let res = await updateLabourExpense({
+      await updateLabourExpense({
         ...data,
-        amount: amount,
         date: currentStamp(date),
+        cid: labourData?.id,
+        id: editData?.id,
+        given_amount: (
+          parseFloat(labourData?.given_amount) +
+          (parseFloat(amount) - parseFloat(editData?.amount))
+        ).toFixed(2),
       });
       setLoading(false);
       ToastSuccess(strings.labour_expense_added, strings.labour);
-      navigate('Labour');
+      goBack();
+    } catch (error) {
+      setLoading(false);
+      ToastError(error?.message, strings.labour);
     }
   };
+  console.log(parseFloat(amount), amount)
   const AddNew = async () => {
-    if (labour == '') {
-      ToastError(strings.labour_name, strings.labour);
-    } else if (amount.trim() == '' || amount <= 0) {
-      ToastError(strings.given_amount_to_labour, strings.labour);
-    } else {
+    if (amount.trim() == '' || amount <= 0) {
+      return ToastError(strings.given_amount_to_labour, strings.labour);
+    }
+    try {
       setLoading(true);
       await submitLabourExpense({
         ...data,
-        labour: labour.trim(),
-        amount: amount,
+        given_amount: (
+          parseFloat(labourData?.given_amount) + parseFloat(amount)
+        ).toFixed(2),
+        cid: labourData?.id,
         date: currentStamp(date),
       });
-      let exist = await getLabourByName(labour.trim());
-      if (Array.isArray(exist) && !exist.length) {
-        await submitLabour({
-          count: 0,
-          rate: 0,
-          labour: labour.trim(),
-          date: currentStamp(date),
-        });
-      }
       setLoading(false);
       ToastSuccess(strings.labour_expense_added, strings.labour);
-      let name = labour.trim();
-      if (Array.isArray(labours) && labours.length) {
-        let exist = labours.findIndex(
-          o => o.toUpperCase() === name.toUpperCase(),
-        );
-        if (exist == -1) {
-          setLabours([...labours, name]);
-        }
-      } else {
-        setLabours([name]);
-      }
-      navigate('Labour');
+      goBack();
+    } catch (error) {
+      setLoading(false);
+      ToastError(error?.message, strings.labour);
     }
   };
+
+  const onDelete = async () => {
+    try {
+      setLoading(true);
+      await deleteLabourExpense(editData);
+      goBack();
+    } catch (error) {
+      setLoading(false);
+      ToastError(error?.message, strings.labour);
+    }
+  };
+  console.log({ labourData })
+  console.log({ editData })
 
   return (
     <BaseView style={styles.container}>
       <Loader visible={loading} />
-      <Header
-        style={{ marginTop: 10 }}
-        leftComponent={
-          <Icon
-            name="back"
-            size={28}
-            color={colors.text}
-            onPress={() => goBack()}
-          />
-        }
-        centerComponent={<Text h2>{data.labour}</Text>}
-        rightComponent={<Text h2> </Text>}
-      />
+      <Header back label={labourData?.name} />
       <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
         <View style={styles.form}>
           <Input
+            entering={FadeInDown.delay(300)}
             label={strings.given_amount_to_labour}
             refs={refAmt}
             autoFocus
             placeholder={strings.given_amount_to_labour}
             value={currencyInput(amount)}
             keyboardType="number-pad"
-            setValue={value => onChangeValue('amount', value)}
+            setValue={value => onChangeValue('amount', value, true)}
           />
           <Input
+            entering={FadeInDown.delay(400)}
             label={strings.remark}
             placeholder={strings.remark}
             multiline
@@ -156,21 +138,39 @@ export default function AddLabourExpense() {
             value={detail}
             setValue={value => onChangeValue('detail', value)}
           />
-          <Text style={styles.text}>{strings.date}</Text>
-          <TouchableOpacity
-            style={[styles.date, { borderColor: gray3 }]}
-            onPress={() => setShowDate(true)}>
-            <Text h3 medium>
-              {dateFormat(date)}
-            </Text>
-          </TouchableOpacity>
+          <Pressable
+            onPress={() => {
+              setShowDate(true);
+              Keyboard.dismiss();
+            }}>
+            <Input
+              entering={FadeInDown.delay(500)}
+              label={strings.date}
+              editable={false}
+              placeholder={strings.date}
+              value={dateFormat(date)}
+            />
+          </Pressable>
           <DateTimePick
             show={showDate}
             setShow={setShowDate}
             date={date}
             setDate={data => onChangeValue('date', data)}
           />
-          <Button label={strings.save} onPress={onPress} />
+          <Button
+            entering={FadeInDown.delay(600)}
+            label={strings.save}
+            onPress={onPress}
+          />
+          <Button
+            entering={FadeInDown.delay(700)}
+            label={strings.delete}
+            btnStyle={{
+              backgroundColor: colors.error,
+              display: editData?.cid && editData?.id ? 'flex' : 'none',
+            }}
+            onPress={onDelete}
+          />
         </View>
       </TouchableWithoutFeedback>
     </BaseView>
@@ -197,11 +197,6 @@ const styles = StyleSheet.create({
   form: {
     paddingVertical: 25,
     width: '100%',
-  },
-  text: {
-    color: gray10,
-    fontSize: 16,
-    marginHorizontal: 5,
-    marginTop: 10,
+    paddingHorizontal: 20,
   },
 });

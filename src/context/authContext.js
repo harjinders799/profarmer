@@ -1,12 +1,7 @@
 import React from 'react';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
-import {
-  clearAsyncStorage,
-  getAsyncStorage,
-  setAsyncStorage,
-} from '../network/AsyncStorage';
-import { deleteDBConnectionDB } from '../sql';
+import { storage } from '@utils/helper';
 
 const initialState = {
   user: undefined,
@@ -83,11 +78,11 @@ export const AuthProvider = props => {
         }
       },
       getPin: async () => {
-        let value = JSON.parse(await getAsyncStorage('pin'));
+        const value = storage.getNumber('pin')
         dispatch({ type: 'PIN', pin: value });
       },
       setPin: async value => {
-        await setAsyncStorage('pin', JSON.stringify(value));
+        storage.set('pin', value)
         dispatch({ type: 'PIN', pin: value });
       },
       setUserVerified: () => {
@@ -95,16 +90,13 @@ export const AuthProvider = props => {
       },
       reset: () => {
         // console.log('reset')
-        deleteDBConnectionDB().then(res => {
-          // console.log('reset', res, '-----')
-          auth()
-            .signOut()
-            .then(async () => {
-              dispatch({ type: 'RESET' });
-              // await clearAsyncStorage();
-              // replace("Login")
-            });
-        });
+        // console.log('reset', res, '-----')
+        auth()
+          .signOut()
+          .then(async () => {
+            dispatch({ type: 'RESET' });
+            // replace("Login")
+          });
       },
     }),
     [state],

@@ -1,8 +1,8 @@
 import React from 'react';
 import { Image, View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import { black, blue, white } from '../utils/color';
-import { WIDTH } from '../utils/constant';
+import { black, blue, white } from '../utils/colors';
+import { WIDTH } from '../utils/constants';
 import { useTheme } from '@react-navigation/native';
 import auth from '@react-native-firebase/auth';
 

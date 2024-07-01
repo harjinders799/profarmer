@@ -1,73 +1,65 @@
 import React from 'react';
+import { StyleSheet } from 'react-native';
+import { sizes } from '@utils/fonts';
+import Animated from 'react-native-reanimated';
 import { useTheme } from '@react-navigation/native';
-import { StyleSheet, Text as TextRN } from 'react-native';
-import { fonts, sizes } from 'src/utils/typograpy';
-import { gray4, black as backRN, white as whiteRN, gray3 } from '../utils/color';
 
-const Text = props => {
+const Text = ({
+  children = '',
+  h1 = false,
+  h2 = false,
+  h3 = false,
+  h4 = false,
+  h5 = false,
+  h6 = false,
+  h7 = false,
+  h8 = false,
+  medium = false,
+  bold = false,
+  semi = false,
+  center = false,
+  left = false,
+  right = false,
+  style = {},
+  color,
+  ...rest
+}) => {
   const { colors } = useTheme();
-  const {
-    style,
-    children,
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6,
-    medium,
-    bold,
-    secondary,
-    secondaryTitle,
-    third,
-    black,
-    white,
-    pl,
-    pr,
-    ...rest
-  } = props;
+  color = color ? color : colors.text;
   return (
-    <TextRN
+    <Animated.Text
       {...rest}
+      allowFontScaling={false}
       style={StyleSheet.flatten([
-        StyleSheet.flatten([styles.text(backRN), style]),
-        medium && styles.medium,
-        bold && styles.bold,
-        secondary && styles.color(gray4),
-        secondaryTitle && styles.color(gray4),
-        black && styles.color(backRN),
-        white && styles.color(whiteRN),
-        pl && styles.paddingLeft(pl),
-        pr && styles.paddingRight(pr),
-        third && styles.color(gray3),
-        h5 && StyleSheet.flatten([styles.h5, style]),
+        StyleSheet.flatten([styles.text, style]),
+        color && styles.color(color),
+        medium && { fontWeight: '700' },
+        bold && { fontWeight: 'bold' },
+        semi && { fontWeight: '500' },
+        center && { textAlign: 'center' },
+        left && { textAlign: 'left' },
+        right && { textAlign: 'right' },
         h1 && StyleSheet.flatten([styles.h1, style]),
         h2 && StyleSheet.flatten([styles.h2, style]),
         h3 && StyleSheet.flatten([styles.h3, style]),
         h4 && StyleSheet.flatten([styles.h4, style]),
+        h5 && StyleSheet.flatten([styles.h5, style]),
         h6 && StyleSheet.flatten([styles.h6, style]),
+        h7 && StyleSheet.flatten([styles.h7, style]),
+        h8 && StyleSheet.flatten([styles.h8, style]),
       ])}>
       {children}
-    </TextRN>
+    </Animated.Text>
   );
 };
 
 const styles = {
-  text: color => ({
+  text: {
     fontSize: sizes.base,
     textAlign: 'left',
-    color,
-  }),
-  medium: {},
-  bold: {},
+  },
   color: color => ({
     color,
-  }),
-  paddingLeft: pl => ({
-    paddingLeft: pl,
-  }),
-  paddingRight: pr => ({
-    paddingRight: pr,
   }),
   h1: {
     fontSize: sizes.h1,
@@ -87,6 +79,11 @@ const styles = {
   h6: {
     fontSize: sizes.h6,
   },
+  h7: {
+    fontSize: sizes.h7,
+  },
+  h8: {
+    fontSize: sizes.h8,
+  },
 };
-
 export default Text;

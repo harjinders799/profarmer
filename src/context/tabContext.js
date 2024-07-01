@@ -1,6 +1,6 @@
 import React from 'react';
-import { getAsyncStorage, setAsyncStorage } from 'src/network/AsyncStorage';
 import { tabsData } from '../utils/helper';
+import { storage } from '@utils/helper';
 
 const initialState = {
   tabs: tabsData,
@@ -25,11 +25,12 @@ export const TabProvider = props => {
     () => ({
       ...state,
       setTab: async value => {
-        await setAsyncStorage('tab', JSON.stringify(value));
+        storage.set('tab', JSON.stringify(value))
         dispatch({ type: 'TAB', tabs: value });
       },
       getTab: async () => {
-        let tabs = JSON.parse(await getAsyncStorage('tab'));
+        const jsonTab = storage.getString('tab')
+        const tabs = jsonTab ? JSON.parse(jsonTab) : null
         if (Array.isArray(tabs)) dispatch({ type: 'TAB', tabs: tabs });
       },
     }),

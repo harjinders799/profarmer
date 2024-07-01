@@ -1,22 +1,16 @@
 import React, { Component, useState, useEffect } from 'react';
 import {
   View,
-  TextInput,
   StyleSheet,
   TouchableOpacity,
-  AsyncStorage,
-  Switch,
 } from 'react-native';
-import Input from 'src/components/input';
-import { goBack, replace } from '../../navigation/ref';
 import Text from 'src/components/text';
-import Button from 'src/components/button';
 import { strings } from 'src/translations/locale';
-import { black, cyan, green, red, white } from '../../utils/color';
+import { black, cyan, green, red, white } from '../../utils/colors';
 import { useAuth } from '../../context/authContext';
 import { ToastError, ToastSuccess } from 'src/utils/toast';
 import BaseView from '../../container/base';
-import { WIDTH } from '../../utils/constant';
+import { WIDTH } from '../../utils/constants';
 
 
 export default function PinSecurity({ navigation }) {

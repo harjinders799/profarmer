@@ -17,7 +17,7 @@ import { currentStamp } from 'src/utils/dateformat';
 import Loader from 'src/components/loader';
 import { ToastError, ToastSuccess } from 'src/utils/toast';
 import { submitLoan, updateLoanName } from '../../network/loan-service';
-import { black } from '../../utils/color';
+import { black } from '../../utils/colors';
 
 
 

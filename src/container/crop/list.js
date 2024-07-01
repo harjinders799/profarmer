@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Text from 'src/components/text';
 import { FlatList, StyleSheet, TouchableOpacity, View } from 'react-native';
-import { white } from 'src/utils/color';
+import { white } from 'src/utils/colors';
 import { filter, groupBy, sumBy } from 'lodash';
 import { strings } from 'src/translations/locale';
 import { navigate } from 'src/navigation/ref';

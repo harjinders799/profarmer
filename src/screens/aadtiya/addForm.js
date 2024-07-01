@@ -25,7 +25,7 @@ import { updateIneterstAmt } from 'src/network/interest-service';
 import Header from '../../components/header';
 import Icon from '../../components/icon';
 import { currencyInput } from '../../utils/dateformat';
-import { black, blue, gray10, gray3, green } from '../../utils/color';
+import { black, blue, gray10, gray3, green } from '../../utils/colors';
 
 export default function AddForm() {
   const { colors } = useTheme();
@@ -141,7 +141,7 @@ export default function AddForm() {
           />
         }
         centerComponent={
-          <Text h2 style={{color:black,fontWeight:"bold"}}>
+          <Text h2 style={{ color: black, fontWeight: "bold" }}>
             {editData?.giver ? editData?.giver + ' ' : ''}
             {strings.aadhtiya}
           </Text>

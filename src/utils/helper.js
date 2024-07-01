@@ -1,5 +1,5 @@
 import moment from 'moment';
-import { WIDTH } from './constant';
+import { WIDTH } from './constants';
 import { strings } from '../translations/locale';
 // import PickerStack from '../navigation/pickerStack';
 import LabourStack from '../navigation/labourStack';
@@ -7,6 +7,10 @@ import CottonStack from '../navigation/cottonStack';
 import SettingStack from '../navigation/settingStack';
 import LoanStack from '../navigation/loanStack';
 import Timeline from '../screens/timeline';
+
+import { MMKV } from 'react-native-mmkv'
+
+export const storage = new MMKV()
 
 export const getTotalInterst = (data = []) => {
     let tot_interest = 0;
@@ -37,6 +41,15 @@ export const getInterst = (data = []) => {
         tot_interest += parseFloat(interest);
     });
     return tot_interest;
+};
+export const sanitizeData = data => {
+    const sanitizedData = {};
+    Object.keys(data).forEach(key => {
+        if (data[key] !== undefined) {
+            sanitizedData[key] = data[key];
+        }
+    });
+    return sanitizedData;
 };
 
 const COL = 4;

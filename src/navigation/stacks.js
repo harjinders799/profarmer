@@ -42,6 +42,7 @@ import LoanUpdate from '../screens/loan/loanUpdate';
 import AddEvent from '../screens/timeline/addEvent';
 import TimeDetail from '../screens/timeline/timeDetail';
 import Customize from '../screens/settings/customize';
+import NewLabour from '@screens/labour/newLabour';
 
 const Stack = createNativeStackNavigator();
 
@@ -65,14 +66,8 @@ export default function Stacks() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Main" component={Tabs} />
-      <Stack.Screen name="Setting" component={Setting} />
-      <Stack.Screen name="AddEvent" component={AddEvent} />
-      <Stack.Screen name="AddForm" component={AddForm} />
-      <Stack.Screen name="CropDetail" component={CropDetail} />
-      <Stack.Screen name="AddPicker" component={AddPicker} />
-      <Stack.Screen name="AddPickerExpense" component={AddPickerExpense} />
-      <Stack.Screen name="AddPickerWeight" component={AddPickerWeight} />
-      <Stack.Screen name="PickerDetail" component={PickerDetail} />
+      {/* Labour */}
+      <Stack.Screen name="NewLabour" component={NewLabour} />
       <Stack.Screen name="AddLabour" component={AddLabour} />
       <Stack.Screen name="AddLabourExpense" component={AddLabourExpense} />
       <Stack.Screen name="AddLabourLeave" component={AddLabourLeave} />
@@ -81,20 +76,29 @@ export default function Stacks() {
         name="RegularLabourDetail"
         component={RegularLabourDetail}
       />
-      <Stack.Screen name="PickerUpdate" component={PickerUpdate} />
+
+      <Stack.Screen name="Setting" component={Setting} />
+      <Stack.Screen name="AddEvent" component={AddEvent} />
+      <Stack.Screen name="AddForm" component={AddForm} />
+      <Stack.Screen name="CropDetail" component={CropDetail} />
+      {/* <Stack.Screen name="AddPicker" component={AddPicker} />
+      <Stack.Screen name="AddPickerExpense" component={AddPickerExpense} />
+      <Stack.Screen name="AddPickerWeight" component={AddPickerWeight} />
+      <Stack.Screen name="PickerDetail" component={PickerDetail} /> */}
+      {/* <Stack.Screen name="PickerUpdate" component={PickerUpdate} /> */}
       <Stack.Screen name="LabourUpdate" component={LabourUpdate} />
       <Stack.Screen name="CropUpdate" component={CropUpdate} />
       <Stack.Screen name="AddCrop" component={AddCrop} />
-      <Stack.Screen name="AddPrice" component={AddPrice} />
+      {/* <Stack.Screen name="AddPrice" component={AddPrice} /> */}
       <Stack.Screen name="GiverUpdate" component={GiverUpdate} />
       <Stack.Screen name="LoanUpdate" component={LoanUpdate} />
       <Stack.Screen name="AddLoan" component={AddLoan} />
       <Stack.Screen name="AddCredit" component={AddCredit} />
       <Stack.Screen name="LoanDetail" component={LoanDetail} />
       <Stack.Screen name="TimeDetail" component={TimeDetail} />
-      <Stack.Screen name="Analysis" component={Analysis} />
-      <Stack.Screen name="Group" component={Group} />
-      <Stack.Screen name="GroupDetail" component={GroupDetail} />
+      {/* <Stack.Screen name="Analysis" component={Analysis} /> */}
+      {/* <Stack.Screen name="Group" component={Group} /> */}
+      {/* <Stack.Screen name="GroupDetail" component={GroupDetail} /> */}
       <Stack.Screen name="AboutUs" component={AboutUs} />
       <Stack.Screen name="ContactUs" component={ContactUs} />
       <Stack.Screen name="SalectLanguage" component={SalectLanguage} />

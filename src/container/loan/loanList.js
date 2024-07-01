@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { white } from 'src/utils/color';
+import { white } from 'src/utils/colors';
 import { groupBy, maxBy } from 'lodash';
 import { strings } from 'src/translations/locale';
 import { navigate } from 'src/navigation/ref';
@@ -14,7 +14,7 @@ import { currencyFormat } from 'src/utils/dateformat';
 import {
   greenDark,
   red,
-} from '../../utils/color';
+} from '../../utils/colors';
 import { useLoan } from '../../context/loanContext';
 import auth from '@react-native-firebase/auth';
 import { getTotalInterst } from '../../utils/helper';

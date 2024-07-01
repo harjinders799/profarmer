@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import Icon from '../../components/icon';
 import Text from 'src/components/text';
 import BaseView from 'src/container/base';
-import { orange, red } from 'src/utils/color';
+import { orange, red } from 'src/utils/colors';
 import { replace } from 'src/navigation/ref';
 import { strings } from 'src/translations/locale';
 import { ToastError, ToastSuccess } from 'src/utils/toast';
@@ -11,7 +11,7 @@ import Loader from 'src/components/loader';
 import { dateFormat } from 'src/utils/dateformat';
 import { useRoute, useTheme } from '@react-navigation/native';
 import { deleteLabour, getLabourExpense } from '../../network/labour-service';
-import { gray2, green, white } from '../../utils/color';
+import { gray2, green, white } from '../../utils/colors';
 import { currencyFormat } from '../../utils/dateformat';
 import { goBack } from '../../navigation/ref';
 import Header from '../../components/header';
@@ -22,7 +22,6 @@ export default function LabourUpdate() {
     const { colors } = useTheme();
     const { params } = useRoute();
     const data = params?.data ?? {};
-    const { db, getLabour } = useState();
 
     const delteData = async () => {
         Alert.alert(

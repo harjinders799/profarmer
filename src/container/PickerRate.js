@@ -1,10 +1,10 @@
-import {View, StyleSheet} from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import React from 'react';
-import {white} from 'src/utils/color';
+import { white } from 'src/utils/colors';
 import Input from 'src/components/input';
-import {strings} from 'src/translations/locale';
+import { strings } from 'src/translations/locale';
 
-export default function PickerRate({rate, setRate}) {
+export default function PickerRate({ rate, setRate }) {
   return (
     <View style={styles.list}>
       <Input

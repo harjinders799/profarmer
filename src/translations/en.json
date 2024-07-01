@@ -152,6 +152,7 @@
   "security": "For data security reasons we add pin security",
   "labour_name": "Labour's Name",
   "add_labour": "Add Labour",
+  "new_labour": "New Labour",
   "labour_count": "How Many Labours",
   "given_amount_to_labour": "Given Amount to Labour",
   "leave_count": "Leave Count",

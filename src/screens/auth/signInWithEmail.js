@@ -8,7 +8,7 @@ import {
   View,
 } from 'react-native';
 import BaseView from 'src/container/base';
-import { WIDTH } from 'src/utils/constant';
+import { WIDTH } from 'src/utils/constants';
 import Input from 'src/components/input';
 import Button from 'src/components/button';
 import auth from '@react-native-firebase/auth';
@@ -23,13 +23,6 @@ import { strings } from 'src/translations/locale';
 import { useLang } from 'src/context/langContext';
 import Icon from 'src/components/icon';
 import { replace } from 'src/navigation/ref';
-import {
-  LoginButton,
-  AccessToken,
-  LoginManager,
-  GraphRequest,
-  GraphRequestManager,
-} from 'react-native-fbsdk-next';
 import { SignInWithEmailUser, SignUpUser } from '../../network/auth-service';
 
 const SignInWithEmail = ({ navigation }) => {

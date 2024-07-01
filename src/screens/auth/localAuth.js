@@ -1,33 +1,14 @@
-import {
-  AppState,
-  Linking,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { AppState, StyleSheet } from 'react-native';
 import Text from 'src/components/text';
 import BaseView from 'src/container/base';
-import Profile from '../../container/profile';
 import { useAuth } from '../../context/authContext';
-import { HEIGHT, WIDTH } from '../../utils/constant';
 import ReactNativeBiometrics, { BiometryTypes } from 'react-native-biometrics';
 import React, { useEffect, useState } from 'react';
-import { goBack, navigate } from '../../navigation/ref';
+import { navigate } from '../../navigation/ref';
 import Logo from '../../container/logo';
-import { logoFull, logoTag } from '../../utils/images';
+import { logoTag } from '../../utils/images';
 import Button from 'src/components/button';
-import {
-  gray4,
-  blue,
-  black,
-  gray6,
-  green,
-  cyan,
-  white,
-  orange,
-} from '../../utils/color';
-
-import { primary, background } from '../../utils/themes';
+import { gray6, green, white, orange } from '../../utils/colors';
 import { strings } from '../../translations/locale';
 const rnBiometrics = new ReactNativeBiometrics();
 
@@ -82,25 +63,22 @@ export default function LocalAuth() {
   if (maxAttempt == 0) navigate('PinSecurity');
 
   return (
-    <BaseView>
-      <Text h3 style={{ marginVertical: 20, color: orange }}>
+    <BaseView space>
+      <Text h3 center style={{ marginVertical: 20 }}>
         {strings.security}
       </Text>
 
       <Logo img={logoTag} style={[styles.logoHeader]} />
-      <Text h3> {user?.name}</Text>
+      <Text h3 style={{ marginBottom: 50 }}> {user?.name}</Text>
       <Button
-        iconName={'finger-print'}
+        iconLeft={'finger-print'}
         iconType="Ionicons"
-        iconColor={gray6}
         label={
           !pin
             ? strings.setup_pin
             : `Login with ${biometricData?.available ? biometricData?.biometryType : 'Pin'
             }`
         }
-        btnStyle={styles.finger}
-        txtStyle={{ color: gray6 }}
         onPress={() => {
           !pin
             ? navigate('PinSecurity')
@@ -121,10 +99,5 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   finger: {
-    borderWidth: 1,
-    elevation: 5,
-    backgroundColor: white,
-    borderColor: green,
-    marginTop: 40,
   },
 });

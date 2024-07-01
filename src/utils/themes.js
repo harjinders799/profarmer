@@ -1,12 +1,12 @@
-import * as colors from './color';
+import * as colors from './colors';
 
 export const themeLight = {
   dark: false,
   colors: {
-    primary: colors.blue,
+    primary: colors.green,
     background: colors.white,
     card: colors.white,
-    text: colors.gray5,
+    text: colors.gray6,
     border: colors.gray4,
     error: colors.red,
     success: colors.green,
@@ -30,7 +30,7 @@ export const themeLight = {
 export const themeDark = {
   dark: true,
   colors: {
-    primary: colors.blue,
+    primary: colors.green,
     background: colors.gray10,
     card: colors.gray8,
     text: colors.gray11,

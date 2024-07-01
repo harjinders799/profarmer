@@ -4,7 +4,7 @@ import Text from './text';
 import { commonStyle } from '../utils/style';
 import { useTheme } from '@react-navigation/native';
 import Icon from './icon';
-import { gray3 } from '../utils/color';
+import { gray3 } from '../utils/colors';
 
 export default function Checkbox({ isChecked, onPress, label }) {
   const { colors } = useTheme();

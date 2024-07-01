@@ -1,24 +1,24 @@
 import * as React from 'react';
-import {View, StyleSheet, ScrollView, TouchableOpacity} from 'react-native';
+import { View, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 // import DateTimePick from '../../components/DateTime'
 // import Category from './category'
-import {useTheme} from '@react-navigation/native';
-import {useAuth} from 'src/context/context';
+import { useTheme } from '@react-navigation/native';
+import { useAuth } from 'src/context/context';
 import Button from 'src/components/button';
 import Input from 'src/components/input';
 import Text from 'src/components/text';
 import Category from './category';
 import DateTimePick from 'src/components/DateTime';
 import moment from 'moment';
-import {dateFormat} from 'src/utils/dateformat';
+import { dateFormat } from 'src/utils/dateformat';
 import BaseView from 'src/container/base';
-import {WIDTH} from 'src/utils/constant';
+import { WIDTH } from 'src/utils/constants';
 import Header from 'src/components/header';
 import Profile from 'src/container/profile';
 import Icon from 'src/components/icon';
 
-export default function AddForm({navigation: {goBack}}) {
-  const {user} = useAuth();
+export default function AddForm({ navigation: { goBack } }) {
+  const { user } = useAuth();
   const [data, setData] = React.useState({
     id: '',
     sender: '',
@@ -32,9 +32,9 @@ export default function AddForm({navigation: {goBack}}) {
   const [showDate, setShowDate] = React.useState(false);
   // const [catData, setCatData] = React.useState(null);
   const [loading, setLoading] = React.useState(false);
-  const {colors} = useTheme();
+  const { colors } = useTheme();
 
-  const {id, sender, receiver, reason, amount, category, type, date} = data;
+  const { id, sender, receiver, reason, amount, category, type, date } = data;
 
   const onChangeValue = (key, value) => {
     setData({
@@ -43,7 +43,7 @@ export default function AddForm({navigation: {goBack}}) {
     });
   };
 
-  const onPress = () => {};
+  const onPress = () => { };
 
   const AddNew = async () => {
     if (
@@ -104,7 +104,7 @@ export default function AddForm({navigation: {goBack}}) {
       />
       <ScrollView
         showsVerticalScrollIndicator={false}
-        style={{marginBottom: 30, width: '90%'}}>
+        style={{ marginBottom: 30, width: '90%' }}>
         <View style={styles.form}>
           <View style={styles.type}>
             <Button

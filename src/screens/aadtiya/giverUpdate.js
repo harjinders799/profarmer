@@ -10,7 +10,7 @@ import {
   lightRed,
   peach,
   white,
-} from '../../utils/color';
+} from '../../utils/colors';
 import { ToastSuccess } from '../../utils/toast';
 import Loader from '../../components/loader';
 import { useRoute, useTheme } from '@react-navigation/native';

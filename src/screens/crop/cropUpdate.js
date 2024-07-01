@@ -1,7 +1,7 @@
 import { Alert, StyleSheet, TouchableOpacity, View } from 'react-native';
 import React, { useCallback } from 'react';
 import Icon from '../../components/icon';
-import { green, white } from '../../utils/color';
+import { green, white } from '../../utils/colors';
 import { ToastSuccess } from '../../utils/toast';
 import { useRoute } from '@react-navigation/native';
 import { goBack, navigate, replace } from '../../navigation/ref';

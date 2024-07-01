@@ -9,7 +9,7 @@ import Category from './category';
 import DateTimePick from 'src/components/DateTime';
 import moment from 'moment';
 import { dateFormat } from 'src/utils/dateformat';
-import { WIDTH } from 'src/utils/constant';
+import { WIDTH } from 'src/utils/constants';
 import BaseView from 'src/container/base';
 
 export default function KharchAdd({ category: cat, setShowKharchForm }) {
@@ -81,8 +81,8 @@ export default function KharchAdd({ category: cat, setShowKharchForm }) {
     return (
         // <ScrollView showsVerticalScrollIndicator={false} style={{ marginBottom: 30, width: '90%' }}>
         <BaseView style={styles.container}>
-        <View style={styles.form}>
-            {/* {
+            <View style={styles.form}>
+                {/* {
                 cat === "labour" ?
                     <View style={styles.type}>
                         <Button
@@ -98,7 +98,7 @@ export default function KharchAdd({ category: cat, setShowKharchForm }) {
                     </View>
                     : null
             } */}
-            {/* <Input
+                {/* <Input
                 placeholder="Sender"
                 value={sender}
                 autoCapitalize='words'
@@ -138,16 +138,16 @@ export default function KharchAdd({ category: cat, setShowKharchForm }) {
                 date={date}
                 setDate={(data) => onChangeValue("date", data)}
             /> */}
-            {/* <Button
+                {/* <Button
                 label="Add Khracha"
                 onPress={()=>setShowKharchForm()}
             /> */}
                 <Text h4 medium >{"Comming Soon..."}</Text>
-            <Button
-                label="Cancel"
-                onPress={setShowKharchForm}
-            />
-        </View>
+                <Button
+                    label="Cancel"
+                    onPress={setShowKharchForm}
+                />
+            </View>
         </BaseView>
         // </ScrollView>
     )

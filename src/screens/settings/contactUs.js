@@ -6,7 +6,7 @@ import Icon from '../../components/icon';
 import Text from '../../components/text';
 import BaseView from '../../container/base';
 import Logo from '../../container/logo';
-import { green } from '../../utils/color';
+import { green } from '../../utils/colors';
 import Header from '../../components/header';
 import { goBack } from '../../navigation/ref';
 import { useTheme } from '@react-navigation/native';

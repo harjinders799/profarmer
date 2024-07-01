@@ -5,10 +5,10 @@ import { useTheme } from '@react-navigation/native';
 import Text from 'src/components/text';
 import Icon from 'src/components/icon';
 import Input from 'src/components/input';
-import { HEIGHT } from 'src/utils/constant';
+import { HEIGHT } from 'src/utils/constants';
 import { strings } from 'src/translations/locale';
 import { commonStyle } from 'src/utils/style';
-import { gray1 } from '../utils/color';
+import { gray1 } from '../utils/colors';
 
 export default function DataPicker(props) {
   const {

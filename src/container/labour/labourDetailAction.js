@@ -1,8 +1,6 @@
 import { View, StyleSheet, Alert, TouchableOpacity } from 'react-native';
 import React, { useEffect, useState } from 'react';
-import Icon from 'src/components/icon';
 import Text from 'src/components/text';
-import { orange, red } from 'src/utils/color';
 import { navigate, replace } from 'src/navigation/ref';
 import { strings } from 'src/translations/locale';
 import { ToastError, ToastSuccess } from 'src/utils/toast';
@@ -10,13 +8,12 @@ import Loader from 'src/components/loader';
 import { dateFormat } from 'src/utils/dateformat';
 import { useTheme } from '@react-navigation/native';
 import { deleteLabour, getLabourExpense } from '../../network/labour-service';
-import { gray2, green, white } from '../../utils/color';
+import { gray2, green, white } from '../../utils/colors';
 import { currencyFormat } from '../../utils/dateformat';
-import { goBack, navigationRef } from '../../navigation/ref';
 
 export default function LabourDetailAction({ data, totalExpense, totalLabour }) {
   const [loading, setLoading] = React.useState(false);
-  const { db, getLabour } = useState();
+  const { getLabour } = useState();
   const delteData = async () => {
     Alert.alert(
       strings.labour,
@@ -27,7 +24,6 @@ export default function LabourDetailAction({ data, totalExpense, totalLabour }) 
           text: 'Yes',
           onPress: async () => {
             setLoading(true);
-            await deleteLabour(db, data, rate);
             if ((data, rate?.fid)) await deleteLabour(data, rate?.fid);
             getLabour();
             setLoading(false);

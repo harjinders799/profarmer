@@ -9,7 +9,7 @@ import {
   PermissionsAndroid,
 } from 'react-native';
 import BaseView from 'src/container/base';
-import { WIDTH } from 'src/utils/constant';
+import { WIDTH } from 'src/utils/constants';
 import Input from 'src/components/input';
 import Button from 'src/components/button';
 import auth from '@react-native-firebase/auth';
@@ -23,7 +23,7 @@ import { strings } from 'src/translations/locale';
 import { useLang } from 'src/context/langContext';
 import OtpInputs from 'react-native-otp-inputs';
 import Icon from 'src/components/icon';
-import { black, gray3, green } from '../../utils/color';
+import { black, gray3, green } from '../../utils/colors';
 
 const Login = ({ navigation }) => {
   const { colors } = useTheme();

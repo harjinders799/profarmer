@@ -6,7 +6,7 @@ import { useLang } from 'src/context/langContext';
 import Loader from '../../components/loader';
 import { strings } from '../../translations/locale';
 import Button from '../../components/button';
-import { greenDark, red, white } from '../../utils/color';
+import { greenDark, red, white } from '../../utils/colors';
 
 import { navigate } from 'src/navigation/ref';
 import LoanList from '../../container/loan/loanList';

@@ -2,7 +2,7 @@ import { View, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import React from 'react';
 import Icon from './icon';
 import Text from './text';
-import { orange, red } from 'src/utils/color';
+import { orange, red } from 'src/utils/colors';
 import { navigate, replace } from 'src/navigation/ref';
 import { strings } from 'src/translations/locale';
 import { ToastError, ToastSuccess } from 'src/utils/toast';
@@ -14,7 +14,7 @@ import { deleteLoan } from 'src/network/loan-service';
 import { currencyFormat } from '../utils/dateformat';
 import { goBack } from '../navigation/ref';
 import auth from '@react-native-firebase/auth';
-import { gray4, greenDark } from '../utils/color';
+import { gray4, greenDark } from '../utils/colors';
 
 export default function LoanDetailAction({ data }) {
   const [loading, setLoading] = React.useState(false);

@@ -9,7 +9,7 @@ import {
   View,
   ScrollView,
 } from 'react-native';
-import { white } from 'src/utils/color';
+import { white } from 'src/utils/colors';
 import { reduce, groupBy, sumBy } from 'lodash';
 import { strings } from 'src/translations/locale';
 import { navigate } from 'src/navigation/ref';
@@ -24,7 +24,7 @@ import {
   lightOrange,
   lightRed,
   red,
-} from '../../utils/color';
+} from '../../utils/colors';
 import Animated from 'react-native-reanimated';
 import auth from '@react-native-firebase/auth';
 import { getTotalInterst } from '../../utils/helper';

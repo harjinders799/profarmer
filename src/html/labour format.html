@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+  padding:10px;
+}
+td {
+  text-align: center;
+}
+.card {
+        width: 100%;
+        background-color: #f2f2f2;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+</style>
+</head>
+<body>
+      <div style="display: flex; flex-direction:column; align-items:center">
+          <div style="display: flex; justify-content: space-between; width:100%">
+            <div>    
+            <h2>${user?.displayName
+        }</h2 >
+  <p>${user?.phoneNumber}</p>
+            ${user?.email ? <p>${user?.email}</p> : ''}
+            </div >
+  <div>
+    <a href="https://play.google.com/store/apps/details?id=com.profarmer">Pro Farmer</a>
+    <p>${moment().format('lll')}</p>
+  </div>
+          </div >
+  <h2>${data.name}</h2>
+      </div >
+  <div class="card" >
+    <div style="display: flex; width:95%; justify-content: space-between;">
+      <h3>${strings.labor_count}
+      </h3>
+      <h3>${data.totalLaborCount}
+      </h3>
+    </div>
+    <div style="display: flex; width:95%; justify-content: space-between;">
+      <h3>${strings.labor_amount}:</h3>
+      <h3>${currencyFormat(data?.totalLaborAmount)}
+      </h3>
+    </div>
+    <div style="display: flex; width:95%; justify-content: space-between;">
+      <h3>${strings.given_amount}:</h3>
+      <h3>${currencyFormat(data?.totalAmountGiven)}
+      </h3>
+    </div>
+    <div style="display: flex; width:95%; justify-content: space-between; ">
+    <h3>${strings.final}:</h3>
+    <h3>${currencyFormat(final)}
+    </h3>
+  </div>
+      </div >
+
+      <h2>${strings.labor_day}</h2>
+       
+      
+      <table style="width:100%">
+      <tr>
+      <th>${strings.date}</th>
+      <th>${strings.labor_count}</th>
+      <th>${strings.labor_rate}</th>
+      <th>${strings.total_amount}</th>
+      <th>${strings.remark}</th>
+  </tr>
+  ${data.workTransactions.reverse().map(
+            record => {
+                return `<tr>
+              <td>${dateTimeFormat(record.dateTime)}</td>
+               <td>${record?.count}</td>
+               <td>${currencyFormat(record?.rate)}</td>
+               <td>${currencyFormat(record?.rate * record?.count)}</td>
+              <td width= "20%">${record.remark}</td>
+          </tr>`;
+            }
+        )}
+      </table>
+
+      <h2>${strings.given_amount}</h2>
+       
+      
+      <table style="width:100%">
+      <tr>
+      <th>${strings.date}</th>
+      <th>${strings.amount}</th>
+      <th>${strings.remark}</th>
+  </tr>
+  ${data.amountTransactions.reverse().map(
+            record => {
+                return `<tr>
+              <td>${dateTimeFormat(record.dateTime)}</td>
+               <td>${currencyFormat(record?.amount)}</td>
+              <td>${record?.remark}</td>
+          </tr>`;
+            }
+        )}
+      </table>
+
+  </body >
+</html >

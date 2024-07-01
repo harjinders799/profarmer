@@ -3,7 +3,7 @@ import React from 'react';
 import BaseView from '../../container/base';
 import { tabsData } from '../../utils/helper';
 import Icon from '../../components/icon';
-import { orange, white } from '../../utils/color';
+import { orange, white } from '../../utils/colors';
 import Text from '../../components/text';
 import { navigate } from '../../navigation/ref';
 import { useTab } from '../../context/tabContext';

@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { green, red, white } from 'src/utils/color';
+import { green, red, white } from 'src/utils/colors';
 import moment from 'moment';
 import { sortBy, groupBy, sumBy } from 'lodash';
 import {
@@ -40,7 +40,7 @@ import {
   gray3,
   gray4,
   greenDark,
-} from '../../utils/color';
+} from '../../utils/colors';
 import Share from 'react-native-share';
 import { useLoan } from '../../context/loanContext';
 import LoanDetailAction from '../../components/loanDetailAction';

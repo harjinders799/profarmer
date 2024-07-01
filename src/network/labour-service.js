@@ -1,39 +1,45 @@
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
+import RNFS from 'react-native-fs';
+import { sanitizeData } from '@utils/helper';
+import { currentStamp } from '@utils/dateformat';
 
 const getCurrentUserId = () => auth().currentUser?.uid;
+const userId = getCurrentUserId();
 
 const addDocumentToCollection = async (collectionName, data) => {
   try {
-    const userId = getCurrentUserId();
+    console.log('labour adding');
     await firestore()
       .collection(collectionName)
       .add({ ...data, uid: userId });
+    console.log('labour added');
     return 'success';
   } catch (error) {
+    console.log(error);
     throw new Error(error);
   }
 };
 
-const getDocumentsFromCollection = async (
-  collectionName,
-  name,
-  isRegular = false,
-) => {
+const getDocumentsFromCollection = (query, onUpdate) => {
   try {
-    const userId = getCurrentUserId();
-    let query = firestore()
-      .collection(collectionName)
-      .where('uid', '==', userId);
-    if (name) {
-      query = query.where('labour', '==', name);
-      if (isRegular) {
-        query = query.where('is_regular', '==', true);
-      }
-    }
-    const querySnapshot = await query.get();
-    return querySnapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
+    // Listen for real-time updates
+    const unsubscribe = query.onSnapshot(
+      querySnapshot => {
+        const documents = querySnapshot.docs.map(doc => ({
+          ...doc.data(),
+          id: doc.id,
+        }));
+        if (onUpdate) onUpdate(documents); // Call the callback function with updated documents
+      },
+      error => {
+        ToastError(error?.message, 'Labour');
+        throw new Error(error);
+      },
+    );
+    return unsubscribe;
   } catch (error) {
+    ToastError(error?.message, 'Labour');
     throw new Error(error);
   }
 };
@@ -56,65 +62,532 @@ const updateDocument = async (collectionName, data) => {
   }
 };
 
-export const submitLabour = async data =>
-  addDocumentToCollection('labour', data);
-export const submitLabourExpense = async data =>
-  addDocumentToCollection('labour_expense', data);
-export const submitLabourLeave = async data =>
-  addDocumentToCollection('labour_leave', data);
-
-export const getLabourData = async () => getDocumentsFromCollection('labour');
-
-export const getLabourRegular = async name =>
-  getDocumentsFromCollection('labour', name, true);
-export const getLabourByName = async name =>
-  getDocumentsFromCollection('labour', name);
-
-export const getLabourExpense = async name =>
-  getDocumentsFromCollection('labour_expense', name);
-export const getLabourLeave = async name =>
-  getDocumentsFromCollection('labour_leave', name);
-
-export const getAllLabourExpense = async () =>
-  getDocumentsFromCollection('labour_expense');
-
-export const updateLabour = async data => updateDocument('labour', data);
-
-export const updateLabourLeave = async data =>
-  updateDocument('labour_leave', data);
-
-export const updateLabourExpense = async data =>
-  updateDocument('labour_expense', data);
-export const deleteLabourExpense = async id =>
-  deleteDocumentById('labour_expense', id);
-export const deleteLabour = async id => deleteDocumentById('labour', id);
-export const deleteLabourLeave = async id =>
-  deleteDocumentById('labour_leave', id);
-
-export const deleteLabourCollection = async name => {
+export const addNewLabour = async data => {
   try {
-    const deletePromises = [];
-    const userId = getCurrentUserId();
-
-    ['labour', 'labour_expense', 'labour_leave'].forEach(collectionName => {
-      const query = firestore()
-        .collection(collectionName)
-        .where('uid', '==', userId)
-        .where('labour', '==', name);
-      deletePromises.push(
-        query.get().then(querySnapshot => {
-          const subDeletePromises = [];
-          querySnapshot.forEach(doc =>
-            subDeletePromises.push(doc.ref.delete()),
-          );
-          return Promise.all(subDeletePromises);
+    // Add labours_data document
+    const labourDataRef = await firestore()
+      .collection('labours_data')
+      .add(
+        sanitizeData({
+          name: data?.name,
+          is_regular: data?.is_regular,
+          phone: data?.phone,
+          start_date: data?.start_date,
+          total_labour_amount: data?.total_labour_amount,
+          total_labour_count: data?.total_labour_count,
+          labour_rate: data?.labour_rate,
+          given_amount: data?.given_amount,
+          read_access: [data?.phone],
+          full_access: [userId],
+          uid: userId,
         }),
       );
-    });
 
-    await Promise.all(deletePromises);
+    const labourDataId = labourDataRef.id;
+    console.log({ labourDataId });
+
+    // Add labour_work subcollection document
+    await firestore()
+      .collection('labours_data')
+      .doc(labourDataId)
+      .collection('labour_work')
+      .add(
+        sanitizeData({
+          ...data,
+          cid: labourDataId,
+          uid: userId,
+          date: currentStamp(),
+        }),
+      );
+
+    return 'success';
+  } catch (error) {
+    console.log(error);
+    throw new Error(error);
+  }
+};
+
+export const submitLabour = async data => {
+  try {
+    await firestore()
+      .collection('labours_data')
+      .doc(data?.cid)
+      .collection('labour_work')
+      .add(sanitizeData({ ...data, uid: userId }));
+    await firestore().collection('labours_data').doc(data?.cid).update({
+      total_labour_amount: data?.total_labour_amount,
+      total_labour_count: data?.total_labour_count,
+      labour_rate: data?.rate,
+    });
+    return 'success';
+  } catch (error) {
+    console.log(error);
+    throw new Error(error);
+  }
+};
+
+export const submitLabourExpense = async data => {
+  try {
+    await firestore()
+      .collection('labours_data')
+      .doc(data?.cid)
+      .collection('labour_expense')
+      .add(sanitizeData({ ...data, uid: userId }));
+    await firestore().collection('labours_data').doc(data?.cid).update({
+      given_amount: data?.given_amount,
+    });
+    return 'success';
+  } catch (error) {
+    console.log(error);
+    throw new Error(error);
+  }
+};
+
+export const submitLabourLeave = async data => {
+  try {
+    await firestore()
+      .collection('labours_data')
+      .doc(data?.cid)
+      .collection('labour_leave')
+      .add(sanitizeData({ ...data, uid: userId }));
+    await firestore().collection('labours_data').doc(data?.cid).update({
+      total_leave: data?.total_leave,
+    });
+    return 'success';
+  } catch (error) {
+    console.log(error);
+    throw new Error(error);
+  }
+}
+
+export const getLabourData = onUpdate =>
+  getDocumentsFromCollection(
+    firestore().collection('labours_data').where('uid', '==', userId),
+    onUpdate,
+  );
+
+export const getLabourRegular = async (name, onUpdate) =>
+  getDocumentsFromCollection(
+    firestore()
+      .collection('labours_data')
+      .where('uid', '==', userId)
+      .where('name' == name),
+    onUpdate,
+  );
+
+export const getLabourExpense = (id, onUpdate) =>
+  getDocumentsFromCollection(
+    firestore()
+      .collection('labours_data')
+      .doc(id)
+      .collection('labour_expense')
+      .orderBy('date', 'desc'),
+    onUpdate,
+  );
+
+export const getLabourWork = (id, onUpdate) =>
+  getDocumentsFromCollection(
+    firestore()
+      .collection('labours_data')
+      .doc(id)
+      .collection('labour_work')
+      .orderBy('date', 'desc'),
+    onUpdate,
+  );
+
+export const getLabourLeave = (id, onUpdate) =>
+  getDocumentsFromCollection(
+    firestore()
+      .collection('labours_data')
+      .doc(id)
+      .collection('labour_leave')
+      .orderBy('date', 'desc'),
+    onUpdate,
+  );
+
+export const updateLabour = async data => {
+  console.log({ data });
+  try {
+    await firestore()
+      .collection('labours_data')
+      .doc(data?.cid)
+      .collection('labour_work')
+      .doc(data?.id)
+      .update(sanitizeData(data));
+    await firestore().collection('labours_data').doc(data?.cid).update({
+      total_labour_amount: data?.total_labour_amount,
+      total_labour_count: data?.total_labour_count,
+      labour_rate: data?.labour_rate,
+    });
+    return 'success';
+  } catch (error) {
+    console.log(error);
+    throw new Error(error);
+  }
+};
+
+export const updateLabourLeave = async data => {
+  try {
+    await firestore()
+      .collection('labours_data')
+      .doc(data?.cid)
+      .collection('labour_leave')
+      .doc(data?.id)
+      .update(sanitizeData(data));
+    await firestore().collection('labours_data').doc(data?.cid).update({
+      total_leave: data?.total_leave,
+    });
+    return 'success';
+  } catch (error) {
+    throw new Error(error);
+  }
+}
+
+export const updateLabourExpense = async data => {
+  try {
+    await firestore()
+      .collection('labours_data')
+      .doc(data?.cid)
+      .collection('labour_expense')
+      .doc(data?.id)
+      .update(sanitizeData(data));
+    await firestore().collection('labours_data').doc(data?.cid).update({
+      given_amount: data?.given_amount,
+    });
     return 'success';
   } catch (error) {
     throw new Error(error);
   }
 };
+
+// Function to update labours_data document calculation
+export const updateLabourDataCalculation = async labourId => {
+  try {
+    const labourDocRef = firestore().collection('labours_data').doc(labourId);
+    const labourDataSnapshot = await labourDocRef.get();
+
+    if (labourDataSnapshot.exists) {
+      // Calculate total_labour_amount from labour_work
+      const workSnapshot = await labourDocRef.collection('labour_work').get();
+      let totalLabourAmount = 0;
+      let totalLabourCount = 0;
+      let labourRate = 0;
+      let start_date;
+      workSnapshot.forEach(workDoc => {
+        const workData = workDoc.data();
+        const count = parseFloat(workData.count); // Assuming count is numeric
+        const rate = parseFloat(workData.rate); // Assuming rate is numeric
+        totalLabourAmount += count * rate;
+        totalLabourCount += count;
+        labourRate = rate;
+        start_date = workData?.date;
+      });
+
+      // Calculate given_amount from labour_expense
+      const expenseSnapshot = await labourDocRef
+        .collection('labour_expense')
+        .get();
+      let givenAmount = 0;
+      expenseSnapshot.forEach(expenseDoc => {
+        const expenseData = expenseDoc.data();
+        const amount = parseFloat(expenseData.amount); // Assuming amount is numeric
+        givenAmount += amount;
+      });
+
+      // Calculate total_leave from labour_leave
+      const leaveSnapshot = await labourDocRef.collection('labour_leave').get();
+      let totalLeave = 0;
+      leaveSnapshot.forEach(leaveDoc => {
+        const leaveData = leaveDoc.data();
+        const leaveCount = parseFloat(leaveData.count); // Assuming count is numeric
+        totalLeave += leaveCount;
+      });
+
+      // Update labours_data document with calculated values
+      await labourDocRef.set(
+        {
+          total_labour_amount: totalLabourAmount.toFixed(2), // Example formatting
+          total_labour_count: totalLabourCount.toFixed(2), // Example formatting
+          labour_rate: labourRate.toFixed(2), // Example formatting
+          given_amount: givenAmount.toFixed(2), // Example formatting
+          total_leave: totalLeave,
+          start_date: start_date,
+        },
+        { merge: true },
+      );
+
+      console.log('Labours data updated successfully.');
+    } else {
+      console.error('Labours data document does not exist.');
+    }
+  } catch (error) {
+    console.error('Error saving or updating labours data:', error);
+  }
+};
+
+export const deleteLabourExpense = async data => {
+  try {
+    await firestore()
+      .collection('labours_data')
+      .doc(data.cid)
+      .collection('labour_expense')
+      .doc(data.id)
+      .delete();
+    return true;
+  } catch (error) {
+    throw new Error(error);
+  }
+}
+
+export const deleteLabour = async data => {
+  try {
+    await firestore()
+      .collection('labours_data')
+      .doc(data.cid)
+      .collection('labour_work')
+      .doc(data.id)
+      .delete();
+    return true;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+export const deleteLabourLeave = async id =>
+  deleteDocumentById('labour_leave', id);
+
+export const deleteLabourCollection = async id => {
+  try {
+    await firestore().collection('labours_data').doc(id).delete();
+    return 'success';
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+// const migrateData = async () => {
+//   try {
+//     const labourSnapshot = await firestore().collection('labour').get();
+//     const expenseSnapshot = await firestore().collection('labour_expense').get();
+//     const leaveSnapshot = await firestore().collection('labour_leave').get();
+
+//     const batch = firestore().batch();
+
+//     // Migrate labour collection data
+//     labourSnapshot.forEach(doc => {
+//       const { labour, is_regular, uid, count, detail, date, rate } = doc.data();
+//       const newLabourRef = firestore().collection('labours').doc(doc.id);
+
+//       // Set labour document with new structure, using default values if necessary
+//       batch.set(newLabourRef, sanitizeData({
+//         name: labour,
+//         is_regular: is_regular,
+//         read_access: [], // Initialize with empty arrays
+//         full_access: [],
+//       }));
+
+//       // Create labour_work subcollection document
+//       const newWorkRef = newLabourRef.collection('labour_work').doc();
+
+//       batch.set(newWorkRef, sanitizeData({
+//         count: count,
+//         detail: detail,
+//         date: date,
+//         rate: rate,
+//       }));
+//     });
+
+//     // Migrate labour_expense data to subcollection
+//     expenseSnapshot.forEach(doc => {
+//       const expenseData = doc.data();
+//       const labourId = expenseData.uid; // Assuming `uid` is the reference to the labour document
+//       const newExpenseRef = firestore().collection('labour').doc(labourId).collection('labour_expense').doc(doc.id);
+
+//       batch.set(newExpenseRef, sanitizeData(expenseData));
+//     });
+
+//     // Migrate labour_leave data to subcollection
+//     leaveSnapshot.forEach(doc => {
+//       const leaveData = doc.data();
+//       const labourId = leaveData.uid; // Assuming `uid` is the reference to the labour document
+//       const newLeaveRef = firestore().collection('labour').doc(labourId).collection('labour_leave').doc(doc.id);
+
+//       batch.set(newLeaveRef, sanitizeData(leaveData));
+//     });
+
+//     // Commit the batch write to Firestore
+//     await batch.commit();
+//     console.log('Data migration complete');
+
+//     // Delete old collections
+//     await deleteCollection('labour_expense');
+//     await deleteCollection('labour_leave');
+
+//     console.log('Old collections deleted');
+//   } catch (error) {
+//     console.error('Error migrating data and deleting old collections:', error);
+//   }
+// };
+
+// const deleteCollection = async (collectionName) => {
+//   const collectionRef = firestore().collection(collectionName);
+//   const querySnapshot = await collectionRef.get();
+
+//   const batch = firestore().batch();
+
+//   querySnapshot.forEach(doc => {
+//     batch.delete(doc.ref);
+//   });
+
+//   await batch.commit();
+//   console.log(`Collection ${collectionName} deleted`);
+// };
+
+// migrateData();
+
+// const backupData = async () => {
+//   try {
+//     const backup = {};
+
+//     const cropSnapshot = await firestore().collection('crop').get();
+//     backup.crop = cropSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+//     const interest_amountSnapshot = await firestore().collection('interest_amount').get();
+//     backup.interest_amount = interest_amountSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+//     const pickerSnapshot = await firestore().collection('picker').get();
+//     backup.picker = pickerSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+//     const picker_expenseSnapshot = await firestore().collection('picker_expense').get();
+//     backup.picker_expense = picker_expenseSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+//     const picker_groupSnapshot = await firestore().collection('picker_group').get();
+//     backup.picker_group = picker_groupSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+//     const loanSnapshot = await firestore().collection('loan').get();
+//     backup.loan = loanSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+//     const usersSnapshot = await firestore().collection('users').get();
+//     backup.users = usersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+//     // Backup labour collection
+//     const labourSnapshot = await firestore().collection('labour').get();
+//     backup.labour = labourSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+//     const laboursSnapshot = await firestore().collection('labours').get();
+//     backup.labours = laboursSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+//     // Backup labour_expense collection
+//     const expenseSnapshot = await firestore().collection('labour_expense').get();
+//     backup.labour_expense = expenseSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+//     // Backup labour_leave collection
+//     const leaveSnapshot = await firestore().collection('labour_leave').get();
+//     backup.labour_leave = leaveSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+//     // Save backup to file
+//     // Convert backup to JSON string
+//     const backupJson = JSON.stringify(backup, null, 2);
+
+//     // Define file path
+//     const filePath = `${RNFS.DownloadDirectoryPath}/firestore-backup.json`;
+//     console.log(filePath)
+//     // Write backup to file
+//     await RNFS.writeFile(filePath, backupJson, 'utf8').then((success) => {
+//       console.log('FILE WRITTEN!', success);
+//     })
+//       .catch((err) => {
+//         console.log(err.message);
+//       });;
+
+//     console.log('Data backup complete');
+//   } catch (error) {
+//     console.error('Error backing up data:', error);
+//   }
+// };
+
+// backupData()
+
+const migrateLabourData = async () => {
+  try {
+    const labourSnapshot = await firestore().collection('labour').get();
+    const batch = firestore().batch();
+
+    // Migrate labour collection data
+    for (const doc of labourSnapshot.docs) {
+      const { labour, is_regulare, uid, count, detail, date, rate } = doc.data();
+
+      const newLabourRef = firestore().collection('labours_data').doc(doc.id);
+
+      // Set labour document with new structure
+      batch.set(
+        newLabourRef,
+        sanitizeData({
+          name: labour,
+          is_regular: is_regulare,
+          start_date: date,
+          uid,
+        }),
+      );
+
+      // Create labour_work subcollection document
+      const newWorkRef = newLabourRef.collection('labour_work').doc();
+      batch.set(
+        newWorkRef,
+        sanitizeData({
+          count: count,
+          detail: detail,
+          date: date,
+          rate: rate,
+        }),
+      );
+
+      // Migrate labour_expense subcollection data
+      const expenseSnapshot = await firestore()
+        .collection('labour')
+        .doc(uid)
+        .collection('labour_expense')
+        .get();
+      expenseSnapshot.forEach(expenseDoc => {
+        const newExpenseRef = newLabourRef.collection('labour_expense').doc();
+        batch.set(newExpenseRef, sanitizeData(expenseDoc.data()));
+      });
+
+      // Migrate labour_leave subcollection data
+      const leaveSnapshot = await firestore()
+        .collection('labour')
+        .doc(uid)
+        .collection('labour_leave')
+        .get();
+      leaveSnapshot.forEach(leaveDoc => {
+        const newLeaveRef = newLabourRef.collection('labour_leave').doc();
+        batch.set(newLeaveRef, sanitizeData(leaveDoc.data()));
+      });
+    }
+
+    // Commit the batch write to Firestore
+    await batch.commit();
+    console.log('Data migration complete');
+
+    // Delete old labour collection
+    await deleteCollection('labour');
+    console.log('Old labour collection deleted');
+  } catch (error) {
+    console.error('Error migrating data:', error);
+  }
+};
+
+const deleteCollection = async collectionName => {
+  const collectionRef = firestore().collection(collectionName);
+  const querySnapshot = await collectionRef.get();
+
+  const batch = firestore().batch();
+
+  querySnapshot.forEach(doc => {
+    batch.delete(doc.id);
+  });
+
+  await batch.commit();
+  console.log(`Collection ${collectionName} deleted`);
+};
+
+// migrateLabourData();

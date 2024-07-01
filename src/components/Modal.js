@@ -9,7 +9,7 @@ import {
   Dimensions,
 } from 'react-native';
 import Icon from './icon';
-import { gray1, white } from '../utils/color';
+import { gray1, white } from '../utils/colors';
 
 const { height: heightWindow } = Dimensions.get('window');
 

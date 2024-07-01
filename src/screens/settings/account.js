@@ -4,7 +4,7 @@ import BaseView from 'src/container/base';
 import Input from 'src/components/input';
 import Button from 'src/components/button';
 import { F18, FBOLD } from 'src/utils/typograpy';
-import { black, gray } from 'src/utils/color';
+import { black, gray } from 'src/utils/colors';
 import Loader from 'src/components/loader';
 import Profile from 'src/container/profile';
 import auth from '@react-native-firebase/auth';
@@ -13,7 +13,7 @@ import Text from '../../components/text';
 import Feather from 'react-native-vector-icons/Feather';
 import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../../context/authContext';
-import { green, red } from '../../utils/color';
+import { green, red } from '../../utils/colors';
 import { strings } from '../../translations/locale';
 import { commonStyle } from '../../utils/style';
 

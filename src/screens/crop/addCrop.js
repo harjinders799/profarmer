@@ -15,7 +15,7 @@ import Header from '../../components/header';
 import Icon from '../../components/icon';
 import { submitCrop, updateCrop } from '../../network/interest-service';
 import { currencyInput } from '../../utils/dateformat';
-import { gray3 } from '../../utils/color';
+import { gray3 } from '../../utils/colors';
 
 export default function AddCrop() {
   const { colors } = useTheme();

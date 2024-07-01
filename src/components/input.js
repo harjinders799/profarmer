@@ -1,10 +1,10 @@
 import { useTheme } from '@react-navigation/native';
 import React from 'react';
 import { StyleSheet, TextInput, View } from 'react-native';
-import { WIDTH } from 'src/utils/constant';
 import Icon from './icon';
-import { black, gray1, gray10, gray2, gray3 } from '../utils/color';
-import Text from 'src/components/text';
+import { borderLight } from '@utils/colors';
+import Text from './text';
+import Animated from 'react-native-reanimated';
 
 const Input = ({
   style,
@@ -21,15 +21,14 @@ const Input = ({
   leftComponent = null,
   rightComponent = null,
   placeholder,
-  placeholderColor = gray2,
   label,
   innerStyle,
   ...props
 }) => {
   const { colors } = useTheme();
   return (
-    <View style={[styles.container, { borderColor: gray3 }, style]}>
-      {label ? <Text style={styles.label}>{label}</Text> : null}
+    <Animated.View {...props} style={[styles.container, { borderColor: colors.border }, style]}>
+      {label ? <Text h4 style={styles.label}>{label}</Text> : null}
 
       <View
         style={[
@@ -39,7 +38,8 @@ const Input = ({
             borderWidth: 1,
             width: '100%',
             borderRadius: 10,
-            borderColor: gray3,
+            borderColor: colors.border,
+            overflow: 'hidden'
           },
           innerStyle,
         ]}>
@@ -50,15 +50,15 @@ const Input = ({
             name={iconName}
             type={iconType}
             size={20}
-            // color={iconColor}
             style={{ margin: 10 }}
           />
         ) : null}
         <TextInput
           ref={refs}
           {...props}
+          allowFontScaling={false}
           multiline={multiline}
-          style={[styles.input, { color: black }, inputStyle]}
+          style={[styles.input, { color: colors.text }, inputStyle]}
           value={value}
           onChangeText={text => setValue(text)}
           placeholder={placeholder}
@@ -69,11 +69,11 @@ const Input = ({
                 ? 'phone-pad'
                 : keyboardType
           }
-          placeholderTextColor={placeholderColor ?? gray3}
+          placeholderTextColor={colors.border}
         />
         {rightComponent}
       </View>
-    </View>
+    </Animated.View>
   );
 };
 const styles = StyleSheet.create({
@@ -88,8 +88,6 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   label: {
-    color: gray10,
-    fontSize: 16,
     margin: 5,
   },
 });

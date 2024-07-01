@@ -19,7 +19,7 @@ import { goBack } from 'src/navigation/ref';
 import Header from '../../components/header';
 import Icon from '../../components/icon';
 import { currencyInput } from '../../utils/dateformat';
-import { black, gray3, green, white } from '../../utils/color';
+import { black, gray3, green, white } from '../../utils/colors';
 import auth from '@react-native-firebase/auth';
 import { submitTimeline, updateTimeline } from '../../network/time-service';
 

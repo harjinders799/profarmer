@@ -1,23 +1,23 @@
-import {StyleSheet, View, TouchableOpacity} from 'react-native';
-import React, {useEffect, useState} from 'react';
-import {black, white} from 'src/utils/color';
+import { StyleSheet, View, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { black, white } from 'src/utils/colors';
 import Text from './text';
 import Icon from './icon';
-import {strings} from 'src/translations/locale';
+import { strings } from 'src/translations/locale';
 import Modal from './Modal';
-import {useTheme} from '@react-navigation/native';
-import {useLang} from 'src/context/langContext';
+import { useTheme } from '@react-navigation/native';
+import { useLang } from 'src/context/langContext';
 import Button from './button';
 
 const langs = [
-  {code: 'pb', label: 'punjabi'},
-  {code: 'hi', label: 'hindi'},
-  {code: 'en', label: 'english'},
+  { code: 'pb', label: 'punjabi' },
+  { code: 'hi', label: 'hindi' },
+  { code: 'en', label: 'english' },
 ];
 const LanguagePicker = props => {
-  const {style} = props;
-  const {lang, setLang} = useLang();
-  const {colors} = useTheme();
+  const { style } = props;
+  const { lang, setLang } = useLang();
+  const { colors } = useTheme();
   const [show, setShow] = useState(false);
 
   useEffect(() => {

@@ -1,9 +1,9 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { MARGIN, SIZE } from '../utils/helper';
-import { WIDTH } from '../utils/constant';
+import { WIDTH } from '../utils/constants';
 import Text from './text';
-import { green, orange, white } from '../utils/color';
+import { green, orange, white } from '../utils/colors';
 import Icon from './icon';
 
 const Box = ({ item }) => {

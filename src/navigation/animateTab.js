@@ -5,7 +5,7 @@ import Animated, {
   useSharedValue,
   withSpring,
 } from 'react-native-reanimated';
-import { green, darkOrange, red, white } from '../utils/color';
+import { green, darkOrange, red, white } from '../utils/colors';
 import TabItem from './tabItem';
 
 const { width } = Dimensions.get('window');

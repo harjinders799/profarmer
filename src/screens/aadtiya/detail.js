@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { green, red, white } from 'src/utils/color';
+import { green, red, white } from 'src/utils/colors';
 import moment from 'moment';
 import { sortBy, sumBy } from 'lodash';
 import { useFocusEffect, useRoute, useTheme } from '@react-navigation/native';
@@ -38,7 +38,7 @@ import {
   lightOrange,
   lightYellow,
   peach,
-} from '../../utils/color';
+} from '../../utils/colors';
 import Share from 'react-native-share';
 import { useAadt } from '../../context/aadtContext';
 import { getTotalInterst } from '../../utils/helper';

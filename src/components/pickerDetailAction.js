@@ -2,7 +2,7 @@
 // import React from 'react';
 // import Icon from './icon';
 // import Text from './text';
-// import {orange, red} from 'src/utils/color';
+// import {orange, red} from 'src/utils/colors';
 // import {navigate, replace} from 'src/navigation/ref';
 // import {strings} from 'src/translations/locale';
 // import {deleteCottonWt} from 'src/network/cotton-service';

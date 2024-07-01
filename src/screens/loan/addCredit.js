@@ -14,7 +14,7 @@ import { goBack } from 'src/navigation/ref';
 import Header from '../../components/header';
 import Icon from '../../components/icon';
 import auth from '@react-native-firebase/auth';
-import { black, gray10, gray3 } from '../../utils/color';
+import { black, gray10, gray3 } from '../../utils/colors';
 import { useLoan } from '../../context/loanContext';
 import { submitLoan, updateLoan } from '../../network/loan-service';
 import { currencyInput } from '../../utils/dateformat';
