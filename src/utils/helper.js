@@ -52,25 +52,6 @@ export const sanitizeData = data => {
     return sanitizedData;
 };
 
-const COL = 4;
-export const MARGIN = 8;
-export const SIZE = WIDTH / 4.2;
-
-export const getPosition = index => {
-    'worklet';
-    return {
-        x: (index % COL) * SIZE,
-        y: Math.floor(index / COL) * SIZE * 2,
-    };
-};
-
-export const getOrder = (x, y) => {
-    'worklet';
-    const row = Math.round(y / SIZE);
-    const col = Math.round(x / SIZE);
-    return row * COL + col;
-};
-
 export const calculateTotals = data => {
     const totals = {};
     data.forEach(item => {
@@ -114,14 +95,14 @@ export const tabsData = [
     //     icon: 'shopping-store',
     //     iconType: 'Fontisto',
     // },
-    // {
-    //     id: 4,
-    //     name: 'LoanStack',
-    //     title: strings.loan,
-    //     component: LoanStack,
-    //     icon: 'sack-percent',
-    //     iconType: 'MaterialCommunityIcons',
-    // },
+    {
+        id: 4,
+        name: 'LoanStack',
+        title: strings.loan,
+        component: LoanStack,
+        icon: 'sack-percent',
+        iconType: 'MaterialCommunityIcons',
+    },
     // {
     //     id: 5,
     //     name: 'Timeline',
@@ -130,13 +111,13 @@ export const tabsData = [
     //     icon: 'timeline-text',
     //     iconType: 'MaterialCommunityIcons',
     // },
-    // {
-    //     id: 6,
-    //     name: 'SettingStack',
-    //     title: strings.settings,
-    //     component: SettingStack,
-    //     icon: 'setting',
-    // },
+    {
+        id: 6,
+        name: 'SettingStack',
+        title: strings.settings,
+        component: SettingStack,
+        icon: 'setting',
+    },
     // {
     //     id: 7,
     //     name: 'Reminder',

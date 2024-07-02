@@ -15,16 +15,10 @@ export default function ContactUs() {
   const { colors } = useTheme()
 
   return (
-    <BaseView>
+    <BaseView space>
       <Header
-        leftComponent={
-          <Icon
-            name="back"
-            size={28}
-            color={colors.text}
-            onPress={() => goBack()}
-          />
-        }
+        back
+        label={"ProFarmer"}
       />
       <Logo />
       <Text h2 style={{ marginTop: 25, width: '100%' }}>{`Hi Solution`}</Text>

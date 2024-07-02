@@ -26,18 +26,10 @@ const SalectLanguage = props => {
         if (!lang?.code) setShow(true);
     }, [lang]);
     return (
-        <BaseView style={[styles.menu]}>
+        <BaseView space>
             <Header
-                leftComponent={
-                    <Icon
-                        name="back"
-                        size={28}
-                        color={colors.text}
-                        onPress={() => goBack()}
-                    />
-                }
-                centerComponent={<Text h2>{strings.lang}</Text>}
-                rightComponent={<Text h2> </Text>}
+                back
+                label={strings.lang}
             />
             {langs.map((v, i) => (
                 <TouchableOpacity
@@ -71,9 +63,5 @@ const styles = StyleSheet.create({
     },
     txt: {
         marginVertical: 5,
-    },
-    menu: {
-        padding: 20,
-
     },
 });

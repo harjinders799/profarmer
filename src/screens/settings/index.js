@@ -60,7 +60,7 @@ export default function Setting({ navigation }) {
 
 
   return (
-    <BaseView>
+    <BaseView space>
       <Loader visible={loading} />
       <Account />
       <ScrollView

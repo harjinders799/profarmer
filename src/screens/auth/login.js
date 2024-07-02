@@ -132,7 +132,8 @@ const Login = ({ navigation }) => {
       <Loader visible={loading} />
       {/* <LanguagePicker /> */}
       <ScrollView
-        contentContainerStyle={{ alignItems: 'center' }}
+        style={{ width: '100%' }}
+        contentContainerStyle={{ alignItems: 'center', width: '90%', margin: '5%' }}
         keyboardShouldPersistTaps="handled">
         <Logo />
         <Text h2 style={{ marginBottom: 50 }}>

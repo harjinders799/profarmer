@@ -60,13 +60,13 @@ export default function App() {
           <StoreProvider>
             {/* <CottonProvider> */}
             {/* <AadtProvider> */}
-            {/* <LoanProvider> */}
-            {/* <TimelineProvider> */}
-            <LangProvider>
-              <Navigation />
-            </LangProvider>
-            {/* </TimelineProvider> */}
-            {/* </LoanProvider> */}
+            <LoanProvider>
+              {/* <TimelineProvider> */}
+              <LangProvider>
+                <Navigation />
+              </LangProvider>
+              {/* </TimelineProvider> */}
+            </LoanProvider>
             {/* </AadtProvider> */}
             {/* </CottonProvider> */}
           </StoreProvider>

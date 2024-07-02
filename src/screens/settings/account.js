@@ -15,7 +15,7 @@ import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../../context/authContext';
 import { green, red } from '../../utils/colors';
 import { strings } from '../../translations/locale';
-import { commonStyle } from '../../utils/style';
+import { common } from '@utils/style';
 
 const Account = ({ }) => {
   const navigation = useNavigation();
@@ -39,7 +39,7 @@ const Account = ({ }) => {
     },
   ];
   return (
-    <View style={[commonStyle.row_c_j_b, commonStyle.m_v_10]}>
+    <View style={[common.row_btw]}>
       <Profile
         // style={{ alignSelf: 'center' }}
         small

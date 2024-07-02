@@ -11,16 +11,10 @@ export default function AboutUs() {
     const { colors } = useTheme()
 
     return (
-        <BaseView>
+        <BaseView space>
             <Header
-                leftComponent={
-                    <Icon
-                        name="back"
-                        size={28}
-                        color={colors.text}
-                        onPress={() => goBack()}
-                    />
-                }
+                back
+                label={'ProFarmer'}
             />
             <Text h3 style={{ marginTop: 10, justifyContent: "center", textAlign: 'center', fontSize: 20, fontStyle: "italic", fontWeight: "bold" }} >
                 {`Hi Farmer \n\n${strings.compliment}`}
