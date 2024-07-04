@@ -1,6 +1,7 @@
 import moment from 'moment';
 import { WIDTH } from './constants';
 import { strings } from '../translations/locale';
+import { MMKV } from 'react-native-mmkv'
 // import PickerStack from '../navigation/pickerStack';
 import LabourStack from '../navigation/labourStack';
 import CottonStack from '../navigation/cottonStack';
@@ -8,9 +9,51 @@ import SettingStack from '../navigation/settingStack';
 import LoanStack from '../navigation/loanStack';
 import Timeline from '../screens/timeline';
 
-import { MMKV } from 'react-native-mmkv'
-
 export const storage = new MMKV()
+
+export const calculateLoanDetails = (loansData, loanData) => {
+    let totalGivenAmount = 0;
+    let totalGivenAmountInterest = 0;
+    let totalGivenAmountWithInterest = 0;
+    let totalReceivedAmount = 0;
+    let totalReceivedAmountInterest = 0;
+    let totalReceivedAmountWithInterest = 0;
+
+    loanData.transactions.forEach(v => {
+        const date = moment(v.date).format('YYYY-MM-DD');
+        const start_date = moment(date);
+        const today = moment();
+        const days = today.diff(start_date, 'days');
+        const interest = (
+            ((parseFloat(v.amount) * (parseFloat(loanData.interest_rate) / 100)) / 30) *
+            days
+        );
+
+        if (v.type === 'giver') {
+            totalGivenAmount += parseFloat(v.amount);
+            totalGivenAmountInterest += parseFloat(interest);
+            totalGivenAmountWithInterest += (parseFloat(interest) + parseFloat(v.amount));
+        } else if (v.type === 'receiver') {
+            totalReceivedAmount += parseFloat(v.amount);
+            totalReceivedAmountInterest += parseFloat(interest);
+            totalReceivedAmountWithInterest += (parseFloat(interest) + parseFloat(v.amount));
+        }
+
+    });
+
+    loanData.totalGivenAmount = (totalGivenAmount).toFixed(2);
+    loanData.totalGivenAmountInterest = (totalGivenAmountInterest).toFixed(2);
+    loanData.totalGivenAmountWithInterest = (totalGivenAmountWithInterest).toFixed(2);
+    loanData.totalReceivedAmount = (totalReceivedAmount).toFixed(2);
+    loanData.totalReceivedAmountInterest = (totalReceivedAmountInterest).toFixed(2);
+    loanData.totalReceivedAmountWithInterest = (totalReceivedAmountWithInterest).toFixed(2);
+    loanData.finalAmount = (totalGivenAmountWithInterest - totalReceivedAmountWithInterest).toFixed(2);
+    console.log({ loanData })
+    const index = loansData.findIndex(loan => loan.id === loanData.lid);
+    if (index !== -1) {
+        loansData[index] = loanData;
+    }
+};
 
 export const getTotalInterst = (data = []) => {
     let tot_interest = 0;

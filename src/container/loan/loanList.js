@@ -1,127 +1,101 @@
-import React from 'react';
-import Text from 'src/components/text';
-import {
-  FlatList,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import { white } from 'src/utils/colors';
-import { groupBy, maxBy } from 'lodash';
-import { strings } from 'src/translations/locale';
-import { navigate } from 'src/navigation/ref';
-import { currencyFormat } from 'src/utils/dateformat';
-import {
-  greenDark,
-  red,
-} from '../../utils/colors';
-import { useLoan } from '../../context/loanContext';
-import auth from '@react-native-firebase/auth';
-import { getTotalInterst } from '../../utils/helper';
-import moment from 'moment';
+import React, { useCallback } from 'react';
+import Text from '@components/text';
+import { FlatList, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { strings } from '@translations/locale';
+import { navigate } from '@navigation/ref';
+import { currencyFormat } from '@utils/dateformat';
+import { greenDark, navy, red } from '@utils/colors';
+import { common } from '@utils/style';
+import { useTheme } from '@react-navigation/native';
+import Button from '@components/button';
 
-export default function LoanList() {
-  const { loanData = [] } = useLoan();
-  let data = [];
-
-  const groupedData = groupBy(loanData, d =>
-    d?.giver == auth().currentUser.uid ? d?.receiver : d?.giver,
+function LoanList({ data }) {
+  const { colors } = useTheme();
+  console.log(data)
+  // Optimized renderItem function using useCallback
+  const renderItem = useCallback(
+    ({ item }) => {
+      return (
+        <TouchableOpacity
+          style={[styles.list, { backgroundColor: colors.background }]}
+          onPress={() => navigate('LoanDetail', { item })}>
+          <View style={styles.row}>
+            <Text h3 style={{ maxWidth: '60%' }}>
+              {item?.name}
+            </Text>
+            <Text
+              h3
+              style={{
+                color: item?.finalAmount > 0 ? colors.error : colors.success,
+                maxWidth: '40%',
+              }}>
+              {currencyFormat(item?.finalAmount > 0 ? item?.finalAmount : -item?.finalAmount)}
+            </Text>
+          </View>
+          <View style={styles.row}>
+            <Button
+              small
+              iconLeft={'plus'}
+              label={strings.amount}
+              btnStyle={styles.btn}
+              onPress={() => navigate('AddCredit', {
+                data: item,
+              })}
+            />
+            <Text h6 color={item?.finalAmount > 0 ? colors.error : colors.success}>
+              {item?.finalAmount == 0 ? '____' : item?.finalAmount < 0 ? strings.give : strings.receive}
+            </Text>
+          </View>
+        </TouchableOpacity>
+      );
+    },
+    [colors]
   );
 
-  Object.keys(groupedData).map(o => {
-    data.push({
-      name: o,
-      interest_rate: groupedData[o][0]?.interest_rate,
-      lastEntry: maxBy(groupedData[o], entry => entry.date),
-    });
-  });
-  console.log(data);
-  const renderItem = item => {
-    const given = getTotalInterst(
-      groupedData[item?.name].filter(
-        entry => entry.giver === auth().currentUser.uid,
-      ),
-    );
-    const taken = getTotalInterst(
-      groupedData[item?.name].filter(entry => entry.giver === item?.name),
-    );
+  // Memoized key extractor
+  const keyExtractor = useCallback((item) => item?.id?.toString(), []);
 
-    return (
-      <TouchableOpacity
-        style={styles.list}
-        onPress={() => navigate('LoanDetail', { item })}>
-        <View style={styles.row}>
-          <Text numberOfLines={1} h3 style={{ width: '60%' }}>
-            {item?.name}
-          </Text>
-          <Text
-            numberOfLines={1}
-            h3
-            style={{
-              color: taken - given <= 0 ? red : greenDark,
-            }}>
-            {currencyFormat(taken - given)}
-          </Text>
-        </View>
-        <View style={{ alignSelf: 'flex-end' }}>
-          <Text
-            numberOfLines={1}
-            h3
-            style={{
-              color: taken - given <= 0 ? red : greenDark,
-            }}>
-            {taken - given <= 0 ? strings.give : strings.receive}
-          </Text>
-        </View>
-      </TouchableOpacity>
-    );
-  };
+  // Memoized ListEmptyComponent
+  const ListEmptyComponent = useCallback(() => (
+    <Text style={{ textAlign: 'center', paddingTop: 30 }}>
+      {strings.no_data}
+    </Text>
+  ), []);
 
   return (
     <FlatList
       style={{ width: '100%' }}
       contentContainerStyle={{ paddingBottom: 150 }}
-      data={data.sort((a, b) => {
-        return moment(b.lastEntry.date) - moment(a.lastEntry.date);
-      })}
-      keyExtractor={item => Math.random().toString()}
-      ListEmptyComponent={() => (
-        <Text style={{ textAlign: 'center', paddingTop: 30 }}>
-          {strings.no_data}
-        </Text>
-      )}
+      data={data}
+      keyExtractor={keyExtractor}
+      ListEmptyComponent={ListEmptyComponent}
       showsVerticalScrollIndicator={false}
-      renderItem={({ item }) => renderItem(item)}
+      renderItem={renderItem}
     />
   );
 }
+
 const styles = StyleSheet.create({
   list: {
-    borderRadius: 5,
-    elevation: 3,
-    backgroundColor: white,
-    paddingHorizontal: 10,
-    padding: 5,
-    margin: '1%',
-    width: '98%',
+    ...common.card,
+    ...common.shadow,
+    padding: 10,
+    marginHorizontal: '5%',
+    marginTop: '5%',
+    width: '90%',
   },
   row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    width: '100%',
+    ...common.row_btw,
     marginVertical: 5,
   },
-  icon: {
-    elevation: 1,
-    width: 30,
-    height: 30,
-    textAlign: 'center',
-    textAlignVertical: 'center',
+  btn: {
+    backgroundColor: navy,
+    width: 'auto',
+    maxWidth: '40%',
+    height: 25,
+    marginVertical: 0,
     borderRadius: 5,
-  },
-  line: {
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    width: '100%',
-  },
+  }
 });
+
+export default React.memo(LoanList);

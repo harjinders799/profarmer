@@ -7,21 +7,8 @@ import { currentStamp } from '@utils/dateformat';
 const getCurrentUserId = () => auth().currentUser?.uid;
 const userId = getCurrentUserId();
 
-const addDocumentToCollection = async (collectionName, data) => {
-  try {
-    console.log('labour adding');
-    await firestore()
-      .collection(collectionName)
-      .add({ ...data, uid: userId });
-    console.log('labour added');
-    return 'success';
-  } catch (error) {
-    console.log(error);
-    throw new Error(error);
-  }
-};
 
-const getDocumentsFromCollection = (query, onUpdate) => {
+const getDocumentsListener = (query, onUpdate) => {
   try {
     // Listen for real-time updates
     const unsubscribe = query.onSnapshot(
@@ -47,15 +34,6 @@ const getDocumentsFromCollection = (query, onUpdate) => {
 const deleteDocumentById = async (collectionName, id) => {
   try {
     await firestore().collection(collectionName).doc(id).delete();
-    return 'success';
-  } catch (error) {
-    throw new Error(error);
-  }
-};
-
-const updateDocument = async (collectionName, data) => {
-  try {
-    await firestore().collection(collectionName).doc(data?.id).update(data);
     return 'success';
   } catch (error) {
     throw new Error(error);
@@ -161,13 +139,13 @@ export const submitLabourLeave = async data => {
 }
 
 export const getLabourData = onUpdate =>
-  getDocumentsFromCollection(
+  getDocumentsListener(
     firestore().collection('labours_data').where('uid', '==', userId),
     onUpdate,
   );
 
 export const getLabourRegular = async (name, onUpdate) =>
-  getDocumentsFromCollection(
+  getDocumentsListener(
     firestore()
       .collection('labours_data')
       .where('uid', '==', userId)
@@ -176,7 +154,7 @@ export const getLabourRegular = async (name, onUpdate) =>
   );
 
 export const getLabourExpense = (id, onUpdate) =>
-  getDocumentsFromCollection(
+  getDocumentsListener(
     firestore()
       .collection('labours_data')
       .doc(id)
@@ -186,7 +164,7 @@ export const getLabourExpense = (id, onUpdate) =>
   );
 
 export const getLabourWork = (id, onUpdate) =>
-  getDocumentsFromCollection(
+  getDocumentsListener(
     firestore()
       .collection('labours_data')
       .doc(id)
@@ -196,7 +174,7 @@ export const getLabourWork = (id, onUpdate) =>
   );
 
 export const getLabourLeave = (id, onUpdate) =>
-  getDocumentsFromCollection(
+  getDocumentsListener(
     firestore()
       .collection('labours_data')
       .doc(id)

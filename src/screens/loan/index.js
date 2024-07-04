@@ -1,86 +1,62 @@
-import { StyleSheet, View } from 'react-native';
 import React, { useState, useCallback } from 'react';
-import Text from 'src/components/text';
-import BaseView from 'src/container/base';
-import { useLang } from 'src/context/langContext';
-import Loader from '../../components/loader';
-import { strings } from '../../translations/locale';
-import Button from '../../components/button';
-import { greenDark, red, white } from '../../utils/colors';
-
-import { navigate } from 'src/navigation/ref';
-import LoanList from '../../container/loan/loanList';
-import { useLoan } from '../../context/loanContext';
+import BaseView from '@container/base';
+import { useLang } from '@context/langContext';
+import Loader from '@components/loader';
+import { strings } from '@translations/locale';
+import Button from '@components/button';
+import { navigate } from '@navigation/ref';
+import LoanList from '@container/loan/loanList';
 import { useFocusEffect } from '@react-navigation/native';
-import { calculateTotals } from '../../utils/helper';
-import { commonStyle } from '../../utils/style';
-import { currencyFormat } from '../../utils/dateformat';
+import Header from '@components/header';
+import { loansDataListener } from '@network/loan-service';
+import LoanConclusion from '@container/loan/loanConclusion';
 
-export default function Loan({ navigation }) {
+function Loan() {
   const { lang } = useLang();
-  const { loanData, getLoan } = useLoan();
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  useFocusEffect(
-    useCallback(() => {
-      getLoan();
-    }, [navigation, lang]),
-  );
-  const totals = calculateTotals(loanData);
+  // Optimized data fetching with useCallback
+  const fetchData = useCallback(() => {
+    const unsubscribeFunctions = [];
+    const unsubscribe = loansDataListener(updatedDocuments => {
+      setData(updatedDocuments);
+      setLoading(false);
+    }, unsubscribeFunctions);
+    return () => {
+      if (unsubscribe) unsubscribe();
+      unsubscribeFunctions.forEach(unsub => unsub());
+    };
+  }, [lang]);
+
+  useFocusEffect(fetchData);
 
   return (
     <BaseView>
-      {/* <Loader visible={loading} /> */}
-      <Text h2 style={{ padding: 20, textAlign: 'center' }}>
-        {strings.loan_record}
-      </Text>
-      <View style={commonStyle.row_c_j_b}>
-        <View style={[styles.card, { backgroundColor: greenDark }]}>
-          <Text h3 white>
-            {currencyFormat(totals?.taken ?? 0)}
-          </Text>
-          <Text h5 white>
-            {strings.taken_amount}
-          </Text>
-        </View>
-        <View style={[styles.card, { backgroundColor: red }]}>
-          <Text h3 white>
-            {currencyFormat(totals?.given ?? 0)}
-          </Text>
-          <Text h5 white>
-            {strings.given_amount}
-          </Text>
-        </View>
-      </View>
-      <LoanList />
+      <Loader visible={loading} />
+      <Header label={strings.loan_record} />
+      <LoanConclusion data={data} />
+      <LoanList data={data} />
       <Button
-        iconName="plus"
-        iconColor={white}
-        label={strings.giver + ' / ' + strings.receiver}
-        btnStyle={{
-          width: 'auto',
-          paddingHorizontal: 15,
-          height: 50,
-          position: 'absolute',
-          bottom: 20,
-          right: 30,
-          zIndex: 999,
-        }}
+        iconLeft="plus"
+        label={`${strings.giver} / ${strings.receiver}`}
+        btnStyle={styles.button}
         onPress={() => navigate('AddLoan')}
       />
     </BaseView>
   );
 }
 
-const styles = StyleSheet.create({
-  card: {
-    padding: 10,
-    width: '48%',
-    paddingHorizontal: 20,
-    alignItems: 'center',
-    marginBottom: 20,
-    borderRadius: 10,
-    overflow: 'hidden',
-    elevation: 5,
-    backgroundColor: 'white',
+const styles = {
+  button: {
+    maxWidth: '50%',
+    paddingHorizontal: 15,
+    height: 50,
+    position: 'absolute',
+    bottom: 20,
+    right: 30,
+    zIndex: 999,
   },
-});
+};
+
+export default React.memo(Loan);

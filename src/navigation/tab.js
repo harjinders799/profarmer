@@ -29,7 +29,7 @@ export default function Tabs() {
         tabBarInactiveTintColor: gray6,
         headerShown: false,
         tabBarHideOnKeyboard: true,
-        unmountOnBlur: true,
+        // unmountOnBlur: true,
         tabBarStyle: {
           backgroundColor: orange,
           height: isIOS

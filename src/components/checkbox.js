@@ -1,34 +1,41 @@
 import { TouchableOpacity, View } from 'react-native';
 import React from 'react';
 import Text from './text';
-import { commonStyle } from '../utils/style';
+import { common, } from '@utils/style';
 import { useTheme } from '@react-navigation/native';
 import Icon from './icon';
-import { gray3 } from '../utils/colors';
 
-export default function Checkbox({ isChecked, onPress, label }) {
+export default function Checkbox({ isChecked, onPress, label, style, activeColor }) {
   const { colors } = useTheme();
+  activeColor = activeColor ?? colors.primary
   return (
     <TouchableOpacity
       activeOpacity={0.8}
       onPress={onPress}
-      style={commonStyle.row_c_j_l}>
+      style={[common.row_start, style]}>
       <View
         style={{
           borderWidth: 1,
-          borderColor: gray3,
-          padding: 2,
-          width: 25,
-          height: 25,
-          borderRadius: 10,
-          overflow: 'hidden',
+          borderColor: colors.border,
+          width: 20,
+          height: 20,
+          borderRadius: 5,
+          justifyContent: 'center',
+          alignItems: 'center',
           marginRight: 15,
         }}>
         {isChecked ? (
-          <Icon name="check" color={colors.primary} size={20} />
+          // <Icon name="check" color={colors.primary} size={20} />
+          <View
+            style={{
+              backgroundColor: activeColor,
+              width: 15,
+              height: 15,
+              borderRadius: 3,
+            }} />
         ) : null}
       </View>
-      <Text h3>{label}</Text>
+      <Text h4 color={isChecked ? activeColor : colors.text}>{label}</Text>
     </TouchableOpacity>
   );
 }

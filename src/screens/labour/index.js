@@ -20,7 +20,7 @@ export default function Labour() {
   // Optimized data fetching with useCallback
   const fetchData = useCallback(() => {
     const unsubscribe = getLabourData(updatedDocuments => {
-      console.log({ updatedDocuments });
+      // console.log({ updatedDocuments });
       setData(updatedDocuments);
       setLoading(false);
     });

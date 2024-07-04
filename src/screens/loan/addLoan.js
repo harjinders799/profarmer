@@ -1,129 +1,105 @@
-import React from 'react';
-import {
-  StyleSheet,
-  ScrollView,
-} from 'react-native';
+import React, { useState, useCallback } from 'react';
+import { StyleSheet, ScrollView } from 'react-native';
 import { useRoute, useTheme } from '@react-navigation/native';
-import Button from 'src/components/button';
-import Input from 'src/components/input';
-import Text from 'src/components/text';
-import BaseView from 'src/container/base';
-import { goBack } from 'src/navigation/ref';
-import { strings } from 'src/translations/locale';
-import Header from '../../components/header';
-import Icon from '../../components/icon';
-import auth from '@react-native-firebase/auth';
-import { currentStamp } from 'src/utils/dateformat';
-import Loader from 'src/components/loader';
-import { ToastError, ToastSuccess } from 'src/utils/toast';
-import { submitLoan, updateLoanName } from '../../network/loan-service';
-import { black } from '../../utils/colors';
-
-
+import Button from '@components/button';
+import Input from '@components/input';
+import Text from '@components/text';
+import BaseView from '@container/base';
+import { goBack } from '@navigation/ref';
+import { strings } from '@translations/locale';
+import Header from '@components/header';
+import Loader from '@components/loader';
+import { ToastError, ToastSuccess } from '@utils/toast';
+import { submitLoan, updateLoanName } from '@network/loan-service';
+import { currentStamp } from '@utils/dateformat';
 
 export default function AddLoan() {
   const { colors } = useTheme();
   const { params } = useRoute();
   const editData = params?.data ?? {};
-  const refAmt = React.useRef();
   const [data, setData] = React.useState({
-    id: editData?.id ?? 0,
-    giver: auth().currentUser?.uid,
-    receiver: editData?.name ?? '',
-    detail: editData?.detail ?? '',
+    name: editData?.name ?? '',
     phone: editData?.phone ?? '',
-    amount: editData?.amount ?? 0,
     interest_rate: editData?.interest_rate ?? '',
-    date: editData?.date ? new Date(editData?.date) : new Date(),
   });
-  const [showDate, setShowDate] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
-  const { receiver, phone, interest_rate, date } = data;
+  const { name, phone, interest_rate } = data;
 
-  // React.useEffect(() => {
-  //   if (givers.length == 1 && !giver) onChangeValue('giver', givers[0]);
-  // }),
-  //   [givers];
+  const onChangeValue = useCallback((key, value, isNumberOnly = false) => {
+    setData(prevData => ({
+      ...prevData,
+      [key]: isNumberOnly
+        ? value.replace(/[^0-9.]/g, '').replace(/(\..*?)\./g, '$1')
+        : value,
+    }));
+  }, []);
 
+  const onPress = useCallback(() => {
+    if (editData?.name) {
+      updateData();
+    } else {
+      addNew();
+    }
+  }, [name, phone, interest_rate]);
 
-  const onChangeValue = (key, value) => {
-    setData({
-      ...data,
-      [key]: value,
-    });
-  };
-  const onPress = () => {
-    if (editData?.name) updateWt();
-    else AddNew();
-  };
-  const updateWt = async () => {
-    if (!receiver || receiver.trim() == '') {
+  const updateData = async () => {
+    if (!name || name.trim() == '') {
       ToastError(strings.receiver_name);
     } else if (interest_rate.trim() == '' || parseInt(interest_rate) <= 0) {
       ToastError(strings.interest_rate);
     } else {
       setLoading(true);
-      await updateLoanName(
-        editData?.name,
-        { ...data, receiver: receiver.trim() }
-      )
+      await updateLoanName(editData?.name, { ...data, name: name.trim() });
       setLoading(false);
       ToastSuccess(strings.update);
       goBack();
     }
   };
-  const AddNew = async () => {
-    if (!receiver || receiver.trim() == '') {
-      ToastError(strings.receiver_name.trim());
-      return;
+
+  const addNew = useCallback(async () => {
+    if (!name || name.trim() == '') {
+      return ToastError(strings.name, strings.loan);
     }
     if (interest_rate.trim() == '' || parseInt(interest_rate) <= 0) {
-      ToastError(strings.interest_rate);
-      return;
+      return ToastError(strings.interest_rate, strings.loan);
     }
+    try {
+      setLoading(true);
+      await submitLoan({ ...data, name: name.trim() });
+      setLoading(false);
+      ToastSuccess(strings.receiver_added);
+      goBack();
+    } catch (error) {
+      setLoading(false);
+      ToastError(error?.message, strings.loan);
+    }
+  }, [name, phone, interest_rate]);
 
-    setLoading(true);
-    await submitLoan({ ...data, receiver: receiver.trim(), date: currentStamp(date), })
-    setLoading(false);
-    ToastSuccess(strings.receiver_added);
-    goBack();
-  };
   return (
-    <BaseView style={styles.container}>
+    <BaseView space>
       <Loader visible={loading} />
-      <Header
-        style={{ marginTop: 10 }}
-        leftComponent={
-          <Icon
-            name="back"
-            size={28}
-            color={black}
-            onPress={() => goBack()}
-          />
-        }
-        centerComponent={<Text h2>{editData?.name ? strings.update : strings.add_loan}</Text>}
-        rightComponent={<Text h2> </Text>}
-      />
+      <Header back label={editData?.name ? strings.update : strings.add_loan} />
       <ScrollView style={styles.form} keyboardShouldPersistTaps="always">
         <Input
           label={strings.name}
           autoFocus
-          placeholder={strings.receiver_name}
-          value={receiver}
-          setValue={value => onChangeValue('receiver', value)}
+          placeholder={strings.name}
+          value={name}
+          setValue={value => onChangeValue('name', value)}
         />
         <Input
           label={strings.phone}
           placeholder={strings.phone}
           value={phone}
-          setValue={value => onChangeValue('phone', value)}
+          maxLength={10}
+          setValue={value => onChangeValue('phone', value, true)}
           keyboardType="numeric"
         />
         <Input
           label={strings.interest}
           placeholder={strings.interest_rate}
           value={interest_rate}
-          setValue={value => onChangeValue('interest_rate', value)}
+          setValue={value => onChangeValue('interest_rate', value, true)}
           keyboardType="numeric"
         />
         <Button label={strings.save} onPress={onPress} />
@@ -132,13 +108,7 @@ export default function AddLoan() {
   );
 }
 const styles = StyleSheet.create({
-  container: {
-    padding: 10,
-  },
-
   form: {
-    paddingVertical: 15,
     width: '100%',
-    marginVertical: 10,
   },
 });

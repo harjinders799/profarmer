@@ -55,7 +55,7 @@ const Button = ({
               <Icon
                 name={iconLeft}
                 type={iconType}
-                size={20}
+                size={small ? 14 : 20}
                 color={txtColor}
               />
             ) : null}

@@ -19,6 +19,15 @@ export const currencyFormat = (value, fraction = 0) => {
   return `${formatter.format(parseFloat(value))} /-`;
 };
 
+export const interestFormat = (value, fraction = 0) => {
+  const formatter = new Intl.NumberFormat('en-IN', {
+    style: 'currency',
+    currency: 'INR',
+    minimumFractionDigits: fraction,
+  });
+  return `${formatter.format(parseFloat(value))} / ₹100`;
+};
+
 export const currencyInput = value => {
   if (!value) return '';
   const formatter = new Intl.NumberFormat('en-IN', {
