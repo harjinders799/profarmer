@@ -1,7 +1,7 @@
 import moment from 'moment';
 import { sortBy } from 'lodash';
 import { currencyFormat, dateFormat, dayCount } from '@utils/dateformat';
-import { getInterst } from '@utils/helper';
+import { getInterest } from '@utils/helper';
 
 export function loanHTMLFormat(strings, user, data) {
 
@@ -80,7 +80,7 @@ export function loanHTMLFormat(strings, user, data) {
           ${sortBy(data?.transactions, (a, b) => moment(b?.date) - moment(a?.date)).map(
     record => {
       let days = dayCount(record?.date);
-      let interest = getInterst([{ ...record, interest_rate: data?.interest_rate }]);
+      let interest = getInterest([{ ...record, interest_rate: data?.interest_rate }]);
 
       return `<tr>
                 <td>${dateFormat(record.date)}</td>

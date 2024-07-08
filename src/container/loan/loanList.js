@@ -11,7 +11,6 @@ import Button from '@components/button';
 
 function LoanList({ data }) {
   const { colors } = useTheme();
-  console.log(data)
   // Optimized renderItem function using useCallback
   const renderItem = useCallback(
     ({ item }) => {

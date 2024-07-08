@@ -39,7 +39,7 @@ export const deleteIneterstAmt = async id => {
   });
 };
 
-export const getInterstAmount = () => {
+export const getInterestAmount = () => {
   return new Promise(async function (resolve, reject) {
     let userId = auth().currentUser?.uid;
     firestore()

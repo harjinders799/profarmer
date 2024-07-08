@@ -28,18 +28,35 @@ export const interestFormat = (value, fraction = 0) => {
   return `${formatter.format(parseFloat(value))} / ₹100`;
 };
 
+let lastValue = 0;
 export const currencyInput = value => {
   if (!value) return '';
+  let minimumFractionDigits = 0;
+  let digit = value.toString().split('.');
+  let lastDigit = lastValue.toString().split('.');
+  if (digit.length == 2) {
+    if (value == lastValue) minimumFractionDigits = 1;
+    if (value != lastValue && lastDigit.length == 1) minimumFractionDigits = 1;
+    if (value != lastValue && lastDigit.length == 2)
+      minimumFractionDigits = digit[1].length;
+  }
   const formatter = new Intl.NumberFormat('en-IN', {
     style: 'currency',
     currency: 'INR',
-    minimumFractionDigits: 0,
+    minimumFractionDigits,
   });
-  return formatter.format(value ? value.replace(/[^0-9]/g, '') : 0);
+
+  if (digit.length > 1) {
+    if (digit[1].length == 0) {
+      value = digit[0];
+    }
+  }
+  lastValue = formatter.format(value);
+  return lastValue;
 };
 
 export const dayCount = value => {
-  let date = moment(value).format("YYYY-MM-DD");
+  let date = moment(value).format('YYYY-MM-DD');
   let start_date = moment(date);
   let today = moment();
   return today.diff(start_date, 'days');

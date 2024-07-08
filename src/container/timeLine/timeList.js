@@ -34,7 +34,6 @@ import moment from 'moment';
 
 export default function TimeList({ data }) {
   const renderItem = item => {
-    // console.log(item,)
     return (
       <View style={styles.list}>
         <Text h5>{moment(item.date).format('DD-MM-YYYY')}</Text>
@@ -45,7 +44,6 @@ export default function TimeList({ data }) {
       </View>
     );
   };
-  // console.log(data,'----11---222--')
   return (
     <View style={styles.container}>
       <Timeline

@@ -14,7 +14,6 @@ import Modal from 'src/components/Modal';
 import { orange } from 'src/utils/colors';
 import { AuthProvider } from './src/context/authContext';
 import { AadtProvider } from './src/context/aadtContext';
-import { LoanProvider } from './src/context/loanContext';
 import { TimelineProvider } from './src/context/timeContext';
 import { TabProvider } from './src/context/tabContext';
 
@@ -59,15 +58,13 @@ export default function App() {
         <AuthProvider>
           <StoreProvider>
             {/* <CottonProvider> */}
-            {/* <AadtProvider> */}
-            <LoanProvider>
+            <AadtProvider>
               {/* <TimelineProvider> */}
               <LangProvider>
                 <Navigation />
               </LangProvider>
               {/* </TimelineProvider> */}
-            </LoanProvider>
-            {/* </AadtProvider> */}
+            </AadtProvider>
             {/* </CottonProvider> */}
           </StoreProvider>
         </AuthProvider>

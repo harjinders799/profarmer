@@ -78,7 +78,6 @@ export const loansDataListener = (onUpdate, unsubscribeFunctions = []) => {
           loansData.forEach(loanData => {
             calculateLoanDetails(loansData, loanData);
           });
-          console.log({ loansData });
           if (onUpdate) onUpdate([...loansData]);
         });
       });
@@ -203,7 +202,6 @@ export const updateLoanName = async (name, data) => {
           ),
         )
         .get();
-      console.log(usersQuerySnapshot, '-----usersQuerySnapshot', name);
       // Create a new batch instance
       const batch = firestore().batch();
 
@@ -302,7 +300,6 @@ async function migrateLoanData() {
         full_access: [userData.uid],
         transactions: [], // This field can be omitted if you don't need an array in the main document
       };
-      console.log(newLoanData);
       batch.set(newLoanRef, newLoanData);
 
       // Transactions subcollection
@@ -310,7 +307,6 @@ async function migrateLoanData() {
         const transactionRef = newLoanRef
           .collection('transactions')
           .doc(transaction.id);
-        console.log(transaction);
         batch.set(transactionRef, transaction);
       });
     });

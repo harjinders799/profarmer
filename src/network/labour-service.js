@@ -62,7 +62,6 @@ export const addNewLabour = async data => {
       );
 
     const labourDataId = labourDataRef.id;
-    console.log({ labourDataId });
 
     // Add labour_work subcollection document
     await firestore()
@@ -184,7 +183,6 @@ export const getLabourLeave = (id, onUpdate) =>
   );
 
 export const updateLabour = async data => {
-  console.log({ data });
   try {
     await firestore()
       .collection('labours_data')

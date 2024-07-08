@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Setting from 'src/screens/settings';
 import AddForm from 'src/screens/aadtiya/addForm';
-import CropDetail from '../screens/crop/detail';
+// import CropDetail from '../screens/crop/detail';
 import Tabs from './tab';
 import NetInfo from '@react-native-community/netinfo';
 // import AddPicker from '../screens/picker/addPicker';
@@ -43,6 +43,11 @@ import AddEvent from '../screens/timeline/addEvent';
 import TimeDetail from '../screens/timeline/timeDetail';
 import Customize from '../screens/settings/customize';
 import NewLabour from '@screens/labour/newLabour';
+import AddTransaction from '@screens/aadhat/addTransaction';
+import AddAadhatiya from '@screens/aadhat/addAadhatiya';
+import AadhatDetail from '@screens/aadhat/aadhatDetail';
+import CropDetail from '@screens/aadhat/cropDetail';
+import AadhatTransactionDetail from '@screens/aadhat/aadhatTransactionDetail';
 
 const Stack = createNativeStackNavigator();
 
@@ -76,11 +81,17 @@ export default function Stacks() {
         name="RegularLabourDetail"
         component={RegularLabourDetail}
       />
+      {/* Aadhat */}
+      <Stack.Screen name="AddAadhatiya" component={AddAadhatiya} />
+      <Stack.Screen name="AddTransaction" component={AddTransaction} />
+      <Stack.Screen name="AadhatDetail" component={AadhatDetail} />
+      <Stack.Screen name="CropDetail" component={CropDetail} />
+      <Stack.Screen name="AadhatTransactionDetail" component={AadhatTransactionDetail} />
 
       <Stack.Screen name="Setting" component={Setting} />
       <Stack.Screen name="AddEvent" component={AddEvent} />
       <Stack.Screen name="AddForm" component={AddForm} />
-      <Stack.Screen name="CropDetail" component={CropDetail} />
+      {/* <Stack.Screen name="CropDetail" component={CropDetail} /> */}
       {/* <Stack.Screen name="AddPicker" component={AddPicker} />
       <Stack.Screen name="AddPickerExpense" component={AddPickerExpense} />
       <Stack.Screen name="AddPickerWeight" component={AddPickerWeight} />

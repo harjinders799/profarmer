@@ -1,15 +1,74 @@
 import moment from 'moment';
 import { WIDTH } from './constants';
 import { strings } from '../translations/locale';
-import { MMKV } from 'react-native-mmkv'
+import { MMKV } from 'react-native-mmkv';
 // import PickerStack from '../navigation/pickerStack';
 import LabourStack from '../navigation/labourStack';
 import CottonStack from '../navigation/cottonStack';
 import SettingStack from '../navigation/settingStack';
 import LoanStack from '../navigation/loanStack';
 import Timeline from '../screens/timeline';
+import AAdhatStack from '@navigation/aadhatStack';
 
-export const storage = new MMKV()
+export const storage = new MMKV();
+
+const removeFirstChar = str => {
+    if (str.length > 1) {
+        return str.substring(1);
+    }
+    return '';
+};
+
+export const onChangeValue = ({
+    setData,
+    key,
+    value,
+    isPhone = false,
+    isAmount = false,
+    isName = false,
+}) => {
+    let isPhoneOnly = isPhone ? isPhone : false;
+    let isAmountOnly = isAmount ? isAmount : false;
+    let isNameOnly = isName ? isName : false;
+    setData(prevData => {
+        const data = { ...prevData };
+
+        if (isPhoneOnly) {
+            // Strip out non-numeric characters for phone number input
+            data[key] = value.replace(/[^0-9]/g, '');
+        } else if (isAmountOnly) {
+            // Handle amount input with number and decimal only, up to 2 decimal places
+            let newValue = value.replace(/[^0-9.]/g, '').replace(/(\..*?)\./g, '$1');
+            const lastValueArr = data[key].split('.');
+            const newValueArr = newValue.split('.');
+
+            // Adjust if there's a trailing dot after decimal
+            if (
+                lastValueArr.length === 2 &&
+                newValueArr.length === 2 &&
+                lastValueArr[1] === '' &&
+                newValueArr[1].length === 2
+            ) {
+                newValue = `${newValueArr[0]}.${newValueArr[1].slice(1)}`;
+            }
+
+            // Limit to maximum 2 decimal places
+            if (newValueArr.length === 2 && newValueArr[1].length > 2) {
+                newValue = `${newValueArr[0]}.${newValueArr[1].substring(0, 2)}`;
+            }
+
+            data[key] = newValue;
+        } else if (isNameOnly) {
+            // Remove invalid characters
+            data[key] = value.replace(/[^a-zA-Z0-9\s]/g, '');
+        } else {
+            // Default case: assign value directly
+            data[key] = value;
+        }
+
+        return data;
+    });
+};
 
 export const calculateLoanDetails = (loansData, loanData) => {
     let totalGivenAmount = 0;
@@ -24,31 +83,35 @@ export const calculateLoanDetails = (loansData, loanData) => {
         const start_date = moment(date);
         const today = moment();
         const days = today.diff(start_date, 'days');
-        const interest = (
-            ((parseFloat(v.amount) * (parseFloat(loanData.interest_rate) / 100)) / 30) *
-            days
-        );
+        const interest =
+            ((parseFloat(v.amount) * (parseFloat(loanData.interest_rate) / 100)) /
+                30) *
+            days;
 
         if (v.type === 'giver') {
             totalGivenAmount += parseFloat(v.amount);
             totalGivenAmountInterest += parseFloat(interest);
-            totalGivenAmountWithInterest += (parseFloat(interest) + parseFloat(v.amount));
+            totalGivenAmountWithInterest +=
+                parseFloat(interest) + parseFloat(v.amount);
         } else if (v.type === 'receiver') {
             totalReceivedAmount += parseFloat(v.amount);
             totalReceivedAmountInterest += parseFloat(interest);
-            totalReceivedAmountWithInterest += (parseFloat(interest) + parseFloat(v.amount));
+            totalReceivedAmountWithInterest +=
+                parseFloat(interest) + parseFloat(v.amount);
         }
-
     });
 
-    loanData.totalGivenAmount = (totalGivenAmount).toFixed(2);
-    loanData.totalGivenAmountInterest = (totalGivenAmountInterest).toFixed(2);
-    loanData.totalGivenAmountWithInterest = (totalGivenAmountWithInterest).toFixed(2);
-    loanData.totalReceivedAmount = (totalReceivedAmount).toFixed(2);
-    loanData.totalReceivedAmountInterest = (totalReceivedAmountInterest).toFixed(2);
-    loanData.totalReceivedAmountWithInterest = (totalReceivedAmountWithInterest).toFixed(2);
-    loanData.finalAmount = (totalGivenAmountWithInterest - totalReceivedAmountWithInterest).toFixed(2);
-    console.log({ loanData })
+    loanData.totalGivenAmount = totalGivenAmount.toFixed(2);
+    loanData.totalGivenAmountInterest = totalGivenAmountInterest.toFixed(2);
+    loanData.totalGivenAmountWithInterest =
+        totalGivenAmountWithInterest.toFixed(2);
+    loanData.totalReceivedAmount = totalReceivedAmount.toFixed(2);
+    loanData.totalReceivedAmountInterest = totalReceivedAmountInterest.toFixed(2);
+    loanData.totalReceivedAmountWithInterest =
+        totalReceivedAmountWithInterest.toFixed(2);
+    loanData.finalAmount = (
+        totalGivenAmountWithInterest - totalReceivedAmountWithInterest
+    ).toFixed(2);
     const index = loansData.findIndex(loan => loan.id === loanData.lid);
     if (index !== -1) {
         loansData[index] = loanData;
@@ -70,7 +133,7 @@ export const getTotalInterst = (data = []) => {
     });
     return tot_interest;
 };
-export const getInterst = (data = []) => {
+export const getInterest = (data = []) => {
     let tot_interest = 0;
     data.map(v => {
         let date = moment(v?.date).format('YYYY-MM-DD');
@@ -124,20 +187,20 @@ export const tabsData = [
     //     iconType: 'MaterialCommunityIcons',
     // },
     {
+        id: 1,
+        name: 'AadhatStack',
+        title: strings.aadhtiya,
+        component: AAdhatStack,
+        icon: 'shopping-store',
+        iconType: 'Fontisto',
+    },
+    {
         id: 2,
         name: 'LabourStack',
         title: strings.labour,
         component: LabourStack,
         icon: 'solution1',
     },
-    // {
-    //     id: 3,
-    //     name: 'CottonStack',
-    //     title: strings.aadhtiya,
-    //     component: CottonStack,
-    //     icon: 'shopping-store',
-    //     iconType: 'Fontisto',
-    // },
     {
         id: 4,
         name: 'LoanStack',

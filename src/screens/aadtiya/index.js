@@ -4,21 +4,17 @@ import Text from 'src/components/text';
 import BaseView from 'src/container/base';
 import { useLang } from 'src/context/langContext';
 import Header from 'src/components/header';
-import { getInterstAmount } from 'src/network/interest-service';
 import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 import moment from 'moment';
 import { strings } from 'src/translations/locale';
-import { useStore } from 'src/context/context';
 import ListAadt from 'src/container/list';
 import ListCrop from 'src/container/crop/list';
-import Loader from '../../components/loader';
 import { ToastError } from '../../utils/toast';
 import Button from '../../components/button';
 import { navigate } from '../../navigation/ref';
 import Icon from '../../components/icon';
 import {
   blue,
-  gray10,
   green,
   greenDark,
   greenLight,
@@ -28,7 +24,7 @@ import {
 } from '../../utils/colors';
 import { sortBy, sumBy } from 'lodash';
 import { useAadt } from '../../context/aadtContext';
-import { getInterst, getTotalInterst } from '../../utils/helper';
+import { getInterest, getTotalInterst } from '../../utils/helper';
 import { currencyFormat } from '../../utils/dateformat';
 import { useAuth } from '../../context/authContext';
 import Share from 'react-native-share';
@@ -38,10 +34,7 @@ import { dateFormat } from 'src/utils/dateformat';
 export default function DashBoard({ navigation }) {
   const { lang } = useLang();
   const { aadtData, getAadt, cropData, getCrop } = useAadt();
-  const { givers, setGivers } = useStore();
   const [data, setData] = useState([]);
-  let arr = [];
-  const [isTextVisible, setTextVisible] = useState(false);
   const { user } = useAuth();
 
   useFocusEffect(
@@ -96,12 +89,17 @@ export default function DashBoard({ navigation }) {
         <div>
           <h3>
             ${strings.taken_amount} : ${currencyFormat(
-      getTotalInterst(aadtData) - getInterst(aadtData), 2)}
+      getTotalInterst(aadtData) - getInterest(aadtData),
+      2,
+    )}
           </h3>
         </div>
         <div>
           <h3>
-            ${strings.crop} : ${currencyFormat(getTotalInterst(cropData) - getInterst(cropData), 2)}
+            ${strings.crop} : ${currencyFormat(
+      getTotalInterst(cropData) - getInterest(cropData),
+      2,
+    )}
           </h3>
         </div>
       </div> 
@@ -109,12 +107,17 @@ export default function DashBoard({ navigation }) {
         <div>
           <h3>
             ${strings.total_interest} : ${currencyFormat(
-        getInterst(aadtData), 2)}
+      getInterest(aadtData),
+      2,
+    )}
           </h3>
         </div>
         <div>
           <h3>
-            ${strings.total_interest} : ${currencyFormat(getInterst(cropData), 2)}
+            ${strings.total_interest} : ${currencyFormat(
+      getInterest(cropData),
+      2,
+    )}
           </h3>
         </div>
       </div> 
@@ -122,7 +125,9 @@ export default function DashBoard({ navigation }) {
       <div>
           <h3>
             ${strings.taken_amount_from_aadhtiya} : ${currencyFormat(
-          getTotalInterst(aadtData), 2)}
+      getTotalInterst(aadtData),
+      2,
+    )}
           </h3>
           <h4>(${strings.interest_included})</h4>
         </div>
@@ -136,10 +141,14 @@ export default function DashBoard({ navigation }) {
       
       <div style="display: flex; align-self: center">
         <h2>
-          ${strings.final} (${getTotalInterst(aadtData) -
-        getTotalInterst(cropData) > 0 ? strings.give : strings.receive}) :
-          ${currencyFormat(getTotalInterst(cropData) -
-          getTotalInterst(aadtData), 2)}${'\n'}
+          ${strings.final} (${getTotalInterst(aadtData) - getTotalInterst(cropData) > 0
+        ? strings.give
+        : strings.receive
+      }) :
+          ${currencyFormat(
+        getTotalInterst(cropData) - getTotalInterst(aadtData),
+        2,
+      )}${'\n'}
         </h2>
       </div>
     </div>
@@ -155,13 +164,19 @@ export default function DashBoard({ navigation }) {
         <th>${strings.remark}</th>
       </tr>
       ${sortBy(aadtData, (a, b) => moment(b?.date) - moment(a?.date)).map(
-            record => {
-              let date = moment(record?.date).format('YYYY-MM-DD'); let
-                start_date = moment(date); let today = moment(); let days =
-                  today.diff(start_date, 'days'); let interest = (
-                    ((parseFloat(record?.amount) * (parseFloat(record?.interest_rate) / 100))
-                      / 30) * parseInt(days)).toFixed(2); let final_amount =
-                        parseFloat(record?.amount) + parseFloat(interest); return `
+        record => {
+          let date = moment(record?.date).format('YYYY-MM-DD');
+          let start_date = moment(date);
+          let today = moment();
+          let days = today.diff(start_date, 'days');
+          let interest = (
+            ((parseFloat(record?.amount) *
+              (parseFloat(record?.interest_rate) / 100)) /
+              30) *
+            parseInt(days)
+          ).toFixed(2);
+          let final_amount = parseFloat(record?.amount) + parseFloat(interest);
+          return `
       <tr>
         <td>${dateFormat(record?.date)}</td>
         <td>${days}</td>
@@ -172,7 +187,8 @@ export default function DashBoard({ navigation }) {
         <td>${record?.detail}</td>
       </tr>
       `;
-            },)}
+        },
+      )}
     </table>
     <h2>${strings.crop_hisab}</h2>
     <table style="width: 100%">
@@ -187,12 +203,18 @@ export default function DashBoard({ navigation }) {
         <th>${strings.remark}</th>
       </tr>
       ${cropData.map(v => {
-              v?.interest_rate; let date =
-                moment(v?.date).format('YYYY-MM-DD'); let start_date = moment(date); let
-                  today = moment(); let days = today.diff(start_date, 'days'); let interest
-                    = (((parseFloat(v?.amount) * (parseFloat(v?.interest_rate) / 100)) / 30)
-                      * parseInt(days)).toFixed(2); let total_amount = parseFloat(v?.amount) +
-                        parseFloat(interest); return `
+        v?.interest_rate;
+        let date = moment(v?.date).format('YYYY-MM-DD');
+        let start_date = moment(date);
+        let today = moment();
+        let days = today.diff(start_date, 'days');
+        let interest = (
+          ((parseFloat(v?.amount) * (parseFloat(v?.interest_rate) / 100)) /
+            30) *
+          parseInt(days)
+        ).toFixed(2);
+        let total_amount = parseFloat(v?.amount) + parseFloat(interest);
+        return `
       <tr>
         <td>${dateFormat(data?.date)}</td>
         <td>${days}</td>
@@ -200,11 +222,14 @@ export default function DashBoard({ navigation }) {
         <td>${currencyFormat(v?.interest_rate, 2)}</td>
         <td>${currencyFormat(v?.amount, 2)}</td>
         <td>${currencyFormat(interest, 2)}</td>
-        <td>${currencyFormat(parseFloat(v?.amount) + parseFloat(interest), 2)}</td>
+        <td>${currencyFormat(
+          parseFloat(v?.amount) + parseFloat(interest),
+          2,
+        )}</td>
         <td>${v?.detail}</td>
       </tr>
       `;
-            })}
+      })}
     </table>
   </body>
 </html>
@@ -336,19 +361,6 @@ export default function DashBoard({ navigation }) {
             </Text>
           </View>
         </View>
-        {/* {isTextVisible && (
-        <View
-          style={{
-            width: '100%',
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            borderBottomWidth: 0.5,
-            marginVertical: 10,
-          }}>
-          <Text h3>{strings.total_amount}</Text>
-          <Text h3> {sumBy(arr, o => o.total)} Rs</Text>
-        </View>
-      )} */}
         <Text h3 style={{ textAlign: 'center' }}>
           {strings.givers_list}
         </Text>

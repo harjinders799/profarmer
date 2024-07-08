@@ -8,7 +8,7 @@ import moment from 'moment';
 import { currencyFormat } from '../utils/dateformat';
 import { common } from '@utils/style';
 import { strings } from '@translations/locale';
-import { getInterst } from '@utils/helper';
+import { getInterest } from '@utils/helper';
 
 export default function LoanDetailAction({ data, item }) {
   const { colors } = useTheme();
@@ -17,13 +17,13 @@ export default function LoanDetailAction({ data, item }) {
   const receiver = type != 'receiver';
 
   let days = dayCount(item?.date);
-  let interest = getInterst([{ ...item, interest_rate: interest_rate }]);
+  let interest = getInterest([{ ...item, interest_rate: interest_rate }]);
 
   return (
     <TouchableOpacity
       style={[styles.list, { display: amount == '0' ? 'none' : 'flex' }]}
       onPress={() => navigate('LoanUpdate', { data, item })}>
-      <Text h5 numberOfLines={1} style={{ color: colors.border }}>
+      <Text h5 numberOfLines={1} color={colors.border}>
         {dateTimeFormat(item?.date)}
       </Text>
       <View style={[styles.row, { width: '100%' }]}>

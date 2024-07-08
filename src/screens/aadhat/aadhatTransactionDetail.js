@@ -1,29 +1,26 @@
-import { StyleSheet, View } from 'react-native';
-import React, { useState } from 'react';
-import Loader from '@components/loader';
+import { Alert, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import React, { useCallback, useState } from 'react';
+import { ToastError, ToastSuccess } from '../../utils/toast';
+import Loader from '../../components/loader';
 import { useRoute, useTheme } from '@react-navigation/native';
-import { navigate, replace } from '@navigation/ref';
-import Text from '@components/text';
+import { navigate, replace } from '../../navigation/ref';
+import Text from '../../components/text';
 import {
   currencyFormat,
+  dateFormat,
   dateTimeFormat,
   dayCount,
-  interestFormat,
-} from '@utils/dateformat';
-import Header from '@components/header';
-import Button from '@components/button';
-import { strings } from '@translations/locale';
+} from '../../utils/dateformat';
+import Header from '../../components/header';
+import Button from '../../components/button';
+import { strings } from '../../translations/locale';
 import BaseView from 'src/container/base';
-import auth from '@react-native-firebase/auth';
 import { getInterest } from '@utils/helper';
 import { common } from '@utils/style';
-import { useLang } from '@context/langContext';
 import DeleteModal from '@container/deleteModal';
-import { ToastError, ToastSuccess } from '@utils/toast';
-import { deleteLoanTransaction } from '@network/loan-service';
+import { deleteAmountTransaction } from '@network/aadhat-service';
 
-export default function LoanUpdate() {
-  const { lang } = useLang();
+export default function AadhatTransactionDetail() {
   const { colors } = useTheme();
   const { params } = useRoute();
   const data = params?.data ?? {};
@@ -34,59 +31,88 @@ export default function LoanUpdate() {
   const onDelete = async () => {
     try {
       setLoading(true);
-      await deleteLoanTransaction(item);
+      await deleteAmountTransaction(item);
       setLoading(false);
       ToastSuccess(strings.amount_deleted, strings.amount);
-      navigate('Loan');
+      navigate('Aadhat');
     } catch (error) {
       setLoading(false);
       ToastError(error?.message, strings.loan);
     }
   };
 
-  let interest = getInterest([{ ...item, interest_rate: data?.interest_rate }]);
+  let days = dayCount(item?.date);
+  let interest = getInterest([
+    { ...item, interest_rate: data[0]?.interest_rate },
+  ]);
+
   return (
-    <BaseView space>
+    <BaseView >
       <Loader visible={loading} />
-      <Header back label={data?.name} />
-      <View
-        style={[
+      <Header back label={data[0]?.name} />
+      <ScrollView
+        contentContainerStyle={[
           common.centerAlignedJustify,
           common.card,
           common.shadow,
-          { backgroundColor: colors.background },
+          { backgroundColor: colors.background, margin: 20 },
         ]}>
-        <Text
-          h2
-          color={item?.type == 'receiver' ? colors.success : colors.error}>
-          {lang?.code !== 'en' && data?.name}{' '}
-          {item?.type == 'receiver' ? strings.received_from : strings.gave_him}{' '}
-          {lang?.code == 'en' && data?.name}
+        <Text h5 style={{ marginBottom: 10 }}>
+          {dateTimeFormat(item?.date)}
         </Text>
-        <Text h5>{dateTimeFormat(item?.date)}</Text>
         <View style={styles.card}>
           <Text h4>{strings.total_principal}</Text>
           <Text h3>{currencyFormat(item?.amount)}</Text>
         </View>
         <View style={styles.card}>
           <Text h4>{strings.interest}</Text>
-          <Text h3>{interestFormat(data?.interest_rate)}</Text>
+          <Text h3>{currencyFormat(parseFloat(data[0]?.interest_rate))}</Text>
         </View>
         <View style={styles.card}>
           <Text h4>{strings.day}</Text>
-          <Text h3>{dayCount(item?.date)}</Text>
+          <Text h3>{days}</Text>
         </View>
         <View style={styles.card}>
           <Text h4>{strings.total_interest}</Text>
-          <Text h3>{currencyFormat(interest)}</Text>
+          <Text h3 numberOfLines={1}>
+            {currencyFormat(interest)}
+          </Text>
         </View>
         <View style={styles.card}>
           <Text h4 bold>
             {strings.total_amount}
           </Text>
           <Text h3 bold>
-            {currencyFormat(interest + item.amount)}
+            {currencyFormat(interest + parseFloat(item.amount))}
           </Text>
+        </View>
+        <View
+          style={[
+            common.topline,
+            {
+              marginTop: 20,
+              borderTopColor: colors.border + 50,
+              display: item?.crop ? 'flex' : 'none',
+            },
+          ]}>
+          <View style={styles.card}>
+            <Text h4>{strings.crop}</Text>
+            <Text h3 numberOfLines={1}>
+              {item?.crop}
+            </Text>
+          </View>
+          <View style={styles.card}>
+            <Text h4>{strings.weight}</Text>
+            <Text h3 numberOfLines={1}>
+              {item?.weight}
+            </Text>
+          </View>
+          <View style={styles.card}>
+            <Text h4>{strings.enter_rate}</Text>
+            <Text h3 numberOfLines={1}>
+              {currencyFormat(item?.rate)}
+            </Text>
+          </View>
         </View>
         <View
           style={[
@@ -105,18 +131,18 @@ export default function LoanUpdate() {
             {item?.detail}
           </Text>
         </View>
-      </View>
-      <View style={common.row_btw}>
+      </ScrollView>
+      <View style={[common.row_btw, { margin: 20, maxWidth: '90%' }]}>
         <Button
           iconLeft="edit"
           label={strings.edit}
           btnStyle={{
-            width: '40%',
+            width: '45%',
           }}
           onPress={() =>
-            replace('AddCredit', {
-              data,
-              item
+            replace('AddTransaction', {
+              data: data[0],
+              item,
             })
           }
         />
@@ -124,7 +150,7 @@ export default function LoanUpdate() {
           iconLeft="delete"
           label={strings.delete}
           btnStyle={{
-            width: '40%',
+            width: '45%',
             backgroundColor: colors.error,
           }}
           onPress={() => setOpenModal(true)}
@@ -133,7 +159,7 @@ export default function LoanUpdate() {
       <DeleteModal
         openModal={openModal}
         setOpenModal={setOpenModal}
-        data={data}
+        data={data[0]}
         customDescription={strings.alert_single_delete}
         onDelete={onDelete}
       />

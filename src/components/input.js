@@ -5,6 +5,7 @@ import Icon from './icon';
 import { borderLight } from '@utils/colors';
 import Text from './text';
 import Animated from 'react-native-reanimated';
+import { sizes } from '@utils/fonts';
 
 const Input = ({
   style,
@@ -83,8 +84,9 @@ const styles = StyleSheet.create({
     marginVertical: 5,
   },
   input: {
+    // height: 50,
     paddingHorizontal: 10,
-    fontSize: 20,
+    fontSize: sizes.h3,
     width: '100%',
   },
   label: {

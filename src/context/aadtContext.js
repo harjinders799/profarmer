@@ -1,5 +1,5 @@
 import React from 'react';
-import { getCrops, getInterstAmount } from '../network/interest-service';
+import { getCrops, getInterestAmount } from '../network/interest-service';
 
 const initialState = {
   aadtData: [],
@@ -32,7 +32,7 @@ export const AadtProvider = props => {
       getAadt: async () => {
         dispatch({
           type: 'AADT',
-          aadtData: await getInterstAmount(),
+          aadtData: await getInterestAmount(),
         });
       },
       getCrop: async () => {
