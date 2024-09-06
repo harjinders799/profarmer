@@ -71,7 +71,7 @@ const Header = ({
           <View
             style={[
               common.row_btw,
-              { justifyContent: deleteIcon ? 'space-between' : 'flex-end' },
+              { justifyContent: deleteIcon && share ? 'space-between' : 'flex-end' },
             ]}>
             <Icon
               name="delete"
@@ -81,7 +81,7 @@ const Header = ({
               onPress={onDeletePress}
               style={{ display: deleteIcon ? 'flex' : 'none', marginLeft: -10 }}
             />
-            <Icon name="pdffile1" size={25} onPress={onSharePress} />
+            <Icon name="pdffile1" size={25} onPress={onSharePress} style={{ display: share ? 'flex' : 'none' }} />
           </View>
         ) : (
           rightComponent

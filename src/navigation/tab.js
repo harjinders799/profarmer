@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from 'src/components/icon';
@@ -8,16 +8,20 @@ import { PixelRatio, View } from 'react-native';
 import { useTab } from '../context/tabContext';
 import { tabsData } from '../utils/helper';
 import More from '../screens/more';
+import { strings } from '@translations/locale';
+import { useLang } from '@context/langContext';
 
 const Tab = createBottomTabNavigator();
 
 export default function Tabs() {
   const { tabs } = useTab();
+  const { lang } = useLang();
 
-  const getComponentByName = name => {
-    return tabsData.find(tab => tab?.name == name).component;
-  };
   let data = [...tabs];
+
+  const getComponentByName = useCallback(name => {
+    return tabsData.find(tab => tab?.name == name).component;
+  }, [lang, tabs]);
   // let isSettingExist = data.slice(0, 4).find(o => o.name === tabsData[3].name)
   // if (!isSettingExist?.name) data.splice(3, 0, tabsData[3])
 
@@ -48,7 +52,7 @@ export default function Tabs() {
               name={value.name}
               component={getComponentByName(value.name)}
               options={{
-                title: value?.title,
+                title: strings[value?.title],
                 tabBarIcon: ({ color }) => {
                   return (
                     <Icon

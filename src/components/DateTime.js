@@ -1,38 +1,32 @@
 import React from 'react';
-import {View, StyleSheet} from 'react-native';
-import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import DatePicker from 'react-native-date-picker';
 
-const DateTimePick = props => {
-  const {show, setShow, date, setDate} = props;
-
-  const onChange = selectedDate => {
-    const currentDate = selectedDate || date;
-    setDate(currentDate);
-    setShow(false);
-  };
-
-  const hideDatePicker = () => {
-    setShow(false);
-  };
-
+const DateTimePicker = ({
+  date = new Date(),
+  mode = 'date',
+  setDate,
+  minimumDate = new Date(),
+  show,
+  setShow,
+  ...props
+}) => {
   return (
-    <View style={[styles.screen]}>
-      {show && (
-        <DateTimePickerModal
-          isVisible={show}
-          mode={'date'}
-          onConfirm={onChange}
-          onCancel={hideDatePicker}
-        />
-      )}
-    </View>
+    <DatePicker
+      modal
+      mode={mode}
+      open={show}
+      date={date}
+      onConfirm={date => {
+        setShow(false);
+        setDate(date);
+      }}
+      minimumDate={minimumDate}
+      onCancel={() => {
+        setShow(false);
+      }}
+      {...props}
+    />
   );
 };
 
-const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-  },
-});
-
-export default DateTimePick;
+export default DateTimePicker;

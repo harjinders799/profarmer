@@ -1,121 +1,57 @@
-import { StyleSheet, View } from 'react-native';
-import React, { useState, useCallback } from 'react';
-import Text from 'src/components/text';
-import BaseView from 'src/container/base';
-import { useLang } from 'src/context/langContext';
-import Loader from '../../components/loader';
-import { strings } from '../../translations/locale';
-import Button from '../../components/button';
-import { aqua, black, blue, brown, cyan, gray11, gray4, green, lightGreen, lightOrange, lightYellow, orange, parrot, peach, red, white, yellowLight } from '../../utils/colors';
-
-import { navigate } from 'src/navigation/ref';
-import LoanList from '../../container/loan/loanList';
+import React, { useCallback, useState, memo, lazy, Suspense } from 'react';
+import BaseView from '@container/base';
+import { useLang } from '@context/langContext';
 import { useFocusEffect } from '@react-navigation/native';
-import TimeList from '../../container/timeLine/timeList';
-import { useTimeline } from '../../context/timeContext';
+import { strings } from '@translations/locale';
+import Button from '@components/button';
+import { navigate } from '@navigation/ref';
+import Loader from '@components/loader';
+import Header from '@components/header';
+import { getTimelineData } from '@network/time-service';
 
-export default function Timeline({ navigation }) {
-  const crops = [
-    {
-      label: strings.cotton,
-      crop: 'cotton',
-      backgroundColor: gray11,
-    },
-    {
-      label: strings.rice,
-      crop: 'rice',
-      backgroundColor: gray11,
-    },
-    {
-      label: strings.wheat,
-      crop: 'wheat',
-      backgroundColor: brown,
-    },
-    {
-      label: strings.barley,
-      crop: 'barley',
-      backgroundColor: orange,
-    },
-    {
-      label: strings.mustard,
-      crop: 'mustard',
-      backgroundColor: '#5d421f',
-    },
-    {
-      label: strings.millet,
-      crop: 'millet',
-      backgroundColor: gray4,
-    },
-    {
-      label: strings.maize,
-      crop: 'maize',
-      backgroundColor: lightYellow,
-    },
+// Lazy load LabourList component
+const LabourList = lazy(() => import('@container/labour/labourList'));
 
-    {
-      label: strings.orange,
-      crop: 'orange',
-      backgroundColor: lightOrange,
-    },
+export default function Timeline() {
+  const { lang } = useLang();
+  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState([]);
 
-    {
-      label: strings.guar,
-      crop: 'guar',
-      backgroundColor: lightGreen,
-    },
+  // Optimized data fetching with useCallback
+  const fetchData = useCallback(() => {
+    const unsubscribe = getTimelineData(updatedDocuments => {
+      // console.log({ updatedDocuments });
+      setData(updatedDocuments);
+      setLoading(false);
+    });
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
+  }, [lang]);
 
-    {
-      label: strings.vegetable,
-      crop: 'vegetable',
-      backgroundColor: parrot,
-    },
-    {
-      label: strings.fruit,
-      crop: 'fruit',
-      backgroundColor: peach,
-    },
-    {
-      label: strings.other,
-      crop: 'other',
-      backgroundColor: cyan,
-    },
-  ];
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     getTimeline();
-  //   }, [navigation, lang]),
-  // );
+  useFocusEffect(fetchData);
+
   return (
     <BaseView>
-      <View style={styles.button}>
-        {crops.map(crop => (
-
-          <Button
-            key={crop.label}
-            iconName="plus"
-            iconColor={white}
-            label={crop.label}
-            btnStyle={{
-              width: '47%',
-              height: 50,
-              elevation: 3,
-              backgroundColor: crop.backgroundColor,
-              color: black,
-            }}
-            onPress={() => navigate('TimeDetail', { data: crop })}
-          />
-        ))}
-
-      </View>
+      <Loader visible={loading} />
+      <Header label={strings.timeline} />
+      <Suspense fallback={<Loader visible={true} />}>
+        {/* <LabourList data={data} /> */}
+      </Suspense>
+      <Button
+        iconLeft="plus"
+        label={"Create Timeline"}
+        btnStyle={{
+          maxWidth: '50%',
+          position: 'absolute',
+          bottom: 20,
+          right: 30,
+          zIndex: 999,
+          elevation: 9
+        }}
+        onPress={() => navigate('AddTimeline')}
+      />
     </BaseView>
   );
 }
 
-const styles = StyleSheet.create({
-  button: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    flexWrap: 'wrap',
-    width: '100%',
-  },
-});

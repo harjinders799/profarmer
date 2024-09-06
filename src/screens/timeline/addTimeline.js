@@ -11,24 +11,24 @@ import { goBack } from '@navigation/ref';
 import Header from '@components/header';
 import { FadeInDown } from 'react-native-reanimated';
 import { onChangeValue } from '@utils/helper';
-import { addNewCrop } from '@network/crop-service';
+import { createTimeline } from '@network/time-service';
 
-export default function AddCrop() {
+export default function AddTimeline() {
   const { params } = useRoute();
   const editData = params?.item ?? {};
 
   const [data, setData] = useState({
-    name: editData?.name ?? '',
+    title: editData?.title ?? '',
     variety: editData?.variety ?? '',
     farm: editData?.farm ?? '',
   });
   const [loading, setLoading] = useState(false);
-  const { name, variety, farm } = data;
+  const { title, variety, farm } = data;
 
   const handleSubmit = useCallback(async () => {
     try {
       setLoading(true);
-      await addNewCrop(data);
+      await createTimeline(data);
       setLoading(false);
       ToastSuccess(strings.labour_added, strings.labour);
       goBack();
@@ -41,7 +41,7 @@ export default function AddCrop() {
   return (
     <BaseView>
       <Loader visible={loading} />
-      <Header back label={strings.add_crop} />
+      <Header back label={'Create Timeline'} />
       <ScrollView
         keyboardShouldPersistTaps="always"
         automaticallyAdjustKeyboardInsets
@@ -50,11 +50,11 @@ export default function AddCrop() {
         <View style={styles.form}>
           <Input
             entering={FadeInDown.delay(350)}
-            label={strings.name}
-            placeholder={strings.name}
-            value={name}
+            label={strings.title}
+            placeholder={strings.title}
+            value={title}
             setValue={value =>
-              onChangeValue({ setData, key: 'name', value, isName: true })
+              onChangeValue({ setData, key: 'title', value, isName: true })
             }
           />
           <Input

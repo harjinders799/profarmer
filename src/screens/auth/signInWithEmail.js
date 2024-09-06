@@ -69,7 +69,7 @@ const SignInWithEmail = ({ navigation }) => {
   };
 
   return (
-    <BaseView>
+    <BaseView space>
       <Loader visible={loading} />
       <Logo />
       <Text h2>{strings.welcome}</Text>

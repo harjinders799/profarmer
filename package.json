@@ -3,14 +3,14 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "npx react-native run-android && react-native start --reset-cache",
+    "start": "npx react-native start --reset-cache",
+    "android": "npx react-native run-android",
     "ios": "react-native run-ios",
     "test": "jest",
     "lint": "eslint ."
   },
   "dependencies": {
     "@react-native-clipboard/clipboard": "^1.14.1",
-    "@react-native-community/datetimepicker": "^8.1.1",
     "@react-native-community/netinfo": "^11.3.2",
     "@react-native-firebase/app": "^20.1.0",
     "@react-native-firebase/auth": "^20.1.0",
@@ -28,6 +28,7 @@
     "react-native": "0.74.2",
     "react-native-biometrics": "^3.0.1",
     "react-native-check-version": "^1.1.1",
+    "react-native-date-picker": "^5.0.4",
     "react-native-device-info": "^11.1.0",
     "react-native-flash-message": "^0.4.2",
     "react-native-fs": "^2.20.0",
@@ -36,7 +37,6 @@
     "react-native-localization": "^2.3.2",
     "react-native-mmkv": "^2.12.2",
     "react-native-modal": "^13.0.1",
-    "react-native-modal-datetime-picker": "^17.1.0",
     "react-native-otp-inputs": "^7.4.0",
     "react-native-pin-view": "^3.0.3",
     "react-native-reanimated": "^3.12.1",

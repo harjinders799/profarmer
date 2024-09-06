@@ -4,20 +4,14 @@ import { strings } from '../translations/locale';
 import { MMKV } from 'react-native-mmkv';
 // import PickerStack from '../navigation/pickerStack';
 import LabourStack from '../navigation/labourStack';
-import CottonStack from '../navigation/cottonStack';
 import SettingStack from '../navigation/settingStack';
 import LoanStack from '../navigation/loanStack';
 import Timeline from '../screens/timeline';
 import AAdhatStack from '@navigation/aadhatStack';
+import CropStack from '@navigation/cropStack';
+import Home from '@screens/home';
 
 export const storage = new MMKV();
-
-const removeFirstChar = str => {
-    if (str.length > 1) {
-        return str.substring(1);
-    }
-    return '';
-};
 
 export const onChangeValue = ({
     setData,
@@ -178,52 +172,52 @@ export const calculateTotals = data => {
 };
 
 export const tabsData = [
-    // {
-    //     id: 1,
-    //     name: 'Picker',
-    //     title: strings.pickers,
-    //     component: PickerStack,
-    //     icon: 'flower-poppy',
-    //     iconType: 'MaterialCommunityIcons',
-    // },
     {
         id: 1,
+        name: 'Home',
+        title: 'home',
+        component: Home,
+        icon: 'home',
+    },
+    {
+        id: 2,
         name: 'AadhatStack',
-        title: strings.aadhtiya,
+        title: 'aadhtiya',
         component: AAdhatStack,
         icon: 'shopping-store',
         iconType: 'Fontisto',
     },
     {
-        id: 2,
+        id: 3,
         name: 'LabourStack',
-        title: strings.labour,
+        title: 'labour',
         component: LabourStack,
         icon: 'solution1',
     },
     {
         id: 4,
         name: 'LoanStack',
-        title: strings.loan,
+        title: 'loan',
         component: LoanStack,
         icon: 'sack-percent',
         iconType: 'MaterialCommunityIcons',
     },
+    {
+        id: 5,
+        name: 'CropStack',
+        title: 'crop',
+        component: CropStack,
+        icon: 'wheat-awn',
+        iconType: 'FontAwesome6',
+    },
     // {
-    //     id: 5,
-    //     name: 'Timeline',
-    //     title: 'Timeline',
-    //     component: Timeline,
-    //     icon: 'timeline-text',
+    //     id: 6,
+    //     name: 'Picker',
+    //     title: 'pickers',
+    //     component: Home,
+    //     icon: 'flower-poppy',
     //     iconType: 'MaterialCommunityIcons',
     // },
-    {
-        id: 6,
-        name: 'SettingStack',
-        title: strings.settings,
-        component: SettingStack,
-        icon: 'setting',
-    },
     // {
     //     id: 7,
     //     name: 'Reminder',
@@ -240,6 +234,21 @@ export const tabsData = [
     //     icon: 'flower-outline',
     //     iconType: 'MaterialCommunityIcons',
     // },
+    // {
+    //     id: 9,
+    //     name: 'Grocery',
+    //     title: 'Grocery',
+    //     component: Timeline,
+    //     icon: 'flower-outline',
+    //     iconType: 'MaterialCommunityIcons',
+    // },
+    {
+        id: 10,
+        name: 'SettingStack',
+        title: 'settings',
+        component: SettingStack,
+        icon: 'setting',
+    },
     // {
     //     id: 9,
     //     name: 'Rent',

@@ -138,6 +138,8 @@
 
   "description": "Description",
   "title": "Title",
+  "variety": "Variety",
+  "farm": "Farm",
   "add_event": "Add Event",
   "cotton": "Cotton",
   "rice": "Rice",

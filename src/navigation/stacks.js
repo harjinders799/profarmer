@@ -22,7 +22,6 @@ import NetInfo from '@react-native-community/netinfo';
 // import Analysis from '../screens/picker/analysis';
 // import Group from '../screens/picker/group';
 import CropUpdate from '../screens/crop/cropUpdate';
-import AddCrop from '../screens/crop/addCrop';
 import AboutUs from '../screens/settings/aboutUs';
 import ContactUs from '../screens/settings/contactUs';
 import SalectLanguage from '../screens/settings/salectLanguage';
@@ -39,15 +38,19 @@ import AddLoan from '../screens/loan/addLoan';
 import AddCredit from '../screens/loan/addCredit';
 import LoanDetail from '../screens/loan/loanDetail';
 import LoanUpdate from '../screens/loan/loanUpdate';
-import AddEvent from '../screens/timeline/addEvent';
+import AddEvent from '../screens/crop/addEvent';
 import TimeDetail from '../screens/timeline/timeDetail';
 import Customize from '../screens/settings/customize';
 import NewLabour from '@screens/labour/newLabour';
 import AddTransaction from '@screens/aadhat/addTransaction';
 import AddAadhatiya from '@screens/aadhat/addAadhatiya';
 import AadhatDetail from '@screens/aadhat/aadhatDetail';
-import CropDetail from '@screens/aadhat/cropDetail';
 import AadhatTransactionDetail from '@screens/aadhat/aadhatTransactionDetail';
+import AddTimeline from '@screens/timeline/addTimeline';
+import AddCrop from '@screens/crop/addCrop';
+import CropDetail from '@screens/crop/detail';
+import AAdhatStack from './aadhatStack';
+import SettingStack from './settingStack';
 
 const Stack = createNativeStackNavigator();
 
@@ -83,13 +86,24 @@ export default function Stacks() {
       />
       {/* Aadhat */}
       <Stack.Screen name="AddAadhatiya" component={AddAadhatiya} />
+      <Stack.Screen name="AAdhatStack" component={AAdhatStack} />
       <Stack.Screen name="AddTransaction" component={AddTransaction} />
       <Stack.Screen name="AadhatDetail" component={AadhatDetail} />
-      <Stack.Screen name="CropDetail" component={CropDetail} />
       <Stack.Screen name="AadhatTransactionDetail" component={AadhatTransactionDetail} />
 
-      <Stack.Screen name="Setting" component={Setting} />
+
+      {/* TimeLine */}
+      <Stack.Screen name="AddTimeline" component={AddTimeline} />
+      <Stack.Screen name="TimeDetail" component={TimeDetail} />
+
+      {/* Crop */}
+      <Stack.Screen name="CropUpdate" component={CropUpdate} />
+      <Stack.Screen name="AddCrop" component={AddCrop} />
       <Stack.Screen name="AddEvent" component={AddEvent} />
+      <Stack.Screen name="CropDetail" component={CropDetail} />
+
+
+      <Stack.Screen name="Setting" component={Setting} />
       <Stack.Screen name="AddForm" component={AddForm} />
       {/* <Stack.Screen name="CropDetail" component={CropDetail} /> */}
       {/* <Stack.Screen name="AddPicker" component={AddPicker} />
@@ -98,15 +112,12 @@ export default function Stacks() {
       <Stack.Screen name="PickerDetail" component={PickerDetail} /> */}
       {/* <Stack.Screen name="PickerUpdate" component={PickerUpdate} /> */}
       <Stack.Screen name="LabourUpdate" component={LabourUpdate} />
-      <Stack.Screen name="CropUpdate" component={CropUpdate} />
-      <Stack.Screen name="AddCrop" component={AddCrop} />
       {/* <Stack.Screen name="AddPrice" component={AddPrice} /> */}
       <Stack.Screen name="GiverUpdate" component={GiverUpdate} />
       <Stack.Screen name="LoanUpdate" component={LoanUpdate} />
       <Stack.Screen name="AddLoan" component={AddLoan} />
       <Stack.Screen name="AddCredit" component={AddCredit} />
       <Stack.Screen name="LoanDetail" component={LoanDetail} />
-      <Stack.Screen name="TimeDetail" component={TimeDetail} />
       {/* <Stack.Screen name="Analysis" component={Analysis} /> */}
       {/* <Stack.Screen name="Group" component={Group} /> */}
       {/* <Stack.Screen name="GroupDetail" component={GroupDetail} /> */}
@@ -115,6 +126,7 @@ export default function Stacks() {
       <Stack.Screen name="SalectLanguage" component={SalectLanguage} />
       <Stack.Screen name="EditProfile" component={EditProfile} />
       <Stack.Screen name="Customize" component={Customize} />
+      <Stack.Screen name="SettingStack" component={SettingStack} />
     </Stack.Navigator>
   );
 }

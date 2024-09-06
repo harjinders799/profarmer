@@ -39,59 +39,17 @@ const deleteDocumentById = async (collectionName, id) => {
   }
 };
 
-export const addNewLabour = async data => {
-  try {
-    // Add timeline_data document
-    const labourDataRef = await firestore()
-      .collection('timeline_data')
-      .add(
-        sanitizeData({
-          name: data?.name,
-          is_regular: data?.is_regular,
-          phone: data?.phone,
-          start_date: data?.start_date,
-          total_labour_amount: data?.total_labour_amount,
-          total_labour_count: data?.total_labour_count,
-          labour_rate: data?.labour_rate,
-          given_amount: data?.given_amount,
-          read_access: [data?.phone],
-          full_access: [userId],
-          uid: userId,
-        }),
-      );
-
-    const labourDataId = labourDataRef.id;
-
-    // Add labour_work subcollection document
-    await firestore()
-      .collection('timeline_data')
-      .doc(labourDataId)
-      .collection('labour_work')
-      .add(
-        sanitizeData({
-          ...data,
-          cid: labourDataId,
-          uid: userId,
-          date: currentStamp(),
-        }),
-      );
-
-    return 'success';
-  } catch (error) {
-    console.log(error);
-    throw new Error(error);
-  }
-};
-
-export const createTimeline = async data => {
+export const addNewCrop = data => {
   return new Promise(function (resolve, reject) {
     try {
       firestore()
-        .collection('timeline_data')
+        .collection('crops_data')
         .add(
           sanitizeData({
             ...data,
             uid: userId,
+            total_expense: '0.00',
+            total_earning: '0.00',
             read_access: [],
             full_access: [userId],
           }),
@@ -108,31 +66,44 @@ export const createTimeline = async data => {
   });
 };
 
-export const submitLabourExpense = async data => {
-  try {
-    await firestore()
-      .collection('timeline_data')
-      .doc(data?.cid)
-      .collection('labour_expense')
-      .add(sanitizeData({ ...data, uid: userId }));
-    await firestore().collection('timeline_data').doc(data?.cid).update({
-      given_amount: data?.given_amount,
-    });
-    return 'success';
-  } catch (error) {
-    console.log(error);
-    throw new Error(error);
-  }
+export const submitEvent = data => {
+  return new Promise(function (resolve, reject) {
+    try {
+      let ref = firestore().collection('crops_data').doc(data?.cid);
+      ref
+        .collection('events')
+        .add(sanitizeData(data))
+        .then(() => {
+          ref
+            .update(sanitizeData({
+              total_expense: data?.total_expense,
+              total_earning: data?.total_earning,
+            }))
+            .then(() => {
+              resolve('success');
+            })
+            .catch(error => {
+              reject(new Error(error));
+            });
+        })
+        .catch(error => {
+          reject(new Error(error));
+        });
+    } catch (error) {
+      console.log(error);
+      throw new Error(error);
+    }
+  });
 };
 
 export const submitLabourLeave = async data => {
   try {
     await firestore()
-      .collection('timeline_data')
+      .collection('crops_data')
       .doc(data?.cid)
       .collection('labour_leave')
       .add(sanitizeData({ ...data, uid: userId }));
-    await firestore().collection('timeline_data').doc(data?.cid).update({
+    await firestore().collection('crops_data').doc(data?.cid).update({
       total_leave: data?.total_leave,
     });
     return 'success';
@@ -142,16 +113,16 @@ export const submitLabourLeave = async data => {
   }
 };
 
-export const getTimelineData = onUpdate =>
+export const getCropData = onUpdate =>
   getDocumentsListener(
-    firestore().collection('timeline_data').where('uid', '==', userId),
+    firestore().collection('crops_data').where('uid', '==', userId),
     onUpdate,
   );
 
 export const getLabourRegular = async (name, onUpdate) =>
   getDocumentsListener(
     firestore()
-      .collection('timeline_data')
+      .collection('crops_data')
       .where('uid', '==', userId)
       .where('name' == name),
     onUpdate,
@@ -160,19 +131,19 @@ export const getLabourRegular = async (name, onUpdate) =>
 export const getLabourExpense = (id, onUpdate) =>
   getDocumentsListener(
     firestore()
-      .collection('timeline_data')
+      .collection('crops_data')
       .doc(id)
       .collection('labour_expense')
       .orderBy('date', 'desc'),
     onUpdate,
   );
 
-export const getLabourWork = (id, onUpdate) =>
+export const getCropEvents = (id, onUpdate) =>
   getDocumentsListener(
     firestore()
-      .collection('timeline_data')
+      .collection('crops_data')
       .doc(id)
-      .collection('labour_work')
+      .collection('events')
       .orderBy('date', 'desc'),
     onUpdate,
   );
@@ -180,7 +151,7 @@ export const getLabourWork = (id, onUpdate) =>
 export const getLabourLeave = (id, onUpdate) =>
   getDocumentsListener(
     firestore()
-      .collection('timeline_data')
+      .collection('crops_data')
       .doc(id)
       .collection('labour_leave')
       .orderBy('date', 'desc'),
@@ -190,12 +161,12 @@ export const getLabourLeave = (id, onUpdate) =>
 export const updateLabour = async data => {
   try {
     await firestore()
-      .collection('timeline_data')
+      .collection('crops_data')
       .doc(data?.cid)
       .collection('labour_work')
       .doc(data?.id)
       .update(sanitizeData(data));
-    await firestore().collection('timeline_data').doc(data?.cid).update({
+    await firestore().collection('crops_data').doc(data?.cid).update({
       total_labour_amount: data?.total_labour_amount,
       total_labour_count: data?.total_labour_count,
       labour_rate: data?.labour_rate,
@@ -210,12 +181,12 @@ export const updateLabour = async data => {
 export const updateLabourLeave = async data => {
   try {
     await firestore()
-      .collection('timeline_data')
+      .collection('crops_data')
       .doc(data?.cid)
       .collection('labour_leave')
       .doc(data?.id)
       .update(sanitizeData(data));
-    await firestore().collection('timeline_data').doc(data?.cid).update({
+    await firestore().collection('crops_data').doc(data?.cid).update({
       total_leave: data?.total_leave,
     });
     return 'success';
@@ -227,12 +198,12 @@ export const updateLabourLeave = async data => {
 export const updateLabourExpense = async data => {
   try {
     await firestore()
-      .collection('timeline_data')
+      .collection('crops_data')
       .doc(data?.cid)
       .collection('labour_expense')
       .doc(data?.id)
       .update(sanitizeData(data));
-    await firestore().collection('timeline_data').doc(data?.cid).update({
+    await firestore().collection('crops_data').doc(data?.cid).update({
       given_amount: data?.given_amount,
     });
     return 'success';
@@ -241,10 +212,10 @@ export const updateLabourExpense = async data => {
   }
 };
 
-// Function to update timeline_data document calculation
+// Function to update crops_data document calculation
 export const updateLabourDataCalculation = async labourId => {
   try {
-    const labourDocRef = firestore().collection('timeline_data').doc(labourId);
+    const labourDocRef = firestore().collection('crops_data').doc(labourId);
     const labourDataSnapshot = await labourDocRef.get();
 
     if (labourDataSnapshot.exists) {
@@ -284,7 +255,7 @@ export const updateLabourDataCalculation = async labourId => {
         totalLeave += leaveCount;
       });
 
-      // Update timeline_data document with calculated values
+      // Update crops_data document with calculated values
       await labourDocRef.set(
         {
           total_labour_amount: totalLabourAmount.toFixed(2), // Example formatting
@@ -297,19 +268,19 @@ export const updateLabourDataCalculation = async labourId => {
         { merge: true },
       );
 
-      console.log('timeline data updated successfully.');
+      console.log('crop data updated successfully.');
     } else {
-      console.error('timeline data document does not exist.');
+      console.error('crop data document does not exist.');
     }
   } catch (error) {
-    console.error('Error saving or updating timeline data:', error);
+    console.error('Error saving or updating crop data:', error);
   }
 };
 
 export const deleteLabourExpense = async data => {
   try {
     await firestore()
-      .collection('timeline_data')
+      .collection('crops_data')
       .doc(data.cid)
       .collection('labour_expense')
       .doc(data.id)
@@ -323,7 +294,7 @@ export const deleteLabourExpense = async data => {
 export const deleteLabour = async data => {
   try {
     await firestore()
-      .collection('timeline_data')
+      .collection('crops_data')
       .doc(data.cid)
       .collection('labour_work')
       .doc(data.id)
@@ -336,9 +307,9 @@ export const deleteLabour = async data => {
 export const deleteLabourLeave = async id =>
   deleteDocumentById('labour_leave', id);
 
-export const deleteLabourCollection = async id => {
+export const deleteCropCollection = async id => {
   try {
-    await firestore().collection('timeline_data').doc(id).delete();
+    await firestore().collection('crops_data').doc(id).delete();
     return 'success';
   } catch (error) {
     throw new Error(error);
@@ -347,16 +318,16 @@ export const deleteLabourCollection = async id => {
 
 // const migrateData = async () => {
 //   try {
-//     const timelinenapshot = await firestore().collection('labour').get();
+//     const cropnapshot = await firestore().collection('labour').get();
 //     const expenseSnapshot = await firestore().collection('labour_expense').get();
 //     const leaveSnapshot = await firestore().collection('labour_leave').get();
 
 //     const batch = firestore().batch();
 
 //     // Migrate labour collection data
-//     timelinenapshot.forEach(doc => {
+//     cropnapshot.forEach(doc => {
 //       const { labour, is_regular, uid, count, detail, date, rate } = doc.data();
-//       const newLabourRef = firestore().collection('timeline').doc(doc.id);
+//       const newLabourRef = firestore().collection('crop').doc(doc.id);
 
 //       // Set labour document with new structure, using default values if necessary
 //       batch.set(newLabourRef, sanitizeData({
@@ -451,11 +422,11 @@ export const deleteLabourCollection = async id => {
 //     backup.users = usersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
 //     // Backup labour collection
-//     const timelinenapshot = await firestore().collection('labour').get();
-//     backup.labour = timelinenapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+//     const cropnapshot = await firestore().collection('labour').get();
+//     backup.labour = cropnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-//     const timelineSnapshot = await firestore().collection('timeline').get();
-//     backup.timeline = timelineSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+//     const cropSnapshot = await firestore().collection('crop').get();
+//     backup.crop = cropSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
 //     // Backup labour_expense collection
 //     const expenseSnapshot = await firestore().collection('labour_expense').get();
@@ -490,14 +461,14 @@ export const deleteLabourCollection = async id => {
 
 const migrateLabourData = async () => {
   try {
-    const timelinenapshot = await firestore().collection('labour').get();
+    const cropnapshot = await firestore().collection('labour').get();
     const batch = firestore().batch();
 
     // Migrate labour collection data
-    for (const doc of timelinenapshot.docs) {
+    for (const doc of cropnapshot.docs) {
       const { labour, is_regulare, uid, count, detail, date, rate } = doc.data();
 
-      const newLabourRef = firestore().collection('timeline_data').doc(doc.id);
+      const newLabourRef = firestore().collection('crops_data').doc(doc.id);
 
       // Set labour document with new structure
       batch.set(

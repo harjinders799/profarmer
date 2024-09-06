@@ -70,7 +70,7 @@ export default function Setting({ navigation }) {
         {/* <View style={{ flex: 1 }}>
           <More />
         </View> */}
-        <View
+        {/* <View
           style={{
             flexDirection: 'row',
             flexWrap: 'wrap',
@@ -96,7 +96,7 @@ export default function Setting({ navigation }) {
               </Text>
             </TouchableOpacity>
           ))}
-        </View>
+        </View> */}
         <View style={styles.footer}>
           <TouchableOpacity
             style={styles.row}
@@ -190,5 +190,6 @@ const styles = StyleSheet.create({
   footer: {
     borderRadius: 10,
     padding: 10,
+    marginTop: 30
   },
 });
