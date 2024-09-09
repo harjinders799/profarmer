@@ -1,10 +1,10 @@
 import { useTheme } from '@react-navigation/native';
 import React from 'react';
-import { StatusBar, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { StatusBar, StyleSheet, View } from 'react-native';
 import { common } from 'src/utils/style';
 import { WIDTH, isIOS } from '../utils/constants';
 
-const BaseView = ({ style, space = false, addBtn, onPress, children }) => {
+const BaseView = ({ style, space = false, children }) => {
   const { colors, dark } = useTheme();
   return (
     <View
@@ -16,11 +16,22 @@ const BaseView = ({ style, space = false, addBtn, onPress, children }) => {
         style,
       ]}>
       {isIOS ? (
-        <View style={{ backgroundColor: colors.background, height: 50, width: WIDTH }} >
-          <StatusBar backgroundColor={colors.background} barStyle="light-content" />
+        <View
+          style={{
+            backgroundColor: colors.background,
+            height: 50,
+            width: WIDTH,
+          }}>
+          <StatusBar
+            backgroundColor={colors.background}
+            barStyle={dark ? 'light-content' : 'dark-content'}
+          />
         </View>
       ) : (
-        <StatusBar backgroundColor={colors.background} barStyle={dark ? 'light-content' : 'dark-content'} />
+        <StatusBar
+          backgroundColor={colors.background}
+          barStyle={dark ? 'light-content' : 'dark-content'}
+        />
       )}
       {children}
     </View>

@@ -2,10 +2,9 @@ import { useTheme } from '@react-navigation/native';
 import React from 'react';
 import { StyleSheet, TextInput, View } from 'react-native';
 import Icon from './icon';
-import { borderLight } from '@utils/colors';
 import Text from './text';
 import Animated from 'react-native-reanimated';
-import { sizes } from '@utils/fonts';
+import { hp, sizes } from '@utils/fonts';
 
 const Input = ({
   style,
@@ -61,6 +60,7 @@ const Input = ({
           multiline={multiline}
           style={[styles.input, { color: colors.text }, inputStyle]}
           value={value}
+          selectionColor={colors.primary}
           onChangeText={text => setValue(text)}
           placeholder={placeholder}
           keyboardType={
@@ -84,9 +84,11 @@ const styles = StyleSheet.create({
     marginVertical: 5,
   },
   input: {
-    // height: 50,
+    height: 45,
+    textAlignVertical: 'center',
+    // paddingVertical: hp(1),
     paddingHorizontal: 10,
-    fontSize: sizes.h3,
+    fontSize: sizes.h4,
     width: '100%',
   },
   label: {

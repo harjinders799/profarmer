@@ -3,11 +3,11 @@ import firestore from '@react-native-firebase/firestore';
 import { calculateLoanDetails, sanitizeData } from '@utils/helper';
 import { ToastError } from '@utils/toast';
 
-let uid = auth().currentUser?.uid;
 
 export const addAadhatiya = async data => {
   return new Promise(async function (resolve, reject) {
     try {
+      let uid = auth().currentUser?.uid;
       await firestore()
         .collection('aadhat_data')
         .add({
@@ -26,6 +26,7 @@ export const addAadhatiya = async data => {
 
 export const aadhatDataListener = (onUpdate, unsubscribeFunctions = []) => {
   try {
+    let uid = auth().currentUser?.uid;
     const unsubscribeMain = firestore()
       .collection('aadhat_data')
       .where('uid', '==', uid)

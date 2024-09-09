@@ -53,20 +53,9 @@ export default function EditProfile({ navigation }) {
         }
     };
     return (
-        <BaseView>
+        <BaseView space>
             <Loader visible={loading} />
-            <Header
-                leftComponent={
-                    <Icon
-                        name="back"
-                        size={28}
-                        color={colors.text}
-                        onPress={() => goBack()}
-                    />
-                }
-                centerComponent={<Text h2>{"Profile"}</Text>}
-                rightComponent={<Text h2> </Text>}
-            />
+            <Header back label={'Profile'} />
             <ScrollView style={{ width: '100%' }} showsVerticalScrollIndicator={false}>
                 {/* <Profile
                     size={150}
@@ -79,7 +68,9 @@ export default function EditProfile({ navigation }) {
                 <View style={styles.body}>
                     <Input
                         placeholder={strings.name}
-                        value={name} setValue={v => updateData('name', v)} />
+                        value={name}
+                        setValue={v => updateData('name', v)}
+                    />
                     <Input
                         value={phone}
                         placeholder={strings.phone}

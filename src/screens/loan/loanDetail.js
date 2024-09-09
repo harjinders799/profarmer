@@ -21,6 +21,7 @@ import LoanDetailAction from '../../components/loanDetailAction';
 import { common } from '@utils/style';
 import DeleteModal from '@container/deleteModal';
 import { loanHTMLFormat } from '@html/loan';
+import auth from '@react-native-firebase/auth';
 
 const transparent = 'rgba(0,0,0,0.5)';
 
@@ -77,7 +78,7 @@ export default function LoanDetail() {
         back
         label={data?.name}
         share
-        deleteIcon
+        deleteIcon={data?.uid == auth().currentUser.uid}
         onDeletePress={() => setOpenModal(true)}
         onSharePress={handleShare}
       />
@@ -197,7 +198,6 @@ export default function LoanDetail() {
             {data?.finalAmount < 0 ? strings.give : strings.receive}
           </Text>
         </View>
-
         {Array.isArray(data?.transactions) && data.transactions.length ? (
           sortBy(
             data.transactions,
@@ -217,6 +217,7 @@ export default function LoanDetail() {
         hitSlop={10}
         label={strings.receive}
         btnStyle={{
+          display: data?.uid == auth().currentUser.uid ? 'flex' : 'none',
           backgroundColor: colors.error,
           width: '40%',
           position: 'absolute',
@@ -238,6 +239,7 @@ export default function LoanDetail() {
         hitSlop={10}
         label={strings.give}
         btnStyle={{
+          display: data?.uid == auth().currentUser.uid ? 'flex' : 'none',
           backgroundColor: colors.success,
           width: '40%',
           position: 'absolute',

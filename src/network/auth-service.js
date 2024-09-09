@@ -15,8 +15,7 @@ export const SignInWithEmailUser = async (email, password) => {
     return await auth().signInWithEmailAndPassword(email, password);
   } catch (error) {
     if (error.code === 'auth/user-not-found') {
-      throw error
-      // return SignUpUser(email, password);
+      throw error;
     } else {
       throw error;
     }
@@ -73,15 +72,15 @@ export const submitUser = async data => {
 export const UpdateUser = async data => {
   try {
     let id = auth().currentUser?.uid;
-    return await firestore().collection('users').doc(id)
-      .update({
-        name: data?.name,
-        phone: data?.phone,
-        email: data?.email,
-        id: id,
-      });
+    await auth().currentUser.updateProfile({ displayName: data?.name });
+    return await firestore().collection('users').doc(id).update({
+      name: data?.name,
+      phone: data?.phone,
+      email: data?.email,
+      id: id,
+    });
   } catch (error) {
-    submitUser(data)
+    submitUser(data);
     return error;
   }
 };
@@ -92,4 +91,42 @@ export const logout = async () => {
   } catch (error) {
     return error;
   }
+};
+
+export const getUserByPhone = async phone => {
+  return new Promise(async function (resolve, reject) {
+    try {
+      await firestore()
+        .collection('users')
+        .where('phone', '==', phone)
+        .get()
+        .then(querySnapshot => {
+          if (!querySnapshot.empty)
+            querySnapshot.forEach(children => {
+              if (children.exists) resolve(children.data());
+              else resolve('user not found');
+            });
+          else resolve('user not found')
+        })
+        .catch(error => {
+          reject(new Error(error));
+        });
+    } catch (error) {
+      reject(new Error(error));
+    }
+  });
+};
+
+export const getUserById = async id => {
+  return new Promise(async function (resolve, reject) {
+    try {
+      let res = await firestore()
+        .collection('users')
+        .doc(id)
+        .get()
+      resolve(res.data())
+    } catch (error) {
+      reject(new Error(error));
+    }
+  });
 };

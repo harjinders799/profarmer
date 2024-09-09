@@ -4,8 +4,6 @@ import RNFS from 'react-native-fs';
 import { sanitizeData } from '@utils/helper';
 import { currentStamp } from '@utils/dateformat';
 
-const getCurrentUserId = () => auth().currentUser?.uid;
-const userId = getCurrentUserId();
 
 const getDocumentsListener = (query, onUpdate) => {
   try {
@@ -41,6 +39,7 @@ const deleteDocumentById = async (collectionName, id) => {
 
 export const addNewLabour = async data => {
   try {
+    let userId = auth().currentUser?.uid;
     // Add timeline_data document
     const labourDataRef = await firestore()
       .collection('timeline_data')
@@ -86,6 +85,7 @@ export const addNewLabour = async data => {
 export const createTimeline = async data => {
   return new Promise(function (resolve, reject) {
     try {
+      let userId = auth().currentUser?.uid;
       firestore()
         .collection('timeline_data')
         .add(
@@ -110,6 +110,7 @@ export const createTimeline = async data => {
 
 export const submitLabourExpense = async data => {
   try {
+    let userId = auth().currentUser?.uid;
     await firestore()
       .collection('timeline_data')
       .doc(data?.cid)
@@ -127,6 +128,7 @@ export const submitLabourExpense = async data => {
 
 export const submitLabourLeave = async data => {
   try {
+    let userId = auth().currentUser?.uid;
     await firestore()
       .collection('timeline_data')
       .doc(data?.cid)
@@ -144,7 +146,8 @@ export const submitLabourLeave = async data => {
 
 export const getTimelineData = onUpdate =>
   getDocumentsListener(
-    firestore().collection('timeline_data').where('uid', '==', userId),
+    firestore().collection('timeline_data').where('uid', '==', auth().currentUser?.uid
+    ),
     onUpdate,
   );
 
@@ -152,7 +155,7 @@ export const getLabourRegular = async (name, onUpdate) =>
   getDocumentsListener(
     firestore()
       .collection('timeline_data')
-      .where('uid', '==', userId)
+      .where('uid', '==', auth().currentUser?.uid)
       .where('name' == name),
     onUpdate,
   );

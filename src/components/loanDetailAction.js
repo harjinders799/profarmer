@@ -9,12 +9,13 @@ import { currencyFormat } from '../utils/dateformat';
 import { common } from '@utils/style';
 import { strings } from '@translations/locale';
 import { getInterest } from '@utils/helper';
+import auth from '@react-native-firebase/auth';
 
 export default function LoanDetailAction({ data, item }) {
   const { colors } = useTheme();
   const { interest_rate } = data;
   const { type, amount } = item;
-  const receiver = type != 'receiver';
+  const giver = type == 'giver' && data?.uid == auth().currentUser.uid;
 
   let days = dayCount(item?.date);
   let interest = getInterest([{ ...item, interest_rate: interest_rate }]);
@@ -41,10 +42,13 @@ export default function LoanDetailAction({ data, item }) {
             h5
             style={{
               width: '100%',
-              textAlign: receiver ? 'right' : 'left',
-              color: receiver ? colors.success : colors.error,
+              textAlign: giver ? 'right' : 'left',
+              color: giver ? colors.success : colors.error,
             }}>
             {currencyFormat(parseFloat(amount))}
+            <Text h8 color={giver ? colors.success : colors.error}>
+              {giver ? 'Given' : 'Taken'}
+            </Text>
           </Text>
         </View>
       </View>

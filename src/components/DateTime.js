@@ -5,7 +5,6 @@ const DateTimePicker = ({
   date = new Date(),
   mode = 'date',
   setDate,
-  minimumDate = new Date(),
   show,
   setShow,
   ...props
@@ -20,7 +19,6 @@ const DateTimePicker = ({
         setShow(false);
         setDate(date);
       }}
-      minimumDate={minimumDate}
       onCancel={() => {
         setShow(false);
       }}

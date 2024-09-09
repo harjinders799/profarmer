@@ -1,96 +1,105 @@
-import firestore from '@react-native-firebase/firestore';
+import firestore, { Filter } from '@react-native-firebase/firestore';
 import Auth from '@react-native-firebase/auth';
 import auth from '@react-native-firebase/auth';
 import { ToastError } from '@utils/toast';
 import { calculateLoanDetails, sanitizeData } from '@utils/helper';
 
-let userId = auth().currentUser?.uid;
 
-export const getLoansData = onUpdate =>
-  getDocumentsListener(
-    firestore().collection('loans_data').where('uid', '==', userId),
-    onUpdate,
-  );
-
-const getDocumentsListener = (query, onUpdate) => {
+export const loansDataListener = (
+  onUpdate,
+  unsubscribeFunctions = [],
+  phone,
+) => {
   try {
-    // Listen for real-time updates
-    const unsubscribe = query.onSnapshot(
-      querySnapshot => {
-        const documents = querySnapshot.docs.map(doc => ({
-          ...doc.data(),
-          id: doc.id,
-        }));
-        if (onUpdate) onUpdate(documents); // Call the callback function with updated documents
-      },
-      error => {
-        ToastError(error?.message, 'Loan');
-        throw new Error(error);
-      },
-    );
-    return unsubscribe;
-  } catch (error) {
-    ToastError(error?.message, 'Loan');
-    throw new Error(error);
-  }
-};
+    const userId = auth().currentUser?.uid;
 
-export const loansDataListener = (onUpdate, unsubscribeFunctions = []) => {
-  try {
-    const unsubscribeMain = firestore()
-      .collection('loans_data')
+    // Create queries
+    const query1 = firestore().collection('loans_data')
+      .where('read_access', 'array-contains', phone)
+      .get();
+
+    const query2 = firestore().collection('loans_data')
       .where('uid', '==', userId)
-      .orderBy('name', 'asc')
-      .onSnapshot(querySnapshot => {
-        const loansData = [];
-        const promises = [];
+      .get();
 
-        unsubscribeFunctions.forEach(unsub => unsub());
-        unsubscribeFunctions.length = 0;
+    // Function to handle the combined results of both queries
+    const handleQueryResults = (snapshot1, snapshot2) => {
+      const loansData = [];
+      const promises = [];
 
-        querySnapshot.forEach(doc => {
-          const loanData = doc.data();
-          loanData.id = doc.id;
-          loanData.transactions = [];
+      // Create a Set to avoid duplicate entries
+      const docSet = new Map();
 
-          const unsubscribe = doc.ref
-            .collection('transactions')
-            .orderBy('date', 'desc')
-            .onSnapshot(subSnapshot => {
-              const transactions = [];
-              subSnapshot.forEach(transactionDoc => {
-                transactions.push({
-                  ...transactionDoc.data(),
-                  lid: doc.id,
-                  id: transactionDoc.id,
-                });
+      // Add documents from the first query
+      snapshot1.forEach(doc => {
+        docSet.set(doc.id, doc);
+      });
+
+      // Add documents from the second query
+      snapshot2.forEach(doc => {
+        docSet.set(doc.id, doc);
+      });
+
+      // Clear previous unsubscriptions
+      unsubscribeFunctions.forEach(unsub => unsub());
+      unsubscribeFunctions.length = 0;
+
+      // Create a new unsubscribe function for each document's transactions
+      docSet.forEach(doc => {
+        const loanData = doc.data();
+        loanData.id = doc.id;
+        loanData.transactions = [];
+
+        const unsubscribe = doc.ref
+          .collection('transactions')
+          .orderBy('date', 'desc')
+          .onSnapshot(subSnapshot => {
+            const transactions = [];
+            subSnapshot.forEach(transactionDoc => {
+              transactions.push({
+                ...transactionDoc.data(),
+                lid: doc.id,
+                id: transactionDoc.id,
               });
-              loanData.transactions = transactions;
-
-              calculateLoanDetails(loansData, loanData);
             });
+            loanData.transactions = transactions;
 
-          unsubscribeFunctions.push(unsubscribe);
-          promises.push(doc.ref.collection('transactions').get());
-          loansData.push(loanData);
-        });
-        Promise.all(promises).then(() => {
-          loansData.forEach(loanData => {
             calculateLoanDetails(loansData, loanData);
           });
-          if (onUpdate) onUpdate([...loansData]);
-        });
+
+        unsubscribeFunctions.push(unsubscribe);
+        promises.push(doc.ref.collection('transactions').get());
+        loansData.push(loanData);
       });
-    return unsubscribeMain;
+
+      // Wait for all transaction queries to complete
+      Promise.all(promises).then(() => {
+        loansData.forEach(loanData => {
+          calculateLoanDetails(loansData, loanData);
+        });
+        if (onUpdate) onUpdate([...loansData]);
+      });
+    };
+
+    // Run both queries and handle their results
+    Promise.all([query1, query2])
+      .then(([snapshot1, snapshot2]) => handleQueryResults(snapshot1, snapshot2))
+      .catch(error => {
+        ToastError(error?.message, 'Loan');
+        throw new Error(error);
+      });
+
   } catch (error) {
     ToastError(error?.message, 'Loan');
     throw new Error(error);
   }
 };
+
 
 export const submitLoan = async data => {
   return new Promise(async function (resolve, reject) {
     try {
+      let userId = auth().currentUser?.uid;
       await firestore()
         .collection('loans_data')
         .add({
@@ -124,6 +133,8 @@ export const addLoanAmount = async data => {
 export const getLoanData = () => {
   return new Promise(function (resolve, reject) {
     try {
+      let userId = auth().currentUser?.uid;
+
       firestore()
         .collection('loan')
         .where('uid', '==', userId)
@@ -187,6 +198,8 @@ export const updateLoanTransaction = async data => {
 export const updateLoanName = async (name, data) => {
   return new Promise(async function (resolve, reject) {
     try {
+      let userId = auth().currentUser?.uid;
+
       const usersQuerySnapshot = await firestore()
         .collection('loan')
         .where(
@@ -241,10 +254,11 @@ export const deleteLoanCollection = async id => {
 const db = firestore();
 
 async function migrateLoanData() {
+  const userId = auth().currentUser?.uid;
   try {
     const oldLoansRef = db.collection('loan');
     const snapshot = await oldLoansRef
-      // .where('uid', '==', userId)
+      .where('uid', '==', userId)
       .get();
 
     if (snapshot.empty) {

@@ -1,5 +1,5 @@
 import { StyleSheet, View } from 'react-native';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Loader from '@components/loader';
 import { useRoute, useTheme } from '@react-navigation/native';
 import { navigate, replace } from '@navigation/ref';
@@ -21,6 +21,7 @@ import { useLang } from '@context/langContext';
 import DeleteModal from '@container/deleteModal';
 import { ToastError, ToastSuccess } from '@utils/toast';
 import { deleteLoanTransaction } from '@network/loan-service';
+import { getUserById } from '@network/auth-service';
 
 export default function LoanUpdate() {
   const { lang } = useLang();
@@ -30,6 +31,18 @@ export default function LoanUpdate() {
   const item = params?.item ?? {};
   const [loading, setLoading] = useState(false);
   const [openModal, setOpenModal] = useState(false);
+  const [owner, setOwner] = useState();
+
+  useEffect(() => {
+    getOwner();
+  }, [data]);
+
+  const getOwner = async () => {
+    console.log('-------');
+    let res = await getUserById(data.uid);
+    console.log({ res });
+    setOwner(res);
+  };
 
   const onDelete = async () => {
     try {
@@ -45,6 +58,7 @@ export default function LoanUpdate() {
   };
 
   let interest = getInterest([{ ...item, interest_rate: data?.interest_rate }]);
+  console.log(owner);
   return (
     <BaseView space>
       <Loader visible={loading} />
@@ -56,13 +70,17 @@ export default function LoanUpdate() {
           common.shadow,
           { backgroundColor: colors.background },
         ]}>
-        <Text
-          h2
-          color={item?.type == 'receiver' ? colors.success : colors.error}>
-          {lang?.code !== 'en' && data?.name}{' '}
-          {item?.type == 'receiver' ? strings.received_from : strings.gave_him}{' '}
-          {lang?.code == 'en' && data?.name}
-        </Text>
+        {item?.type == 'giver' && data?.uid == auth().currentUser.uid ? (
+          <Text h2 color={colors.error}>
+            {lang?.code !== 'en' && data?.name} {strings.gave_him}{' '}
+            {lang?.code == 'en' && data?.name}
+          </Text>
+        ) : (
+          <Text h2 color={colors.success}>
+            {lang?.code !== 'en' && owner?.name} {strings.received_from}{' '}
+            {lang?.code == 'en' && owner?.name}
+          </Text>
+        )}
         <Text h5>{dateTimeFormat(item?.date)}</Text>
         <View style={styles.card}>
           <Text h4>{strings.total_principal}</Text>
@@ -106,7 +124,11 @@ export default function LoanUpdate() {
           </Text>
         </View>
       </View>
-      <View style={common.row_btw}>
+      <View
+        style={[
+          common.row_btw,
+          { display: data?.uid == auth().currentUser.uid ? 'flex' : 'none' },
+        ]}>
         <Button
           iconLeft="edit"
           label={strings.edit}
@@ -116,7 +138,7 @@ export default function LoanUpdate() {
           onPress={() =>
             replace('AddCredit', {
               data,
-              item
+              item,
             })
           }
         />

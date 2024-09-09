@@ -10,7 +10,7 @@ import Timeline from '../screens/timeline';
 import AAdhatStack from '@navigation/aadhatStack';
 import CropStack from '@navigation/cropStack';
 import Home from '@screens/home';
-
+import auth from '@react-native-firebase/auth';
 export const storage = new MMKV();
 
 export const onChangeValue = ({
@@ -82,12 +82,15 @@ export const calculateLoanDetails = (loansData, loanData) => {
                 30) *
             days;
 
-        if (v.type === 'giver') {
+        if (v.type === 'giver' && loanData?.uid == auth().currentUser.uid) {
             totalGivenAmount += parseFloat(v.amount);
             totalGivenAmountInterest += parseFloat(interest);
             totalGivenAmountWithInterest +=
                 parseFloat(interest) + parseFloat(v.amount);
-        } else if (v.type === 'receiver') {
+        } else if (
+            v.type === 'receiver' ||
+            (v.type === 'giver' && loanData?.uid != auth().currentUser.uid)
+        ) {
             totalReceivedAmount += parseFloat(v.amount);
             totalReceivedAmountInterest += parseFloat(interest);
             totalReceivedAmountWithInterest +=

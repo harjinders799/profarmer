@@ -61,6 +61,18 @@ const SignInWithEmail = ({ navigation }) => {
         .catch(error => {
           setLoading(false);
           ToastError(error?.message, 'SignInWithEmail');
+          Alert.alert("SignUp", "Do you want to create new account?", ([
+            {
+              text: 'Yes', onPress: async () => {
+                try {
+                  await SignUpUser(state.email, state.password)
+                } catch (error) {
+                  ToastError(error?.message)
+                }
+              }
+            },
+            { text: 'No' }
+          ]))
         });
     } catch (error) {
       setLoading(false);

@@ -4,9 +4,6 @@ import RNFS from 'react-native-fs';
 import { sanitizeData } from '@utils/helper';
 import { currentStamp } from '@utils/dateformat';
 
-const getCurrentUserId = () => auth().currentUser?.uid;
-const userId = getCurrentUserId();
-
 
 const getDocumentsListener = (query, onUpdate) => {
   try {
@@ -42,6 +39,7 @@ const deleteDocumentById = async (collectionName, id) => {
 
 export const addNewLabour = async data => {
   try {
+    let userId = auth().currentUser?.uid;
     // Add labours_data document
     const labourDataRef = await firestore()
       .collection('labours_data')
@@ -86,6 +84,7 @@ export const addNewLabour = async data => {
 
 export const submitLabour = async data => {
   try {
+    let userId = auth().currentUser?.uid;
     await firestore()
       .collection('labours_data')
       .doc(data?.cid)
@@ -105,6 +104,7 @@ export const submitLabour = async data => {
 
 export const submitLabourExpense = async data => {
   try {
+    let userId = auth().currentUser?.uid;
     await firestore()
       .collection('labours_data')
       .doc(data?.cid)
@@ -122,6 +122,7 @@ export const submitLabourExpense = async data => {
 
 export const submitLabourLeave = async data => {
   try {
+    let userId = auth().currentUser?.uid;
     await firestore()
       .collection('labours_data')
       .doc(data?.cid)
@@ -139,7 +140,7 @@ export const submitLabourLeave = async data => {
 
 export const getLabourData = onUpdate =>
   getDocumentsListener(
-    firestore().collection('labours_data').where('uid', '==', userId),
+    firestore().collection('labours_data').where('uid', '==', auth().currentUser?.uid),
     onUpdate,
   );
 
@@ -147,7 +148,7 @@ export const getLabourRegular = async (name, onUpdate) =>
   getDocumentsListener(
     firestore()
       .collection('labours_data')
-      .where('uid', '==', userId)
+      .where('uid', '==', auth().currentUser?.uid)
       .where('name' == name),
     onUpdate,
   );
@@ -566,4 +567,4 @@ const deleteCollection = async collectionName => {
   console.log(`Collection ${collectionName} deleted`);
 };
 
-// migrateLabourData();
+migrateLabourData();

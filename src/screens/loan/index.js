@@ -10,8 +10,10 @@ import { useFocusEffect } from '@react-navigation/native';
 import Header from '@components/header';
 import { loansDataListener } from '@network/loan-service';
 import LoanConclusion from '@container/loan/loanConclusion';
+import { useAuth } from '@context/authContext';
 
 function Loan() {
+  const { user } = useAuth()
   const { lang } = useLang();
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -22,7 +24,7 @@ function Loan() {
     const unsubscribe = loansDataListener(updatedDocuments => {
       setData(updatedDocuments);
       setLoading(false);
-    }, unsubscribeFunctions);
+    }, unsubscribeFunctions, user?.phone);
     return () => {
       if (unsubscribe) unsubscribe();
       unsubscribeFunctions.forEach(unsub => unsub());
@@ -30,7 +32,7 @@ function Loan() {
   }, [lang]);
 
   useFocusEffect(fetchData);
-
+  console.log(data)
   return (
     <BaseView>
       <Loader visible={loading} />

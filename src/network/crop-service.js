@@ -4,9 +4,6 @@ import RNFS from 'react-native-fs';
 import { sanitizeData } from '@utils/helper';
 import { currentStamp } from '@utils/dateformat';
 
-const getCurrentUserId = () => auth().currentUser?.uid;
-const userId = getCurrentUserId();
-
 const getDocumentsListener = (query, onUpdate) => {
   try {
     // Listen for real-time updates
@@ -42,6 +39,7 @@ const deleteDocumentById = async (collectionName, id) => {
 export const addNewCrop = data => {
   return new Promise(function (resolve, reject) {
     try {
+      let userId = auth().currentUser?.uid;
       firestore()
         .collection('crops_data')
         .add(
@@ -98,6 +96,7 @@ export const submitEvent = data => {
 
 export const submitLabourLeave = async data => {
   try {
+    let userId = auth().currentUser?.uid;
     await firestore()
       .collection('crops_data')
       .doc(data?.cid)
@@ -115,7 +114,7 @@ export const submitLabourLeave = async data => {
 
 export const getCropData = onUpdate =>
   getDocumentsListener(
-    firestore().collection('crops_data').where('uid', '==', userId),
+    firestore().collection('crops_data').where('uid', '==', auth().currentUser?.uid),
     onUpdate,
   );
 
@@ -123,7 +122,7 @@ export const getLabourRegular = async (name, onUpdate) =>
   getDocumentsListener(
     firestore()
       .collection('crops_data')
-      .where('uid', '==', userId)
+      .where('uid', '==', auth().currentUser?.uid)
       .where('name' == name),
     onUpdate,
   );
