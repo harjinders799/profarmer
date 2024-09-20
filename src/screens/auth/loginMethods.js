@@ -1,8 +1,5 @@
 import React, { useEffect } from 'react';
-import {
-  ScrollView,
-  StyleSheet,
-} from 'react-native';
+import { ScrollView, StyleSheet } from 'react-native';
 import BaseView from 'src/container/base';
 import { WIDTH } from 'src/utils/constants';
 import Button from 'src/components/button';
@@ -33,7 +30,7 @@ const LoginMethods = ({ navigation }) => {
 
   const signInG = async () => {
     try {
-      setLoading(true)
+      setLoading(true);
       await GoogleSignin.hasPlayServices();
       const { idToken } = await GoogleSignin.signIn();
       // Create a Google credential with the token
@@ -43,9 +40,9 @@ const LoginMethods = ({ navigation }) => {
       auth().signInWithCredential(googleCredential);
       // replace('Main');
       // this.setState({ userInfo });
-      setLoading(false)
+      setLoading(false);
     } catch (error) {
-      setLoading(false)
+      setLoading(false);
       console.log(error);
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
         // user cancelled the login flow
@@ -58,16 +55,25 @@ const LoginMethods = ({ navigation }) => {
       }
     }
   };
-  ;
-
-
   return (
     <BaseView>
       <Loader visible={loading} />
-      <LanguagePicker />
+      <LanguagePicker
+        btnStyle={{
+          borderRadius: 0,
+          borderTopLeftRadius: 10,
+          borderBottomLeftRadius: 10,
+          width: '40%',
+          height: 40,
+        }}
+      />
       <ScrollView
         style={{ width: '100%' }}
-        contentContainerStyle={{ alignItems: 'center', width: '90%', margin: '5%' }}
+        contentContainerStyle={{
+          alignItems: 'center',
+          width: '90%',
+          margin: '5%',
+        }}
         keyboardShouldPersistTaps="handled">
         <Logo />
         <Text h2>{strings.welcome}</Text>
@@ -112,9 +118,7 @@ const LoginMethods = ({ navigation }) => {
           iconType="Fontisto"
           iconColor={colors.background}
           btnStyle={{ backgroundColor: '#00bfff' }}
-          onPress={() =>
-            navigate('SignInWithEmail')}
-
+          onPress={() => navigate('SignInWithEmail')}
         />
         <Button
           label="Sign-In With Phone"
@@ -122,8 +126,7 @@ const LoginMethods = ({ navigation }) => {
           iconType="SimpleLineIcons"
           iconColor={colors.background}
           btnStyle={{ backgroundColor: '#a020f0' }}
-          onPress={() =>
-            navigate('Login')}
+          onPress={() => navigate('Login')}
         />
         <Button
           label="Sign-In With Google"

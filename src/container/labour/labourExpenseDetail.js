@@ -11,9 +11,12 @@ import { common } from '@utils/style';
 function LabourExpenseDetail({ data, expense }) {
   const { colors } = useTheme();
 
-  const handleNavigate = useCallback((item) => {
-    navigate('AddLabourExpense', { item, data });
-  }, [data]);
+  const handleNavigate = useCallback(
+    item => {
+      navigate('AddLabourExpense', { item, data });
+    },
+    [data],
+  );
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -27,18 +30,14 @@ function LabourExpenseDetail({ data, expense }) {
             style={index !== expense.length - 1 && common.underline}
             onPress={() => handleNavigate(item)}>
             <View style={styles.row}>
-              <Text h4 numberOfLines={1}>
-                {dateFormat(item?.date)}
-              </Text>
-              <Text h4 numberOfLines={1}>
-                {currencyFormat(item?.amount)}
-              </Text>
-              {item?.detail && (
-                <Text h5 center style={styles.detail}>
-                  {item.detail}
-                </Text>
-              )}
+              <Text h4>{currencyFormat(item?.amount)}</Text>
+              <Text h6>{dateFormat(item?.date)}</Text>
             </View>
+            {item?.detail && (
+              <Text h5 style={styles.detail}>
+                {item.detail}
+              </Text>
+            )}
           </Pressable>
         ))
       ) : (
@@ -60,7 +59,8 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   row: {
-    ...common.row_btw,
+    ...common.row_top_btw,
+    width: '100%',
     marginTop: 20,
   },
   detail: {

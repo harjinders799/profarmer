@@ -133,7 +133,11 @@ const Login = ({ navigation }) => {
       {/* <LanguagePicker /> */}
       <ScrollView
         style={{ width: '100%' }}
-        contentContainerStyle={{ alignItems: 'center', width: '90%', margin: '5%' }}
+        contentContainerStyle={{
+          alignItems: 'center',
+          width: '90%',
+          margin: '5%',
+        }}
         keyboardShouldPersistTaps="handled">
         <Logo />
         <Text h2 style={{ marginBottom: 50 }}>
@@ -143,7 +147,7 @@ const Login = ({ navigation }) => {
           numberType
           autoFocus
           maxLength={10}
-          textContentType='telephoneNumber'
+          textContentType="telephoneNumber"
           dataDetectorTypes={'phoneNumber'}
           leftComponent={
             <View style={styles.row}>
@@ -153,7 +157,7 @@ const Login = ({ navigation }) => {
                 color={colors.primary}
                 size={20}
               />
-              <Text h3 pl={10}>
+              <Text h3 style={{ paddingLeft: 10 }}>
                 +91
               </Text>
             </View>

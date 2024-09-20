@@ -27,19 +27,19 @@ function LabourWorkDetail({ data, work }) {
             style={index !== work.length - 1 && common.underline}
             onPress={() => handleNavigate(item)}>
             <View style={styles.row}>
-              <Text h4>{dateFormat(item?.date)}</Text>
               <Text h4>
                 {item?.count} {strings.labour}
               </Text>
               <Text h4>
                 {currencyFormat(parseFloat(item?.rate) * parseFloat(item?.count))}
               </Text>
-              {item?.detail && (
-                <Text h5 center style={styles.detail}>
-                  {item.detail}
-                </Text>
-              )}
+              <Text h6>{dateFormat(item?.date)}</Text>
             </View>
+            {item?.detail && (
+              <Text h5 style={styles.detail}>
+                {item.detail}
+              </Text>
+            )}
           </Pressable>
         ))
       ) : (
@@ -61,7 +61,8 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   row: {
-    ...common.row_btw,
+    ...common.row_top_btw,
+    width: '100%',
     marginTop: 20,
   },
   detail: {

@@ -77,12 +77,12 @@ export const AuthProvider = props => {
           console.log(error, '------auth user');
         }
       },
-      getPin: async () => {
-        const value = storage.getNumber('pin')
+      getPin: () => {
+        const value = storage.getString('pin');
         dispatch({ type: 'PIN', pin: value });
       },
-      setPin: async value => {
-        storage.set('pin', value)
+      setPin: value => {
+        storage.set('pin', value);
         dispatch({ type: 'PIN', pin: value });
       },
       setUserVerified: () => {

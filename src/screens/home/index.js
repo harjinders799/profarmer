@@ -18,6 +18,7 @@ export default function Home() {
 
     const tabs = [...tabsData];
     tabs.shift();
+
     return (
         <BaseView>
             <Header

@@ -4,7 +4,6 @@ import RNFS from 'react-native-fs';
 import { sanitizeData } from '@utils/helper';
 import { currentStamp } from '@utils/dateformat';
 
-
 const getDocumentsListener = (query, onUpdate) => {
   try {
     // Listen for real-time updates
@@ -136,11 +135,13 @@ export const submitLabourLeave = async data => {
     console.log(error);
     throw new Error(error);
   }
-}
+};
 
 export const getLabourData = onUpdate =>
   getDocumentsListener(
-    firestore().collection('labours_data').where('uid', '==', auth().currentUser?.uid),
+    firestore()
+      .collection('labours_data')
+      .where('uid', '==', auth().currentUser?.uid),
     onUpdate,
   );
 
@@ -218,7 +219,7 @@ export const updateLabourLeave = async data => {
   } catch (error) {
     throw new Error(error);
   }
-}
+};
 
 export const updateLabourExpense = async data => {
   try {
@@ -314,7 +315,7 @@ export const deleteLabourExpense = async data => {
   } catch (error) {
     throw new Error(error);
   }
-}
+};
 
 export const deleteLabour = async data => {
   try {
@@ -488,7 +489,7 @@ const migrateLabourData = async () => {
   try {
     const labourSnapshot = await firestore().collection('labour').get();
     const batch = firestore().batch();
-
+    console.log('----migrate-----labour data');
     // Migrate labour collection data
     for (const doc of labourSnapshot.docs) {
       const { labour, is_regulare, uid, count, detail, date, rate } = doc.data();
@@ -547,6 +548,8 @@ const migrateLabourData = async () => {
 
     // Delete old labour collection
     await deleteCollection('labour');
+    // await deleteCollection('labour_expense');
+    // await deleteCollection('labour_leave');
     console.log('Old labour collection deleted');
   } catch (error) {
     console.error('Error migrating data:', error);
@@ -567,4 +570,86 @@ const deleteCollection = async collectionName => {
   console.log(`Collection ${collectionName} deleted`);
 };
 
-migrateLabourData();
+// migrateLabourData();
+
+const cleanUpDuplicates = async () => {
+  try {
+    let userId = auth().currentUser?.uid;
+    const labourDataSnapshot = await firestore()
+      .collection('labours_data')
+      .where('uid', '==', userId)
+      .get();
+    const batch = firestore().batch();
+
+    for (const doc of labourDataSnapshot.docs) {
+      const newLabourRef = firestore().collection('labours_data').doc(doc.id);
+
+      // // Step 1: Remove duplicates in labour_work subcollection
+      const labourWorkSnapshot = await newLabourRef
+        .collection('labour_work')
+        .get();
+      const uniqueLabourWork = new Set(); // Set to track unique records (by date, amount, or full object)
+
+      labourWorkSnapshot.forEach(workDoc => {
+        const workData = workDoc.data();
+        const { date, amount } = workData;
+
+        // Convert the full object to a string to compare the entire document
+        const uniqueIdentifier = JSON.stringify({ date, amount, ...workData });
+
+        if (uniqueLabourWork.has(uniqueIdentifier)) {
+          // If this combination of date, amount, or full object is already in the set, delete the duplicate
+          batch.delete(workDoc.ref);
+          console.log(
+            `Deleted duplicate labour_work record for labour: ${doc.id}`,
+          );
+        } else {
+          // Add the unique combination of date, amount, or full object to the set
+          uniqueLabourWork.add(uniqueIdentifier);
+        }
+      });
+
+      // Step 2: Remove duplicates in labour_expense subcollection
+      const labourExpenseSnapshot = await newLabourRef.collection('labour_expense').get();
+      const uniqueLabourExpenseByDate = new Map();
+
+      labourExpenseSnapshot.forEach(expenseDoc => {
+        const expenseData = expenseDoc.data();
+        const { date, amount } = expenseData;
+        // console.log({ expenseData })
+        if (uniqueLabourExpenseByDate.has(date + amount)) {
+          batch.delete(expenseDoc.ref);
+          console.log(`Deleted duplicate labour_expense record with date: ${date} for labour: ${doc.id}`);
+        } else {
+          uniqueLabourExpenseByDate.set(date + amount, expenseDoc.id);
+        }
+      });
+
+      // Step 3: Remove duplicates in labour_leave subcollection
+      const labourLeaveSnapshot = await newLabourRef
+        .collection('labour_leave')
+        .get();
+      const uniqueLabourLeaveByDate = new Map();
+
+      labourLeaveSnapshot.forEach(leaveDoc => {
+        const leaveData = leaveDoc.data();
+        const { date, count } = leaveData;
+
+        if (uniqueLabourLeaveByDate.has(date + count)) {
+          batch.delete(leaveDoc.ref);
+          console.log(`Deleted duplicate labour_leave record with date: ${JSON.stringify(leaveData)} for labour: ${doc.id}`);
+        } else {
+          uniqueLabourLeaveByDate.set(date + count, leaveDoc.id);
+        }
+      });
+    }
+
+    // // Commit the batch delete operation to Firestore
+    await batch.commit();
+    console.log('Duplicate records removed successfully.');
+  } catch (error) {
+    console.error('Error cleaning up duplicates:', error);
+  }
+};
+
+// cleanUpDuplicates();

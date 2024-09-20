@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
     },
     modalView: {
         ...common.modalView,
-        width: '80%',
+        width: '90%',
         padding: 20,
     },
     text: {

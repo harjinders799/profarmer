@@ -11,6 +11,7 @@ import AAdhatStack from '@navigation/aadhatStack';
 import CropStack from '@navigation/cropStack';
 import Home from '@screens/home';
 import auth from '@react-native-firebase/auth';
+import PickerStack from '@navigation/pickerStack';
 export const storage = new MMKV();
 
 export const onChangeValue = ({
@@ -213,14 +214,14 @@ export const tabsData = [
         icon: 'wheat-awn',
         iconType: 'FontAwesome6',
     },
-    // {
-    //     id: 6,
-    //     name: 'Picker',
-    //     title: 'pickers',
-    //     component: Home,
-    //     icon: 'flower-poppy',
-    //     iconType: 'MaterialCommunityIcons',
-    // },
+    {
+        id: 6,
+        name: 'Pickers',
+        title: 'pickers',
+        component: PickerStack,
+        icon: 'flower-poppy',
+        iconType: 'MaterialCommunityIcons',
+    },
     // {
     //     id: 7,
     //     name: 'Reminder',

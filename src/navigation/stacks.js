@@ -51,6 +51,7 @@ import AddCrop from '@screens/crop/addCrop';
 import CropDetail from '@screens/crop/detail';
 import AAdhatStack from './aadhatStack';
 import SettingStack from './settingStack';
+import Pickers from '@screens/pickers';
 
 const Stack = createNativeStackNavigator();
 
@@ -104,6 +105,7 @@ export default function Stacks() {
 
 
       <Stack.Screen name="Setting" component={Setting} />
+      <Stack.Screen name="Pickers" component={Pickers} />
       <Stack.Screen name="AddForm" component={AddForm} />
       {/* <Stack.Screen name="CropDetail" component={CropDetail} /> */}
       {/* <Stack.Screen name="AddPicker" component={AddPicker} />

@@ -15,7 +15,7 @@ const langs = [
   { code: 'en', label: 'english' },
 ];
 const LanguagePicker = props => {
-  const { style } = props;
+  const { style, btnStyle } = props;
   const { lang, setLang } = useLang();
   const { colors } = useTheme();
   const [show, setShow] = useState(false);
@@ -28,7 +28,7 @@ const LanguagePicker = props => {
     <View style={[styles.container, style]}>
       <Button
         label={strings.lang}
-        btnStyle={[styles.btn]}
+        btnStyle={[styles.btn, btnStyle]}
         onPress={() => setShow(!show)}
       />
       <Modal visible={show} setModalVisible={setShow} ratioHeight={0.3}>

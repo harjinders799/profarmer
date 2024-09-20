@@ -10,9 +10,12 @@ import { common } from '@utils/style';
 function LabourLeaveDetail({ data, leaves }) {
   const { colors } = useTheme();
 
-  const handleNavigate = useCallback((item) => {
-    navigate('AddLabourLeave', { item, data });
-  }, [data]);
+  const handleNavigate = useCallback(
+    item => {
+      navigate('AddLabourLeave', { item, data });
+    },
+    [data],
+  );
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -26,16 +29,16 @@ function LabourLeaveDetail({ data, leaves }) {
             style={index !== leaves.length - 1 && common.underline}
             onPress={() => handleNavigate(item)}>
             <View style={styles.row}>
-              <Text h4>{dateFormat(item?.date)}</Text>
               <Text h4>
                 {item?.count} {strings.leave}
               </Text>
-              {item?.detail && (
-                <Text h5 center style={styles.detail}>
-                  {item.detail}
-                </Text>
-              )}
+              <Text h6>{dateFormat(item?.date)}</Text>
             </View>
+            {item?.detail && (
+              <Text h5 style={styles.detail}>
+                {item.detail}
+              </Text>
+            )}
           </Pressable>
         ))
       ) : (
@@ -57,7 +60,8 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   row: {
-    ...common.row_btw,
+    ...common.row_top_btw,
+    width: '100%',
     marginTop: 20,
   },
   detail: {

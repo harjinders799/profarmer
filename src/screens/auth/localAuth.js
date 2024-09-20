@@ -13,12 +13,13 @@ import { strings } from '../../translations/locale';
 const rnBiometrics = new ReactNativeBiometrics();
 
 export default function LocalAuth() {
-  const { user, pin, setUserVerified } = useAuth();
+  const { user, pin, getPin, setUserVerified } = useAuth();
   const [biometricData, setBiometricData] = useState({});
   const [maxAttempt, setMaxAttempt] = useState(3);
-
+  console.log({ user, pin, setUserVerified })
   useEffect(() => {
     if (pin) checkSensor();
+    getPin()
   }, [pin]);
 
   const checkSensor = () => {
