@@ -52,7 +52,7 @@ export default function Navigation() {
   return (
     <NavigationContainer theme={themeLight} ref={navigationRef}>
       {user ? (
-        userVerified ? (
+        __DEV__ || userVerified ? (
           <Stacks />
         ) : (
           <Stack.Navigator screenOptions={{ headerShown: false }}>

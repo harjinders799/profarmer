@@ -55,7 +55,6 @@ export default function AddCredit() {
         ToastError(strings.credit_amount);
       } else {
         setLoading(true);
-        console.log(data);
         await updateLoanTransaction({
           ...data,
           lid: editData?.id,

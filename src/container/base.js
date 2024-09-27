@@ -3,11 +3,13 @@ import React from 'react';
 import { StatusBar, StyleSheet, View } from 'react-native';
 import { common } from 'src/utils/style';
 import { WIDTH, isIOS } from '../utils/constants';
+import Animated, { LinearTransition } from 'react-native-reanimated';
 
 const BaseView = ({ style, space = false, children }) => {
   const { colors, dark } = useTheme();
   return (
-    <View
+    <Animated.View
+      layout={LinearTransition}
       style={[
         common.centerAligned,
         styles.base,
@@ -34,7 +36,7 @@ const BaseView = ({ style, space = false, children }) => {
         />
       )}
       {children}
-    </View>
+    </Animated.View>
   );
 };
 const styles = StyleSheet.create({

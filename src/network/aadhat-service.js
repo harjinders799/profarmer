@@ -36,7 +36,7 @@ export const aadhatDataListener = (onUpdate, unsubscribeFunctions = []) => {
 
         unsubscribeFunctions.forEach(unsub => unsub());
         unsubscribeFunctions.length = 0;
-        console.log({ querySnapshot })
+        // console.log({ querySnapshot })
         querySnapshot != null && querySnapshot.forEach(doc => {
           const aadhatData = doc.data();
           aadhatData.id = doc.id;
@@ -55,7 +55,7 @@ export const aadhatDataListener = (onUpdate, unsubscribeFunctions = []) => {
                 });
               });
               aadhatData.transactions = transactions;
-              console.log({ transactions })
+              // console.log({ transactions })
               calculateLoanDetails(aadhatsData, aadhatData);
             });
 
@@ -114,7 +114,7 @@ export const deleteAmountTransaction = async data => {
 
 
 export const updateAmountTransaction = async data => {
-  console.log(data)
+  // console.log(data)
   return new Promise(async function (resolve, reject) {
     try {
       await firestore()

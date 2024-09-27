@@ -1,6 +1,7 @@
 import React from 'react';
 import { ActivityIndicator, View, StyleSheet, Platform } from 'react-native';
 import { useTheme } from '@react-navigation/native';
+import Text from './text';
 
 const styles = StyleSheet.create({
   container: {
@@ -37,6 +38,7 @@ const Loader = ({ visible, small = false, style }) => {
           top: Platform.OS === 'ios' ? 1 : 0,
         }}
       />
+      <Text>Loading...</Text>
     </View>
   ) : null;
 };

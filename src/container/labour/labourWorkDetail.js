@@ -43,7 +43,7 @@ function LabourWorkDetail({ data, work }) {
           </Pressable>
         ))
       ) : (
-        <Text h4 style={styles.underline}>
+        <Text style={{ marginTop: 10 }}>
           {strings.no_record}
         </Text>
       )}

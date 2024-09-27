@@ -12,6 +12,7 @@ import CropStack from '@navigation/cropStack';
 import Home from '@screens/home';
 import auth from '@react-native-firebase/auth';
 import PickerStack from '@navigation/pickerStack';
+import { currentStamp } from './dateformat';
 export const storage = new MMKV();
 
 export const onChangeValue = ({
@@ -173,6 +174,135 @@ export const calculateTotals = data => {
     });
 
     return totals;
+};
+
+export const unassignPickers = (pickers, groups, editingGroupId) => {
+    // Create a Set of all assigned picker IDs, excluding the group being edited
+    const assignedPickerIds = new Set();
+    groups.forEach(group => {
+        // Skip the group being edited
+        if (group.id !== editingGroupId) {
+            group.members.forEach(memberRef => {
+                assignedPickerIds.add(memberRef);
+            });
+        }
+    });
+    // Filter pickers to include unassigned pickers and those in the editing group
+    const unassignedPickers = pickers.filter(
+        picker => !assignedPickerIds.has(picker.id),
+    );
+
+    return unassignedPickers;
+};
+
+export const calculateGroupFinalAmount = (group, pickers) => {
+    // Create a Set of member IDs for faster lookup
+    const memberIds = new Set(group.members.map(memberRef => memberRef));
+    // Filter pickers to only include group members and calculate totals
+    const groupTotals = pickers
+        .filter(picker => memberIds.has(picker.id))
+        .reduce(
+            (acc, picker) => {
+                acc.totalEarnings += parseFloat(picker?.total_earning ?? 0);
+                acc.totalGiven += parseFloat(picker?.total_given ?? 0);
+                return acc;
+            },
+            { totalEarnings: 0, totalGiven: 0 },
+        );
+    // Calculate final amount
+    const finalAmount = groupTotals.totalEarnings - groupTotals.totalGiven;
+
+    return finalAmount;
+};
+
+const createPickerGroupMap = groups => {
+    if (!Array.isArray(groups)) {
+        return {};
+    }
+
+    return groups.reduce((acc, group) => {
+        group.members.forEach(pickerId => {
+            acc[pickerId] = group.name;
+        });
+        return acc;
+    }, {});
+};
+
+export const findPickerGroupNames = (picker, groups) => {
+    const pickerGroupMap = createPickerGroupMap(groups);
+
+    return pickerGroupMap[picker.id] || 'no group';
+};
+
+export function groupPickersByDate(pickers, pickersWeightData) {
+    // Create a map of picker ID to name
+    const pickerMap = {};
+    pickers.forEach(picker => {
+        pickerMap[picker.id] = {
+            name: picker.name,
+        };
+    });
+
+    // Create an object to hold grouped data
+    const groupedData = {};
+
+    // Process each entry in pickersWeightData
+    pickersWeightData.forEach(entry => {
+        const date = new Date(entry.date).toISOString().split('T')[0]; // Convert timestamp to YYYY-MM-DD
+        const pickerName = pickerMap[entry.pid]?.name;
+        console.log(date);
+        if (!groupedData[date]) {
+            groupedData[date] = {
+                total_weight: 0,
+                pickers: [],
+            };
+        }
+
+        // Add to total weight for the date
+        groupedData[date].total_weight += parseFloat(entry.weight);
+        console.log({ groupedData });
+        // Check if the picker is already in the list for that date
+        const existingPicker = groupedData[date].pickers.find(
+            p => p.name === pickerName,
+        );
+        if (existingPicker) {
+            existingPicker.total_weight += parseFloat(entry.weight); // Aggregate picker weight
+        } else {
+            // If picker does not exist, add them
+            groupedData[date].pickers.push({
+                name: pickerName,
+                total_weight: parseFloat(entry.weight),
+            });
+        }
+    });
+
+    console.log({ groupedData }, '-----');
+    // Convert the grouped data into the desired output format
+    const result = Object.keys(groupedData).map(date => ({
+        date: date,
+        total_weight: groupedData[date].total_weight,
+        pickers: groupedData[date].pickers,
+    }));
+
+    return result;
+}
+
+export const processWeights = (data, date) => {
+    const processedData = data
+        .filter(entry => entry.weight.trim() !== '') // Filter out entries with blank weights
+        .flatMap(entry => {
+            // Split the weight by '+' and convert to numbers
+            const weights = entry.weight.split('+').map(Number);
+
+            // Create an array of objects for each weight, doubling the weight entries
+            return weights.map(weight => ({
+                ...entry,
+                weight: weight,
+                date: currentStamp(date),
+            }));
+        });
+
+    return processedData;
 };
 
 export const tabsData = [

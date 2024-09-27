@@ -37,7 +37,8 @@ const Button = ({
         styles.container,
         small && styles.small,
         {
-          backgroundColor: loading || disabled ? colors.disable : colors.primary,
+          backgroundColor:
+            loading || disabled ? colors.disable : colors.primary,
         },
         btnStyle,
       ]}
@@ -50,7 +51,7 @@ const Button = ({
         {loading ? (
           <ActivityIndicator size={25} color={colors.text} />
         ) : (
-          <View style={[common.row_center,]}>
+          <View style={[common.row_center]}>
             {iconLeft ? (
               <Icon
                 name={iconLeft}
@@ -59,9 +60,9 @@ const Button = ({
                 color={txtColor}
               />
             ) : null}
-            <Text
+            {label ? <Text
               color={txtColor}
-              h5
+              h5={!small}
               bold={!small}
               semi={small}
               style={[
@@ -72,7 +73,7 @@ const Button = ({
                 txtStyle,
               ]}>
               {label}
-            </Text>
+            </Text> : null}
             {iconRight ? (
               <Icon
                 name={iconRight}

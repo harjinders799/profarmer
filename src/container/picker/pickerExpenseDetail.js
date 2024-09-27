@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { View, StyleSheet, Pressable } from 'react-native';
 import Text from '@components/text';
 import { strings } from '@translations/locale';
@@ -7,45 +7,54 @@ import { useTheme } from '@react-navigation/native';
 import { navigate } from '@navigation/ref';
 import { currencyFormat } from '@utils/dateformat';
 import { common } from '@utils/style';
+import Animated, { FadeInUp, LinearTransition } from 'react-native-reanimated';
 
-function LabourExpenseDetail({ data, expense }) {
+function PickerExpenseDetail({ data, expense }) {
   const { colors } = useTheme();
+  const [expand, setExpand] = useState(true);
 
   const handleNavigate = useCallback(
     item => {
-      navigate('AddLabourExpense', { item, data });
+      navigate('AddPickerExpense', { item, data });
     },
     [data],
   );
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <Text h4 center bold>
-        {strings.given_amount}
-      </Text>
+    <Animated.View
+      layout={LinearTransition}
+      style={[styles.container, { backgroundColor: colors.background }]}>
+      <View style={common.row_btw}>
+        <Text h4 center bold>
+          {strings.given_amount}
+        </Text>
+        <Text
+          style={{ borderBottomWidth: 0.4 }}
+          onPress={() => setExpand(!expand)}>
+          {expand ? 'Hide' : 'View All'}
+        </Text>
+      </View>
       {expense?.length > 0 ? (
-        expense.map((item, index) => (
+        (expand ? expense : []).map((item, index) => (
           <Pressable
             key={index}
             style={index !== expense.length - 1 && common.underline}
             onPress={() => handleNavigate(item)}>
-            <View style={styles.row}>
+            <Animated.View entering={FadeInUp} style={styles.row}>
               <Text h4>{currencyFormat(item?.amount)}</Text>
               <Text h6>{dateFormat(item?.date)}</Text>
-            </View>
+            </Animated.View>
             {item?.detail && (
-              <Text h5 style={styles.detail}>
+              <Text entering={FadeInUp} h5 style={styles.detail}>
                 {item.detail}
               </Text>
             )}
           </Pressable>
         ))
       ) : (
-        <Text style={{ marginTop: 10 }}>
-          {strings.no_record}
-        </Text>
+        <Text style={{ marginTop: 10 }}>{strings.no_record}</Text>
       )}
-    </View>
+    </Animated.View>
   );
 }
 
@@ -69,4 +78,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default React.memo(LabourExpenseDetail);
+export default React.memo(PickerExpenseDetail);

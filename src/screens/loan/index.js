@@ -32,7 +32,6 @@ function Loan() {
   }, [lang]);
 
   useFocusEffect(fetchData);
-  console.log(data)
   return (
     <BaseView>
       <Loader visible={loading} />

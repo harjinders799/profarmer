@@ -5,6 +5,7 @@ import Button from '@components/button';
 import { useTheme } from '@react-navigation/native';
 import { strings } from '@translations/locale';
 import { common } from '@utils/style';
+import Loader from '@components/loader';
 
 function DeleteModal({
     openModal,
@@ -12,14 +13,16 @@ function DeleteModal({
     data,
     onDelete,
     customDescription = null,
+    loading,
 }) {
     const { colors } = useTheme();
 
     return (
         <Modal visible={openModal} animationType="slide" transparent={true}>
             <View style={[styles.container, { backgroundColor: colors.border + 50 }]}>
+                <Loader visible={loading} />
                 <View style={[styles.modalView, { backgroundColor: colors.background }]}>
-                    <Text h2 bold>
+                    <Text h2 center bold style={common.underline}>
                         {strings.are_you_sure}
                     </Text>
                     <Text h3 style={styles.text}>
@@ -36,7 +39,10 @@ function DeleteModal({
                         />
                         <Button
                             label={strings.cancel}
-                            btnStyle={[styles.button, { backgroundColor: colors.border }]}
+                            btnStyle={[
+                                styles.button,
+                                { backgroundColor: colors.secondaryBackground },
+                            ]}
                             onPress={() => setOpenModal(false)}
                         />
                     </View>

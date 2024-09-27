@@ -103,7 +103,6 @@ export default function AddLoan() {
             try {
               setChecking(true);
               let res = await getUserByPhone(phone);
-              console.log(res);
               if (user.uid == res?.id) ToastError("You can't add yourself");
               else setVerifiedUser(res);
               setChecking(false);

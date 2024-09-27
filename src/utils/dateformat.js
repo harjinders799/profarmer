@@ -16,7 +16,7 @@ export const currencyFormat = (value, fraction = 0) => {
     currency: 'INR',
     minimumFractionDigits: fraction,
   });
-  return `${formatter.format(parseFloat(value))} /-`;
+  return `${!isNaN(value) ? formatter.format(parseFloat(value)) : 0} /-`;
 };
 
 export const interestFormat = (value, fraction = 0) => {

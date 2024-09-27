@@ -38,9 +38,7 @@ export default function LoanUpdate() {
   }, [data]);
 
   const getOwner = async () => {
-    console.log('-------');
     let res = await getUserById(data.uid);
-    console.log({ res });
     setOwner(res);
   };
 
@@ -58,7 +56,6 @@ export default function LoanUpdate() {
   };
 
   let interest = getInterest([{ ...item, interest_rate: data?.interest_rate }]);
-  console.log(owner);
   return (
     <BaseView space>
       <Loader visible={loading} />
