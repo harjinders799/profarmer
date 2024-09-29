@@ -14,7 +14,7 @@ import Text from 'src/components/text';
 import { HEIGHT } from 'src/utils/constants';
 import { useLang } from '../../context/langContext';
 import Icon from '../../components/icon';
-import { green, black, orange, white } from '../../utils/colors';
+import { green, black, orange, white, gray3 } from '../../utils/colors';
 import { strings } from '../../translations/locale';
 import ReactNativeBiometrics, { BiometryTypes } from 'react-native-biometrics';
 import { useAuth } from '../../context/authContext';
@@ -23,11 +23,14 @@ import { ToastError, ToastProgress } from '../../utils/toast';
 import Loader from '../../components/loader';
 import More from '../more';
 import { tabsData } from '../../utils/helper';
+import Header from '@components/header';
+import { navigate } from '@navigation/ref';
+import { backupData } from '@network/labour-service';
 
 const rnBiometrics = new ReactNativeBiometrics();
 
 export default function Setting({ navigation }) {
-  const { lang, setFingerLock, fingerLock } = useLang();
+  const { lang, setFingerLock, fingerLock, theme, setTheme } = useLang();
   const { user, reset } = useAuth();
   const [loading, setLoading] = useState(false);
 
@@ -57,12 +60,23 @@ export default function Setting({ navigation }) {
       setLoading(false);
     }
   };
-
-
+  console.log(user);
   return (
     <BaseView space>
       <Loader visible={loading} />
-      <Account />
+      <Header
+        back
+        label={user?.name}
+        rightComponent={
+          <Icon
+            type="FontAwesome5"
+            name="user-edit"
+            size={25}
+            onPress={() => navigate('EditProfile')}
+          />
+        }
+      />
+      {/* <Account /> */}
       <ScrollView
         style={{ width: '100%' }}
         showsVerticalScrollIndicator={false}
@@ -149,18 +163,27 @@ https://play.google.com/store/apps/details?id=com.profarmer
             <Icon name="share" type="Entypo" size={25} />
           </TouchableOpacity>
           {/* {isBiometry ? (
+          ) : null} */}
+          <TouchableOpacity
+            style={styles.row}
+            onPress={() => setTheme(theme == 'dark' ? 'light' : 'dark')}>
+            <Text style={styles.txt}>
+              {theme == 'light' ? 'Light' : 'Dark'} Theme
+            </Text>
+            <Switch
+              value={theme == 'dark'}
+              trackColor={{ false: gray3, true: gray3 }}
+              thumbColor={theme == 'dark' ? white : black}
+              onValueChange={() => setTheme(theme == 'dark' ? 'light' : 'dark')}
+            />
+          </TouchableOpacity>
+          {user?.email == 'harjinders799@gmail.com' || __DEV__ ? (
             <TouchableOpacity
               style={styles.row}
-              onPress={() => navigation.navigate('AboutUs')}>
-              <Text style={styles.txt}>Finger Lock</Text>
-              <Switch
-                value={fingerLock}
-                trackColor={{ false: '#767577', true: black }}
-                thumbColor={fingerLock ? green : '#f4f3f4'}
-                onValueChange={() => setFingerLock(!fingerLock)}
-              />
+              onPress={backupData}>
+              <Text style={styles.txt}>Backup Now</Text>
             </TouchableOpacity>
-          ) : null} */}
+          ) : null}
 
           <TouchableOpacity style={styles.row} onPress={onLogOut}>
             <Text style={styles.txt}>Log Out</Text>
@@ -190,6 +213,6 @@ const styles = StyleSheet.create({
   footer: {
     borderRadius: 10,
     padding: 10,
-    marginTop: 30
+    marginTop: 30,
   },
 });

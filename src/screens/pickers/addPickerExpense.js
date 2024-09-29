@@ -123,7 +123,7 @@ export default function AddPickerExpense() {
         <BaseView space>
             <Loader visible={loading} />
             <Header back label={editData?.name} />
-            <ScrollView style={styles.form} keyboardShouldPersistTaps="always">
+            <ScrollView style={styles.form} showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 150 }} automaticallyAdjustKeyboardInsets keyboardShouldPersistTaps="always">
                 <Input
                     label={strings.amount}
                     placeholder={strings.amount}
@@ -145,6 +145,10 @@ export default function AddPickerExpense() {
                         editable={false}
                         placeholder={strings.date}
                         value={dateFormat(date)}
+                        onPress={() => {
+                            setShowDate(true);
+                            Keyboard.dismiss();
+                        }}
                     />
                 </Pressable>
                 <Input

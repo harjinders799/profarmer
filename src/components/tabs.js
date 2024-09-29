@@ -36,7 +36,7 @@ const Tabs = ({ tabs, activeTab, setActiveTab }) => {
                     key={tab}
                     onPress={() => handleTabPress(tab)}
                     style={[styles.tab, { width: `${100 / tabs.length}%`, }]}>
-                    <Text bold={activeTab == tab} >{tab}</Text>
+                    <Text h5 bold={activeTab == tab} >{tab}</Text>
                 </TouchableOpacity>
             ))}
             <Animated.View

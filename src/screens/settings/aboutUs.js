@@ -1,25 +1,40 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 import { strings } from 'src/translations/locale';
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { Image, StyleSheet } from 'react-native';
 import BaseView from '../../container/base';
 import { useTheme } from '@react-navigation/native';
 import Header from '../../components/header';
 import Icon from '../../components/icon';
 import { goBack } from '../../navigation/ref';
+import Text from '@components/text';
 
 export default function AboutUs() {
-    const { colors } = useTheme()
+    const { colors } = useTheme();
 
     return (
         <BaseView space>
-            <Header
-                back
-                label={'ProFarmer'}
-            />
-            <Text h3 style={{ marginTop: 10, justifyContent: "center", textAlign: 'center', fontSize: 20, fontStyle: "italic", fontWeight: "bold" }} >
-                {`Hi Farmer \n\n${strings.compliment}`}
+            <Header back label={'Hi Farmer'} />
+            <Text
+                h3
+                style={{
+                    marginTop: 10,
+                    justifyContent: 'center',
+                    textAlign: 'center',
+                    fontSize: 20,
+                    fontStyle: 'italic',
+                    fontWeight: 'bold',
+                }}>
+                {`${strings.compliment}`}
             </Text>
-            <Text h4 style={{ paddingTop: 20, textAlign: 'center', fontSize: 20, fontStyle: "italic", fontWeight: "bold" }}>
+            <Text
+                h4
+                style={{
+                    paddingTop: 20,
+                    textAlign: 'center',
+                    fontSize: 20,
+                    fontStyle: 'italic',
+                    fontWeight: 'bold',
+                }}>
                 {strings.compliment2}
             </Text>
             <Image
@@ -28,10 +43,8 @@ export default function AboutUs() {
                 style={{ width: '100%', height: '35%', marginTop: 10, }}
             />
         </BaseView>
-    )
-};
+    );
+}
 const styles = StyleSheet.create({
-    container: {
-
-    }
+    container: {},
 });

@@ -36,49 +36,57 @@ const deleteDocumentById = async (collectionName, id) => {
   }
 };
 
-export const addNewLabour = async data => {
-  try {
-    let userId = auth().currentUser?.uid;
-    // Add labours_data document
-    const labourDataRef = await firestore()
-      .collection('labours_data')
-      .add(
-        sanitizeData({
-          name: data?.name,
-          is_regular: data?.is_regular,
-          phone: data?.phone,
-          start_date: data?.start_date,
-          total_labour_amount: data?.total_labour_amount,
-          total_labour_count: data?.total_labour_count,
-          labour_rate: data?.labour_rate,
-          given_amount: data?.given_amount,
-          read_access: [data?.phone],
-          full_access: [userId],
-          uid: userId,
-        }),
-      );
+export const addNewLabour = data => {
+  return new Promise(async function (resolve, reject) {
+    try {
+      let userId = auth().currentUser?.uid;
+      // let res = await firestore().disableNetwork()
+      // console.log({ res })
+      // setTimeout(() => {
+      //   resolve(true);
+      // }, 3000);
+      // Add labours_data document
+      const labourDataRef = await firestore()
+        .collection('labours_data')
+        .add(
+          sanitizeData({
+            name: data?.name,
+            is_regular: data?.is_regular,
+            phone: data?.phone,
+            start_date: data?.start_date,
+            total_labour_amount: data?.total_labour_amount,
+            total_labour_count: data?.total_labour_count,
+            labour_rate: data?.labour_rate,
+            given_amount: data?.given_amount,
+            read_access: [data?.phone],
+            full_access: [userId],
+            uid: userId,
+          }),
+        );
 
-    const labourDataId = labourDataRef.id;
+      const labourDataId = labourDataRef.id;
 
-    // Add labour_work subcollection document
-    await firestore()
-      .collection('labours_data')
-      .doc(labourDataId)
-      .collection('labour_work')
-      .add(
-        sanitizeData({
-          ...data,
-          cid: labourDataId,
-          uid: userId,
-          date: currentStamp(),
-        }),
-      );
+      // Add labour_work subcollection document
+      await firestore()
+        .collection('labours_data')
+        .doc(labourDataId)
+        .collection('labour_work')
+        .add(
+          sanitizeData({
+            ...data,
+            cid: labourDataId,
+            uid: userId,
+            date: currentStamp(),
+          }),
+        );
 
-    return 'success';
-  } catch (error) {
-    console.log(error);
-    throw new Error(error);
-  }
+      resolve(true);
+    } catch (error) {
+      console.log(error);
+      reject(error);
+      throw new Error(error);
+    }
+  });
 };
 
 export const submitLabour = async data => {
@@ -422,66 +430,204 @@ export const deleteLabourCollection = async id => {
 
 // migrateData();
 
-// const backupData = async () => {
-//   try {
-//     const backup = {};
+export const backupData = async () => {
+  try {
+    const backup = {};
 
-//     const cropSnapshot = await firestore().collection('crop').get();
-//     backup.crop = cropSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const cropSnapshot = await firestore().collection('crop').get();
+    backup.crop = cropSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-//     const interest_amountSnapshot = await firestore().collection('interest_amount').get();
-//     backup.interest_amount = interest_amountSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const interest_amountSnapshot = await firestore()
+      .collection('interest_amount')
+      .get();
+    backup.interest_amount = interest_amountSnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
 
-//     const pickerSnapshot = await firestore().collection('picker').get();
-//     backup.picker = pickerSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const pickerSnapshot = await firestore().collection('picker').get();
+    backup.picker = pickerSnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
 
-//     const picker_expenseSnapshot = await firestore().collection('picker_expense').get();
-//     backup.picker_expense = picker_expenseSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const picker_expenseSnapshot = await firestore()
+      .collection('picker_expense')
+      .get();
+    backup.picker_expense = picker_expenseSnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
 
-//     const picker_groupSnapshot = await firestore().collection('picker_group').get();
-//     backup.picker_group = picker_groupSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const picker_groupSnapshot = await firestore()
+      .collection('picker_group')
+      .get();
+    backup.picker_group = picker_groupSnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
 
-//     const loanSnapshot = await firestore().collection('loan').get();
-//     backup.loan = loanSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const loanSnapshot = await firestore().collection('loan').get();
+    backup.loan = loanSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-//     const usersSnapshot = await firestore().collection('users').get();
-//     backup.users = usersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const usersSnapshot = await firestore().collection('users').get();
+    backup.users = usersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-//     // Backup labour collection
-//     const labourSnapshot = await firestore().collection('labour').get();
-//     backup.labour = labourSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    // Backup labour collection
+    const labourSnapshot = await firestore().collection('labour').get();
+    backup.labour = labourSnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
 
-//     const laboursSnapshot = await firestore().collection('labours').get();
-//     backup.labours = laboursSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const laboursSnapshot = await firestore().collection('labours').get();
+    backup.labours = laboursSnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
 
-//     // Backup labour_expense collection
-//     const expenseSnapshot = await firestore().collection('labour_expense').get();
-//     backup.labour_expense = expenseSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    // Backup labour_expense collection
+    const expenseSnapshot = await firestore()
+      .collection('labour_expense')
+      .get();
+    backup.labour_expense = expenseSnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
 
-//     // Backup labour_leave collection
-//     const leaveSnapshot = await firestore().collection('labour_leave').get();
-//     backup.labour_leave = leaveSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    // Backup labour_leave collection
+    const leaveSnapshot = await firestore().collection('labour_leave').get();
+    backup.labour_leave = leaveSnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
 
-//     // Save backup to file
-//     // Convert backup to JSON string
-//     const backupJson = JSON.stringify(backup, null, 2);
+    // Backup pickers_data collection
+    const pickers_dataSnapshot = await firestore()
+      .collection('pickers_data')
+      .get();
+    backup.labour_pickers_data = pickers_dataSnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
 
-//     // Define file path
-//     const filePath = `${RNFS.DownloadDirectoryPath}/firestore-backup.json`;
-//     console.log(filePath)
-//     // Write backup to file
-//     await RNFS.writeFile(filePath, backupJson, 'utf8').then((success) => {
-//       console.log('FILE WRITTEN!', success);
-//     })
-//       .catch((err) => {
-//         console.log(err.message);
-//       });;
+    // Backup pickers_groups collection
+    const pickers_groupsSnapshot = await firestore()
+      .collection('pickers_groups')
+      .get();
+    backup.labour_pickers_groups = pickers_groupsSnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
 
-//     console.log('Data backup complete');
-//   } catch (error) {
-//     console.error('Error backing up data:', error);
-//   }
-// };
+    // Backup picker_cotton_weight collection
+    const picker_cotton_weightSnapshot = await firestore()
+      .collection('picker_cotton_weight')
+      .get();
+    backup.labour_picker_cotton_weight = picker_cotton_weightSnapshot.docs.map(
+      doc => ({ id: doc.id, ...doc.data() }),
+    );
+
+    // Backup labours_data collection
+    const labours_dataSnapshot = await firestore()
+      .collection('labours_data')
+      .get();
+
+    backup.labour_labours_data = await Promise.all(
+      labours_dataSnapshot.docs.map(async doc => {
+        const [leaveSnapshot, expenseSnapshot, workSnapshot] =
+          await Promise.all([
+            firestore()
+              .collection('labours_data')
+              .doc(doc.id)
+              .collection('labour_leave')
+              .get(),
+            firestore()
+              .collection('labours_data')
+              .doc(doc.id)
+              .collection('labour_expense')
+              .get(),
+            firestore()
+              .collection('labours_data')
+              .doc(doc.id)
+              .collection('labour_work')
+              .get(),
+          ]);
+
+        const leaveData = leaveSnapshot.docs.map(leaveDoc => ({
+          id: leaveDoc.id,
+          ...leaveDoc.data(),
+        }));
+
+        const expenseData = expenseSnapshot.docs.map(expenseDoc => ({
+          id: expenseDoc.id,
+          ...expenseDoc.data(),
+        }));
+
+        const workData = workSnapshot.docs.map(workDoc => ({
+          id: workDoc.id,
+          ...workDoc.data(),
+        }));
+
+        return {
+          id: doc.id,
+          ...doc.data(),
+          labour_leave: leaveData,
+          labour_expense: expenseData,
+          labour_work: workData,
+        };
+      }),
+    );
+
+    // Backup aadhat_data collection
+    const aadhat_dataSnapshot = await firestore()
+      .collection('aadhat_data')
+      .get();
+
+    backup.labour_labours_data = await Promise.all(
+      aadhat_dataSnapshot.docs.map(async doc => {
+        const [transactionsSnapshot] = await Promise.all([
+          firestore()
+            .collection('aadhat_data')
+            .doc(doc.id)
+            .collection('transactions')
+            .get(),
+        ]);
+
+        const transData = transactionsSnapshot.docs.map(transDoc => ({
+          id: transDoc.id,
+          ...transDoc.data(),
+        }));
+
+        return {
+          id: doc.id,
+          ...doc.data(),
+          transactions: transData,
+        };
+      }),
+    );
+
+    // Save backup to file
+    // Convert backup to JSON string
+    const backupJson = JSON.stringify(backup, null, 2);
+
+    // Define file path
+    const filePath = `${RNFS.DownloadDirectoryPath}/firestore-backup.json`;
+    console.log(filePath);
+    // Write backup to file
+    await RNFS.writeFile(filePath, backupJson, 'utf8')
+      .then(success => {
+        console.log('FILE WRITTEN!', success);
+      })
+      .catch(err => {
+        console.log(err.message);
+      });
+
+    console.log('Data backup complete');
+  } catch (error) {
+    console.error('Error backing up data:', error);
+  }
+};
 
 // backupData()
 
@@ -610,7 +756,9 @@ const cleanUpDuplicates = async () => {
       });
 
       // Step 2: Remove duplicates in labour_expense subcollection
-      const labourExpenseSnapshot = await newLabourRef.collection('labour_expense').get();
+      const labourExpenseSnapshot = await newLabourRef
+        .collection('labour_expense')
+        .get();
       const uniqueLabourExpenseByDate = new Map();
 
       labourExpenseSnapshot.forEach(expenseDoc => {
@@ -619,7 +767,9 @@ const cleanUpDuplicates = async () => {
         // console.log({ expenseData })
         if (uniqueLabourExpenseByDate.has(date + amount)) {
           batch.delete(expenseDoc.ref);
-          console.log(`Deleted duplicate labour_expense record with date: ${date} for labour: ${doc.id}`);
+          console.log(
+            `Deleted duplicate labour_expense record with date: ${date} for labour: ${doc.id}`,
+          );
         } else {
           uniqueLabourExpenseByDate.set(date + amount, expenseDoc.id);
         }
@@ -637,7 +787,11 @@ const cleanUpDuplicates = async () => {
 
         if (uniqueLabourLeaveByDate.has(date + count)) {
           batch.delete(leaveDoc.ref);
-          console.log(`Deleted duplicate labour_leave record with date: ${JSON.stringify(leaveData)} for labour: ${doc.id}`);
+          console.log(
+            `Deleted duplicate labour_leave record with date: ${JSON.stringify(
+              leaveData,
+            )} for labour: ${doc.id}`,
+          );
         } else {
           uniqueLabourLeaveByDate.set(date + count, leaveDoc.id);
         }

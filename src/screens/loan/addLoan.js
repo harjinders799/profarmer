@@ -79,7 +79,7 @@ export default function AddLoan() {
     <BaseView space>
       <Loader visible={loading} />
       <Header back label={editData?.name ? strings.update : strings.add_loan} />
-      <ScrollView style={styles.form} keyboardShouldPersistTaps="always">
+      <ScrollView style={styles.form} showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 150 }} automaticallyAdjustKeyboardInsets keyboardShouldPersistTaps="always">
         <Input
           label={strings.name}
           autoFocus

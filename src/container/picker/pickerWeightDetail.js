@@ -71,7 +71,6 @@ const styles = StyleSheet.create({
     margin: '5%',
     marginVertical: 15,
     width: '90%',
-    elevation: 5,
   },
   row: {
     ...common.row_top_btw,

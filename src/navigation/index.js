@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
 import Login from 'src/screens/auth/login';
-import { themeLight } from 'src/utils/themes';
+import { themeDark, themeLight } from 'src/utils/themes';
 // import AdBanner from "src/components/adBanner";
 import { useLang } from 'src/context/langContext';
 import { navigationRef } from './ref';
@@ -19,7 +19,7 @@ import { useTab } from '../context/tabContext';
 const Stack = createNativeStackNavigator();
 
 export default function Navigation() {
-  const { getLang } = useLang();
+  const { getLang, theme } = useLang();
   const { getUser, userVerified, getPin } = useAuth();
   const { getTab, tabs } = useTab();
   const [initializing, setInitializing] = useState(true);
@@ -31,7 +31,6 @@ export default function Navigation() {
     getUser();
     getPin();
   }, []);
-
 
   function onAuthStateChanged(user) {
     if (user) {
@@ -47,10 +46,13 @@ export default function Navigation() {
     return subscriber;
   }, [userVerified]);
 
-  if (initializing || !Array.isArray(tabs)) return <Loader visible={initializing} />;
+  if (initializing || !Array.isArray(tabs))
+    return <Loader visible={initializing} />;
 
   return (
-    <NavigationContainer theme={themeLight} ref={navigationRef}>
+    <NavigationContainer
+      theme={theme == 'dark' ? themeDark : themeLight}
+      ref={navigationRef}>
       {user ? (
         __DEV__ || userVerified ? (
           <Stacks />

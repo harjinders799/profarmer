@@ -8,10 +8,12 @@ import { navigate } from '@navigation/ref';
 import { currencyFormat } from '@utils/dateformat';
 import { common } from '@utils/style';
 import Animated, { FadeInUp, LinearTransition } from 'react-native-reanimated';
+import auth from '@react-native-firebase/auth';
 
 function PickerExpenseDetail({ data, expense }) {
   const { colors } = useTheme();
   const [expand, setExpand] = useState(true);
+  const uid = auth().currentUser.uid;
 
   const handleNavigate = useCallback(
     item => {
@@ -26,7 +28,7 @@ function PickerExpenseDetail({ data, expense }) {
       style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={common.row_btw}>
         <Text h4 center bold>
-          {strings.given_amount}
+          {data?.uid == uid ? strings.given_amount : strings.taken_amount}
         </Text>
         <Text
           style={{ borderBottomWidth: 0.4 }}

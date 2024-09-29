@@ -4,7 +4,6 @@ import auth from '@react-native-firebase/auth';
 import { ToastError } from '@utils/toast';
 import { calculateLoanDetails, sanitizeData } from '@utils/helper';
 
-
 export const loansDataListener = (
   onUpdate,
   unsubscribeFunctions = [],
@@ -18,7 +17,8 @@ export const loansDataListener = (
       .where('read_access', 'array-contains', phone)
       .get();
 
-    const query2 = firestore().collection('loans_data')
+    const query2 = firestore()
+      .collection('loans_data')
       .where('uid', '==', userId)
       .get();
 
@@ -83,18 +83,18 @@ export const loansDataListener = (
 
     // Run both queries and handle their results
     Promise.all([query1, query2])
-      .then(([snapshot1, snapshot2]) => handleQueryResults(snapshot1, snapshot2))
+      .then(([snapshot1, snapshot2]) =>
+        handleQueryResults(snapshot1, snapshot2),
+      )
       .catch(error => {
         ToastError(error?.message, 'Loan');
         throw new Error(error);
       });
-
   } catch (error) {
     ToastError(error?.message, 'Loan');
     throw new Error(error);
   }
 };
-
 
 export const submitLoan = async data => {
   return new Promise(async function (resolve, reject) {
@@ -257,9 +257,7 @@ async function migrateLoanData() {
   const userId = auth().currentUser?.uid;
   try {
     const oldLoansRef = db.collection('loan');
-    const snapshot = await oldLoansRef
-      .where('uid', '==', userId)
-      .get();
+    const snapshot = await oldLoansRef.where('uid', '==', userId).get();
 
     if (snapshot.empty) {
       console.log('No loan documents found.');

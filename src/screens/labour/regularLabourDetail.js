@@ -85,32 +85,32 @@ const RegularLabourDetail = () => {
       <ScrollView style={{ width: '100%' }} contentContainerStyle={{ paddingBottom: 150 }} stickyHeaderIndices={[8]} showsVerticalScrollIndicator={false}>
         <Text center style={{ color: colors.success, marginBottom: 10 }} h6>{data?.is_regular ? strings.regular : ''}</Text>
         <View style={[styles.row, { backgroundColor: colors.background, borderBottomColor: colors.border, borderTopEndRadius: 10, borderTopStartRadius: 10 }]}>
-          <Text h3>{strings.start_date}</Text>
-          <Text h3 style={{ color: colors.success }}>{dateFormat(data?.start_date)}</Text>
+          <Text h4>{strings.start_date}</Text>
+          <Text h4 style={{ color: colors.success }}>{dateFormat(data?.start_date)}</Text>
         </View>
         <View style={[styles.row, { borderBottomColor: colors.border, backgroundColor: colors.background }]}>
-          <Text h3>{strings.total_days_from_start}</Text>
-          <Text h3 style={{ color: colors.success }}>{days}</Text>
+          <Text h4>{strings.total_days_from_start}</Text>
+          <Text h4 style={{ color: colors.success }}>{days}</Text>
         </View>
         <View style={[styles.row, { borderBottomColor: colors.border, backgroundColor: colors.background }]}>
-          <Text h3>{strings.leaves}</Text>
-          <Text h3 style={{ color: colors.error }}>{sumBy(leaves, o => parseFloat(o.count))}</Text>
+          <Text h4>{strings.leaves}</Text>
+          <Text h4 style={{ color: colors.error }}>{sumBy(leaves, o => parseFloat(o.count))}</Text>
         </View>
         <View style={[styles.row, { borderBottomColor: colors.border, backgroundColor: colors.background }]}>
-          <Text h3>{strings.labour_day}</Text>
-          <Text h3 style={{ color: colors.success }}>{days - sumBy(leaves, o => parseFloat(o.count))}</Text>
+          <Text h4>{strings.labour_day}</Text>
+          <Text h4 style={{ color: colors.success }}>{days - sumBy(leaves, o => parseFloat(o.count))}</Text>
         </View>
         <View style={[styles.row, { borderBottomColor: colors.border, backgroundColor: colors.background }]}>
-          <Text h3>{strings.labour_rate}</Text>
-          <Text h3 style={{ color: colors.success }}>{currencyFormat(data?.labour_rate)}</Text>
+          <Text h4>{strings.labour_rate}</Text>
+          <Text h4 style={{ color: colors.success }}>{currencyFormat(data?.labour_rate)}</Text>
         </View>
         <View style={[styles.row, { borderBottomColor: colors.border, backgroundColor: colors.background }]}>
-          <Text h3>{strings.total_labour_amount}</Text>
-          <Text h3 style={{ color: colors.success }}>{currencyFormat(totalLabourAmount)}</Text>
+          <Text h4>{strings.total_labour_amount}</Text>
+          <Text h4 style={{ color: colors.success }}>{currencyFormat(totalLabourAmount)}</Text>
         </View>
         <View style={[styles.row, { borderBottomColor: colors.border, backgroundColor: colors.background }]}>
-          <Text h3>{strings.given_amount}</Text>
-          <Text h3 style={{ color: colors.error }}>{currencyFormat(totalLabourGiven)}</Text>
+          <Text h4>{strings.given_amount}</Text>
+          <Text h4 style={{ color: colors.error }}>{currencyFormat(totalLabourGiven)}</Text>
         </View>
         <Final />
 

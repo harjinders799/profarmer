@@ -4,6 +4,7 @@ import { storage } from '@utils/helper';
 
 const initialState = {
   lang: undefined,
+  theme: 'dark',
   fingerLock: true,
   authenticate: false
 };
@@ -21,6 +22,11 @@ const LangReducer = (prevState, action) => {
       return {
         ...prevState,
         fingerLock: action.fingerLock,
+      };
+    case 'THEME':
+      return {
+        ...prevState,
+        theme: action.theme,
       };
     case 'AUTHENTICATE':
       return {
@@ -41,6 +47,10 @@ export const LangProvider = props => {
         storage.set('lang', JSON.stringify(value))
         dispatch({ type: 'LANG', lang: value });
       },
+      setTheme: async value => {
+        storage.set('theme', JSON.stringify(value))
+        dispatch({ type: 'THEME', theme: value });
+      },
       setFingerLock: async value => {
         storage.set('fingerLock', JSON.stringify(value))
         dispatch({ type: 'FINGER', fingerLock: value });
@@ -49,11 +59,14 @@ export const LangProvider = props => {
         dispatch({ type: 'AUTHENTICATE', authenticate: value });
       },
       getLang: async () => {
+        const jsonTheme = storage.getString('theme')
         const jsonLang = storage.getString('lang')
+        const theme = jsonTheme ? JSON.parse(jsonTheme) : null
         const lang = jsonLang ? JSON.parse(jsonLang) : null
         const jsonLock = storage.getString('fingerLock')
         const lock = jsonLock ? JSON.parse(jsonLock) : null
         if (lang?.code) strings.setLanguage(lang.code);
+        dispatch({ type: 'THEME', theme });
         dispatch({ type: 'FINGER', fingerLock: lock });
         dispatch({ type: 'LANG', lang: lang });
       },

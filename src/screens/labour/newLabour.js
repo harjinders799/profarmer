@@ -80,7 +80,7 @@ export default function NewLabour() {
       setLoading(true);
       let res = await updateLabour({
         ...data,
-        date: currentStamp(date),
+        start_date: currentStamp(start_date),
       });
       setLoading(false);
       ToastSuccess(strings.labour_added, strings.labour);
@@ -105,7 +105,7 @@ export default function NewLabour() {
       await addNewLabour({
         ...data,
         name: name.trim(),
-        start_date: is_regular ? currentStamp(date) : undefined,
+        start_date: is_regular ? currentStamp(start_date) : undefined,
         total_labour_amount: (parseFloat(rate) * parseFloat(count)).toFixed(2),
         total_labour_count: parseFloat(count).toFixed(2),
         labour_rate: parseFloat(rate).toFixed(2),
@@ -187,19 +187,23 @@ export default function NewLabour() {
           </TouchableOpacity>
         </Animated.View>
 
-        <Pressable
+        {is_regular ? <Pressable
           onPress={() => {
             setShowDate(true);
             Keyboard.dismiss();
           }}
-          style={{ display: is_regular ? 'flex' : 'none' }}>
+        >
           <Input
             entering={FadeInDown.delay(100)}
             label={strings.start_date}
             editable={false}
             value={dateFormat(start_date)}
+            onPress={() => {
+              setShowDate(true);
+              Keyboard.dismiss();
+            }}
           />
-        </Pressable>
+        </Pressable> : null}
         <DateTimePick
           show={showDate}
           setShow={setShowDate}

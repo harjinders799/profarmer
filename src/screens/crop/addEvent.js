@@ -108,6 +108,10 @@ export default function AddEvent() {
               editable={false}
               placeholder={strings.date}
               value={dateFormat(date)}
+              onPress={() => {
+                setShowDate(true);
+                Keyboard.dismiss();
+              }}
             />
           </Pressable>
           <Text entering={FadeInDown.delay(500)} h4 style={{ paddingTop: 10 }}>

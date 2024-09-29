@@ -15,6 +15,7 @@ import Animated, { LinearTransition } from 'react-native-reanimated';
 
 function PickerList({ data, groups }) {
     const { colors } = useTheme();
+    const uid = auth().currentUser.uid;
     const [owners, setOwners] = useState({});
 
     // Fetch owner data for each unique user ID
@@ -54,9 +55,7 @@ function PickerList({ data, groups }) {
                     }>
                     <View style={styles.row}>
                         <Text h3 style={{ maxWidth: '60%' }}>
-                            {item?.uid === auth().currentUser.uid
-                                ? item?.name
-                                : owner?.name || 'Unknown'}
+                            {item?.uid === uid ? item?.name : owner?.name || '--'}
                         </Text>
                         <Text
                             h3
@@ -68,34 +67,33 @@ function PickerList({ data, groups }) {
                         </Text>
                     </View>
                     <View style={styles.row}>
-                        <Text h6 color={colors.warning}>
-                            {pickerGroupName}
+                        <Text h6 color={item?.uid === uid ? colors.warning : colors.border}>
+                            {item?.uid === uid ? pickerGroupName : 'Read Only'}
                         </Text>
                         <Text h6 color={finalAmount < 0 ? colors.error : colors.success}>
                             {finalAmount === 0
                                 ? '____'
-                                : finalAmount > 0
+                                : finalAmount > 0 && item?.uid == uid
                                     ? strings.give
                                     : strings.receive}
                         </Text>
                     </View>
-                    <View style={styles.row}>
+                    <View
+                        style={[
+                            styles.row,
+                            { display: item?.uid === uid ? 'flex' : 'none' },
+                        ]}>
                         <Button
                             small
-                            iconLeft={item?.uid === auth().currentUser.uid ? 'plus' : null}
-                            label={
-                                item?.uid === auth().currentUser.uid
-                                    ? strings.amount
-                                    : 'Read Only'
-                            }
+                            iconLeft={item?.uid === uid ? 'plus' : null}
+                            label={strings.amount}
                             btnStyle={[
                                 styles.btn,
                                 {
-                                    backgroundColor:
-                                        item?.uid === auth().currentUser.uid ? navy : colors.border,
+                                    backgroundColor: item?.uid === uid ? navy : colors.border,
                                 },
                             ]}
-                            disabled={item?.uid !== auth().currentUser.uid}
+                            disabled={item?.uid !== uid}
                             onPress={() =>
                                 navigate('AddPickerExpense', {
                                     data: item,
@@ -104,22 +102,16 @@ function PickerList({ data, groups }) {
                         />
                         <Button
                             small
-                            iconLeft={item?.uid === auth().currentUser.uid ? 'plus' : null}
-                            label={
-                                item?.uid === auth().currentUser.uid
-                                    ? strings.weight
-                                    : 'Read Only'
-                            }
+                            iconLeft={item?.uid === uid ? 'plus' : null}
+                            label={strings.weight}
                             btnStyle={[
                                 styles.btn,
                                 {
                                     backgroundColor:
-                                        item?.uid === auth().currentUser.uid
-                                            ? colors.warning
-                                            : colors.border,
+                                        item?.uid === uid ? colors.warning : colors.border,
                                 },
                             ]}
-                            disabled={item?.uid !== auth().currentUser.uid}
+                            disabled={item?.uid !== uid}
                             onPress={() =>
                                 navigate('AddPickerWeight', {
                                     data: item,

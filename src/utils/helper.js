@@ -295,11 +295,13 @@ export const processWeights = (data, date) => {
             const weights = entry.weight.split('+').map(Number);
 
             // Create an array of objects for each weight, doubling the weight entries
-            return weights.map(weight => ({
-                ...entry,
-                weight: weight,
-                date: currentStamp(date),
-            }));
+            return weights
+                .filter(weight => weight > 0)
+                .map(weight => ({
+                    ...entry,
+                    weight: weight,
+                    date: currentStamp(date),
+                }));
         });
 
     return processedData;

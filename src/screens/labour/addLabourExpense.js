@@ -156,6 +156,10 @@ export default function AddLabourExpense() {
               editable={false}
               placeholder={strings.date}
               value={dateFormat(date)}
+              onPress={() => {
+                setShowDate(true);
+                Keyboard.dismiss();
+              }}
             />
           </Pressable>
           <DateTimePick

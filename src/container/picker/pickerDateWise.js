@@ -15,7 +15,6 @@ import Animated, { LinearTransition } from 'react-native-reanimated';
 function PickerDateWise({ pickers, groups }) {
     const { colors } = useTheme();
     const [pickersWeightData, setPickersWeightData] = useState([]);
-
     const fetchData = useCallback(() => {
         const unsubscribePickerWeight = pickersWeightListener(
             updatedDocuments => {

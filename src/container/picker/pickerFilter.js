@@ -48,7 +48,7 @@ const PickerFilter = ({
             <Animated.View layout={LinearTransition} style={styles.row}>
                 {!isFocus ? (
                     <Text
-                        // h5
+                        h5
                         color={orderBy.key == 'name' ? colors.primary : colors.text}
                         entering={FadeInLeft.delay(50)}
                         onPress={() => setOrderBy({ key: 'name', type: 'asc' })}>
@@ -62,7 +62,7 @@ const PickerFilter = ({
                 ) : null}
                 {!isFocus ? (
                     <Text
-                        // h6
+                        h5
                         color={orderBy.key == 'updatedAt' ? colors.primary : colors.text}
                         entering={FadeInLeft.delay(50)}
                         onPress={() => setOrderBy({ key: 'updatedAt', type: 'desc' })}>

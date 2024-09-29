@@ -103,7 +103,7 @@ export default function Aadhat() {
       <ScrollView
         style={{ width: '100%' }}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ padding: 20, paddingBottom: '80%' }}>
+        contentContainerStyle={{ padding: 20, paddingBottom: 100 }}>
         {Array.isArray(data) && data.length ? (
           <>
             <AadhtiyaConclusionCard data={data} />

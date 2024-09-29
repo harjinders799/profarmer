@@ -174,6 +174,10 @@ export default function AddLabour() {
               editable={false}
               placeholder={strings.date}
               value={dateFormat(date)}
+              onPress={() => {
+                setShowDate(true);
+                Keyboard.dismiss();
+              }}
             />
           </Pressable>
           <DateTimePick

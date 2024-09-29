@@ -17,7 +17,7 @@ export const pickersDataListener = (onUpdate, phone, orderBy) => {
 
     const query2 = firestore()
       .collection('pickers_data')
-      .where('read_access', 'array-contains', phone);
+    if (phone) query2.where('read_access', 'array-contains', phone);
 
     // Subscribe to the first query's snapshot changes
     const unsubscribe = query1.onSnapshot(
@@ -92,12 +92,13 @@ export const pickersWeightListener = (onUpdate, pid) => {
     const userId = auth().currentUser?.uid;
     let query = firestore()
       .collection('picker_cotton_weight')
-      .where('uid', '==', userId)
       .orderBy('date', 'desc');
 
     // Add the optional `where` clause if `pid` is provided
     if (pid) {
       query = query.where('pid', '==', pid);
+    } else {
+      query = query.where('uid', '==', userId);
     }
     // Listen for real-time updates
     const unsubscribe = query.onSnapshot(
@@ -125,12 +126,13 @@ export const pickersExpenseListener = (onUpdate, pid) => {
     const userId = auth().currentUser?.uid;
     let query = firestore()
       .collection('picker_expense')
-      .where('uid', '==', userId)
       .orderBy('date', 'desc');
 
     // Add the optional `where` clause if `pid` is provided
     if (pid) {
       query = query.where('pid', '==', pid);
+    } else {
+      query = query.where('uid', '==', userId);
     }
     // Listen for real-time updates
     const unsubscribe = query.onSnapshot(
@@ -205,7 +207,7 @@ export const addPickerWeightBulk = async (data, date, pickers) => {
     try {
       let uid = auth().currentUser?.uid;
       const processedData = processWeights(data, date); // Process weights before saving
-      console.log({ processedData, data, date });
+      // console.log({ processedData, data, date });
       const batch = firestore().batch(); // Create a batch for bulk operations
 
       // Create an object to hold the total weight and earnings for each picker

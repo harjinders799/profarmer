@@ -16,6 +16,7 @@ import { common } from '@utils/style';
 import { addPickerWeightBulk } from '@network/picker-service';
 import DateTimePicker from '@components/DateTime';
 import DropdownPicker from '@components/dropdown';
+import { sumBy } from 'lodash';
 
 export default function AddPickerBulkWeight() {
     const { colors } = useTheme();
@@ -48,11 +49,28 @@ export default function AddPickerBulkWeight() {
         }
     };
 
+    const addMoreWeight = i => {
+        setData(prevs => {
+            let data = [...prevs];
+            if (
+                data[i].weight.length &&
+                data[i].weight.charAt(data[i].weight.length - 1) !== '+'
+            )
+                data[i].weight += '+';
+            return data;
+        });
+    };
+
     return (
         <BaseView space>
             <Loader visible={loading} />
             <Header back label={strings.pickers_weight} />
-            <ScrollView style={styles.form} keyboardShouldPersistTaps="always">
+            <ScrollView
+                style={styles.form}
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={{ paddingBottom: 150 }}
+                automaticallyAdjustKeyboardInsets
+                keyboardShouldPersistTaps="always">
                 <Pressable
                     onPress={() => {
                         setShowDate(true);
@@ -67,10 +85,26 @@ export default function AddPickerBulkWeight() {
                         }
                         placeholder={strings.date}
                         value={dateFormat(date)}
+                        onPress={() => {
+                            setShowDate(true);
+                            Keyboard.dismiss();
+                        }}
                     />
                 </Pressable>
                 {data.map((picker, i) => (
                     <View key={picker?.name} style={common.row_btw}>
+                        <Icon
+                            name={'close'}
+                            size={20}
+                            color={colors.error}
+                            onPress={() =>
+                                setData(prevs => {
+                                    let data = [...prevs];
+                                    let filtered = data.filter(obj => obj.name != picker.name);
+                                    return filtered;
+                                })
+                            }
+                        />
                         <DropdownPicker
                             value={picker?.name}
                             data={pickers.filter(
@@ -99,7 +133,8 @@ export default function AddPickerBulkWeight() {
                             // label={strings.weight}
                             placeholder={strings.weight}
                             value={picker?.weight}
-                            maxLength={10}
+                            maxLength={30}
+                            multiline
                             setValue={value =>
                                 setData(prevs => {
                                     let data = [...prevs];
@@ -108,37 +143,25 @@ export default function AddPickerBulkWeight() {
                                 })
                             }
                             style={{ width: '50%' }}
-                            inputStyle={{ width: '85%' }}
+                            inputStyle={{ width: '85%', height: 45 + picker?.weight.length }}
                             keyboardType="numeric"
                             rightComponent={
-                                <Icon
-                                    name={'plus'}
-                                    color={colors.success}
-                                    size={18}
-                                    onPress={() =>
-                                        setData(prevs => {
-                                            let data = [...prevs];
-                                            if (
-                                                data[i].weight.length &&
-                                                data[i].weight.charAt(data[i].weight.length - 1) !== '+'
-                                            )
-                                                data[i].weight += '+';
-                                            return data;
-                                        })
-                                    }
-                                />
-                            }
-                        />
-                        <Icon
-                            name={'close'}
-                            size={20}
-                            color={colors.error}
-                            onPress={() =>
-                                setData(prevs => {
-                                    let data = [...prevs];
-                                    let filtered = data.filter(obj => obj.name != picker.name);
-                                    return filtered;
-                                })
+                                <>
+                                    <Text style={{ position: 'absolute', bottom: 0, right: 5 }}>
+                                        =
+                                        {sumBy(picker?.weight.split('+'), v =>
+                                            parseFloat(v ? v : 0),
+                                        )}
+                                    </Text>
+                                    <Pressable hitSlop={20} onPress={() => addMoreWeight(i)}>
+                                        <Icon
+                                            name={'plus'}
+                                            color={colors.success}
+                                            size={20}
+                                            onPress={() => addMoreWeight(i)}
+                                        />
+                                    </Pressable>
+                                </>
                             }
                         />
                     </View>

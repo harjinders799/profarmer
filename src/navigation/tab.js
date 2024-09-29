@@ -41,7 +41,7 @@ export default function Tabs() {
             : 50 * PixelRatio.getFontScale(),
         },
         tabBarLabelStyle: {
-          fontSize: 18,
+          fontSize: 14,
         },
       }}>
       {Array.isArray(data) &&

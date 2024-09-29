@@ -126,7 +126,7 @@ export default function AddPickerWeight() {
         <BaseView space>
             <Loader visible={loading} />
             <Header back label={editData?.name} />
-            <ScrollView style={styles.form} keyboardShouldPersistTaps="always">
+            <ScrollView style={styles.form} showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 150 }} automaticallyAdjustKeyboardInsets keyboardShouldPersistTaps="always">
                 <View style={common.row_btw}>
                     <Input
                         label={strings.weight}
@@ -167,6 +167,10 @@ export default function AddPickerWeight() {
                         editable={false}
                         placeholder={strings.date}
                         value={dateFormat(date)}
+                        onPress={() => {
+                            setShowDate(true);
+                            Keyboard.dismiss();
+                        }}
                     />
                 </Pressable>
                 <Input

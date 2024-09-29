@@ -24,6 +24,8 @@ import PickerFilter from '@container/picker/pickerFilter';
 import PickerConclusion from '@container/picker/pickerConclusion';
 import DeleteModal from '@container/deleteModal';
 import { ToastError, ToastProgress, ToastSuccess } from '@utils/toast';
+import auth from '@react-native-firebase/auth';
+
 
 // Lazy load components
 const PickerExpenseDetail = lazy(() =>
@@ -38,6 +40,7 @@ function PickerDetail() {
     const {
         params: { item, pickers, groups },
     } = useRoute();
+    const uid = auth().currentUser.uid;
     const { lang } = useLang();
     const { colors } = useTheme();
     const [loading, setLoading] = useState(true);
@@ -87,7 +90,7 @@ function PickerDetail() {
             <Header
                 back
                 label={item?.name}
-                deleteIcon
+                deleteIcon={item?.uid == uid}
                 onDeletePress={() => setOpenModal(true)}
                 share
                 onSharePress={() => ToastProgress(strings.in_progress)}

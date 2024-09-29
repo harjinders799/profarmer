@@ -8,6 +8,7 @@ import { common } from '@utils/style';
 import { white } from '@utils/colors';
 import { sumBy, debounce } from 'lodash';
 import { updatePickersCalculation } from '@network/picker-service';
+import auth from '@react-native-firebase/auth';
 
 const Card = React.memo(({ title, subtitle, color, textColor }) => (
     <View style={[styles.card, { backgroundColor: color }]}>
@@ -20,6 +21,7 @@ const Card = React.memo(({ title, subtitle, color, textColor }) => (
 
 const PickerConclusion = ({ item, weights, expenses }) => {
     const { colors } = useTheme();
+    const uid = auth().currentUser.uid;
 
     // Memoize calculations to avoid unnecessary recalculations on re-renders
     const { totalWeight, totalEarning, totalGiven, finalAmount } = useMemo(() => {
@@ -57,10 +59,12 @@ const PickerConclusion = ({ item, weights, expenses }) => {
 
     // Call the debounced function
     useEffect(() => {
-        updateCalculation(); // This will invoke the debounced function
-        return () => {
-            updateCalculation.cancel(); // Clean up on unmount or before the next call
-        };
+        if (item?.uid == uid) {
+            updateCalculation(); // This will invoke the debounced function
+            return () => {
+                updateCalculation.cancel(); // Clean up on unmount or before the next call
+            };
+        }
     }, [updateCalculation]); // Run when updateCalculation changes
 
     return (
@@ -78,7 +82,7 @@ const PickerConclusion = ({ item, weights, expenses }) => {
             />
             <Card
                 title={`${currencyFormat(totalGiven, 2)}`}
-                subtitle={strings.given_amount}
+                subtitle={item?.uid == uid ? strings.given_amount : strings.taken_amount}
                 color={colors.secondaryCard}
                 textColor={colors.error}
             />
