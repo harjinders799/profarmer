@@ -15,8 +15,7 @@ export const pickersDataListener = (onUpdate, phone, orderBy) => {
       // .orderBy('name', 'asc');
       .orderBy(orderBy.key, orderBy.type);
 
-    const query2 = firestore()
-      .collection('pickers_data')
+    const query2 = firestore().collection('pickers_data');
     if (phone) query2.where('read_access', 'array-contains', phone);
 
     // Subscribe to the first query's snapshot changes
@@ -155,8 +154,8 @@ export const pickersExpenseListener = (onUpdate, pid) => {
   }
 };
 
-export const submitPicker = async data => {
-  return new Promise(async function (resolve, reject) {
+export const submitPicker = data => {
+  return new Promise(function (resolve, reject) {
     try {
       let uid = auth().currentUser?.uid;
       firestore()
@@ -171,23 +170,23 @@ export const submitPicker = async data => {
           uid: uid,
           createdAt: currentStamp(new Date()),
           updatedAt: currentStamp(new Date()),
-        })
-        .then(res => resolve(res?.id));
+        });
+      resolve(true);
     } catch (error) {
       reject(new Error(error));
     }
   });
 };
 
-export const addPickerWeight = async data => {
-  return new Promise(async function (resolve, reject) {
+export const addPickerWeight = data => {
+  return new Promise(function (resolve, reject) {
     try {
       let uid = auth().currentUser?.uid;
       console.log(sanitizeData({ ...data, uid }));
-      await firestore()
+      firestore()
         .collection('picker_cotton_weight')
         .add(sanitizeData({ ...data, uid }));
-      await firestore()
+      firestore()
         .collection('pickers_data')
         .doc(data?.pid)
         .update({
@@ -202,8 +201,8 @@ export const addPickerWeight = async data => {
     }
   });
 };
-export const addPickerWeightBulk = async (data, date, pickers) => {
-  return new Promise(async (resolve, reject) => {
+export const addPickerWeightBulk = (data, date, pickers) => {
+  return new Promise((resolve, reject) => {
     try {
       let uid = auth().currentUser?.uid;
       const processedData = processWeights(data, date); // Process weights before saving
@@ -239,14 +238,14 @@ export const addPickerWeightBulk = async (data, date, pickers) => {
       });
 
       // Commit the batch
-      await batch.commit();
+      batch.commit();
 
       // Update each picker's data with new totals
       for (const p of pickers) {
         const newTotalWeight = pickerTotals[p.id]?.totalWeight;
         const newTotalEarning = pickerTotals[p.id]?.totalEarning;
 
-        await firestore()
+        firestore()
           .collection('pickers_data')
           .doc(p.id)
           .update({
@@ -263,14 +262,14 @@ export const addPickerWeightBulk = async (data, date, pickers) => {
   });
 };
 
-export const addPickerExpense = async data => {
-  return new Promise(async function (resolve, reject) {
+export const addPickerExpense = data => {
+  return new Promise(function (resolve, reject) {
     try {
       let uid = auth().currentUser?.uid;
-      await firestore()
+      firestore()
         .collection('picker_expense')
         .add(sanitizeData({ ...data, uid }));
-      await firestore()
+      firestore()
         .collection('pickers_data')
         .doc(data?.pid)
         .update({
@@ -285,9 +284,9 @@ export const addPickerExpense = async data => {
 };
 
 export const getPickerData = () => {
-  return new Promise(async function (resolve, reject) {
+  return new Promise(function (resolve, reject) {
     let userId = auth().currentUser?.uid;
-    await firestore()
+    firestore()
       .collection('picker')
       .where('uid', '==', userId)
       .get()
@@ -305,9 +304,9 @@ export const getPickerData = () => {
 };
 
 export const getPickerByName = name => {
-  return new Promise(async function (resolve, reject) {
+  return new Promise(function (resolve, reject) {
     let userId = auth().currentUser?.uid;
-    await firestore()
+    firestore()
       .collection('picker')
       .where('uid', '==', userId)
       .where('picker', '==', name)
@@ -325,11 +324,11 @@ export const getPickerByName = name => {
   });
 };
 
-export const getAllPickerExpense = async name => {
-  return new Promise(async function (resolve, reject) {
+export const getAllPickerExpense = name => {
+  return new Promise(function (resolve, reject) {
     try {
       let userId = auth().currentUser?.uid;
-      await firestore()
+      firestore()
         .collection('picker_expense')
         .where('uid', '==', userId)
         .get()
@@ -346,10 +345,10 @@ export const getAllPickerExpense = async name => {
   });
 };
 
-export const deletePickerExpense = async id => {
-  return new Promise(async function (resolve, reject) {
+export const deletePickerExpense = id => {
+  return new Promise(function (resolve, reject) {
     try {
-      await firestore().collection('picker_expense').doc(id).delete();
+      firestore().collection('picker_expense').doc(id).delete();
       resolve('success');
     } catch (error) {
       reject(new Error(error));
@@ -357,10 +356,10 @@ export const deletePickerExpense = async id => {
   });
 };
 
-export const updatePicker = async data => {
-  return new Promise(async function (resolve, reject) {
+export const updatePicker = data => {
+  return new Promise(function (resolve, reject) {
     try {
-      await firestore().collection('picker').doc(data?.fid).update(data);
+      firestore().collection('picker').doc(data?.fid).update(data);
       resolve(data?.fid);
     } catch (error) {
       reject(new Error(error));
@@ -368,13 +367,10 @@ export const updatePicker = async data => {
   });
 };
 
-export const updatePickerCottonWeight = async data => {
-  return new Promise(async function (resolve, reject) {
+export const updatePickerCottonWeight = data => {
+  return new Promise(function (resolve, reject) {
     try {
-      await firestore()
-        .collection('picker_cotton_weight')
-        .doc(data?.id)
-        .update(data);
+      firestore().collection('picker_cotton_weight').doc(data?.id).update(data);
       resolve(true);
     } catch (error) {
       reject(new Error(error));
@@ -382,10 +378,10 @@ export const updatePickerCottonWeight = async data => {
   });
 };
 
-export const updatePickersCalculation = async data => {
-  return new Promise(async function (resolve, reject) {
+export const updatePickersCalculation = data => {
+  return new Promise(function (resolve, reject) {
     try {
-      await firestore()
+      firestore()
         .collection('pickers_data')
         .doc(data.pid) // Assuming item has a pid property
         .update({
@@ -401,10 +397,10 @@ export const updatePickersCalculation = async data => {
   });
 };
 
-export const updatePickerExpense = async data => {
-  return new Promise(async function (resolve, reject) {
+export const updatePickerExpense = data => {
+  return new Promise(function (resolve, reject) {
     try {
-      await firestore().collection('picker_expense').doc(data?.id).update(data);
+      firestore().collection('picker_expense').doc(data?.id).update(data);
       resolve(true);
     } catch (error) {
       reject(new Error(error));
@@ -412,10 +408,10 @@ export const updatePickerExpense = async data => {
   });
 };
 
-export const deletePicker = async id => {
-  return new Promise(async function (resolve, reject) {
+export const deletePicker = id => {
+  return new Promise(function (resolve, reject) {
     try {
-      await firestore().collection('picker').doc(id).delete();
+      firestore().collection('picker').doc(id).delete();
       resolve('success');
     } catch (error) {
       reject(new Error(error));
@@ -423,10 +419,10 @@ export const deletePicker = async id => {
   });
 };
 
-export const deletePickerCottonWeight = async id => {
-  return new Promise(async function (resolve, reject) {
+export const deletePickerCottonWeight = id => {
+  return new Promise(function (resolve, reject) {
     try {
-      await firestore().collection('picker_cotton_weight').doc(id).delete();
+      firestore().collection('picker_cotton_weight').doc(id).delete();
       resolve('success');
     } catch (error) {
       reject(new Error(error));
@@ -434,25 +430,25 @@ export const deletePickerCottonWeight = async id => {
   });
 };
 
-export const submitPickerExpense = async data => {
-  return new Promise(async function (resolve, reject) {
+export const submitPickerExpense = data => {
+  return new Promise(function (resolve, reject) {
     try {
       let id = auth().currentUser?.uid;
       firestore()
         .collection('picker_expense')
         .add({ ...data, uid: id })
-        .then(res => resolve(res?.id));
+      resolve(true);
     } catch (error) {
       reject(new Error(error));
     }
   });
 };
 
-export const getPickerExpense = async name => {
-  return new Promise(async function (resolve, reject) {
+export const getPickerExpense = name => {
+  return new Promise(function (resolve, reject) {
     try {
       let userId = auth().currentUser?.uid;
-      await firestore()
+      firestore()
         .collection('picker_expense')
         .where('uid', '==', userId)
         .where('picker', '==', name)
@@ -471,9 +467,9 @@ export const getPickerExpense = async name => {
 };
 
 export const getCottonByPicker = search => {
-  return new Promise(async function (resolve, reject) {
+  return new Promise(function (resolve, reject) {
     let userId = auth().currentUser?.uid;
-    await firestore()
+    firestore()
       .collection('cotton')
       .where('uid', '==', userId)
       .where('picker', '==', search)
@@ -491,16 +487,16 @@ export const getCottonByPicker = search => {
   });
 };
 
-export const deletePickerCollection = async id => {
+export const deletePickerCollection = id => {
   try {
     const uid = auth().currentUser.uid;
 
-    const deletePicker = await firestore()
+    const deletePicker = firestore()
       .collection('pickers_data')
       .doc(id)
       .delete();
 
-    const deletePickerCottonWeight = await firestore()
+    const deletePickerCottonWeight = firestore()
       .collection('picker_cotton_weight')
       .where('pid', '==', id)
       .get()
@@ -512,7 +508,7 @@ export const deletePickerCollection = async id => {
         return Promise.all(deletePromises);
       });
 
-    const deletePickerExpense = await firestore()
+    const deletePickerExpense = firestore()
       .collection('picker_expense')
       .where('pid', '==', id)
       .get()
@@ -524,7 +520,7 @@ export const deletePickerCollection = async id => {
         return Promise.all(deletePromises);
       });
 
-    const querySnapshot = await firestore()
+    const querySnapshot = firestore()
       .collection('picker_groups')
       .where('uid', '==', uid)
       .where('members', 'array-contains', id)
@@ -540,35 +536,35 @@ export const deletePickerCollection = async id => {
         ? groupDoc.ref.delete()
         : groupDoc.ref.update({ members: firestore.FieldValue.arrayRemove(id) });
 
-    await action;
+    action;
 
-    await Promise.all([
+    Promise.all([
       deletePicker,
       deletePickerExpense,
       deletePickerCottonWeight,
-      action
+      action,
     ]);
   } catch (error) {
     throw new Error(error);
   }
 };
 
-export const createGroup = async data => {
-  return new Promise(async function (resolve, reject) {
+export const createGroup = data => {
+  return new Promise(function (resolve, reject) {
     try {
       let id = auth().currentUser?.uid;
       firestore()
         .collection('picker_groups')
         .add({ ...data, uid: id })
-        .then(res => resolve(res?.id));
+      resolve(true);
     } catch (error) {
       reject(new Error(error));
     }
   });
 };
 
-export const updateGroup = async data => {
-  return new Promise(async function (resolve, reject) {
+export const updateGroup = data => {
+  return new Promise(function (resolve, reject) {
     try {
       let id = auth().currentUser?.uid;
       firestore().collection('picker_groups').doc(data?.id).update(data);
@@ -579,10 +575,10 @@ export const updateGroup = async data => {
   });
 };
 
-export const deleteGroup = async id => {
-  return new Promise(async function (resolve, reject) {
+export const deleteGroup = id => {
+  return new Promise(function (resolve, reject) {
     try {
-      await firestore().collection('picker_groups').doc(id).delete();
+      firestore().collection('picker_groups').doc(id).delete();
       resolve('success');
     } catch (error) {
       reject(new Error(error));
@@ -590,12 +586,12 @@ export const deleteGroup = async id => {
   });
 };
 
-export const getPickerGroup = async () => {
-  return new Promise(async function (resolve, reject) {
+export const getPickerGroup = () => {
+  return new Promise(function (resolve, reject) {
     try {
       let userId = auth().currentUser?.uid;
       let arr = [];
-      await firestore()
+      firestore()
         .collection('picker_groups')
         .where('uid', '==', userId)
         .get()
@@ -612,7 +608,7 @@ export const getPickerGroup = async () => {
 };
 
 export const getGroupMembersData = group => {
-  return new Promise(async function (resolve, reject) {
+  return new Promise(function (resolve, reject) {
     try {
       const memberPromises = group.members.map(memberRef =>
         firestore()
@@ -622,7 +618,7 @@ export const getGroupMembersData = group => {
           .then(doc => ({ id: doc.id, ...doc.data() })),
       );
 
-      const memberDetails = await Promise.all(memberPromises);
+      const memberDetails = Promise.all(memberPromises);
       resolve(memberDetails);
     } catch (error) {
       reject(new Error(error));

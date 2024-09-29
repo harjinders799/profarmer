@@ -27,9 +27,9 @@ const getDocumentsListener = (query, onUpdate) => {
   }
 };
 
-const deleteDocumentById = async (collectionName, id) => {
+const deleteDocumentById = (collectionName, id) => {
   try {
-    await firestore().collection(collectionName).doc(id).delete();
+    firestore().collection(collectionName).doc(id).delete();
     return 'success';
   } catch (error) {
     throw new Error(error);
@@ -94,15 +94,15 @@ export const submitEvent = data => {
   });
 };
 
-export const submitLabourLeave = async data => {
+export const submitLabourLeave = data => {
   try {
     let userId = auth().currentUser?.uid;
-    await firestore()
+    firestore()
       .collection('crops_data')
       .doc(data?.cid)
       .collection('labour_leave')
       .add(sanitizeData({ ...data, uid: userId }));
-    await firestore().collection('crops_data').doc(data?.cid).update({
+    firestore().collection('crops_data').doc(data?.cid).update({
       total_leave: data?.total_leave,
     });
     return 'success';
@@ -118,7 +118,7 @@ export const getCropData = onUpdate =>
     onUpdate,
   );
 
-export const getLabourRegular = async (name, onUpdate) =>
+export const getLabourRegular = (name, onUpdate) =>
   getDocumentsListener(
     firestore()
       .collection('crops_data')
@@ -157,15 +157,15 @@ export const getLabourLeave = (id, onUpdate) =>
     onUpdate,
   );
 
-export const updateLabour = async data => {
+export const updateLabour = data => {
   try {
-    await firestore()
+    firestore()
       .collection('crops_data')
       .doc(data?.cid)
       .collection('labour_work')
       .doc(data?.id)
       .update(sanitizeData(data));
-    await firestore().collection('crops_data').doc(data?.cid).update({
+    firestore().collection('crops_data').doc(data?.cid).update({
       total_labour_amount: data?.total_labour_amount,
       total_labour_count: data?.total_labour_count,
       labour_rate: data?.labour_rate,
@@ -177,15 +177,15 @@ export const updateLabour = async data => {
   }
 };
 
-export const updateLabourLeave = async data => {
+export const updateLabourLeave = data => {
   try {
-    await firestore()
+    firestore()
       .collection('crops_data')
       .doc(data?.cid)
       .collection('labour_leave')
       .doc(data?.id)
       .update(sanitizeData(data));
-    await firestore().collection('crops_data').doc(data?.cid).update({
+    firestore().collection('crops_data').doc(data?.cid).update({
       total_leave: data?.total_leave,
     });
     return 'success';
@@ -194,15 +194,15 @@ export const updateLabourLeave = async data => {
   }
 };
 
-export const updateLabourExpense = async data => {
+export const updateLabourExpense = data => {
   try {
-    await firestore()
+    firestore()
       .collection('crops_data')
       .doc(data?.cid)
       .collection('labour_expense')
       .doc(data?.id)
       .update(sanitizeData(data));
-    await firestore().collection('crops_data').doc(data?.cid).update({
+    firestore().collection('crops_data').doc(data?.cid).update({
       given_amount: data?.given_amount,
     });
     return 'success';
@@ -212,14 +212,14 @@ export const updateLabourExpense = async data => {
 };
 
 // Function to update crops_data document calculation
-export const updateLabourDataCalculation = async labourId => {
+export const updateLabourDataCalculation = labourId => {
   try {
     const labourDocRef = firestore().collection('crops_data').doc(labourId);
-    const labourDataSnapshot = await labourDocRef.get();
+    const labourDataSnapshot = labourDocRef.get();
 
     if (labourDataSnapshot.exists) {
       // Calculate total_labour_amount from labour_work
-      const workSnapshot = await labourDocRef.collection('labour_work').get();
+      const workSnapshot = labourDocRef.collection('labour_work').get();
       let totalLabourAmount = 0;
       let totalLabourCount = 0;
       let labourRate = 0;
@@ -235,7 +235,7 @@ export const updateLabourDataCalculation = async labourId => {
       });
 
       // Calculate given_amount from labour_expense
-      const expenseSnapshot = await labourDocRef
+      const expenseSnapshot = labourDocRef
         .collection('labour_expense')
         .get();
       let givenAmount = 0;
@@ -246,7 +246,7 @@ export const updateLabourDataCalculation = async labourId => {
       });
 
       // Calculate total_leave from labour_leave
-      const leaveSnapshot = await labourDocRef.collection('labour_leave').get();
+      const leaveSnapshot = labourDocRef.collection('labour_leave').get();
       let totalLeave = 0;
       leaveSnapshot.forEach(leaveDoc => {
         const leaveData = leaveDoc.data();
@@ -255,7 +255,7 @@ export const updateLabourDataCalculation = async labourId => {
       });
 
       // Update crops_data document with calculated values
-      await labourDocRef.set(
+      labourDocRef.set(
         {
           total_labour_amount: totalLabourAmount.toFixed(2), // Example formatting
           total_labour_count: totalLabourCount.toFixed(2), // Example formatting
@@ -276,9 +276,9 @@ export const updateLabourDataCalculation = async labourId => {
   }
 };
 
-export const deleteLabourExpense = async data => {
+export const deleteLabourExpense = data => {
   try {
-    await firestore()
+    firestore()
       .collection('crops_data')
       .doc(data.cid)
       .collection('labour_expense')
@@ -290,9 +290,9 @@ export const deleteLabourExpense = async data => {
   }
 };
 
-export const deleteLabour = async data => {
+export const deleteLabour = data => {
   try {
-    await firestore()
+    firestore()
       .collection('crops_data')
       .doc(data.cid)
       .collection('labour_work')
@@ -303,23 +303,23 @@ export const deleteLabour = async data => {
     throw new Error(error);
   }
 };
-export const deleteLabourLeave = async id =>
+export const deleteLabourLeave = id =>
   deleteDocumentById('labour_leave', id);
 
-export const deleteCropCollection = async id => {
+export const deleteCropCollection = id => {
   try {
-    await firestore().collection('crops_data').doc(id).delete();
+    firestore().collection('crops_data').doc(id).delete();
     return 'success';
   } catch (error) {
     throw new Error(error);
   }
 };
 
-// const migrateData = async () => {
+// const migrateData =  () => {
 //   try {
-//     const cropnapshot = await firestore().collection('labour').get();
-//     const expenseSnapshot = await firestore().collection('labour_expense').get();
-//     const leaveSnapshot = await firestore().collection('labour_leave').get();
+//     const cropnapshot =  firestore().collection('labour').get();
+//     const expenseSnapshot =  firestore().collection('labour_expense').get();
+//     const leaveSnapshot =  firestore().collection('labour_leave').get();
 
 //     const batch = firestore().batch();
 
@@ -366,12 +366,12 @@ export const deleteCropCollection = async id => {
 //     });
 
 //     // Commit the batch write to Firestore
-//     await batch.commit();
+//      batch.commit();
 //     console.log('Data migration complete');
 
 //     // Delete old collections
-//     await deleteCollection('labour_expense');
-//     await deleteCollection('labour_leave');
+//      deleteCollection('labour_expense');
+//      deleteCollection('labour_leave');
 
 //     console.log('Old collections deleted');
 //   } catch (error) {
@@ -379,9 +379,9 @@ export const deleteCropCollection = async id => {
 //   }
 // };
 
-// const deleteCollection = async (collectionName) => {
+// const deleteCollection =  (collectionName) => {
 //   const collectionRef = firestore().collection(collectionName);
-//   const querySnapshot = await collectionRef.get();
+//   const querySnapshot =  collectionRef.get();
 
 //   const batch = firestore().batch();
 
@@ -389,50 +389,50 @@ export const deleteCropCollection = async id => {
 //     batch.delete(doc.ref);
 //   });
 
-//   await batch.commit();
+//    batch.commit();
 //   console.log(`Collection ${collectionName} deleted`);
 // };
 
 // migrateData();
 
-// const backupData = async () => {
+// const backupData =  () => {
 //   try {
 //     const backup = {};
 
-//     const cropSnapshot = await firestore().collection('crop').get();
+//     const cropSnapshot =  firestore().collection('crop').get();
 //     backup.crop = cropSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-//     const interest_amountSnapshot = await firestore().collection('interest_amount').get();
+//     const interest_amountSnapshot =  firestore().collection('interest_amount').get();
 //     backup.interest_amount = interest_amountSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-//     const pickerSnapshot = await firestore().collection('picker').get();
+//     const pickerSnapshot =  firestore().collection('picker').get();
 //     backup.picker = pickerSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-//     const picker_expenseSnapshot = await firestore().collection('picker_expense').get();
+//     const picker_expenseSnapshot =  firestore().collection('picker_expense').get();
 //     backup.picker_expense = picker_expenseSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-//     const picker_groupSnapshot = await firestore().collection('picker_group').get();
+//     const picker_groupSnapshot =  firestore().collection('picker_group').get();
 //     backup.picker_group = picker_groupSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-//     const loanSnapshot = await firestore().collection('loan').get();
+//     const loanSnapshot =  firestore().collection('loan').get();
 //     backup.loan = loanSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-//     const usersSnapshot = await firestore().collection('users').get();
+//     const usersSnapshot =  firestore().collection('users').get();
 //     backup.users = usersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
 //     // Backup labour collection
-//     const cropnapshot = await firestore().collection('labour').get();
+//     const cropnapshot =  firestore().collection('labour').get();
 //     backup.labour = cropnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-//     const cropSnapshot = await firestore().collection('crop').get();
+//     const cropSnapshot =  firestore().collection('crop').get();
 //     backup.crop = cropSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
 //     // Backup labour_expense collection
-//     const expenseSnapshot = await firestore().collection('labour_expense').get();
+//     const expenseSnapshot =  firestore().collection('labour_expense').get();
 //     backup.labour_expense = expenseSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
 //     // Backup labour_leave collection
-//     const leaveSnapshot = await firestore().collection('labour_leave').get();
+//     const leaveSnapshot =  firestore().collection('labour_leave').get();
 //     backup.labour_leave = leaveSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
 //     // Save backup to file
@@ -443,7 +443,7 @@ export const deleteCropCollection = async id => {
 //     const filePath = `${RNFS.DownloadDirectoryPath}/firestore-backup.json`;
 //     console.log(filePath)
 //     // Write backup to file
-//     await RNFS.writeFile(filePath, backupJson, 'utf8').then((success) => {
+//      RNFS.writeFile(filePath, backupJson, 'utf8').then((success) => {
 //       console.log('FILE WRITTEN!', success);
 //     })
 //       .catch((err) => {
@@ -458,9 +458,9 @@ export const deleteCropCollection = async id => {
 
 // backupData()
 
-const migrateLabourData = async () => {
+const migrateLabourData = () => {
   try {
-    const cropnapshot = await firestore().collection('labour').get();
+    const cropnapshot = firestore().collection('labour').get();
     const batch = firestore().batch();
 
     // Migrate labour collection data
@@ -493,7 +493,7 @@ const migrateLabourData = async () => {
       );
 
       // Migrate labour_expense subcollection data
-      const expenseSnapshot = await firestore()
+      const expenseSnapshot = firestore()
         .collection('labour')
         .doc(uid)
         .collection('labour_expense')
@@ -504,7 +504,7 @@ const migrateLabourData = async () => {
       });
 
       // Migrate labour_leave subcollection data
-      const leaveSnapshot = await firestore()
+      const leaveSnapshot = firestore()
         .collection('labour')
         .doc(uid)
         .collection('labour_leave')
@@ -516,20 +516,20 @@ const migrateLabourData = async () => {
     }
 
     // Commit the batch write to Firestore
-    await batch.commit();
+    batch.commit();
     console.log('Data migration complete');
 
     // Delete old labour collection
-    await deleteCollection('labour');
+    deleteCollection('labour');
     console.log('Old labour collection deleted');
   } catch (error) {
     console.error('Error migrating data:', error);
   }
 };
 
-const deleteCollection = async collectionName => {
+const deleteCollection = collectionName => {
   const collectionRef = firestore().collection(collectionName);
-  const querySnapshot = await collectionRef.get();
+  const querySnapshot = collectionRef.get();
 
   const batch = firestore().batch();
 
@@ -537,7 +537,7 @@ const deleteCollection = async collectionName => {
     batch.delete(doc.id);
   });
 
-  await batch.commit();
+  batch.commit();
   console.log(`Collection ${collectionName} deleted`);
 };
 

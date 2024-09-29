@@ -96,11 +96,11 @@ export const loansDataListener = (
   }
 };
 
-export const submitLoan = async data => {
-  return new Promise(async function (resolve, reject) {
+export const submitLoan = data => {
+  return new Promise(function (resolve, reject) {
     try {
       let userId = auth().currentUser?.uid;
-      await firestore()
+      firestore()
         .collection('loans_data')
         .add({
           ...data,
@@ -115,10 +115,10 @@ export const submitLoan = async data => {
   });
 };
 
-export const addLoanAmount = async data => {
-  return new Promise(async function (resolve, reject) {
+export const addLoanAmount = data => {
+  return new Promise(function (resolve, reject) {
     try {
-      await firestore()
+      firestore()
         .collection('loans_data')
         .doc(data?.lid)
         .collection('transactions')
@@ -152,10 +152,10 @@ export const getLoanData = () => {
   });
 };
 
-export const deleteLoanTransaction = async data => {
-  return new Promise(async function (resolve, reject) {
+export const deleteLoanTransaction = data => {
+  return new Promise(function (resolve, reject) {
     try {
-      await firestore()
+      firestore()
         .collection('loans_data')
         .doc(data?.lid)
         .collection('transactions')
@@ -168,10 +168,10 @@ export const deleteLoanTransaction = async data => {
   });
 };
 
-export const updateLoan = async data => {
-  return new Promise(async function (resolve, reject) {
+export const updateLoan = data => {
+  return new Promise(function (resolve, reject) {
     try {
-      await firestore().collection('loan').doc(data?.id).update(data);
+      firestore().collection('loan').doc(data?.id).update(data);
       resolve('success');
     } catch (error) {
       reject(new Error(error));
@@ -179,10 +179,10 @@ export const updateLoan = async data => {
   });
 };
 
-export const updateLoanTransaction = async data => {
-  return new Promise(async function (resolve, reject) {
+export const updateLoanTransaction = data => {
+  return new Promise(function (resolve, reject) {
     try {
-      await firestore()
+      firestore()
         .collection('loans_data')
         .doc(data?.lid)
         .collection('transactions')
@@ -195,12 +195,12 @@ export const updateLoanTransaction = async data => {
   });
 };
 
-export const updateLoanName = async (name, data) => {
-  return new Promise(async function (resolve, reject) {
+export const updateLoanName = (name, data) => {
+  return new Promise(function (resolve, reject) {
     try {
       let userId = auth().currentUser?.uid;
 
-      const usersQuerySnapshot = await firestore()
+      const usersQuerySnapshot = firestore()
         .collection('loan')
         .where(
           firestore.Filter.or(
@@ -240,10 +240,10 @@ export const updateLoanName = async (name, data) => {
   });
 };
 
-export const deleteLoanCollection = async id => {
-  return new Promise(async function (resolve, reject) {
+export const deleteLoanCollection = id => {
+  return new Promise(function (resolve, reject) {
     try {
-      await firestore().collection('loans_data').doc(id).delete();
+      firestore().collection('loans_data').doc(id).delete();
       resolve('success');
     } catch (error) {
       throw new Error(error);
@@ -253,11 +253,11 @@ export const deleteLoanCollection = async id => {
 
 const db = firestore();
 
-async function migrateLoanData() {
+function migrateLoanData() {
   const userId = auth().currentUser?.uid;
   try {
     const oldLoansRef = db.collection('loan');
-    const snapshot = await oldLoansRef.where('uid', '==', userId).get();
+    const snapshot = oldLoansRef.where('uid', '==', userId).get();
 
     if (snapshot.empty) {
       console.log('No loan documents found.');
@@ -323,7 +323,7 @@ async function migrateLoanData() {
       });
     });
 
-    await batch.commit();
+    batch.commit();
     console.log('Migration completed successfully.');
   } catch (error) {
     console.log('Migration not completed successfully:', error);

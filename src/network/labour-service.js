@@ -27,9 +27,9 @@ const getDocumentsListener = (query, onUpdate) => {
   }
 };
 
-const deleteDocumentById = async (collectionName, id) => {
+const deleteDocumentById = (collectionName, id) => {
   try {
-    await firestore().collection(collectionName).doc(id).delete();
+    firestore().collection(collectionName).doc(id).delete();
     return 'success';
   } catch (error) {
     throw new Error(error);
@@ -37,16 +37,11 @@ const deleteDocumentById = async (collectionName, id) => {
 };
 
 export const addNewLabour = data => {
-  return new Promise(async function (resolve, reject) {
+  return new Promise(function (resolve, reject) {
     try {
       let userId = auth().currentUser?.uid;
-      // let res = await firestore().disableNetwork()
-      // console.log({ res })
-      // setTimeout(() => {
-      //   resolve(true);
-      // }, 3000);
       // Add labours_data document
-      const labourDataRef = await firestore()
+      const labourDataRef = firestore()
         .collection('labours_data')
         .add(
           sanitizeData({
@@ -67,7 +62,7 @@ export const addNewLabour = data => {
       const labourDataId = labourDataRef.id;
 
       // Add labour_work subcollection document
-      await firestore()
+      firestore()
         .collection('labours_data')
         .doc(labourDataId)
         .collection('labour_work')
@@ -89,15 +84,15 @@ export const addNewLabour = data => {
   });
 };
 
-export const submitLabour = async data => {
+export const submitLabour = data => {
   try {
     let userId = auth().currentUser?.uid;
-    await firestore()
+    firestore()
       .collection('labours_data')
       .doc(data?.cid)
       .collection('labour_work')
       .add(sanitizeData({ ...data, uid: userId }));
-    await firestore().collection('labours_data').doc(data?.cid).update({
+    firestore().collection('labours_data').doc(data?.cid).update({
       total_labour_amount: data?.total_labour_amount,
       total_labour_count: data?.total_labour_count,
       labour_rate: data?.rate,
@@ -109,15 +104,15 @@ export const submitLabour = async data => {
   }
 };
 
-export const submitLabourExpense = async data => {
+export const submitLabourExpense = data => {
   try {
     let userId = auth().currentUser?.uid;
-    await firestore()
+    firestore()
       .collection('labours_data')
       .doc(data?.cid)
       .collection('labour_expense')
       .add(sanitizeData({ ...data, uid: userId }));
-    await firestore().collection('labours_data').doc(data?.cid).update({
+    firestore().collection('labours_data').doc(data?.cid).update({
       given_amount: data?.given_amount,
     });
     return 'success';
@@ -127,15 +122,15 @@ export const submitLabourExpense = async data => {
   }
 };
 
-export const submitLabourLeave = async data => {
+export const submitLabourLeave = data => {
   try {
     let userId = auth().currentUser?.uid;
-    await firestore()
+    firestore()
       .collection('labours_data')
       .doc(data?.cid)
       .collection('labour_leave')
       .add(sanitizeData({ ...data, uid: userId }));
-    await firestore().collection('labours_data').doc(data?.cid).update({
+    firestore().collection('labours_data').doc(data?.cid).update({
       total_leave: data?.total_leave,
     });
     return 'success';
@@ -153,7 +148,7 @@ export const getLabourData = onUpdate =>
     onUpdate,
   );
 
-export const getLabourRegular = async (name, onUpdate) =>
+export const getLabourRegular = (name, onUpdate) =>
   getDocumentsListener(
     firestore()
       .collection('labours_data')
@@ -192,15 +187,15 @@ export const getLabourLeave = (id, onUpdate) =>
     onUpdate,
   );
 
-export const updateLabour = async data => {
+export const updateLabour = data => {
   try {
-    await firestore()
+    firestore()
       .collection('labours_data')
       .doc(data?.cid)
       .collection('labour_work')
       .doc(data?.id)
       .update(sanitizeData(data));
-    await firestore().collection('labours_data').doc(data?.cid).update({
+    firestore().collection('labours_data').doc(data?.cid).update({
       total_labour_amount: data?.total_labour_amount,
       total_labour_count: data?.total_labour_count,
       labour_rate: data?.labour_rate,
@@ -212,15 +207,15 @@ export const updateLabour = async data => {
   }
 };
 
-export const updateLabourLeave = async data => {
+export const updateLabourLeave = data => {
   try {
-    await firestore()
+    firestore()
       .collection('labours_data')
       .doc(data?.cid)
       .collection('labour_leave')
       .doc(data?.id)
       .update(sanitizeData(data));
-    await firestore().collection('labours_data').doc(data?.cid).update({
+    firestore().collection('labours_data').doc(data?.cid).update({
       total_leave: data?.total_leave,
     });
     return 'success';
@@ -229,15 +224,15 @@ export const updateLabourLeave = async data => {
   }
 };
 
-export const updateLabourExpense = async data => {
+export const updateLabourExpense = data => {
   try {
-    await firestore()
+    firestore()
       .collection('labours_data')
       .doc(data?.cid)
       .collection('labour_expense')
       .doc(data?.id)
       .update(sanitizeData(data));
-    await firestore().collection('labours_data').doc(data?.cid).update({
+    firestore().collection('labours_data').doc(data?.cid).update({
       given_amount: data?.given_amount,
     });
     return 'success';
@@ -247,14 +242,14 @@ export const updateLabourExpense = async data => {
 };
 
 // Function to update labours_data document calculation
-export const updateLabourDataCalculation = async labourId => {
+export const updateLabourDataCalculation = labourId => {
   try {
     const labourDocRef = firestore().collection('labours_data').doc(labourId);
-    const labourDataSnapshot = await labourDocRef.get();
+    const labourDataSnapshot = labourDocRef.get();
 
     if (labourDataSnapshot.exists) {
       // Calculate total_labour_amount from labour_work
-      const workSnapshot = await labourDocRef.collection('labour_work').get();
+      const workSnapshot = labourDocRef.collection('labour_work').get();
       let totalLabourAmount = 0;
       let totalLabourCount = 0;
       let labourRate = 0;
@@ -270,7 +265,7 @@ export const updateLabourDataCalculation = async labourId => {
       });
 
       // Calculate given_amount from labour_expense
-      const expenseSnapshot = await labourDocRef
+      const expenseSnapshot = labourDocRef
         .collection('labour_expense')
         .get();
       let givenAmount = 0;
@@ -281,7 +276,7 @@ export const updateLabourDataCalculation = async labourId => {
       });
 
       // Calculate total_leave from labour_leave
-      const leaveSnapshot = await labourDocRef.collection('labour_leave').get();
+      const leaveSnapshot = labourDocRef.collection('labour_leave').get();
       let totalLeave = 0;
       leaveSnapshot.forEach(leaveDoc => {
         const leaveData = leaveDoc.data();
@@ -290,7 +285,7 @@ export const updateLabourDataCalculation = async labourId => {
       });
 
       // Update labours_data document with calculated values
-      await labourDocRef.set(
+      labourDocRef.set(
         {
           total_labour_amount: totalLabourAmount.toFixed(2), // Example formatting
           total_labour_count: totalLabourCount.toFixed(2), // Example formatting
@@ -311,9 +306,9 @@ export const updateLabourDataCalculation = async labourId => {
   }
 };
 
-export const deleteLabourExpense = async data => {
+export const deleteLabourExpense = data => {
   try {
-    await firestore()
+    firestore()
       .collection('labours_data')
       .doc(data.cid)
       .collection('labour_expense')
@@ -325,9 +320,9 @@ export const deleteLabourExpense = async data => {
   }
 };
 
-export const deleteLabour = async data => {
+export const deleteLabour = data => {
   try {
-    await firestore()
+    firestore()
       .collection('labours_data')
       .doc(data.cid)
       .collection('labour_work')
@@ -338,12 +333,12 @@ export const deleteLabour = async data => {
     throw new Error(error);
   }
 };
-export const deleteLabourLeave = async id =>
+export const deleteLabourLeave = id =>
   deleteDocumentById('labour_leave', id);
 
-export const deleteLabourCollection = async id => {
+export const deleteLabourCollection = id => {
   try {
-    await firestore().collection('labours_data').doc(id).delete();
+    firestore().collection('labours_data').doc(id).delete();
     return 'success';
   } catch (error) {
     throw new Error(error);

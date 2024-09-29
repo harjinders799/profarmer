@@ -4,11 +4,11 @@ import { calculateLoanDetails, sanitizeData } from '@utils/helper';
 import { ToastError } from '@utils/toast';
 
 
-export const addAadhatiya = async data => {
-  return new Promise(async function (resolve, reject) {
+export const addAadhatiya = data => {
+  return new Promise(function (resolve, reject) {
     try {
       let uid = auth().currentUser?.uid;
-      await firestore()
+      firestore()
         .collection('aadhat_data')
         .add({
           ...data,
@@ -96,10 +96,10 @@ export const addAmountTransaction = data => {
   });
 };
 
-export const deleteAmountTransaction = async data => {
-  return new Promise(async function (resolve, reject) {
+export const deleteAmountTransaction = data => {
+  return new Promise(function (resolve, reject) {
     try {
-      await firestore()
+      firestore()
         .collection('aadhat_data')
         .doc(data?.aid)
         .collection('transactions')
@@ -113,11 +113,11 @@ export const deleteAmountTransaction = async data => {
 };
 
 
-export const updateAmountTransaction = async data => {
+export const updateAmountTransaction = data => {
   // console.log(data)
-  return new Promise(async function (resolve, reject) {
+  return new Promise(function (resolve, reject) {
     try {
-      await firestore()
+      firestore()
         .collection('aadhat_data')
         .doc(data?.aid)
         .collection('transactions')
@@ -131,10 +131,10 @@ export const updateAmountTransaction = async data => {
 };
 
 
-export const deleteAadhatCollection = async id => {
-  return new Promise(async function (resolve, reject) {
+export const deleteAadhatCollection = id => {
+  return new Promise(function (resolve, reject) {
     try {
-      await firestore().collection('aadhat_data').doc(id).delete();
+      firestore().collection('aadhat_data').doc(id).delete();
       resolve('success');
     } catch (error) {
       throw new Error(error);

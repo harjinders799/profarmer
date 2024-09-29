@@ -1,8 +1,8 @@
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 
-export const submitInterestAmount = async data => {
-  return new Promise(async function (resolve, reject) {
+export const submitInterestAmount = data => {
+  return new Promise(function (resolve, reject) {
     try {
       let id = auth().currentUser?.uid;
       firestore()
@@ -14,8 +14,8 @@ export const submitInterestAmount = async data => {
     }
   });
 };
-export const updateIneterstAmt = async data => {
-  return new Promise(async function (resolve, reject) {
+export const updateIneterstAmt = data => {
+  return new Promise(function (resolve, reject) {
     try {
       firestore()
         .collection('interest_amount')
@@ -28,8 +28,8 @@ export const updateIneterstAmt = async data => {
   });
 };
 
-export const deleteIneterstAmt = async id => {
-  return new Promise(async function (resolve, reject) {
+export const deleteIneterstAmt = id => {
+  return new Promise(function (resolve, reject) {
     try {
       firestore().collection('interest_amount').doc(id).delete();
       resolve('success');
@@ -40,7 +40,7 @@ export const deleteIneterstAmt = async id => {
 };
 
 export const getInterestAmount = () => {
-  return new Promise(async function (resolve, reject) {
+  return new Promise(function (resolve, reject) {
     let userId = auth().currentUser?.uid;
     firestore()
       .collection('interest_amount')
@@ -59,8 +59,8 @@ export const getInterestAmount = () => {
   });
 };
 
-export const submitCrop = async data => {
-  return new Promise(async function (resolve, reject) {
+export const submitCrop = data => {
+  return new Promise(function (resolve, reject) {
     try {
       let id = auth().currentUser?.uid;
       firestore()
@@ -72,8 +72,8 @@ export const submitCrop = async data => {
     }
   });
 };
-export const updateCrop = async data => {
-  return new Promise(async function (resolve, reject) {
+export const updateCrop = data => {
+  return new Promise(function (resolve, reject) {
     try {
       firestore().collection('crop').doc(data?.id).update(data);
       resolve('success');
@@ -83,8 +83,8 @@ export const updateCrop = async data => {
   });
 };
 
-export const deleteCrop = async id => {
-  return new Promise(async function (resolve, reject) {
+export const deleteCrop = id => {
+  return new Promise(function (resolve, reject) {
     try {
       firestore().collection('crop').doc(id).delete();
       resolve('success');
@@ -94,7 +94,7 @@ export const deleteCrop = async id => {
   });
 };
 export const getCrops = () => {
-  return new Promise(async function (resolve, reject) {
+  return new Promise(function (resolve, reject) {
     let userId = auth().currentUser?.uid;
     firestore()
       .collection('crop')
@@ -112,8 +112,8 @@ export const getCrops = () => {
       });
   });
 };
-export const deleteCropCollection = async name => {
-  return new Promise(async function (resolve, reject) {
+export const deleteCropCollection = name => {
+  return new Promise(function (resolve, reject) {
     try {
       let userId = auth().currentUser?.uid;
       firestore()
@@ -132,7 +132,7 @@ export const deleteCropCollection = async name => {
   });
 };
 
-export const deleteGiverCollection = async (name) => {
+export const deleteGiverCollection = (name) => {
 
   try {
     const userId = auth().currentUser?.uid;
@@ -154,7 +154,7 @@ export const deleteGiverCollection = async (name) => {
     throw new Error(error);
   }
 };
-// export const deleteDebtorCollection = async (name) => {
+// export const deleteDebtorCollection =  (name) => {
 //   x
 //   try {
 //     const userId = auth().currentUser?.uid;
