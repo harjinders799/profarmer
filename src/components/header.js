@@ -94,8 +94,7 @@ const Header = ({
 const styles = StyleSheet.create({
   container: {
     width: wp(100),
-    paddingHorizontal: 20,
-    paddingVertical: 10,
+    padding: 10,
     zIndex: 1,
   },
 });

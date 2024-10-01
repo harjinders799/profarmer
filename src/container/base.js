@@ -14,7 +14,7 @@ const BaseView = ({ style, space = false, children }) => {
         common.centerAligned,
         styles.base,
         { backgroundColor: colors.background },
-        space && { paddingHorizontal: 20 },
+        space && { paddingHorizontal: 10 },
         style,
       ]}>
       {isIOS ? (

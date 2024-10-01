@@ -52,12 +52,7 @@ export const addNewCrop = data => {
             full_access: [userId],
           }),
         )
-        .then(() => {
-          resolve('success');
-        })
-        .catch(error => {
-          reject(new Error(error));
-        });
+      resolve('success');
     } catch (error) {
       reject(new Error(error));
     }
@@ -71,22 +66,54 @@ export const submitEvent = data => {
       ref
         .collection('events')
         .add(sanitizeData(data))
-        .then(() => {
-          ref
-            .update(sanitizeData({
-              total_expense: data?.total_expense,
-              total_earning: data?.total_earning,
-            }))
-            .then(() => {
-              resolve('success');
-            })
-            .catch(error => {
-              reject(new Error(error));
-            });
-        })
-        .catch(error => {
-          reject(new Error(error));
-        });
+      ref
+        .update(sanitizeData({
+          total_expense: data?.total_expense,
+          total_earning: data?.total_earning,
+        }))
+      resolve('success');
+    } catch (error) {
+      console.log(error);
+      throw new Error(error);
+    }
+  });
+};
+
+export const updateEvent = data => {
+  return new Promise(function (resolve, reject) {
+    try {
+      let ref = firestore().collection('crops_data').doc(data?.cid);
+      ref
+        .collection('events')
+        .doc(data?.id)
+        .update(sanitizeData(data))
+      ref
+        .update(sanitizeData({
+          total_expense: data?.total_expense,
+          total_earning: data?.total_earning,
+        }))
+      resolve('success');
+    } catch (error) {
+      console.log(error);
+      throw new Error(error);
+    }
+  });
+};
+
+export const deleteEvent = data => {
+  return new Promise(function (resolve, reject) {
+    try {
+      let ref = firestore().collection('crops_data').doc(data?.cid);
+      ref
+        .collection('events')
+        .doc(data?.id)
+        .delete()
+      ref
+        .update(sanitizeData({
+          total_expense: data?.total_expense,
+          total_earning: data?.total_earning,
+        }))
+      resolve('success');
     } catch (error) {
       console.log(error);
       throw new Error(error);

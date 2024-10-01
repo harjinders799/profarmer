@@ -12,7 +12,9 @@ import { common } from '@utils/style';
 export default function AadhatTransacton({ type, data, item }) {
   const { colors } = useTheme();
   let days = dayCount(item?.date);
-  let interest = getInterest([{ ...item, interest_rate: data[0]?.interest_rate }]);
+  let interest = getInterest([
+    { ...item, interest_rate: data[0]?.interest_rate },
+  ]);
   let final_amount = parseFloat(item?.amount) + parseFloat(interest);
 
   return (
@@ -20,39 +22,45 @@ export default function AadhatTransacton({ type, data, item }) {
       style={[
         styles.list,
         {
-          borderBottomColor: colors.border,
+          backgroundColor: colors.secondaryCard,
           display: item.type == type ? 'flex' : 'none',
         },
       ]}
       onPress={() => navigate('AadhatTransactionDetail', { data, item })}>
       <View style={common.row_btw}>
-        <Text h4>
-          {days} <Text h8>{strings.day}</Text>
+        <Text color={colors.border}>{dateFormat(item?.date)}</Text>
+        <Text h4 center>
+          {currencyFormat(parseFloat(item?.amount))}
         </Text>
-        <Text h4>{currencyFormat(parseFloat(item?.amount))}</Text>
-        <Text h4>
+        <Text>+</Text>
+        <Text h4 right>
           {currencyFormat(parseFloat(interest))}
           <Text h8>{'Int'}</Text>
         </Text>
-        <Text right h4>
+      </View>
+      <View style={[common.row_top_btw, { marginVertical: 10 }]}>
+        <Text h4 left>
+          {days} <Text h8>{strings.day}</Text>
+        </Text>
+        <Text right h4 bold>
           {currencyFormat(final_amount)}
         </Text>
       </View>
-      <View style={[common.row_bottom_btw, { marginTop: 10 }]}>
-        <Text h4 color={colors.secondaryText} style={{ maxWidth: '80%' }}>
+      {item?.detail ? (
+        <Text h5 center>
           {item?.detail}
         </Text>
-        <Text h5 numberOfLines={1} color={colors.thirdText}>
-          {dateFormat(item?.date)}
-        </Text>
-      </View>
+      ) : null}
     </TouchableOpacity>
   );
 }
 const styles = StyleSheet.create({
   list: {
-    margin: 20,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    paddingBottom: 5,
+    marginHorizontal: 10,
+    marginVertical: 5,
+    padding: 10,
+    borderRadius: 5,
+    // borderBottomWidth: StyleSheet.hairlineWidth,
+    // ...common.shadow
   },
 });

@@ -1,16 +1,19 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, lazy, Suspense } from 'react';
 import BaseView from '@container/base';
 import { useLang } from '@context/langContext';
 import Loader from '@components/loader';
 import { strings } from '@translations/locale';
 import Button from '@components/button';
 import { navigate } from '@navigation/ref';
-import LoanList from '@container/loan/loanList';
 import { useFocusEffect } from '@react-navigation/native';
 import Header from '@components/header';
 import { loansDataListener } from '@network/loan-service';
 import LoanConclusion from '@container/loan/loanConclusion';
 import { useAuth } from '@context/authContext';
+import { common } from '@utils/style';
+
+// Lazy load LoanList component
+const LoanList = lazy(() => import('@container/loan/loanList'));
 
 function Loan() {
   const { user } = useAuth()
@@ -37,7 +40,9 @@ function Loan() {
       <Loader visible={loading} />
       <Header label={strings.loan_record} />
       <LoanConclusion data={data} />
-      <LoanList data={data} />
+      <Suspense fallback={<Loader visible={true} />}>
+        <LoanList data={data} />
+      </Suspense>
       <Button
         iconLeft="plus"
         label={`${strings.giver} / ${strings.receiver}`}
@@ -50,13 +55,14 @@ function Loan() {
 
 const styles = {
   button: {
-    maxWidth: '50%',
-    paddingHorizontal: 15,
-    height: 50,
+    maxWidth: '60%',
+    // paddingHorizontal: 15,
+    width: 'auto',
     position: 'absolute',
     bottom: 20,
-    right: 30,
+    right: -5,
     zIndex: 999,
+    ...common.shadow
   },
 };
 

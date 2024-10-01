@@ -112,7 +112,7 @@ export default function AddLabourExpense() {
   const handleDelete = React.useCallback(async () => {
     try {
       setLoading(true);
-      await deleteLabourExpense(editData);
+      await deleteLabourExpense(editData, labourData);
       goBack();
     } catch (error) {
       setLoading(false);

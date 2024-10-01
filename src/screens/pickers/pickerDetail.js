@@ -25,7 +25,7 @@ import PickerConclusion from '@container/picker/pickerConclusion';
 import DeleteModal from '@container/deleteModal';
 import { ToastError, ToastProgress, ToastSuccess } from '@utils/toast';
 import auth from '@react-native-firebase/auth';
-
+import Icon from '@components/icon';
 
 // Lazy load components
 const PickerExpenseDetail = lazy(() =>
@@ -40,7 +40,7 @@ function PickerDetail() {
     const {
         params: { item, pickers, groups },
     } = useRoute();
-    const uid = auth().currentUser.uid;
+    const uid = auth()?.currentUser?.uid;
     const { lang } = useLang();
     const { colors } = useTheme();
     const [loading, setLoading] = useState(true);
@@ -95,6 +95,9 @@ function PickerDetail() {
                 share
                 onSharePress={() => ToastProgress(strings.in_progress)}
             />
+            <Text center h5 style={{ textDecorationLine: 'underline' }}>
+                <Icon name={'phone'} type="Feather" size={16} /> {item?.phone}
+            </Text>
             <ScrollView contentContainerStyle={{ paddingBottom: 150 }}>
                 <PickerConclusion
                     item={item}
@@ -117,16 +120,5 @@ function PickerDetail() {
         </BaseView>
     );
 }
-
-const styles = {
-    button: {
-        maxWidth: '45%',
-        width: 'auto',
-        paddingHorizontal: 5,
-        position: 'absolute',
-        bottom: 30,
-        zIndex: 999,
-    },
-};
 
 export default React.memo(PickerDetail);

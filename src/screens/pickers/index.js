@@ -17,6 +17,7 @@ import SearchBar from '@container/searchBar';
 import PickerFilter from '@container/picker/pickerFilter';
 import Icon from '@components/icon';
 import PickersConclusion from '@container/picker/pickersConclusion';
+import auth from '@react-native-firebase/auth';
 
 // Lazy load components
 const PickerList = lazy(() => import('@container/picker/pickerList'));
@@ -26,6 +27,7 @@ const GroupList = lazy(() => import('@container/picker/groupList'));
 function Pickers() {
     const { user } = useAuth();
     const { lang } = useLang();
+    const uid = auth()?.currentUser?.uid;
     const { colors } = useTheme();
     const [pickers, setPickers] = useState([]);
     const [groups, setGroups] = useState([]);
@@ -34,6 +36,7 @@ function Pickers() {
     const [orderBy, setOrderBy] = useState({ key: 'name', type: 'asc' });
     const [isFocus, setIsFocus] = useState();
     const [showConclusion, setShowConclusion] = useState(false);
+    const [refreshing, setRefreshing] = useState(false);
 
     // Optimized data fetching with useCallback
     const fetchData = useCallback(() => {
@@ -41,6 +44,7 @@ function Pickers() {
             updatedDocuments => {
                 setPickers(updatedDocuments);
                 setLoading(false);
+                setRefreshing(false);
             },
             user?.phone,
             orderBy,
@@ -48,6 +52,7 @@ function Pickers() {
         const unsubscribeGroup = groupsDataListener(updatedDocuments => {
             setGroups(updatedDocuments);
             setLoading(false);
+            setRefreshing(false);
         }, orderBy);
 
         return () => {
@@ -61,11 +66,35 @@ function Pickers() {
     const renderContent = () => (
         <Suspense fallback={<Loader visible={true} />}>
             {activeTab === 'Picker List' ? (
-                <PickerList data={pickers} groups={groups} />
+                <PickerList
+                    data={pickers}
+                    groups={groups}
+                    refreshing={refreshing}
+                    onRefresh={() => {
+                        setRefreshing(true);
+                        fetchData();
+                    }}
+                />
             ) : activeTab === 'Group List' ? (
-                <GroupList data={groups} pickers={pickers} />
+                <GroupList
+                    data={groups}
+                    pickers={pickers.filter(o => o?.uid == uid)}
+                    refreshing={refreshing}
+                    onRefresh={() => {
+                        setRefreshing(true);
+                        fetchData();
+                    }}
+                />
             ) : (
-                <PickerDateWise groups={groups} pickers={pickers} />
+                <PickerDateWise
+                    groups={groups}
+                    pickers={pickers.filter(o => o?.uid === uid)}
+                    refreshing={refreshing}
+                    onRefresh={() => {
+                        setRefreshing(true);
+                        fetchData();
+                    }}
+                />
             )}
         </Suspense>
     );
@@ -98,32 +127,41 @@ function Pickers() {
                     isFocus={isFocus}
                     setIsFocus={setIsFocus}
                     orderBy={orderBy}
-                    pickers={pickers}
+                    pickers={pickers.filter(o => o?.uid === uid)}
                     groups={groups}
                     setOrderBy={setOrderBy}
                 />
             ) : null}
             {isFocus ? null : renderContent()}
             {!isFocus ? (
-                <Button
-                    iconLeft="plus"
-                    small
-                    label={strings.add_picker}
-                    btnStyle={[styles.button, { right: 20 }]}
-                    onPress={() => navigate('AddPicker')}
-                />
-            ) : null}
-            {activeTab == 'Group List' && !isFocus ? (
-                <Button
-                    small
-                    iconLeft="plus"
-                    label={strings.create_group}
-                    btnStyle={[
-                        styles.button,
-                        { left: 20, backgroundColor: colors.warning },
-                    ]}
-                    onPress={() => navigate('CreatePickerGroup', { pickers, groups })}
-                />
+                <View
+                    style={[
+                        common.row_btw,
+                        { marginTop: 20, position: 'absolute', bottom: 20 },
+                    ]}>
+                    <Button
+                        iconLeft="plus"
+                        label={strings.create_group}
+                        btnStyle={{
+                            maxWidth: '48%',
+                            width: 'auto',
+                            left: -5,
+                            ...common.shadow,
+                        }}
+                        onPress={() => navigate('CreatePickerGroup', { pickers: pickers.filter(o => o?.uid === uid), groups })}
+                    />
+                    <Button
+                        iconLeft="plus"
+                        label={strings.add_picker}
+                        btnStyle={{
+                            maxWidth: '48%',
+                            width: 'auto',
+                            right: -5,
+                            ...common.shadow,
+                        }}
+                        onPress={() => navigate('AddPicker')}
+                    />
+                </View>
             ) : null}
         </BaseView>
     );

@@ -74,7 +74,7 @@ export const common = StyleSheet.create({
   },
   card: {
     borderRadius: 10,
-    padding: 20,
+    padding: 10,
     alignItems: 'center',
     justifyContent: 'center',
   },

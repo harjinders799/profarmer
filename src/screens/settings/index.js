@@ -49,11 +49,9 @@ export default function Setting({ navigation }) {
       //   setLoading(false);
       //   return;
       // } else {
-      setTimeout(() => {
-        // resetPicker();
-        reset();
-        setLoading(false);
-      }, 2000);
+      // resetPicker();
+      reset();
+      setLoading(false);
       // }
     } catch (error) {
       ToastError('Something Went Wrong!');
@@ -187,7 +185,7 @@ https://play.google.com/store/apps/details?id=com.profarmer
 
           <TouchableOpacity style={styles.row} onPress={onLogOut}>
             <Text style={styles.txt}>Log Out</Text>
-            <Icon name="chevron-right" type="Entypo" size={25} />
+            <Icon name="logout" size={25} />
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -213,6 +211,6 @@ const styles = StyleSheet.create({
   footer: {
     borderRadius: 10,
     padding: 10,
-    marginTop: 30,
+    // marginTop: 30,
   },
 });

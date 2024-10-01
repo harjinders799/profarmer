@@ -1,13 +1,13 @@
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import { currentStamp } from '@utils/dateformat';
-import { processWeights, sanitizeData } from '@utils/helper';
+import { processAmounts, processWeights, sanitizeData } from '@utils/helper';
 import { ToastError } from '@utils/toast';
 
 export const pickersDataListener = (onUpdate, phone, orderBy) => {
   try {
     const userId = auth().currentUser?.uid;
-
+    console.log({ phone, userId })
     // Define the two queries
     const query1 = firestore()
       .collection('pickers_data')
@@ -15,8 +15,7 @@ export const pickersDataListener = (onUpdate, phone, orderBy) => {
       // .orderBy('name', 'asc');
       .orderBy(orderBy.key, orderBy.type);
 
-    const query2 = firestore().collection('pickers_data');
-    if (phone) query2.where('read_access', 'array-contains', phone);
+    const query2 = firestore().collection('pickers_data').where('read_access', 'array-contains', phone);
 
     // Subscribe to the first query's snapshot changes
     const unsubscribe = query1.onSnapshot(
@@ -262,6 +261,62 @@ export const addPickerWeightBulk = (data, date, pickers) => {
   });
 };
 
+export const addPickerExpenseBulk = (data, date, pickers) => {
+  return new Promise((resolve, reject) => {
+    try {
+      let uid = auth().currentUser?.uid;
+      const processedData = processAmounts(data, date); // Process weights before saving
+      // console.log({ processedData, data, date });
+      const batch = firestore().batch(); // Create a batch for bulk operations
+
+      // Create an object to hold the total expense for each picker
+      const pickerTotals = {};
+
+      // Loop through each picker ID
+      for (const pickerData of pickers) {
+        let lastTotalGiven = pickerData.total_given || 0;
+
+        // Initialize totals for this picker
+        pickerTotals[pickerData.id] = {
+          totalGiven: lastTotalGiven,
+        };
+      }
+
+      // Loop through processed data and add to the batch
+      processedData.forEach(entry => {
+        const docRef = firestore().collection('picker_expense').doc(); // Create a new document reference
+        batch.set(docRef, sanitizeData({ ...entry, uid })); // Add to the batch
+
+        // Update totals for the corresponding picker
+        const pid = entry.pid; // Assuming entry contains pid
+        if (pickerTotals[pid]) {
+          pickerTotals[pid].totalGiven += parseFloat(entry.amount); // Add current amount
+        }
+      });
+
+      // Commit the batch
+      batch.commit();
+
+      // Update each picker's data with new totals
+      for (const p of pickers) {
+        const newTotalGiven = pickerTotals[p.id]?.totalGiven;
+
+        firestore()
+          .collection('pickers_data')
+          .doc(p.id)
+          .update({
+            total_given: newTotalGiven,
+            updatedAt: currentStamp(new Date()),
+          });
+      }
+
+      resolve('success');
+    } catch (error) {
+      reject(new Error(error));
+    }
+  });
+};
+
 export const addPickerExpense = data => {
   return new Promise(function (resolve, reject) {
     try {
@@ -436,7 +491,7 @@ export const submitPickerExpense = data => {
       let id = auth().currentUser?.uid;
       firestore()
         .collection('picker_expense')
-        .add({ ...data, uid: id })
+        .add({ ...data, uid: id });
       resolve(true);
     } catch (error) {
       reject(new Error(error));
@@ -487,16 +542,10 @@ export const getCottonByPicker = search => {
   });
 };
 
-export const deletePickerCollection = id => {
+export const deletePickerCollection = async id => {
   try {
-    const uid = auth().currentUser.uid;
-
-    const deletePicker = firestore()
-      .collection('pickers_data')
-      .doc(id)
-      .delete();
-
-    const deletePickerCottonWeight = firestore()
+    const uid = auth()?.currentUser?.uid;
+    const deletePickerCottonWeight = await firestore()
       .collection('picker_cotton_weight')
       .where('pid', '==', id)
       .get()
@@ -508,7 +557,7 @@ export const deletePickerCollection = id => {
         return Promise.all(deletePromises);
       });
 
-    const deletePickerExpense = firestore()
+    const deletePickerExpense = await firestore()
       .collection('picker_expense')
       .where('pid', '==', id)
       .get()
@@ -520,23 +569,33 @@ export const deletePickerCollection = id => {
         return Promise.all(deletePromises);
       });
 
-    const querySnapshot = firestore()
+    const querySnapshot = await firestore()
       .collection('picker_groups')
       .where('uid', '==', uid)
       .where('members', 'array-contains', id)
       .get();
 
     // Assume only one group due to single membership rule
-    const groupDoc = querySnapshot.docs[0];
-    const members = groupDoc.data().members || [];
+    const members = querySnapshot.size
+      ? (await querySnapshot.docs[0].data().members) || []
+      : [];
 
     // Delete the group if the picker is the only member, otherwise remove the picker
     const action =
-      members.length === 1
-        ? groupDoc.ref.delete()
-        : groupDoc.ref.update({ members: firestore.FieldValue.arrayRemove(id) });
+      members.length === 0
+        ? false
+        : members.length === 1
+          ? await groupDoc.ref.delete()
+          : await groupDoc.ref.update({
+            members: firestore.FieldValue.arrayRemove(id),
+          });
 
     action;
+
+    const deletePicker = await firestore()
+      .collection('pickers_data')
+      .doc(id)
+      .delete();
 
     Promise.all([
       deletePicker,
@@ -555,7 +614,7 @@ export const createGroup = data => {
       let id = auth().currentUser?.uid;
       firestore()
         .collection('picker_groups')
-        .add({ ...data, uid: id })
+        .add({ ...data, uid: id });
       resolve(true);
     } catch (error) {
       reject(new Error(error));

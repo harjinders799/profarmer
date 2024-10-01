@@ -252,48 +252,49 @@ export default function AadhatDetail() {
         contentContainerStyle={{ paddingBottom: '20%' }}>
         <Animated.View
           entering={FadeIn.delay(100)}
-          style={[
-            card,
-            shadow,
-            { backgroundColor: colors.background, margin: 20 },
-          ]}>
+          style={[card, shadow, { backgroundColor: colors.error, margin: 10 }]}>
           <View style={[row_btw]}>
-            <Text h4 entering={FadeInUp}>
+            <Text color={white} h4 entering={FadeInUp}>
               {strings.interest}
             </Text>
-            <Text medium h4 entering={FadeInUp}>
+            <Text color={white} medium h4 entering={FadeInUp}>
               {interestFormat(data[0]?.interest_rate)}
             </Text>
           </View>
           <View style={[row_btw, { marginTop: 20 }]}>
-            <Text h4 entering={FadeInUp}>
+            <Text color={white} h4 entering={FadeInUp}>
               {strings.taken_amount}
             </Text>
-            <Text medium h4 entering={FadeInUp}>
+            <Text color={white} medium h4 entering={FadeInUp}>
               {currencyFormat(data[0]?.totalReceivedAmount)}
             </Text>
           </View>
           <View style={[row_btw, { marginTop: 20 }]}>
-            <Text h4 entering={FadeInUp}>
+            <Text color={white} h4 entering={FadeInUp}>
               {strings.total_interest}
             </Text>
-            <Text medium h4 entering={FadeInUp}>
+            <Text color={white} medium h4 entering={FadeInUp}>
               {currencyFormat(data[0]?.totalReceivedAmountInterest)}
             </Text>
           </View>
           <View style={[row_btw, { marginTop: 20 }]}>
-            <Text medium h4 entering={FadeInUp}>
+            <Text color={white} medium h4 entering={FadeInUp}>
               {strings.total_amount}
             </Text>
-            <Text medium h4 entering={FadeInUp}>
+            <Text color={white} medium h4 entering={FadeInUp}>
               {currencyFormat(data[0]?.totalReceivedAmountWithInterest)}
             </Text>
           </View>
         </Animated.View>
         {Array.isArray(data[0]?.transactions) && data[0].transactions.length ? (
-          data[0].transactions.map(
-            (item, i) => <AadhatTransacton type={"receiver"} key={i} data={data} item={item} />,
-          )
+          data[0].transactions.map((item, i) => (
+            <AadhatTransacton
+              type={'receiver'}
+              key={i}
+              data={data}
+              item={item}
+            />
+          ))
         ) : (
           <Text>{strings.no_data}</Text>
         )}
@@ -311,7 +312,7 @@ const styles = StyleSheet.create({
   row: {
     ...common.row_btw,
     paddingHorizontal: 20,
-    marginVertical: 10
+    marginVertical: 10,
   },
   underline: {
     // borderBottomWidth: 1,

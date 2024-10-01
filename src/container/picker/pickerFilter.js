@@ -1,13 +1,9 @@
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet } from 'react-native';
 import React, { Fragment, memo, useCallback, useEffect, useState } from 'react';
 import Text from '@components/text';
 import SearchBar from '@container/searchBar';
 import { common } from '@utils/style';
-import Animated, {
-    FadeInLeft,
-    LinearTransition,
-    SequencedTransition,
-} from 'react-native-reanimated';
+import Animated, { FadeInLeft, LinearTransition } from 'react-native-reanimated';
 import Icon from '@components/icon';
 import { useTheme } from '@react-navigation/native';
 import PickerList from './pickerList';
@@ -82,7 +78,7 @@ const PickerFilter = ({
                 />
             </Animated.View>
             {isFocus ? <PickerList data={filteredPickers} groups={groups} /> : null}
-        </Fragment >
+        </Fragment>
     );
 };
 

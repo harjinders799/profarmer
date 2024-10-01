@@ -13,7 +13,7 @@ import Header from '../../components/header';
 import Icon from '../../components/icon';
 import { goBack } from '../../navigation/ref';
 import { useTheme } from '@react-navigation/native';
-import { UpdateUser } from '../../network/auth-service';
+import { getUserByPhone, UpdateUser } from '../../network/auth-service';
 import { strings } from '../../translations/locale';
 
 export default function EditProfile({ navigation }) {
@@ -41,10 +41,15 @@ export default function EditProfile({ navigation }) {
         else {
             try {
                 setLoading(true);
+                let res = await getUserByPhone(phone);
+                console.log({ res });
+                if (res?.id && res?.id != auth()?.currentUser?.uid) {
+                    setLoading(false);
+                    return ToastError('Phone number already in use:(');
+                }
                 await UpdateUser(user);
                 ToastSuccess('Successfully updated!', 'Profile');
                 getUser();
-                navigation.goBack();
                 setLoading(false);
             } catch (error) {
                 setLoading(false);
@@ -56,7 +61,7 @@ export default function EditProfile({ navigation }) {
         <BaseView space>
             <Loader visible={loading} />
             <Header back label={'Profile'} />
-            <ScrollView style={{ width: '100%' }} showsVerticalScrollIndicator={false}>
+            <ScrollView style={{ width: '100%' }} keyboardDismissMode='on-drag' keyboardShouldPersistTaps='handled' showsVerticalScrollIndicator={false}>
                 {/* <Profile
                     size={150}
                     style={{ alignSelf: 'center' }}
@@ -74,6 +79,11 @@ export default function EditProfile({ navigation }) {
                     <Input
                         value={phone}
                         placeholder={strings.phone}
+                        editable={data?.phone ? false : true}
+                        innerStyle={{
+                            backgroundColor: data?.phone ? colors.disable : colors.background,
+                        }}
+                        maxLength={10}
                         keyboardType="phone-pad"
                         setValue={v => updateData('phone', v)}
                     />
@@ -81,6 +91,8 @@ export default function EditProfile({ navigation }) {
                         keyboardType="email-address"
                         placeholder={strings.email}
                         value={email}
+                        editable={false}
+                        innerStyle={{ backgroundColor: colors.disable }}
                         setValue={v => updateData('email', v)}
                     />
                     <Button label={'Update'} onPress={update} />
@@ -91,6 +103,6 @@ export default function EditProfile({ navigation }) {
 }
 const styles = StyleSheet.create({
     body: {
-        paddingTop: 50,
+        paddingTop: 10,
     },
 });

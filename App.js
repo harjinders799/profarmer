@@ -16,6 +16,7 @@ import { AuthProvider } from './src/context/authContext';
 import { AadtProvider } from './src/context/aadtContext';
 import { TimelineProvider } from './src/context/timeContext';
 import { TabProvider } from './src/context/tabContext';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 export default function App() {
   const [version, setVersion] = useState();
@@ -37,39 +38,41 @@ export default function App() {
   };
   return (
     <SafeAreaProvider>
-      <Modal
-        visible={(version?.needsUpdate ? true : false) && visible}
-        setModalVisible={() => setVisible(false)}
-        ratioHeight={0.9}>
-        <ScrollView
-          style={{
-            width: '100%',
-          }}
-          contentContainerStyle={{
-            alignItems: 'center',
-            paddingHorizontal: 20,
-            paddingBottom: '30%',
-          }}>
-          <Button label="Update" btnStyle={{ marginTop: 0 }} onPress={update} />
-          <Text h3>{strings.new_version}</Text>
-        </ScrollView>
-      </Modal>
-      <TabProvider>
-        <AuthProvider>
-          <StoreProvider>
-            {/* <CottonProvider> */}
-            <AadtProvider>
-              {/* <TimelineProvider> */}
-              <LangProvider>
-                <Navigation />
-              </LangProvider>
-              {/* </TimelineProvider> */}
-            </AadtProvider>
-            {/* </CottonProvider> */}
-          </StoreProvider>
-        </AuthProvider>
-      </TabProvider>
-      <FlashMessage position="top" />
+      <GestureHandlerRootView>
+        <Modal
+          visible={(version?.needsUpdate ? true : false) && visible}
+          setModalVisible={() => setVisible(false)}
+          ratioHeight={0.9}>
+          <ScrollView
+            style={{
+              width: '100%',
+            }}
+            contentContainerStyle={{
+              alignItems: 'center',
+              paddingHorizontal: 20,
+              paddingBottom: '30%',
+            }}>
+            <Button label="Update" btnStyle={{ marginTop: 0 }} onPress={update} />
+            <Text h3>{strings.new_version}</Text>
+          </ScrollView>
+        </Modal>
+        <TabProvider>
+          <AuthProvider>
+            <StoreProvider>
+              {/* <CottonProvider> */}
+              <AadtProvider>
+                {/* <TimelineProvider> */}
+                <LangProvider>
+                  <Navigation />
+                </LangProvider>
+                {/* </TimelineProvider> */}
+              </AadtProvider>
+              {/* </CottonProvider> */}
+            </StoreProvider>
+          </AuthProvider>
+        </TabProvider>
+        <FlashMessage position="top" />
+      </GestureHandlerRootView>
     </SafeAreaProvider>
   );
 }

@@ -59,6 +59,9 @@ import AddPickerWeight from '@screens/pickers/addPickerWeight';
 import AddPickerExpense from '@screens/pickers/addPickerExpense';
 import AddPickerBulkWeight from '@screens/pickers/addPickerBulkWeight';
 import pickerDetail from '@screens/pickers/pickerDetail';
+import AddPickerBulkExpense from '@screens/pickers/addPickerBulkExpense';
+import LoanStack from './loanStack';
+import AadhatCropDetail from '@screens/aadhat/cropDetail';
 
 const Stack = createNativeStackNavigator();
 
@@ -112,6 +115,7 @@ export default function Stacks() {
 
 
       <Stack.Screen name="Setting" component={Setting} />
+      <Stack.Screen name="LoanStack" component={LoanStack} />
       <Stack.Screen name="Pickers" component={Pickers} />
       <Stack.Screen name="PickerDetail" component={pickerDetail} />
       <Stack.Screen name="AddPicker" component={AddPicker} />
@@ -120,8 +124,9 @@ export default function Stacks() {
       <Stack.Screen name="AddPickerWeight" component={AddPickerWeight} />
       <Stack.Screen name="AddPickerExpense" component={AddPickerExpense} />
       <Stack.Screen name="AddPickerBulkWeight" component={AddPickerBulkWeight} />
+      <Stack.Screen name="AddPickerBulkExpense" component={AddPickerBulkExpense} />
       <Stack.Screen name="AddForm" component={AddForm} />
-      {/* <Stack.Screen name="CropDetail" component={CropDetail} /> */}
+      <Stack.Screen name="AadhatCropDetail" component={AadhatCropDetail} />
       {/* <Stack.Screen name="AddPicker" component={AddPicker} />
       <Stack.Screen name="AddPickerExpense" component={AddPickerExpense} />
       <Stack.Screen name="AddPickerWeight" component={AddPickerWeight} />

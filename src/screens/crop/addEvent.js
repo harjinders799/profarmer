@@ -11,7 +11,7 @@ import { goBack } from '@navigation/ref';
 import Header from '@components/header';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { onChangeValue } from '@utils/helper';
-import { addNewCrop, submitEvent } from '@network/crop-service';
+import { deleteEvent, submitEvent, updateEvent } from '@network/crop-service';
 import DateTimePick from '@components/DateTime';
 import { currencyInput, currentStamp, dateFormat } from '@utils/dateformat';
 import Checkbox from '@components/checkbox';
@@ -27,37 +27,62 @@ export default function AddEvent() {
   const [data, setData] = useState({
     title: editItem?.title ?? '',
     description: editItem?.description ?? '',
-    amount: editItem?.amount ?? '',
+    amount: editItem?.expense_amount ?? editItem?.earning_amount ?? '',
     date: editItem?.date ? new Date(editItem?.date) : new Date(),
   });
-  const [isExpense, setIsExpense] = useState(undefined);
+  const [isExpense, setIsExpense] = useState(
+    editItem?.expense_amount
+      ? true
+      : editItem?.earning_amount
+        ? false
+        : undefined,
+  );
   const [loading, setLoading] = useState(false);
   const [showDate, setShowDate] = useState(false);
   const { title, description, amount, date } = data;
 
   const handleSubmit = useCallback(async () => {
+    await handleEventSubmission(editItem?.id ? updateEvent : submitEvent);
+  }, [data, editItem?.id]);
+
+  const handleEventSubmission = async eventFunction => {
     try {
       setLoading(true);
-      await submitEvent({
+
+      // Prepare the event data
+      const newExpenseAmount = isExpense ? data.amount : 0;
+      const newEarningAmount = !isExpense ? data.amount : 0;
+
+      const totalExpenseChange = isExpense
+        ? newExpenseAmount - (editItem?.expense_amount || 0)
+        : 0;
+
+      const totalEarningChange = !isExpense
+        ? newEarningAmount - (editItem?.earning_amount || 0)
+        : 0;
+
+      const updatedTotalExpense = (
+        parseFloat(editData?.total_expense || 0) + totalExpenseChange
+      ).toFixed(2);
+      const updatedTotalEarning = (
+        parseFloat(editData?.total_earning || 0) + totalEarningChange
+      ).toFixed(2);
+
+      const eventData = {
         title: data?.title,
         description: data?.description,
         date: currentStamp(data?.date),
         cid: editData?.id,
-        expense_amount: isExpense ? data.amount : null,
-        earning_amount:
-          isExpense == false && isExpense != undefined ? data.amount : null,
-        total_expense: isExpense
-          ? (
-            parseFloat(data.amount) + parseFloat(editData?.total_expense)
-          ).toFixed(2)
-          : editData?.total_expense,
-        total_earning:
-          isExpense == false && isExpense != undefined
-            ? (
-              parseFloat(data.amount) + parseFloat(editData?.total_earning)
-            ).toFixed(2)
-            : editData?.total_earning,
-      });
+        id: editItem?.id,
+        expense_amount: isExpense ? newExpenseAmount : null,
+        earning_amount: !isExpense ? newEarningAmount : null,
+        total_expense: updatedTotalExpense,
+        total_earning: updatedTotalEarning,
+      };
+
+      // Call the event function (either submitEvent or updateEvent)
+      await eventFunction(eventData);
+
       setLoading(false);
       ToastSuccess(strings.labour_added, strings.labour);
       goBack();
@@ -65,8 +90,42 @@ export default function AddEvent() {
       setLoading(false);
       ToastError(error?.message);
     }
-  }, [data]);
+  };
 
+  const handleDelete = useCallback(async () => {
+    try {
+      setLoading(true);
+
+      // Calculate the new totals
+      const updatedTotalExpense = (
+        parseFloat(editData?.total_expense || 0) -
+        (editItem?.expense_amount || 0)
+      ).toFixed(2);
+
+      const updatedTotalEarning = (
+        parseFloat(editData?.total_earning || 0) -
+        (editItem?.earning_amount || 0)
+      ).toFixed(2);
+
+      // Call the delete function
+      await deleteEvent({
+        id: editItem?.id,
+        total_expense: updatedTotalExpense,
+        total_earning: updatedTotalEarning,
+        cid: editData?.id,
+      }); // Assuming you have a deleteEvent function
+
+      setLoading(false);
+      ToastSuccess(strings.labour_deleted, strings.labour);
+      goBack();
+    } catch (error) {
+      setLoading(false);
+      ToastError(error?.message);
+    }
+  }, [editData, isExpense]);
+
+  const updatingEntry =
+    editItem?.expense_amount > 0 || editItem?.earning_amount > 0;
   return (
     <BaseView>
       <Loader visible={loading} />
@@ -114,7 +173,10 @@ export default function AddEvent() {
               }}
             />
           </Pressable>
-          <Text entering={FadeInDown.delay(500)} h4 style={{ paddingTop: 10 }}>
+          <Text
+            entering={FadeInDown.delay(500)}
+            h4
+            style={{ paddingTop: 10, display: updatingEntry ? 'none' : 'flex' }}>
             If Any (Optional)
           </Text>
           <Animated.View
@@ -124,7 +186,12 @@ export default function AddEvent() {
               isChecked={isExpense == true}
               activeColor={colors.error}
               label={'Expense'}
-              style={{ width: '50%', marginVertical: 3 }}
+              disabled={updatingEntry}
+              style={{
+                width: '50%',
+                marginVertical: 3,
+                display: editItem?.earning_amount > 0 ? 'none' : 'flex',
+              }}
               onPress={() =>
                 setIsExpense(prevs =>
                   prevs == undefined || prevs == false ? true : undefined,
@@ -135,7 +202,12 @@ export default function AddEvent() {
               isChecked={isExpense != undefined && isExpense == false}
               label={'Earning'}
               activeColor={colors.success}
-              style={{ width: '50%', marginVertical: 3 }}
+              disabled={updatingEntry}
+              style={{
+                width: '50%',
+                marginVertical: 3,
+                display: editItem?.expense_amount > 0 ? 'none' : 'flex',
+              }}
               onPress={() =>
                 setIsExpense(prevs =>
                   prevs == undefined || prevs == true ? false : undefined,
@@ -159,9 +231,17 @@ export default function AddEvent() {
           />
           <Button
             entering={FadeInDown.delay(600)}
-            label={strings.save}
+            label={editItem?.id ? strings.update : strings.save}
             onPress={handleSubmit}
           />
+          {editItem?.id ? (
+            <Button
+              entering={FadeInDown.delay(600)}
+              label={strings.delete}
+              btnStyle={{ backgroundColor: colors.error }}
+              onPress={handleDelete}
+            />
+          ) : null}
         </View>
       </ScrollView>
     </BaseView>
@@ -170,7 +250,7 @@ export default function AddEvent() {
 
 const styles = StyleSheet.create({
   form: {
-    paddingVertical: 25,
+    paddingBottom: 100,
     width: '100%',
   },
 });

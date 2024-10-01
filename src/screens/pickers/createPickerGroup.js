@@ -79,6 +79,7 @@ export default function CreatePickerGroup() {
             ToastError(error?.message, strings.loan);
         }
     };
+
     let unassignedPickersData = useCallback(
         unassignPickers(pickers, groups, editData?.id),
         [editData, pickers, groups],

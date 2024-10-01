@@ -8,6 +8,7 @@ import { navigate } from '@navigation/ref';
 import { getLabourData } from '@network/labour-service';
 import Loader from '@components/loader';
 import Header from '@components/header';
+import { common } from '@utils/style';
 
 // Lazy load LabourList component
 const LabourList = lazy(() => import('@container/labour/labourList'));
@@ -42,12 +43,13 @@ export default function Labour() {
         iconLeft="plus"
         label={strings.new_labour}
         btnStyle={{
-          maxWidth: '50%',
+          maxWidth: '60%',
+          width: 'auto',
           position: 'absolute',
           bottom: 20,
-          right: 30,
+          right: -5,
           zIndex: 999,
-          elevation: 9
+          ...common.shadow,
         }}
         onPress={() => navigate('NewLabour')}
       />

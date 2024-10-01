@@ -5,14 +5,16 @@ import { common, } from '@utils/style';
 import { useTheme } from '@react-navigation/native';
 import Icon from './icon';
 
-export default function Checkbox({ isChecked, onPress, label, style, activeColor }) {
+export default function Checkbox({ isChecked, onPress, label, style, activeColor, disabled = false }) {
   const { colors } = useTheme();
   activeColor = activeColor ?? colors.primary
   return (
     <TouchableOpacity
       activeOpacity={0.8}
       onPress={onPress}
-      style={[common.row_start, style]}>
+      style={[common.row_start, style]}
+      disabled={disabled}
+    >
       <View
         style={{
           borderWidth: 1,

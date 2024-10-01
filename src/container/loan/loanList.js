@@ -23,7 +23,7 @@ function LoanList({ data }) {
 
       for (const uid of uniqueUserIds) {
         try {
-          if (uid != auth().currentUser.uid) {
+          if (uid != auth()?.currentUser?.uid) {
             const user = await getUserById(uid);
             fetchedOwners[uid] = user;
           }
@@ -49,12 +49,12 @@ function LoanList({ data }) {
           onPress={() => navigate('LoanDetail', { item })}>
           <View style={styles.row}>
             <Text h3 style={{ maxWidth: '60%' }}>
-              {item?.uid === auth().currentUser.uid ? item?.name : owner?.name || 'Unknown'}
+              {item?.uid === auth()?.currentUser?.uid ? item?.name : owner?.name || 'Unknown'}
             </Text>
             <Text
               h3
               style={{
-                color: item?.finalAmount > 0 ? colors.error : colors.success,
+                color: item?.finalAmount < 0 ? colors.error : colors.success,
                 maxWidth: '40%',
               }}>
               {currencyFormat(
@@ -65,9 +65,9 @@ function LoanList({ data }) {
           <View style={styles.row}>
             <Button
               small
-              iconLeft={item?.uid === auth().currentUser.uid ? 'plus' : null}
+              iconLeft={item?.uid === auth()?.currentUser?.uid ? 'plus' : null}
               label={
-                item?.uid === auth().currentUser.uid
+                item?.uid === auth()?.currentUser?.uid
                   ? strings.amount
                   : 'Read Only'
               }
@@ -75,10 +75,10 @@ function LoanList({ data }) {
                 styles.btn,
                 {
                   backgroundColor:
-                    item?.uid === auth().currentUser.uid ? navy : colors.border,
+                    item?.uid === auth()?.currentUser?.uid ? navy : colors.border,
                 },
               ]}
-              disabled={item?.uid !== auth().currentUser.uid}
+              disabled={item?.uid !== auth()?.currentUser?.uid}
               onPress={() =>
                 navigate('AddCredit', {
                   data: item,
@@ -87,7 +87,7 @@ function LoanList({ data }) {
             />
             <Text
               h6
-              color={item?.finalAmount > 0 ? colors.error : colors.success}>
+              color={item?.finalAmount < 0 ? colors.error : colors.success}>
               {item?.finalAmount === 0
                 ? '____'
                 : item?.finalAmount < 0
@@ -131,7 +131,6 @@ const styles = StyleSheet.create({
   list: {
     ...common.card,
     ...common.shadow,
-    padding: 10,
     marginHorizontal: '5%',
     marginTop: '5%',
     width: '90%',

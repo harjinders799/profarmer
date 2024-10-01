@@ -78,7 +78,7 @@ export default function LoanDetail() {
         back
         label={data?.name}
         share
-        deleteIcon={data?.uid == auth().currentUser.uid}
+        deleteIcon={data?.uid == auth()?.currentUser?.uid}
         onDeletePress={() => setOpenModal(true)}
         onSharePress={handleShare}
       />
@@ -90,7 +90,7 @@ export default function LoanDetail() {
         }}
         stickyHeaderIndices={[2]}
         showsVerticalScrollIndicator={false}>
-        <View style={[styles.card, { backgroundColor: colors.success }]}>
+        <View style={[styles.card, { backgroundColor: colors.error }]}>
           <View style={styles.row}>
             <View style={{ alignItems: 'flex-start', padding: 10 }}>
               <Text h4 bold color={colors.background}>
@@ -104,7 +104,10 @@ export default function LoanDetail() {
               <View
                 style={[
                   styles.innerCard,
-                  { backgroundColor: colors.background + 40 },
+                  {
+                    backgroundColor: colors.background + 40,
+                    borderBottomLeftRadius: 20
+                  },
                 ]}>
                 <Text h4 bold color={colors.background}>
                   {currencyFormat(data?.totalGivenAmount, 2)}
@@ -118,7 +121,8 @@ export default function LoanDetail() {
                   styles.innerCard,
                   {
                     backgroundColor: colors.background + 40,
-                    marginTop: 5,
+                    marginTop: 10,
+                    borderTopLeftRadius: 20
                   },
                 ]}>
                 <Text h4 bold color={colors.background}>
@@ -131,7 +135,7 @@ export default function LoanDetail() {
             </View>
           </View>
         </View>
-        <View style={[styles.card, { backgroundColor: colors.error }]}>
+        <View style={[styles.card, { backgroundColor: colors.success }]}>
           <View style={styles.row}>
             <View style={{ alignItems: 'flex-start', padding: 10 }}>
               <Text h4 bold color={colors.background}>
@@ -142,7 +146,13 @@ export default function LoanDetail() {
               </Text>
             </View>
             <View style={{ alignItems: 'flex-end' }}>
-              <View style={styles.innerCard}>
+              <View style={[
+                styles.innerCard,
+                {
+                  backgroundColor: colors.background + 40,
+                  borderBottomLeftRadius: 20
+                },
+              ]}>
                 <Text h4 bold color={colors.background}>
                   {currencyFormat(data?.totalReceivedAmount, 2)}
                 </Text>
@@ -154,7 +164,9 @@ export default function LoanDetail() {
                 style={[
                   styles.innerCard,
                   {
-                    marginTop: 5,
+                    backgroundColor: colors.background + 40,
+                    marginTop: 10,
+                    borderTopLeftRadius: 20
                   },
                 ]}>
                 <Text h4 bold color={colors.background}>
@@ -184,7 +196,7 @@ export default function LoanDetail() {
             <Text
               h2
               bold
-              color={data?.finalAmount > 0 ? colors.error : colors.success}>
+              color={data?.finalAmount < 0 ? colors.error : colors.success}>
               {currencyFormat(
                 data?.finalAmount > 0 ? data?.finalAmount : -data?.finalAmount,
               )}
@@ -193,7 +205,7 @@ export default function LoanDetail() {
           <Text
             h6
             center
-            color={data?.finalAmount > 0 ? colors.error : colors.success}
+            color={data?.finalAmount < 0 ? colors.error : colors.success}
             style={{ position: 'absolute', bottom: -10, alignSelf: 'center' }}>
             {data?.finalAmount < 0 ? strings.give : strings.receive}
           </Text>
@@ -204,7 +216,7 @@ export default function LoanDetail() {
             (a, b) => moment(b?.date) - moment(a?.date),
           ).map((o, i) => <LoanDetailAction key={i} item={o} data={data} />)
         ) : (
-          <Text>0</Text>
+          null
         )}
       </ScrollView>
       <DeleteModal
@@ -217,8 +229,8 @@ export default function LoanDetail() {
         hitSlop={10}
         label={strings.receive}
         btnStyle={{
-          display: data?.uid == auth().currentUser.uid ? 'flex' : 'none',
-          backgroundColor: colors.error,
+          display: data?.uid == auth()?.currentUser?.uid ? 'flex' : 'none',
+          backgroundColor: colors.success,
           width: '40%',
           position: 'absolute',
           bottom: 5,
@@ -239,8 +251,8 @@ export default function LoanDetail() {
         hitSlop={10}
         label={strings.give}
         btnStyle={{
-          display: data?.uid == auth().currentUser.uid ? 'flex' : 'none',
-          backgroundColor: colors.success,
+          display: data?.uid == auth()?.currentUser?.uid ? 'flex' : 'none',
+          backgroundColor: colors.error,
           width: '40%',
           position: 'absolute',
           bottom: 5,
@@ -289,8 +301,9 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   innerCard: {
-    borderTopLeftRadius: 20,
-    borderBottomLeftRadius: 20,
+    // borderTopLeftRadius: 20,
+    marginVertical: -5,
+    // borderBottomLeftRadius: 20,
     paddingLeft: 25,
     paddingRight: 15,
     padding: 10,

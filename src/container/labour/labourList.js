@@ -21,9 +21,9 @@ const LabourList = React.memo(({ data }) => {
 
     const total_labour_amount = item?.is_regular
       ? (dayCount(item.start_date) * parseFloat(item?.labour_rate)) -
-      parseFloat(item?.total_leave) * parseFloat(item?.labour_rate)
+      (parseFloat(item?.total_leave) || 0) * parseFloat(item?.labour_rate)
       : parseFloat(item?.total_labour_amount);
-
+    console.log(item)
     const total_labour_given = parseFloat(item?.given_amount);
 
     const balanceColor =

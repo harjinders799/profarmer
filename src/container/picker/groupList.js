@@ -9,8 +9,10 @@ import { useTheme } from '@react-navigation/native';
 import Button from '@components/button';
 import { calculateGroupFinalAmount } from '@utils/helper';
 import Animated, { LinearTransition } from 'react-native-reanimated';
+import { navy } from '@utils/colors';
+import { RefreshControl } from 'react-native-gesture-handler';
 
-function GroupList({ data, pickers }) {
+function GroupList({ data, pickers, refreshing, onRefresh }) {
     const { colors } = useTheme();
 
     const renderItem = useCallback(
@@ -39,7 +41,7 @@ function GroupList({ data, pickers }) {
                     </View>
                     <View style={styles.row}>
                         <Button
-                            label={strings.edit}
+                            iconLeft={'edit'}
                             small
                             btnStyle={[styles.btn, { backgroundColor: colors.warning }]}
                             onPress={() =>
@@ -53,6 +55,32 @@ function GroupList({ data, pickers }) {
                                     ? strings.give
                                     : strings.receive}
                         </Text>
+                    </View>
+                    <View style={[styles.row]}>
+                        <Button
+                            small
+                            iconLeft={'plus'}
+                            label={strings.amount}
+                            btnStyle={[
+                                styles.btn,
+                                {
+                                    backgroundColor: navy,
+                                },
+                            ]}
+                            onPress={() => navigate('AddPickerBulkExpense', { item, pickers })}
+                        />
+                        <Button
+                            small
+                            iconLeft={'plus'}
+                            label={strings.weight}
+                            btnStyle={[
+                                styles.btn,
+                                {
+                                    backgroundColor: colors.warning,
+                                },
+                            ]}
+                            onPress={() => navigate('AddPickerBulkWeight', { item, pickers })}
+                        />
                     </View>
                 </TouchableOpacity>
             );
@@ -82,6 +110,10 @@ function GroupList({ data, pickers }) {
             style={{ width: '100%' }}
             contentContainerStyle={{ paddingBottom: 150 }}
             data={data}
+            refreshing={refreshing}
+            refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
             keyExtractor={keyExtractor}
             ListEmptyComponent={ListEmptyComponent}
             showsVerticalScrollIndicator={false}

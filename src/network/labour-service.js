@@ -3,6 +3,7 @@ import auth from '@react-native-firebase/auth';
 import RNFS from 'react-native-fs';
 import { sanitizeData } from '@utils/helper';
 import { currentStamp } from '@utils/dateformat';
+import { ToastError, ToastSuccess } from '@utils/toast';
 
 const getDocumentsListener = (query, onUpdate) => {
   try {
@@ -37,11 +38,11 @@ const deleteDocumentById = (collectionName, id) => {
 };
 
 export const addNewLabour = data => {
-  return new Promise(function (resolve, reject) {
+  return new Promise(async function (resolve, reject) {
     try {
       let userId = auth().currentUser?.uid;
       // Add labours_data document
-      const labourDataRef = firestore()
+      const labourDataRef = await firestore()
         .collection('labours_data')
         .add(
           sanitizeData({
@@ -62,7 +63,7 @@ export const addNewLabour = data => {
       const labourDataId = labourDataRef.id;
 
       // Add labour_work subcollection document
-      firestore()
+      await firestore()
         .collection('labours_data')
         .doc(labourDataId)
         .collection('labour_work')
@@ -265,9 +266,7 @@ export const updateLabourDataCalculation = labourId => {
       });
 
       // Calculate given_amount from labour_expense
-      const expenseSnapshot = labourDocRef
-        .collection('labour_expense')
-        .get();
+      const expenseSnapshot = labourDocRef.collection('labour_expense').get();
       let givenAmount = 0;
       expenseSnapshot.forEach(expenseDoc => {
         const expenseData = expenseDoc.data();
@@ -306,7 +305,7 @@ export const updateLabourDataCalculation = labourId => {
   }
 };
 
-export const deleteLabourExpense = data => {
+export const deleteLabourExpense = (data, labour) => {
   try {
     firestore()
       .collection('labours_data')
@@ -314,6 +313,12 @@ export const deleteLabourExpense = data => {
       .collection('labour_expense')
       .doc(data.id)
       .delete();
+    firestore()
+      .collection('labours_data')
+      .doc(data?.cid)
+      .update({
+        given_amount: labour?.given_amount - data?.amount,
+      });
     return true;
   } catch (error) {
     throw new Error(error);
@@ -333,8 +338,25 @@ export const deleteLabour = data => {
     throw new Error(error);
   }
 };
-export const deleteLabourLeave = id =>
-  deleteDocumentById('labour_leave', id);
+export const deleteLabourLeave = (data, labour) => {
+  try {
+    firestore()
+      .collection('labours_data')
+      .doc(data.cid)
+      .collection('labour_leave')
+      .doc(data.id)
+      .delete();
+    firestore()
+      .collection('labours_data')
+      .doc(data?.cid)
+      .update({
+        total_leave: labour?.total_leave - data?.count,
+      });
+    return true;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
 
 export const deleteLabourCollection = id => {
   try {
@@ -612,15 +634,13 @@ export const backupData = async () => {
     // Write backup to file
     await RNFS.writeFile(filePath, backupJson, 'utf8')
       .then(success => {
-        console.log('FILE WRITTEN!', success);
+        ToastSuccess(filePath, 'Data backup completed!!');
       })
       .catch(err => {
-        console.log(err.message);
+        ToastError(err.message);
       });
-
-    console.log('Data backup complete');
   } catch (error) {
-    console.error('Error backing up data:', error);
+    ToastError(error?.message, 'Error backing up data');
   }
 };
 

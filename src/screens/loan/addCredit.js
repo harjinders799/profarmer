@@ -103,7 +103,7 @@ export default function AddCredit() {
           style={[common.centerAlignedJustify, { padding: 20, paddingTop: 0 }]}>
           <Checkbox
             isChecked={type == 'giver'}
-            activeColor={colors.success}
+            activeColor={colors.error}
             label={`${lang?.code !== 'en' ? editData?.name : ''} ${strings.gave_him
               } ${lang?.code == 'en' ? editData?.name : ''}`}
             style={{ width: '50%', marginTop: 10 }}
@@ -111,7 +111,7 @@ export default function AddCredit() {
           />
           <Checkbox
             isChecked={type == 'receiver'}
-            activeColor={colors.error}
+            activeColor={colors.success}
             label={`${lang?.code !== 'en' ? editData?.name : ''} ${strings.received_from
               } ${lang?.code == 'en' ? editData?.name : ''}`}
             style={{ width: '50%', marginTop: 10 }}

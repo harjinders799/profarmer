@@ -10,7 +10,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import Text from './text';
 
-const Tabs = ({ tabs, activeTab, setActiveTab }) => {
+const Tabs = ({ tabs, activeTab, setActiveTab, style }) => {
     const translateX = useSharedValue(0);
     const { colors } = useTheme();
     useEffect(() => {
@@ -30,7 +30,7 @@ const Tabs = ({ tabs, activeTab, setActiveTab }) => {
     }));
 
     return (
-        <Animated.View layout={LinearTransition} style={styles.container}>
+        <Animated.View layout={LinearTransition} style={[styles.container, style]}>
             {tabs.map(tab => (
                 <TouchableOpacity
                     key={tab}

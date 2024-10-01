@@ -7,6 +7,7 @@ import { useTheme } from '@react-navigation/native';
 import { navigate } from '@navigation/ref';
 import { currencyFormat } from '@utils/dateformat';
 import { common } from '@utils/style';
+import { white } from '@utils/colors';
 
 const { card, row_btw, underline, shadow } = common;
 
@@ -26,44 +27,52 @@ const AadhtiyaConclusionCard = memo(({ data = [] }) => {
                         shadow,
                         { backgroundColor: colors.error, marginVertical: 20 },
                     ]}>
+                    <Text
+                        color={white}
+                        bold
+                        h4
+                        entering={FadeInUp}
+                        style={{ marginBottom: 10 }}>
+                        {strings.taken_amount}
+                    </Text>
                     <View style={[row_btw]}>
-                        <Text color={colors.background} h4 entering={FadeInUp}>
+                        <Text color={white} h4 entering={FadeInUp}>
                             {strings.taken_amount}
                         </Text>
-                        <Text color={colors.background} medium h4 entering={FadeInUp}>
+                        <Text color={white} medium h4 entering={FadeInUp}>
                             {currencyFormat(data[0]?.totalReceivedAmount)}
                         </Text>
                     </View>
-                    <Text color={colors.background} h4>
+                    <Text color={white} h4>
                         +
                     </Text>
                     <View style={[row_btw]}>
-                        <Text color={colors.background} h4 entering={FadeInUp}>
+                        <Text color={white} h4 entering={FadeInUp}>
                             {strings.total_interest}
                         </Text>
-                        <Text color={colors.background} medium h4 entering={FadeInUp}>
+                        <Text color={white} medium h4 entering={FadeInUp}>
                             {currencyFormat(data[0]?.totalReceivedAmountInterest)}
                         </Text>
                     </View>
-                    <Text color={colors.background} h2>
+                    <Text color={white} h2>
                         =
                     </Text>
                     <View style={[row_btw]}>
-                        <Text color={colors.background} medium h4 entering={FadeInUp}>
+                        <Text color={white} medium h4 entering={FadeInUp}>
                             {strings.total_amount}
                         </Text>
-                        <Text color={colors.background} medium h4 entering={FadeInUp}>
+                        <Text color={white} medium h4 entering={FadeInUp}>
                             {currencyFormat(data[0]?.totalReceivedAmountWithInterest)}
                         </Text>
                     </View>
                 </Animated.View>
             </Pressable>
-            <Pressable onPress={() => navigate('CropDetail', { data })}>
+            <Pressable onPress={() => navigate('AadhatCropDetail', { data })}>
                 <Animated.View
                     entering={ZoomIn.delay(100)}
                     style={[card, shadow, { backgroundColor: colors.success }]}>
                     <Text
-                        color={colors.background}
+                        color={white}
                         bold
                         h4
                         entering={FadeInUp}
@@ -71,32 +80,32 @@ const AadhtiyaConclusionCard = memo(({ data = [] }) => {
                         {strings.crop} / {strings.given_amount}
                     </Text>
                     <View style={[row_btw]}>
-                        <Text color={colors.background} h4 entering={FadeInUp}>
+                        <Text color={white} h4 entering={FadeInUp}>
                             {strings.crop} / {strings.given_amount}
                         </Text>
-                        <Text color={colors.background} medium h4 entering={FadeInUp}>
+                        <Text color={white} medium h4 entering={FadeInUp}>
                             {currencyFormat(data[0]?.totalGivenAmount)}
                         </Text>
                     </View>
-                    <Text color={colors.background} h4>
+                    <Text color={white} h4>
                         +
                     </Text>
                     <View style={[row_btw]}>
-                        <Text color={colors.background} h4 entering={FadeInUp}>
+                        <Text color={white} h4 entering={FadeInUp}>
                             {strings.total_interest}
                         </Text>
-                        <Text color={colors.background} medium h4 entering={FadeInUp}>
+                        <Text color={white} medium h4 entering={FadeInUp}>
                             {currencyFormat(data[0]?.totalGivenAmountInterest)}
                         </Text>
                     </View>
-                    <Text color={colors.background} h2>
+                    <Text color={white} h2>
                         =
                     </Text>
                     <View style={[row_btw]}>
-                        <Text color={colors.background} medium h4 entering={FadeInUp}>
+                        <Text color={white} medium h4 entering={FadeInUp}>
                             {strings.total_amount}
                         </Text>
-                        <Text color={colors.background} medium h4 entering={FadeInUp}>
+                        <Text color={white} medium h4 entering={FadeInUp}>
                             {currencyFormat(data[0]?.totalGivenAmountWithInterest)}
                         </Text>
                     </View>
@@ -107,7 +116,7 @@ const AadhtiyaConclusionCard = memo(({ data = [] }) => {
                 style={[
                     card,
                     shadow,
-                    { backgroundColor: colors.secondaryCard, marginTop: 10 },
+                    { backgroundColor: colors.secondaryCard, marginTop: 20 },
                 ]}>
                 <View style={[row_btw]}>
                     <Text bold h3>

@@ -41,7 +41,7 @@ import AadhatTransacton from '@container/aadhat/aadhatTransaction';
 const transparent = 'rgba(0,0,0,0.5)';
 const { card, row_btw, underline, shadow } = common;
 
-export default function CropDetail() {
+export default function AadhatCropDetail() {
   const { colors } = useTheme();
   const { user } = useAuth();
   const { lang } = useLang();
@@ -255,37 +255,37 @@ export default function CropDetail() {
           style={[
             card,
             shadow,
-            { backgroundColor: colors.background, margin: 20 },
+            { backgroundColor: colors.success, margin: 10 },
           ]}>
           <View style={[row_btw]}>
-            <Text h4 entering={FadeInUp}>
+            <Text color={white} h4 entering={FadeInUp}>
               {strings.interest}
             </Text>
-            <Text medium h4 entering={FadeInUp}>
+            <Text color={white} medium h4 entering={FadeInUp}>
               {interestFormat(data[0]?.interest_rate)}
             </Text>
           </View>
           <View style={[row_btw, { marginTop: 20 }]}>
-            <Text h4 entering={FadeInUp}>
+            <Text color={white} h4 entering={FadeInUp}>
               {strings.crop} / {strings.given_amount}
             </Text>
-            <Text medium h4 entering={FadeInUp}>
+            <Text color={white} medium h4 entering={FadeInUp}>
               {currencyFormat(data[0]?.totalGivenAmount)}
             </Text>
           </View>
           <View style={[row_btw, { marginTop: 20 }]}>
-            <Text h4 entering={FadeInUp}>
+            <Text color={white} h4 entering={FadeInUp}>
               {strings.total_interest}
             </Text>
-            <Text medium h4 entering={FadeInUp}>
+            <Text color={white} medium h4 entering={FadeInUp}>
               {currencyFormat(data[0]?.totalGivenAmountInterest)}
             </Text>
           </View>
           <View style={[row_btw, { marginTop: 20 }]}>
-            <Text medium h4 entering={FadeInUp}>
+            <Text color={white} medium h4 entering={FadeInUp}>
               {strings.total_amount}
             </Text>
-            <Text medium h4 entering={FadeInUp}>
+            <Text color={white} medium h4 entering={FadeInUp}>
               {currencyFormat(data[0]?.totalGivenAmountWithInterest)}
             </Text>
           </View>

@@ -21,7 +21,7 @@ const Card = React.memo(({ title, subtitle, color, textColor }) => (
 
 const PickerConclusion = ({ item, weights, expenses }) => {
     const { colors } = useTheme();
-    const uid = auth().currentUser.uid;
+    const uid = auth()?.currentUser?.uid;
 
     // Memoize calculations to avoid unnecessary recalculations on re-renders
     const { totalWeight, totalEarning, totalGiven, finalAmount } = useMemo(() => {

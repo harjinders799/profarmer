@@ -10,6 +10,7 @@ import Text from './text';
 import { common } from '@utils/style';
 import Animated, { FadeInUp } from 'react-native-reanimated';
 import { useTheme } from '@react-navigation/native';
+import { white } from '@utils/colors';
 
 // Memoize Button component to prevent unnecessary re-renders
 // export const MemoizedButton = memo(Button);
@@ -29,7 +30,7 @@ const Button = ({
   ...props
 }) => {
   const { colors } = useTheme();
-  txtColor = txtColor ? txtColor : colors.background;
+  txtColor = txtColor ? txtColor : white;
   return (
     <Animated.View
       entering={FadeInUp}

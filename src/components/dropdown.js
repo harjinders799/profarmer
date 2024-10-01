@@ -26,6 +26,10 @@ export default function DropdownPicker({
                     borderBottomLeftRadius: 10,
                     borderBottomRightRadius: 10,
                 }}
+                itemTextStyle={{ color: colors.text }}
+                placeholderStyle={{ color: colors.border }}
+                visibleSelectedItem
+                selectedTextProps={{ style: { color: colors.text } }}
                 data={data}
                 search={search}
                 searchPlaceholder="Search..."

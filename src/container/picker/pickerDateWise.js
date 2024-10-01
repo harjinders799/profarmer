@@ -1,56 +1,80 @@
 import React, { useCallback, useState } from 'react';
 import Text from '@components/text';
-import { FlatList, StyleSheet, View } from 'react-native';
+import { FlatList, RefreshControl, StyleSheet, View } from 'react-native';
 import { strings } from '@translations/locale';
-import { dateFormat } from '@utils/dateformat';
+import { currencyFormat, dateFormat } from '@utils/dateformat';
 import { navy } from '@utils/colors';
 import { common } from '@utils/style';
 import { useFocusEffect, useTheme } from '@react-navigation/native';
 import { groupPickersByDate } from '@utils/helper';
-import { pickersWeightListener } from '@network/picker-service';
-import Button from '@components/button';
-import { navigate } from '@navigation/ref';
+import {
+    pickersExpenseListener,
+    pickersWeightListener,
+} from '@network/picker-service';
 import Animated, { LinearTransition } from 'react-native-reanimated';
+import { hp } from '@utils/fonts';
 
-function PickerDateWise({ pickers, groups }) {
+function PickerDateWise({ pickers, groups, refreshing, onRefresh }) {
     const { colors } = useTheme();
     const [pickersWeightData, setPickersWeightData] = useState([]);
+    const [pickersExpenseData, setPickersExpenseData] = useState([]);
     const fetchData = useCallback(() => {
-        const unsubscribePickerWeight = pickersWeightListener(
+        const unsubscribePickerWeight = pickersWeightListener(updatedDocuments => {
+            setPickersWeightData(updatedDocuments);
+            // setLoading(false);
+        });
+        const unsubscribePickerExpense = pickersExpenseListener(
             updatedDocuments => {
-                setPickersWeightData(updatedDocuments);
+                setPickersExpenseData(updatedDocuments);
                 // setLoading(false);
             },
         );
         return () => {
             if (unsubscribePickerWeight) unsubscribePickerWeight();
+            if (unsubscribePickerExpense) unsubscribePickerExpense();
         }; // Cleanup on unmount or dependency change
     }, [pickers]);
 
     useFocusEffect(fetchData);
 
-    const data = groupPickersByDate(pickers, pickersWeightData);
+    const data = groupPickersByDate(
+        pickers,
+        pickersWeightData,
+        pickersExpenseData,
+    );
+
     // Optimized renderItem function using useCallback
     const renderItem = useCallback(
         ({ item }) => {
-            console.log(item);
             return (
                 <View style={[styles.list, { backgroundColor: colors.background }]}>
                     <View style={styles.row}>
-                        <Text h3 style={{ maxWidth: '60%' }}>
+                        <Text h5 style={{ width: '30%' }}>
                             {dateFormat(item.date)}
                         </Text>
-                        <Text h3>
+                        <Text h4 center color={colors.error} style={{ width: '30%' }}>
+                            {currencyFormat(item?.total_expense)}
+                        </Text>
+                        <Text h4 right color={colors.success} style={{ width: '30%' }}>
                             {item?.total_weight}
-                            <Text h6> Kg</Text>
+                            <Text h6 color={colors.success}>
+                                {' '}
+                                Kg
+                            </Text>
                         </Text>
                     </View>
                     {item.pickers.map(picker => (
                         <View key={picker.name} style={styles.row}>
-                            <Text>{picker?.name}</Text>
-                            <Text>
+                            <Text style={{ width: '30%' }}>{picker?.name}</Text>
+                            <Text center color={colors.error} style={{ width: '30%' }}>
+                                {currencyFormat(picker?.total_expense)}
+                            </Text>
+                            <Text right color={colors.success} style={{ width: '30%' }}>
                                 {picker?.total_weight}
-                                <Text h7> kg</Text>
+                                <Text h7 color={colors.success}>
+                                    {' '}
+                                    kg
+                                </Text>
                             </Text>
                         </View>
                     ))}
@@ -75,15 +99,31 @@ function PickerDateWise({ pickers, groups }) {
 
     return (
         <Animated.View layout={LinearTransition} style={{ width: '100%' }}>
-            <Button
-                label={'Add Weight Date Wise'}
-                small
-                btnStyle={{ width: '80%', alignSelf: 'center' }}
-                onPress={() => navigate('AddPickerBulkWeight', { pickers })}
-            />
+            <View
+                style={[common.row_btw, { paddingHorizontal: 25 }]}>
+                <Text bold style={{ width: '30%' }}>
+                    Date
+                </Text>
+                <Text bold center color={colors.error} style={{ width: '30%' }}>
+                    Given Amount
+                </Text>
+                <Text bold right color={colors.success} style={{ width: '30%' }}>
+                    Weight
+                </Text>
+            </View>
             <FlatList
                 style={{ width: '100%' }}
-                contentContainerStyle={{ paddingBottom: 150 }}
+                // refreshing={refreshing}
+                refreshControl={
+                    <RefreshControl
+                        refreshing={refreshing}
+                        onRefresh={() => {
+                            fetchData();
+                            onRefresh();
+                        }}
+                    />
+                }
+                contentContainerStyle={{ paddingBottom: hp(30) }}
                 data={data}
                 keyExtractor={keyExtractor}
                 ListEmptyComponent={ListEmptyComponent}
@@ -100,7 +140,7 @@ const styles = StyleSheet.create({
         ...common.shadow,
         padding: 10,
         marginHorizontal: '5%',
-        marginTop: '5%',
+        marginTop: '3%',
         width: '90%',
     },
     row: {

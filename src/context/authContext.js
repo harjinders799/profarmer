@@ -93,7 +93,7 @@ export const AuthProvider = props => {
         // console.log('reset', res, '-----')
         auth()
           .signOut()
-          .then(async () => {
+          .then(() => {
             dispatch({ type: 'RESET' });
             // replace("Login")
           });

@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { strings } from '@translations/locale';
 import { currencyFormat } from '@utils/dateformat';
@@ -12,6 +12,8 @@ import Animated, {
     SlideInUp,
     SlideOutUp,
 } from 'react-native-reanimated';
+import Tabs from '@components/tabs';
+import auth from '@react-native-firebase/auth';
 
 const Card = React.memo(({ title, subtitle, color, textColor }) => (
     <View style={[styles.card, { backgroundColor: color }]}>
@@ -24,19 +26,28 @@ const Card = React.memo(({ title, subtitle, color, textColor }) => (
 
 const PickersConclusion = ({ pickers }) => {
     const { colors } = useTheme();
+    const [activeTab, setActiveTab] = useState('My Pickers');
+    const uid = auth()?.currentUser?.uid;
 
+    const pickerData =
+        activeTab == 'Me'
+            ? pickers.filter(o => o?.uid !== uid)
+            : pickers.filter(o => o?.uid == uid);
     // Memoize calculations to avoid unnecessary recalculations on re-renders
     const { totalWeight, totalEarning, totalGiven, finalAmount } = useMemo(() => {
-        const totalWeight = sumBy(pickers, p => parseFloat(p?.total_weight) || 0);
+        const totalWeight = sumBy(
+            pickerData,
+            p => parseFloat(p?.total_weight) || 0,
+        );
         const totalEarning = sumBy(
-            pickers,
+            pickerData,
             p => (parseFloat(p?.total_weight) || 0) * (parseFloat(p?.rate) || 0),
         );
-        const totalGiven = sumBy(pickers, p => parseFloat(p?.total_given) || 0);
+        const totalGiven = sumBy(pickerData, p => parseFloat(p?.total_given) || 0);
         const finalAmount = totalEarning - totalGiven;
 
         return { totalWeight, totalEarning, totalGiven, finalAmount };
-    }, [pickers]); // Dependencies to recalculate only when these change
+    }, [pickerData]); // Dependencies to recalculate only when these change
 
     return (
         <Animated.View
@@ -44,6 +55,12 @@ const PickersConclusion = ({ pickers }) => {
             entering={SlideInUp}
             exiting={SlideOutUp}
             style={styles.row}>
+            <Tabs
+                // style={{ width: '90%' }}
+                tabs={['My Pickers', 'Me']}
+                activeTab={activeTab}
+                setActiveTab={setActiveTab}
+            />
             <Card
                 title={`${totalWeight.toFixed(2)} Kg`}
                 subtitle={strings.total_weight}
@@ -57,7 +74,9 @@ const PickersConclusion = ({ pickers }) => {
             />
             <Card
                 title={`${currencyFormat(totalGiven, 2)}`}
-                subtitle={strings.given_amount}
+                subtitle={
+                    activeTab == 'Me' ? strings.taken_amount : strings.given_amount
+                }
                 color={colors.secondaryCard}
                 textColor={colors.error}
             />
@@ -75,15 +94,18 @@ export default PickersConclusion;
 
 const styles = StyleSheet.create({
     row: {
-        ...common.row_btw,
+        ...common.row_center,
         flexWrap: 'wrap',
-        paddingHorizontal: 20,
+        marginBottom: 40
+        // paddingHorizontal: 20,
     },
     card: {
         ...common.shadow,
         ...common.card,
         padding: 10,
         marginTop: 10,
-        width: '48%',
+        minWidth: '44%',
+        maxWidth: '48%',
+        marginHorizontal: '1%',
     },
 });

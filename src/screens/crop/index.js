@@ -8,6 +8,7 @@ import { navigate } from '@navigation/ref';
 import Loader from '@components/loader';
 import Header from '@components/header';
 import { getCropData } from '@network/crop-service';
+import { common } from '@utils/style';
 
 // Lazy load CropList component
 const CropList = lazy(() => import('@container/crop/cropList'));
@@ -43,15 +44,15 @@ export default function Crop() {
         label={strings.add_crop}
         btnStyle={{
           maxWidth: '50%',
+          width: 'auto',
           position: 'absolute',
           bottom: 20,
-          right: 30,
+          right: -5,
           zIndex: 999,
-          elevation: 9
+          ...common.shadow
         }}
         onPress={() => navigate('AddCrop')}
       />
     </BaseView>
   );
 }
-

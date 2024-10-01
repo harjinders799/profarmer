@@ -1,6 +1,6 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import Text from '@components/text';
-import { FlatList, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { FlatList, RefreshControl, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { strings } from '@translations/locale';
 import { navigate } from '@navigation/ref';
 import { currencyFormat } from '@utils/dateformat';
@@ -13,9 +13,9 @@ import { getUserById } from '@network/auth-service';
 import { findPickerGroupNames } from '@utils/helper';
 import Animated, { LinearTransition } from 'react-native-reanimated';
 
-function PickerList({ data, groups }) {
+function PickerList({ data, groups, refreshing, onRefresh }) {
     const { colors } = useTheme();
-    const uid = auth().currentUser.uid;
+    const uid = auth()?.currentUser?.uid;
     const [owners, setOwners] = useState({});
 
     // Fetch owner data for each unique user ID
@@ -26,7 +26,7 @@ function PickerList({ data, groups }) {
 
             for (const uid of uniqueUserIds) {
                 try {
-                    if (uid != auth().currentUser.uid) {
+                    if (uid != auth()?.currentUser?.uid) {
                         const user = await getUserById(uid);
                         fetchedOwners[uid] = user;
                     }
@@ -144,6 +144,10 @@ function PickerList({ data, groups }) {
             style={{ width: '100%' }}
             contentContainerStyle={{ paddingBottom: 150 }}
             data={data}
+            refreshing={refreshing}
+            refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
             keyExtractor={keyExtractor}
             ListEmptyComponent={ListEmptyComponent}
             showsVerticalScrollIndicator={false}

@@ -13,7 +13,7 @@ import auth from '@react-native-firebase/auth';
 function PickerExpenseDetail({ data, expense }) {
   const { colors } = useTheme();
   const [expand, setExpand] = useState(true);
-  const uid = auth().currentUser.uid;
+  const uid = auth()?.currentUser?.uid;
 
   const handleNavigate = useCallback(
     item => {

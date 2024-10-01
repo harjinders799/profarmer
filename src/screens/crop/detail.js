@@ -19,7 +19,13 @@ import { deleteCropCollection, getCropEvents } from '@network/crop-service';
 import DeleteModal from '@container/deleteModal';
 import Text from '@components/text';
 import CropEventDetail from '@container/crop/cropEventDetail';
-import Animated, { FadeInLeft, FadeInRight, FadeInUp } from 'react-native-reanimated';
+import Animated, {
+  FadeInLeft,
+  FadeInRight,
+  FadeInUp,
+} from 'react-native-reanimated';
+import { sumBy } from 'lodash';
+import { white } from '@utils/colors';
 
 const CropDetail = () => {
   const { params } = useRoute();
@@ -41,18 +47,24 @@ const CropDetail = () => {
     };
   }, [data]);
 
-  let finalAmount = data?.total_earning - data?.total_expense;
-
-  const onDelete = async () => {
+  const onDelete = () => {
     try {
       setLoading(true);
-      await deleteCropCollection(data?.id);
+      deleteCropCollection(data?.id);
       goBack();
     } catch (error) {
       setLoading(false);
       ToastError(error?.message);
     }
   };
+
+  let total_earning =
+    sumBy(events, o => parseFloat(o?.earning_amount) || 0) ??
+    data?.total_earning;
+  let total_expense =
+    sumBy(events, o => parseFloat(o?.expense_amount) || 0) ??
+    data?.total_expense;
+  let finalAmount = total_earning - total_expense;
 
   return (
     <BaseView style={{ paddingHorizontal: 0 }}>
@@ -72,20 +84,20 @@ const CropDetail = () => {
           <Animated.View
             entering={FadeInLeft.delay(300).duration(500)}
             style={[styles.card, { backgroundColor: colors.error }]}>
-            <Text h4 bold color={colors.background}>
-              {currencyFormat(data?.total_expense, 2)}
+            <Text h4 bold color={white}>
+              {currencyFormat(total_expense, 2)}
             </Text>
-            <Text h5 medium color={colors.background} style={{ paddingTop: 5 }}>
+            <Text h5 medium color={white} style={{ paddingTop: 5 }}>
               Total Expense
             </Text>
           </Animated.View>
           <Animated.View
             entering={FadeInRight.delay(300).duration(500)}
             style={[styles.card, { backgroundColor: colors.success }]}>
-            <Text h4 bold color={colors.background}>
-              {currencyFormat(data?.total_earning, 2)}
+            <Text h4 bold color={white}>
+              {currencyFormat(total_earning, 2)}
             </Text>
-            <Text h5 medium color={colors.background} style={{ paddingTop: 5 }}>
+            <Text h5 medium color={white} style={{ paddingTop: 5 }}>
               Total Earning
             </Text>
           </Animated.View>
@@ -98,6 +110,8 @@ const CropDetail = () => {
               ...common.shadow,
               paddingVertical: 15,
               marginHorizontal: 20,
+              borderTopLeftRadius: 0,
+              borderTopRightRadius: 0,
               backgroundColor: colors.secondaryCard,
             },
           ]}>
@@ -143,8 +157,8 @@ const styles = StyleSheet.create({
     ...common.card,
     ...common.shadow,
     maxWidth: '50%',
+    minWidth: '35%',
     marginBottom: 10,
-    padding: 15,
   },
 });
 

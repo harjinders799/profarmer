@@ -84,14 +84,14 @@ export const calculateLoanDetails = (loansData, loanData) => {
                 30) *
             days;
 
-        if (v.type === 'giver' && loanData?.uid == auth().currentUser.uid) {
+        if (v.type === 'giver' && loanData?.uid == auth()?.currentUser?.uid) {
             totalGivenAmount += parseFloat(v.amount);
             totalGivenAmountInterest += parseFloat(interest);
             totalGivenAmountWithInterest +=
                 parseFloat(interest) + parseFloat(v.amount);
         } else if (
             v.type === 'receiver' ||
-            (v.type === 'giver' && loanData?.uid != auth().currentUser.uid)
+            (v.type === 'giver' && loanData?.uid != auth()?.currentUser?.uid)
         ) {
             totalReceivedAmount += parseFloat(v.amount);
             totalReceivedAmountInterest += parseFloat(interest);
@@ -194,6 +194,20 @@ export const unassignPickers = (pickers, groups, editingGroupId) => {
 
     return unassignedPickers;
 };
+export const assignedPickers = (pickers, group) => {
+    // If the group is not provided or has no members, return an empty array
+    if (!group || !group.members) {
+        return [];
+    }
+
+    // Create a Set of assigned picker IDs from the group
+    const assignedPickerIds = new Set(group.members);
+
+    // Filter pickers to include only those who are assigned in the group
+    const assignedPickers = pickers.filter(picker => assignedPickerIds.has(picker.id));
+
+    return assignedPickers;
+};
 
 export const calculateGroupFinalAmount = (group, pickers) => {
     // Create a Set of member IDs for faster lookup
@@ -234,12 +248,13 @@ export const findPickerGroupNames = (picker, groups) => {
     return pickerGroupMap[picker.id] || 'no group';
 };
 
-export function groupPickersByDate(pickers, pickersWeightData) {
-    // Create a map of picker ID to name
+export function groupPickersByDate(pickers, pickersWeightData, pickersExpenseData) {
+    // Create a map of picker ID to name and uid
     const pickerMap = {};
     pickers.forEach(picker => {
         pickerMap[picker.id] = {
             name: picker.name,
+            uid: picker.uid, // Store uid for matching
         };
     });
 
@@ -248,44 +263,84 @@ export function groupPickersByDate(pickers, pickersWeightData) {
 
     // Process each entry in pickersWeightData
     pickersWeightData.forEach(entry => {
-        const date = new Date(entry.date).toISOString().split('T')[0]; // Convert timestamp to YYYY-MM-DD
-        const pickerName = pickerMap[entry.pid]?.name;
-        console.log(date);
-        if (!groupedData[date]) {
-            groupedData[date] = {
-                total_weight: 0,
-                pickers: [],
-            };
-        }
+        const pickerUid = pickerMap[entry.pid]?.uid;
+        // Only process if uid matches
+        if (entry.uid === pickerUid) {
+            const date = new Date(entry.date).toISOString().split('T')[0]; // Convert timestamp to YYYY-MM-DD
+            const pickerName = pickerMap[entry.pid]?.name;
 
-        // Add to total weight for the date
-        groupedData[date].total_weight += parseFloat(entry.weight);
-        console.log({ groupedData });
-        // Check if the picker is already in the list for that date
-        const existingPicker = groupedData[date].pickers.find(
-            p => p.name === pickerName,
-        );
-        if (existingPicker) {
-            existingPicker.total_weight += parseFloat(entry.weight); // Aggregate picker weight
-        } else {
-            // If picker does not exist, add them
-            groupedData[date].pickers.push({
-                name: pickerName,
-                total_weight: parseFloat(entry.weight),
-            });
+            if (!groupedData[date]) {
+                groupedData[date] = {
+                    total_weight: 0,
+                    total_expense: 0,
+                    pickers: [],
+                };
+            }
+
+            // Add to total weight for the date
+            groupedData[date].total_weight += parseFloat(entry.weight);
+
+            // Check if the picker is already in the list for that date
+            const existingPicker = groupedData[date].pickers.find(p => p.name === pickerName);
+            if (existingPicker) {
+                existingPicker.total_weight += parseFloat(entry.weight); // Aggregate picker weight
+            } else {
+                // If picker does not exist, add them with initial weight
+                groupedData[date].pickers.push({
+                    name: pickerName,
+                    total_weight: parseFloat(entry.weight),
+                    total_expense: 0, // Initialize total expense for this picker
+                });
+            }
         }
     });
 
-    console.log({ groupedData }, '-----');
+    // Process each entry in pickersExpenseData
+    pickersExpenseData.forEach(entry => {
+        const pickerUid = pickerMap[entry.pid]?.uid;
+        // Only process if uid matches
+        if (entry.uid === pickerUid) {
+            const date = new Date(entry.date).toISOString().split('T')[0]; // Convert timestamp to YYYY-MM-DD
+            const pickerName = pickerMap[entry.pid]?.name;
+
+            if (!groupedData[date]) {
+                groupedData[date] = {
+                    total_weight: 0,
+                    total_expense: 0,
+                    pickers: [],
+                };
+            }
+
+            // Add to total expense for the date
+            groupedData[date].total_expense += parseFloat(entry.amount);
+
+            // Check if the picker is already in the list for that date
+            const existingPicker = groupedData[date].pickers.find(p => p.name === pickerName);
+            if (existingPicker) {
+                existingPicker.total_expense += parseFloat(entry.amount); // Aggregate picker expense
+            } else {
+                // If picker does not exist, add them with initial expense
+                groupedData[date].pickers.push({
+                    name: pickerName,
+                    total_weight: 0, // Initialize total weight for this picker
+                    total_expense: parseFloat(entry.amount),
+                });
+            }
+        }
+    });
+
     // Convert the grouped data into the desired output format
     const result = Object.keys(groupedData).map(date => ({
         date: date,
         total_weight: groupedData[date].total_weight,
+        total_expense: groupedData[date].total_expense,
         pickers: groupedData[date].pickers,
     }));
 
     return result;
 }
+
+
 
 export const processWeights = (data, date) => {
     const processedData = data
@@ -307,6 +362,20 @@ export const processWeights = (data, date) => {
     return processedData;
 };
 
+export const processAmounts = (data, date) => {
+    const processedData = data
+        .filter(entry => entry.amount.trim() !== '') // Filter out entries with blank weights
+        .flatMap(entry => {
+            return {
+                ...entry,
+                date: currentStamp(date),
+            }
+        });
+
+    return processedData;
+};
+
+
 export const tabsData = [
     {
         id: 1,
@@ -317,11 +386,11 @@ export const tabsData = [
     },
     {
         id: 2,
-        name: 'AadhatStack',
-        title: 'aadhtiya',
-        component: AAdhatStack,
-        icon: 'shopping-store',
-        iconType: 'Fontisto',
+        name: 'Pickers',
+        title: 'pickers',
+        component: PickerStack,
+        icon: 'flower-poppy',
+        iconType: 'MaterialCommunityIcons',
     },
     {
         id: 3,
@@ -332,11 +401,11 @@ export const tabsData = [
     },
     {
         id: 4,
-        name: 'LoanStack',
-        title: 'loan',
-        component: LoanStack,
-        icon: 'sack-percent',
-        iconType: 'MaterialCommunityIcons',
+        name: 'AadhatStack',
+        title: 'aadhtiya',
+        component: AAdhatStack,
+        icon: 'shopping-store',
+        iconType: 'Fontisto',
     },
     {
         id: 5,
@@ -348,10 +417,10 @@ export const tabsData = [
     },
     {
         id: 6,
-        name: 'Pickers',
-        title: 'pickers',
-        component: PickerStack,
-        icon: 'flower-poppy',
+        name: 'LoanStack',
+        title: 'loan',
+        component: LoanStack,
+        icon: 'sack-percent',
         iconType: 'MaterialCommunityIcons',
     },
     // {

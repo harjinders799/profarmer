@@ -10,16 +10,16 @@ import { strings } from '@translations/locale';
 import Header from '@components/header';
 import Loader from '@components/loader';
 import { ToastError, ToastSuccess } from '@utils/toast';
-import { dateFormat } from '@utils/dateformat';
+import { currencyInput, dateFormat } from '@utils/dateformat';
 import Icon from '@components/icon';
 import { common } from '@utils/style';
-import { addPickerWeightBulk } from '@network/picker-service';
+import { addPickerExpenseBulk, addPickerWeightBulk } from '@network/picker-service';
 import DateTimePicker from '@components/DateTime';
 import DropdownPicker from '@components/dropdown';
 import { sumBy } from 'lodash';
 import { assignedPickers, unassignPickers } from '@utils/helper';
 
-export default function AddPickerBulkWeight() {
+export default function AddPickerBulkExpense() {
     const { colors } = useTheme();
     const { params } = useRoute();
     const pickers = params?.pickers;
@@ -28,25 +28,23 @@ export default function AddPickerBulkWeight() {
         group?.id ? assignedPickers(pickers, group) : pickers,
         [pickers, group],
     );
-
+    console.log({ pickersData })
     const [date, setDate] = useState(new Date());
     const [data, setData] = React.useState(
         pickersData.map(obj => ({
             name: obj.name,
-            weight: '',
-            rate: obj.rate,
+            amount: '',
             pid: obj.id,
-            total_earning: obj.total_earning,
-            total_weight: obj.total_weight,
+            total_given: obj.total_given,
         })),
     );
     const [loading, setLoading] = React.useState(false);
     const [showDate, setShowDate] = useState(false);
 
-    const addWeight = async () => {
+    const addExpenses = async () => {
         try {
             setLoading(true);
-            await addPickerWeightBulk(data, date, pickers);
+            await addPickerExpenseBulk(data, date, pickers);
             setLoading(false);
             ToastSuccess(strings.weight_added);
             goBack();
@@ -56,22 +54,10 @@ export default function AddPickerBulkWeight() {
         }
     };
 
-    const addMoreWeight = i => {
-        setData(prevs => {
-            let data = [...prevs];
-            if (
-                data[i].weight.length &&
-                data[i].weight.charAt(data[i].weight.length - 1) !== '+'
-            )
-                data[i].weight += '+';
-            return data;
-        });
-    };
-
     return (
         <BaseView space>
             <Loader visible={loading} />
-            <Header back label={strings.pickers_weight} />
+            <Header back label={strings.picker_expense} />
             <ScrollView
                 style={styles.form}
                 showsVerticalScrollIndicator={false}
@@ -137,39 +123,20 @@ export default function AddPickerBulkWeight() {
                             }}
                         />
                         <Input
-                            // label={strings.weight}
-                            placeholder={strings.weight}
-                            value={picker?.weight}
+                            placeholder={strings.amount}
+                            value={currencyInput(picker?.amount)}
                             maxLength={30}
                             multiline
                             setValue={value =>
                                 setData(prevs => {
                                     let data = [...prevs];
-                                    data[i].weight = value.replace(/[^0-9+]/g, '');
+                                    data[i].amount = value.replace(/[^0-9]/g, '');
                                     return data;
                                 })
                             }
                             style={{ width: '50%' }}
-                            inputStyle={{ width: '85%', height: 45 + picker?.weight.length }}
+                            inputStyle={{ width: '85%', }}
                             keyboardType="numeric"
-                            rightComponent={
-                                <>
-                                    <Text style={{ position: 'absolute', bottom: 0, right: 5 }}>
-                                        =
-                                        {sumBy(picker?.weight.split('+'), v =>
-                                            parseFloat(v ? v : 0),
-                                        )}
-                                    </Text>
-                                    <Pressable hitSlop={20} onPress={() => addMoreWeight(i)}>
-                                        <Icon
-                                            name={'plus'}
-                                            color={colors.success}
-                                            size={20}
-                                            onPress={() => addMoreWeight(i)}
-                                        />
-                                    </Pressable>
-                                </>
-                            }
                         />
                     </View>
                 ))}
@@ -181,7 +148,7 @@ export default function AddPickerBulkWeight() {
                         onPress={() =>
                             setData(prevs => {
                                 let data = [...prevs];
-                                if (data.every(o => o.name)) data.push({ name: '', weight: '' });
+                                if (data.every(o => o.name)) data.push({ name: '', amount: '' });
                                 return data;
                             })
                         }
@@ -194,7 +161,7 @@ export default function AddPickerBulkWeight() {
                     date={date}
                     setDate={value => setDate(value)}
                 />
-                <Button label={strings.save} onPress={addWeight} />
+                <Button label={strings.save} onPress={addExpenses} />
             </ScrollView>
         </BaseView>
     );

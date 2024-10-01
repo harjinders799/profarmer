@@ -67,7 +67,7 @@ export default function LoanUpdate() {
           common.shadow,
           { backgroundColor: colors.background },
         ]}>
-        {item?.type == 'giver' && data?.uid == auth().currentUser.uid ? (
+        {item?.type == 'giver' && data?.uid == auth()?.currentUser?.uid ? (
           <Text h2 color={colors.error}>
             {lang?.code !== 'en' && data?.name} {strings.gave_him}{' '}
             {lang?.code == 'en' && data?.name}
@@ -100,7 +100,7 @@ export default function LoanUpdate() {
             {strings.total_amount}
           </Text>
           <Text h3 bold>
-            {currencyFormat(interest + item.amount)}
+            {currencyFormat(interest + parseFloat(item.amount))}
           </Text>
         </View>
         <View
@@ -124,13 +124,14 @@ export default function LoanUpdate() {
       <View
         style={[
           common.row_btw,
-          { display: data?.uid == auth().currentUser.uid ? 'flex' : 'none' },
+          { display: data?.uid == auth()?.currentUser?.uid ? 'flex' : 'none' },
         ]}>
         <Button
           iconLeft="edit"
           label={strings.edit}
           btnStyle={{
             width: '40%',
+            backgroundColor: colors.warning
           }}
           onPress={() =>
             replace('AddCredit', {

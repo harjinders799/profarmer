@@ -86,7 +86,7 @@ export default function AddLabourLeave() {
         ...data,
         date: currentStamp(date),
         total_leave: (
-          parseFloat(labourData?.total_leave) + parseFloat(count)
+          (parseFloat(labourData?.total_leave) || 0) + parseFloat(count)
         ).toFixed(2),
         cid: labourData?.id,
       });
@@ -102,7 +102,7 @@ export default function AddLabourLeave() {
   const handleDelete = React.useCallback(async () => {
     try {
       setLoading(true);
-      await deleteLabourLeave(editData);
+      await deleteLabourLeave(editData, labourData);
       goBack();
     } catch (error) {
       setLoading(false);

@@ -15,7 +15,7 @@ export default function LoanDetailAction({ data, item }) {
   const { colors } = useTheme();
   const { interest_rate } = data;
   const { type, amount } = item;
-  const giver = type == 'giver' && data?.uid == auth().currentUser.uid;
+  const giver = type == 'giver' && data?.uid == auth()?.currentUser?.uid;
 
   let days = dayCount(item?.date);
   let interest = getInterest([{ ...item, interest_rate: interest_rate }]);
@@ -24,7 +24,7 @@ export default function LoanDetailAction({ data, item }) {
     <TouchableOpacity
       style={[styles.list, { display: amount == '0' ? 'none' : 'flex' }]}
       onPress={() => navigate('LoanUpdate', { data, item })}>
-      <Text h5 numberOfLines={1} color={colors.border}>
+      <Text numberOfLines={1} color={colors.border}>
         {dateTimeFormat(item?.date)}
       </Text>
       <View style={[styles.row, { width: '100%' }]}>
@@ -43,10 +43,10 @@ export default function LoanDetailAction({ data, item }) {
             style={{
               width: '100%',
               textAlign: giver ? 'right' : 'left',
-              color: giver ? colors.success : colors.error,
+              color: !giver ? colors.success : colors.error,
             }}>
             {currencyFormat(parseFloat(amount))}
-            <Text h8 color={giver ? colors.success : colors.error}>
+            <Text h8 color={!giver ? colors.success : colors.error}>
               {giver ? 'Given' : 'Taken'}
             </Text>
           </Text>
