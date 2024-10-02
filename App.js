@@ -1,30 +1,29 @@
 import React, { useEffect, useState } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StoreProvider } from 'src/context/context';
-import { CottonProvider } from 'src/context/cottonContext';
 import FlashMessage from 'react-native-flash-message';
 import Button from 'src/components/button';
 import { checkVersion } from 'react-native-check-version';
 import Text from 'src/components/text';
-import { Linking, ScrollView, View } from 'react-native';
+import { Linking, PermissionsAndroid, ScrollView, View } from 'react-native';
 import { LangProvider } from 'src/context/langContext';
 import { strings } from 'src/translations/locale';
 import Navigation from 'src/navigation';
 import Modal from 'src/components/Modal';
-import { orange } from 'src/utils/colors';
 import { AuthProvider } from './src/context/authContext';
 import { AadtProvider } from './src/context/aadtContext';
-import { TimelineProvider } from './src/context/timeContext';
 import { TabProvider } from './src/context/tabContext';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import messaging from '@react-native-firebase/messaging';
-import auth from '@react-native-firebase/auth'
+import auth from '@react-native-firebase/auth';
 import { getFCMToken, saveTokenToFirestore } from '@network/auth-service';
+import notifee, { AndroidImportance } from '@notifee/react-native';
+import { isIOS } from '@utils/constants';
+import { green } from '@utils/colors';
 
 export default function App() {
   const [version, setVersion] = useState();
   const [visible, setVisible] = useState(true);
-
 
   useEffect(() => {
     (async () => {
@@ -39,17 +38,19 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    requestUserPermission()
+    requestUserPermission();
     const unsubscribe = messaging().onMessage(async remoteMessage => {
       // Handle the message
       console.log('A new FCM message arrived!', remoteMessage);
+      onDisplayNotification(remoteMessage);
     });
     if (auth()?.currentUser?.uid) {
-      const unsubscribeTokenRefresh = messaging().onTokenRefresh(async (token) => {
-        console.log('Token refreshed:', token);
-        const userId = 'USER_ID_HERE'; // Replace with actual user ID
-        await saveTokenToFirestore(token); // Update the token in Firestore
-      });
+      const unsubscribeTokenRefresh = messaging().onTokenRefresh(
+        async token => {
+          console.log('Token refreshed:', token);
+          await saveTokenToFirestore(token); // Update the token in Firestore
+        },
+      );
 
       return unsubscribeTokenRefresh; // Cleanup the listener
     }
@@ -67,6 +68,40 @@ export default function App() {
       console.log('Authorization status:', authStatus);
       if (auth()?.currentUser?.uid) await getFCMToken();
     }
+  }
+  async function onDisplayNotification(data) {
+    // if (isIOS) {
+    // Request permissions (required for iOS)
+    await notifee.requestPermission();
+    // }
+    // else {
+    await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+    );
+
+    // Create a channel (required for Android)
+    const channelId = await notifee.createChannel({
+      id: 'default',
+      name: 'Default Channel',
+      importance: AndroidImportance.HIGH,
+    });
+    // }
+    console.log({ channelId, data });
+    // Display a notification
+    await notifee.displayNotification({
+      title: data?.notification?.title,
+      body: data?.notification?.body,
+      android: {
+        channelId,
+        importance: AndroidImportance.HIGH,
+        color: '#CD853F',
+        smallIcon: 'ic_notification', // optional, defaults to 'ic_launcher'.
+        // pressAction is needed if you want the notification to open the app when pressed
+        pressAction: {
+          id: 'default',
+        },
+      },
+    });
   }
 
   const update = () => {

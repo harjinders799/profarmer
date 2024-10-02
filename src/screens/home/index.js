@@ -21,13 +21,14 @@ export default function Home() {
 
     const tabs = [...tabsData];
     tabs.shift();
-    useFocusEffect(useCallback(() => {
-
-        if (user?.id && !user?.phone) {
-            navigate('EditProfile')
-            return ToastError('Please Complete your profile!!')
-        }
-    }, [user, lang]))
+    useFocusEffect(
+        useCallback(() => {
+            if (user?.id && !user?.phone) {
+                navigate('EditProfile');
+                return ToastError('Please Complete your profile!!');
+            }
+        }, [user, lang]),
+    );
 
     return (
         <BaseView>
@@ -39,7 +40,7 @@ export default function Home() {
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={[
                     common.row_btw,
-                    { flexWrap: 'wrap', padding: 20, paddingBottom: 150 },
+                    { flexWrap: 'wrap', paddingHorizontal: 20, paddingBottom: 150 },
                 ]}>
                 <Text justify color={colors.warning} style={{ width: '100%' }}>
                     <Text bold color={colors.warning}>

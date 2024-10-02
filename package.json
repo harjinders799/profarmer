@@ -10,8 +10,10 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "@notifee/react-native": "^9.0.2",
     "@react-native-clipboard/clipboard": "^1.14.1",
     "@react-native-community/netinfo": "^11.3.2",
+    "@react-native-firebase/analytics": "^21.0.0",
     "@react-native-firebase/app": "^20.1.0",
     "@react-native-firebase/auth": "^20.1.0",
     "@react-native-firebase/firestore": "^20.1.0",
@@ -21,6 +23,7 @@
     "@react-navigation/bottom-tabs": "^6.5.20",
     "@react-navigation/native": "^6.1.17",
     "@react-navigation/native-stack": "^6.9.26",
+    "google-auth-library": "^9.14.1",
     "lodash": "^4.17.21",
     "moment": "^2.30.1",
     "prop-types": "^15.8.1",
