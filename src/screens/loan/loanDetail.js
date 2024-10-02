@@ -17,7 +17,7 @@ import RNHTMLtoPDF from 'react-native-html-to-pdf';
 import { useAuth } from '../../context/authContext';
 import { deleteLoanCollection } from '../../network/loan-service';
 import Share from 'react-native-share';
-import LoanDetailAction from '../../components/loanDetailAction';
+import LoanDetailAction from '../../container/loan/loanDetailAction';
 import { common } from '@utils/style';
 import DeleteModal from '@container/deleteModal';
 import { loanHTMLFormat } from '@html/loan';

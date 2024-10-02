@@ -31,7 +31,7 @@ export default function AddPickerWeight() {
         rate: editItem?.rate ?? editData?.rate ?? '',
         date: editItem?.date ? new Date(parseInt(editItem?.date)) : new Date(),
     });
-    console.log({ editItem });
+
     const [loading, setLoading] = React.useState(false);
     const { detail, weight, rate, date } = data;
     const [showDate, setShowDate] = useState(false);
@@ -87,7 +87,6 @@ export default function AddPickerWeight() {
         }
         try {
             setLoading(true);
-            // console.log(date, currentStamp(date), moment(currentStamp(date)).format('l'))
             await addPickerWeight({
                 ...data,
                 total_earning: (
@@ -126,7 +125,12 @@ export default function AddPickerWeight() {
         <BaseView space>
             <Loader visible={loading} />
             <Header back label={editData?.name} />
-            <ScrollView style={styles.form} showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 150 }} automaticallyAdjustKeyboardInsets keyboardShouldPersistTaps="always">
+            <ScrollView
+                style={styles.form}
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={{ paddingBottom: 150 }}
+                automaticallyAdjustKeyboardInsets
+                keyboardShouldPersistTaps="always">
                 <View style={common.row_btw}>
                     <Input
                         label={strings.weight}
@@ -185,10 +189,7 @@ export default function AddPickerWeight() {
                     show={showDate}
                     setShow={setShowDate}
                     date={date}
-                    setDate={value => {
-                        console.log({ value }, currentStamp(value));
-                        onChangeValue({ setData, key: 'date', value });
-                    }}
+                    setDate={value => onChangeValue({ setData, key: 'date', value })}
                 />
                 <Button label={strings.save} onPress={onPress} />
                 {editItem?.id ? (

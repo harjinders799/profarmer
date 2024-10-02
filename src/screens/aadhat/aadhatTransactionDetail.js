@@ -1,16 +1,11 @@
-import { Alert, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import React, { useCallback, useState } from 'react';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import { ToastError, ToastSuccess } from '../../utils/toast';
 import Loader from '../../components/loader';
 import { useRoute, useTheme } from '@react-navigation/native';
 import { navigate, replace } from '../../navigation/ref';
 import Text from '../../components/text';
-import {
-  currencyFormat,
-  dateFormat,
-  dateTimeFormat,
-  dayCount,
-} from '../../utils/dateformat';
+import { currencyFormat, dateTimeFormat, dayCount } from '../../utils/dateformat';
 import Header from '../../components/header';
 import Button from '../../components/button';
 import { strings } from '../../translations/locale';
@@ -23,31 +18,30 @@ import { deleteAmountTransaction } from '@network/aadhat-service';
 export default function AadhatTransactionDetail() {
   const { colors } = useTheme();
   const { params } = useRoute();
-  const data = params?.data ?? {};
+  const data = params?.data ?? [];
   const item = params?.item ?? {};
   const [loading, setLoading] = useState(false);
   const [openModal, setOpenModal] = useState(false);
 
-  const onDelete = async () => {
+  const handleDelete = useCallback(async () => {
+    setLoading(true);
     try {
-      setLoading(true);
       await deleteAmountTransaction(item);
-      setLoading(false);
       ToastSuccess(strings.amount_deleted, strings.amount);
       navigate('Aadhat');
     } catch (error) {
-      setLoading(false);
       ToastError(error?.message, strings.loan);
+    } finally {
+      setLoading(false);
     }
-  };
+  }, [item]);
 
-  let days = dayCount(item?.date);
-  let interest = getInterest([
-    { ...item, interest_rate: data[0]?.interest_rate },
-  ]);
+  const days = dayCount(item?.date);
+  const interestRate = data[0]?.interest_rate || 0;
+  const interest = getInterest([{ ...item, interest_rate: interestRate }]);
 
   return (
-    <BaseView >
+    <BaseView>
       <Loader visible={loading} />
       <Header back label={data[0]?.name} />
       <ScrollView
@@ -56,103 +50,47 @@ export default function AadhatTransactionDetail() {
           common.card,
           common.shadow,
           { backgroundColor: colors.background, margin: 20 },
-        ]}>
+        ]}
+      >
         <Text h5 style={{ marginBottom: 10 }}>
           {dateTimeFormat(item?.date)}
         </Text>
-        <View style={styles.card}>
-          <Text h4>{strings.total_principal}</Text>
-          <Text h3>{currencyFormat(item?.amount)}</Text>
-        </View>
-        <View style={styles.card}>
-          <Text h4>{strings.interest}</Text>
-          <Text h3>{currencyFormat(parseFloat(data[0]?.interest_rate))}</Text>
-        </View>
-        <View style={styles.card}>
-          <Text h4>{strings.day}</Text>
-          <Text h3>{days}</Text>
-        </View>
-        <View style={styles.card}>
-          <Text h4>{strings.total_interest}</Text>
-          <Text h3 numberOfLines={1}>
-            {currencyFormat(interest)}
-          </Text>
-        </View>
-        <View style={styles.card}>
-          <Text h4 bold>
-            {strings.total_amount}
-          </Text>
-          <Text h3 bold>
-            {currencyFormat(interest + parseFloat(item.amount))}
-          </Text>
-        </View>
-        <View
-          style={[
-            common.topline,
-            {
-              marginTop: 20,
-              borderTopColor: colors.border + 50,
-              display: item?.crop ? 'flex' : 'none',
-            },
-          ]}>
-          <View style={styles.card}>
-            <Text h4>{strings.crop}</Text>
-            <Text h3 numberOfLines={1}>
-              {item?.crop}
+        <DetailsCard label={strings.total_principal} value={currencyFormat(item?.amount)} />
+        <DetailsCard label={strings.interest} value={currencyFormat(parseFloat(interestRate))} />
+        <DetailsCard label={strings.day} value={days} />
+        <DetailsCard label={strings.total_interest} value={currencyFormat(interest)} />
+        <DetailsCard
+          label={strings.total_amount}
+          value={currencyFormat(interest + parseFloat(item.amount))}
+          isBold
+        />
+        {item?.crop && (
+          <View style={[common.topline, { marginTop: 20, borderTopColor: colors.border + 50 }]}>
+            <DetailsCard label={strings.crop} value={item?.crop} />
+            <DetailsCard label={strings.weight} value={`${item?.weight} Qtl.`} />
+            <DetailsCard label={strings.enter_rate} value={currencyFormat(item?.rate)} />
+          </View>
+        )}
+        {item?.detail && (
+          <View style={[common.centerAlignedJustify, common.topline, { marginTop: 40, borderTopColor: colors.border + 50 }]}>
+            <Text h3 semi>{strings.remark}</Text>
+            <Text h4 center style={{ marginTop: 10 }}>
+              {item?.detail}
             </Text>
           </View>
-          <View style={styles.card}>
-            <Text h4>{strings.weight}</Text>
-            <Text h3 numberOfLines={1}>
-              {item?.weight}
-            </Text>
-          </View>
-          <View style={styles.card}>
-            <Text h4>{strings.enter_rate}</Text>
-            <Text h3 numberOfLines={1}>
-              {currencyFormat(item?.rate)}
-            </Text>
-          </View>
-        </View>
-        <View
-          style={[
-            common.centerAlignedJustify,
-            common.topline,
-            {
-              marginTop: 40,
-              borderTopColor: colors.border + 50,
-              display: item?.detail ? 'flex' : 'none',
-            },
-          ]}>
-          <Text h3 semi>
-            {strings.remark}
-          </Text>
-          <Text h4 center style={{ marginTop: 10 }}>
-            {item?.detail}
-          </Text>
-        </View>
+        )}
       </ScrollView>
       <View style={[common.row_btw, { margin: 20, maxWidth: '90%' }]}>
         <Button
           iconLeft="edit"
           label={strings.edit}
-          btnStyle={{
-            width: '45%',
-          }}
-          onPress={() =>
-            replace('AddTransaction', {
-              data: data[0],
-              item,
-            })
-          }
+          btnStyle={{ width: '45%' }}
+          onPress={() => replace('AddTransaction', { data: data[0], item, isCrop: item?.crop })}
         />
         <Button
           iconLeft="delete"
           label={strings.delete}
-          btnStyle={{
-            width: '45%',
-            backgroundColor: colors.error,
-          }}
+          btnStyle={{ width: '45%', backgroundColor: colors.error }}
           onPress={() => setOpenModal(true)}
         />
       </View>
@@ -161,17 +99,20 @@ export default function AadhatTransactionDetail() {
         setOpenModal={setOpenModal}
         data={data[0]}
         customDescription={strings.alert_single_delete}
-        onDelete={onDelete}
+        onDelete={handleDelete}
       />
     </BaseView>
   );
 }
 
+const DetailsCard = ({ label, value, isBold }) => (
+  <View style={styles.card}>
+    <Text h4>{label}</Text>
+    <Text h3 bold={isBold}>{value}</Text>
+  </View>
+);
+
 const styles = StyleSheet.create({
-  list: {
-    marginVertical: 5,
-    width: '100%',
-  },
   card: {
     marginTop: 10,
     padding: 10,

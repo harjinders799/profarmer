@@ -32,7 +32,7 @@ function Pickers() {
     const [pickers, setPickers] = useState([]);
     const [groups, setGroups] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [activeTab, setActiveTab] = useState('Group List');
+    const [activeTab, setActiveTab] = useState(strings.group_list); // Updated for localization
     const [orderBy, setOrderBy] = useState({ key: 'name', type: 'asc' });
     const [isFocus, setIsFocus] = useState();
     const [showConclusion, setShowConclusion] = useState(false);
@@ -56,8 +56,8 @@ function Pickers() {
         }, orderBy);
 
         return () => {
-            if (unsubscribePicker) unsubscribePicker();
-            if (unsubscribeGroup) unsubscribeGroup();
+            unsubscribePicker && unsubscribePicker();
+            unsubscribeGroup && unsubscribeGroup();
         }; // Cleanup on unmount or dependency change
     }, [lang, activeTab, user?.phone, orderBy]);
 
@@ -65,7 +65,7 @@ function Pickers() {
 
     const renderContent = () => (
         <Suspense fallback={<Loader visible={true} />}>
-            {activeTab === 'Picker List' ? (
+            {activeTab === strings.pickers_list ? (
                 <PickerList
                     data={pickers}
                     groups={groups}
@@ -75,10 +75,10 @@ function Pickers() {
                         fetchData();
                     }}
                 />
-            ) : activeTab === 'Group List' ? (
+            ) : activeTab === strings.group_list ? (
                 <GroupList
                     data={groups}
-                    pickers={pickers.filter(o => o?.uid == uid)}
+                    pickers={pickers.filter(o => o?.uid === uid)}
                     refreshing={refreshing}
                     onRefresh={() => {
                         setRefreshing(true);
@@ -104,7 +104,7 @@ function Pickers() {
             <Loader visible={loading} />
             <Header
                 back
-                label={strings.picker}
+                label={strings.pickers} // Updated for localization
                 rightComponent={
                     <Icon
                         name={showConclusion ? 'eye-off' : 'eye'}
@@ -114,15 +114,15 @@ function Pickers() {
                     />
                 }
             />
-            {showConclusion ? <PickersConclusion pickers={pickers} /> : null}
-            {isFocus ? null : (
+            {showConclusion && <PickersConclusion pickers={pickers} />}
+            {!isFocus && (
                 <Tabs
-                    tabs={['Picker List', 'Group List', 'Date Wise']}
+                    tabs={[strings.pickers_list, strings.group_list, strings.date_wise]} // Updated for localization
                     activeTab={activeTab}
                     setActiveTab={setActiveTab}
                 />
             )}
-            {activeTab != 'Date Wise' ? (
+            {activeTab !== strings.date_wise && (
                 <PickerFilter
                     isFocus={isFocus}
                     setIsFocus={setIsFocus}
@@ -131,17 +131,13 @@ function Pickers() {
                     groups={groups}
                     setOrderBy={setOrderBy}
                 />
-            ) : null}
-            {isFocus ? null : renderContent()}
-            {!isFocus ? (
-                <View
-                    style={[
-                        common.row_btw,
-                        { marginTop: 20, position: 'absolute', bottom: 20 },
-                    ]}>
+            )}
+            {!isFocus && renderContent()}
+            {!isFocus && (
+                <View style={[common.row_btw, { marginTop: 20, position: 'absolute', bottom: 20 }]}>
                     <Button
                         iconLeft="plus"
-                        label={strings.create_group}
+                        label={strings.create_group} // Updated for localization
                         btnStyle={{
                             maxWidth: '48%',
                             width: 'auto',
@@ -152,7 +148,7 @@ function Pickers() {
                     />
                     <Button
                         iconLeft="plus"
-                        label={strings.add_picker}
+                        label={strings.add_picker} // Updated for localization
                         btnStyle={{
                             maxWidth: '48%',
                             width: 'auto',
@@ -162,20 +158,9 @@ function Pickers() {
                         onPress={() => navigate('AddPicker')}
                     />
                 </View>
-            ) : null}
+            )}
         </BaseView>
     );
 }
-
-const styles = {
-    button: {
-        maxWidth: '45%',
-        width: 'auto',
-        paddingHorizontal: 5,
-        position: 'absolute',
-        bottom: 30,
-        zIndex: 999,
-    },
-};
 
 export default React.memo(Pickers);

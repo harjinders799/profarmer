@@ -6,7 +6,6 @@ import { MMKV } from 'react-native-mmkv';
 import LabourStack from '../navigation/labourStack';
 import SettingStack from '../navigation/settingStack';
 import LoanStack from '../navigation/loanStack';
-import Timeline from '../screens/timeline';
 import AAdhatStack from '@navigation/aadhatStack';
 import CropStack from '@navigation/cropStack';
 import Home from '@screens/home';

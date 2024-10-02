@@ -12,10 +12,12 @@ import { navigate, replace } from '@navigation/ref';
 import { useAuth } from '@context/authContext';
 import { ToastError, ToastProgress } from '@utils/toast';
 import { red } from '@utils/colors';
+import { useLang } from '@context/langContext';
 
 export default function Home() {
     const { colors } = useTheme();
     const { user } = useAuth();
+    const { lang } = useLang();
 
     const tabs = [...tabsData];
     tabs.shift();
@@ -25,7 +27,7 @@ export default function Home() {
             navigate('EditProfile')
             return ToastError('Please Complete your profile!!')
         }
-    }, [user]))
+    }, [user, lang]))
 
     return (
         <BaseView>
@@ -41,11 +43,9 @@ export default function Home() {
                 ]}>
                 <Text justify color={colors.warning} style={{ width: '100%' }}>
                     <Text bold color={colors.warning}>
-                        {'Important Note: '}
+                        {strings.important_note}
                     </Text>
-                    We are currently working on enhancing the app. During this development
-                    phase, we recommend that you keep your data backed up in the previous
-                    method to ensure its safety. Thank you for your understanding!
+                    {strings.backup_data_warning}
                 </Text>
                 {tabs.map(tab => (
                     <TouchableOpacity

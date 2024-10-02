@@ -30,13 +30,13 @@ export default function AddEvent() {
     amount: editItem?.expense_amount ?? editItem?.earning_amount ?? '',
     date: editItem?.date ? new Date(editItem?.date) : new Date(),
   });
-  const [isExpense, setIsExpense] = useState(
-    editItem?.expense_amount
-      ? true
-      : editItem?.earning_amount
-        ? false
-        : undefined,
-  );
+
+  const [isExpense, setIsExpense] = useState(() => {
+    if (editItem?.expense_amount) return true;
+    if (editItem?.earning_amount) return false;
+    return undefined;
+  });
+
   const [loading, setLoading] = useState(false);
   const [showDate, setShowDate] = useState(false);
   const { title, description, amount, date } = data;
@@ -45,87 +45,64 @@ export default function AddEvent() {
     await handleEventSubmission(editItem?.id ? updateEvent : submitEvent);
   }, [data, editItem?.id]);
 
-  const handleEventSubmission = async eventFunction => {
+  const handleEventSubmission = async (eventFunction) => {
+    setLoading(true);
     try {
-      setLoading(true);
-
-      // Prepare the event data
       const newExpenseAmount = isExpense ? data.amount : 0;
       const newEarningAmount = !isExpense ? data.amount : 0;
 
-      const totalExpenseChange = isExpense
-        ? newExpenseAmount - (editItem?.expense_amount || 0)
-        : 0;
+      const totalExpenseChange = isExpense ? newExpenseAmount - (editItem?.expense_amount || 0) : 0;
+      const totalEarningChange = !isExpense ? newEarningAmount - (editItem?.earning_amount || 0) : 0;
 
-      const totalEarningChange = !isExpense
-        ? newEarningAmount - (editItem?.earning_amount || 0)
-        : 0;
-
-      const updatedTotalExpense = (
-        parseFloat(editData?.total_expense || 0) + totalExpenseChange
-      ).toFixed(2);
-      const updatedTotalEarning = (
-        parseFloat(editData?.total_earning || 0) + totalEarningChange
-      ).toFixed(2);
+      const updatedTotalExpense = (parseFloat(editData?.total_expense || 0) + totalExpenseChange).toFixed(2);
+      const updatedTotalEarning = (parseFloat(editData?.total_earning || 0) + totalEarningChange).toFixed(2);
 
       const eventData = {
-        title: data?.title,
-        description: data?.description,
-        date: currentStamp(data?.date),
-        cid: editData?.id,
-        id: editItem?.id,
+        title: data.title,
+        description: data.description,
+        date: currentStamp(data.date),
+        cid: editData.id,
+        id: editItem.id,
         expense_amount: isExpense ? newExpenseAmount : null,
         earning_amount: !isExpense ? newEarningAmount : null,
         total_expense: updatedTotalExpense,
         total_earning: updatedTotalEarning,
       };
 
-      // Call the event function (either submitEvent or updateEvent)
       await eventFunction(eventData);
-
-      setLoading(false);
       ToastSuccess(strings.labour_added, strings.labour);
       goBack();
     } catch (error) {
-      setLoading(false);
       ToastError(error?.message);
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleDelete = useCallback(async () => {
+    setLoading(true);
     try {
-      setLoading(true);
+      const updatedTotalExpense = (parseFloat(editData?.total_expense || 0) - (editItem?.expense_amount || 0)).toFixed(2);
+      const updatedTotalEarning = (parseFloat(editData?.total_earning || 0) - (editItem?.earning_amount || 0)).toFixed(2);
 
-      // Calculate the new totals
-      const updatedTotalExpense = (
-        parseFloat(editData?.total_expense || 0) -
-        (editItem?.expense_amount || 0)
-      ).toFixed(2);
-
-      const updatedTotalEarning = (
-        parseFloat(editData?.total_earning || 0) -
-        (editItem?.earning_amount || 0)
-      ).toFixed(2);
-
-      // Call the delete function
       await deleteEvent({
-        id: editItem?.id,
+        id: editItem.id,
         total_expense: updatedTotalExpense,
         total_earning: updatedTotalEarning,
-        cid: editData?.id,
-      }); // Assuming you have a deleteEvent function
+        cid: editData.id,
+      });
 
-      setLoading(false);
       ToastSuccess(strings.labour_deleted, strings.labour);
       goBack();
     } catch (error) {
-      setLoading(false);
       ToastError(error?.message);
+    } finally {
+      setLoading(false);
     }
-  }, [editData, isExpense]);
+  }, [editData, editItem]);
 
-  const updatingEntry =
-    editItem?.expense_amount > 0 || editItem?.earning_amount > 0;
+  const updatingEntry = editItem?.expense_amount > 0 || editItem?.earning_amount > 0;
+
   return (
     <BaseView>
       <Loader visible={loading} />
@@ -139,22 +116,19 @@ export default function AddEvent() {
           <Input
             entering={FadeInDown.delay(350)}
             label={strings.title}
+            autoFocus
             autoCapitalize="words"
             placeholder={strings.title}
             value={title}
-            setValue={value =>
-              onChangeValue({ setData, key: 'title', value, isName: true })
-            }
+            setValue={(value) => onChangeValue({ setData, key: 'title', value, isName: true })}
           />
           <Input
             entering={FadeInDown.delay(400)}
             label={strings.description}
-            placeholder={'Plowing'}
+            placeholder={strings.description} // Updated for localization
             multiline
             value={description}
-            setValue={value =>
-              onChangeValue({ setData, key: 'description', value, isName: true })
-            }
+            setValue={(value) => onChangeValue({ setData, key: 'description', value, isName: true })}
           />
           <Pressable
             onPress={() => {
@@ -167,81 +141,57 @@ export default function AddEvent() {
               editable={false}
               placeholder={strings.date}
               value={dateFormat(date)}
-              onPress={() => {
-                setShowDate(true);
-                Keyboard.dismiss();
-              }}
             />
           </Pressable>
           <Text
             entering={FadeInDown.delay(500)}
             h4
             style={{ paddingTop: 10, display: updatingEntry ? 'none' : 'flex' }}>
-            If Any (Optional)
+            {strings.optional} {/* New key for optional text */}
           </Text>
-          <Animated.View
-            entering={FadeInDown.delay(500)}
-            style={[common.row_btw]}>
+          <Animated.View entering={FadeInDown.delay(500)} style={[common.row_btw]}>
             <Checkbox
-              isChecked={isExpense == true}
+              isChecked={isExpense === true}
               activeColor={colors.error}
-              label={'Expense'}
+              label={strings.expense}
               disabled={updatingEntry}
-              style={{
-                width: '50%',
-                marginVertical: 3,
-                display: editItem?.earning_amount > 0 ? 'none' : 'flex',
-              }}
-              onPress={() =>
-                setIsExpense(prevs =>
-                  prevs == undefined || prevs == false ? true : undefined,
-                )
-              }
+              style={{ width: '50%', marginVertical: 3, display: editItem?.earning_amount > 0 ? 'none' : 'flex' }}
+              onPress={() => setIsExpense((prev) => (prev === undefined || prev === false ? true : undefined))}
             />
             <Checkbox
-              isChecked={isExpense != undefined && isExpense == false}
-              label={'Earning'}
+              isChecked={isExpense === false}
+              label={strings.earning}
               activeColor={colors.success}
               disabled={updatingEntry}
-              style={{
-                width: '50%',
-                marginVertical: 3,
-                display: editItem?.expense_amount > 0 ? 'none' : 'flex',
-              }}
-              onPress={() =>
-                setIsExpense(prevs =>
-                  prevs == undefined || prevs == true ? false : undefined,
-                )
-              }
+              style={{ width: '50%', marginVertical: 3, display: editItem?.expense_amount > 0 ? 'none' : 'flex' }}
+              onPress={() => setIsExpense((prev) => (prev === undefined || prev === true ? false : undefined))}
             />
           </Animated.View>
           <Input
             entering={FadeInDown.delay(550)}
-            placeholder={'₹1000, ₹1400...'}
+            placeholder={'₹1000, ₹15,000....'}
             value={currencyInput(amount)}
-            setValue={value =>
-              onChangeValue({ setData, key: 'amount', value, isAmount: true })
-            }
+            setValue={(value) => onChangeValue({ setData, key: 'amount', value, isAmount: true })}
           />
           <DateTimePick
             show={showDate}
             setShow={setShowDate}
             date={date}
-            setDate={value => onChangeValue({ setData, key: 'date', value })}
+            setDate={(value) => onChangeValue({ setData, key: 'date', value })}
           />
           <Button
             entering={FadeInDown.delay(600)}
             label={editItem?.id ? strings.update : strings.save}
             onPress={handleSubmit}
           />
-          {editItem?.id ? (
+          {editItem?.id && (
             <Button
               entering={FadeInDown.delay(600)}
               label={strings.delete}
               btnStyle={{ backgroundColor: colors.error }}
               onPress={handleDelete}
             />
-          ) : null}
+          )}
         </View>
       </ScrollView>
     </BaseView>

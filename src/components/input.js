@@ -1,5 +1,5 @@
 import { useTheme } from '@react-navigation/native';
-import React from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, TextInput, View } from 'react-native';
 import Icon from './icon';
 import Text from './text';
@@ -26,6 +26,17 @@ const Input = ({
   ...props
 }) => {
   const { colors } = useTheme();
+  const [inputHeight, setInputHeight] = useState(45);
+
+  const handleChange = (value) => {
+    setValue(value);
+
+    // Calculate the height based on content
+    const lines = value.split('\n').length; // Count number of lines
+    const newHeight = Math.min(40 + lines * 20, 150); // Calculate new height, max 200
+    setInputHeight(newHeight);
+  };
+
   return (
     <Animated.View {...props} style={[styles.container, { borderColor: colors.border }, style]}>
       {label ? <Text h4 style={styles.label}>{label}</Text> : null}
@@ -58,10 +69,10 @@ const Input = ({
           {...props}
           allowFontScaling={false}
           multiline={multiline}
-          style={[styles.input, { color: colors.text }, inputStyle]}
+          style={[styles.input, { color: colors.text, maxHeight: inputHeight }, inputStyle]}
           value={value}
           selectionColor={colors.primary}
-          onChangeText={text => setValue(text)}
+          onChangeText={text => multiline ? handleChange(text) : setValue(text)}
           placeholder={placeholder}
           keyboardType={
             emailType
@@ -84,7 +95,7 @@ const styles = StyleSheet.create({
     marginVertical: 5,
   },
   input: {
-    height: 45,
+    minHeight: 45,
     textAlignVertical: 'center',
     // paddingVertical: hp(1),
     paddingHorizontal: 10,

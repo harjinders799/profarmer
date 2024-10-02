@@ -20,7 +20,7 @@ import { common } from '@utils/style';
 const Account = ({ }) => {
   const navigation = useNavigation();
   const { user } = useAuth();
-  // console.log(user)
+
   let userData = [
     {
       icon: 'user',

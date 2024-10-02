@@ -1,6 +1,7 @@
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import { ToastSuccess } from 'src/utils/toast';
+import messaging from '@react-native-firebase/messaging';
 
 export const SignUpUser = async (email, password) => {
   try {
@@ -93,6 +94,38 @@ export const logout = async () => {
   }
 };
 
+export const getFCMToken = async () => {
+  try {
+    const token = await messaging().getToken();
+
+    if (token) {
+      console.log('FCM Token:', token);
+      // Save the token to Firestore
+      await saveTokenToFirestore(token);
+    }
+  } catch (error) {
+    console.log({ error });
+  }
+};
+
+export const saveTokenToFirestore = async token => {
+  try {
+    const userId = auth().currentUser.uid;
+    await firestore()
+      .collection('users') // Adjust to your Firestore structure
+      .doc(userId)
+      .set(
+        {
+          fcmToken: token,
+        },
+        { merge: true }, // Use merge to avoid overwriting other user data
+      );
+    console.log('Token saved to Firestore');
+  } catch (error) {
+    console.error('Error saving token to Firestore:', error);
+  }
+};
+
 export const getUserByPhone = async phone => {
   return new Promise(async function (resolve, reject) {
     try {
@@ -106,7 +139,7 @@ export const getUserByPhone = async phone => {
               if (children.exists) resolve(children.data());
               else resolve('user not found');
             });
-          else resolve('user not found')
+          else resolve('user not found');
         })
         .catch(error => {
           reject(new Error(error));
@@ -120,11 +153,8 @@ export const getUserByPhone = async phone => {
 export const getUserById = async id => {
   return new Promise(async function (resolve, reject) {
     try {
-      let res = await firestore()
-        .collection('users')
-        .doc(id)
-        .get()
-      resolve(res.data())
+      let res = await firestore().collection('users').doc(id).get();
+      resolve(res.data());
     } catch (error) {
       reject(new Error(error));
     }

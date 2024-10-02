@@ -28,7 +28,7 @@ export default function AddPickerBulkExpense() {
         group?.id ? assignedPickers(pickers, group) : pickers,
         [pickers, group],
     );
-    console.log({ pickersData })
+
     const [date, setDate] = useState(new Date());
     const [data, setData] = React.useState(
         pickersData.map(obj => ({

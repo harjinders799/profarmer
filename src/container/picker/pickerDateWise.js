@@ -102,13 +102,13 @@ function PickerDateWise({ pickers, groups, refreshing, onRefresh }) {
             <View
                 style={[common.row_btw, { paddingHorizontal: 25 }]}>
                 <Text bold style={{ width: '30%' }}>
-                    Date
+                    {strings.date}
                 </Text>
                 <Text bold center color={colors.error} style={{ width: '30%' }}>
-                    Given Amount
+                    {strings.given_amount}
                 </Text>
                 <Text bold right color={colors.success} style={{ width: '30%' }}>
-                    Weight
+                    {strings.weight}
                 </Text>
             </View>
             <FlatList

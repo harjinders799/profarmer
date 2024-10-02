@@ -1,94 +1,70 @@
-import * as React from 'react';
+import React, { useState, useCallback } from 'react';
 import { StyleSheet, ScrollView } from 'react-native';
-import { useRoute, useTheme } from '@react-navigation/native';
-import Button from 'src/components/button';
-import Input from 'src/components/input';
-import { currentStamp, dateFormat } from 'src/utils/dateformat';
-import { submitInterestAmount } from 'src/network/interest-service';
-import Loader from 'src/components/loader';
-import BaseView from 'src/container/base';
-import { ToastError, ToastSuccess } from 'src/utils/toast';
-import { strings } from 'src/translations/locale';
-import { useStore } from 'src/context/context';
-import { goBack } from 'src/navigation/ref';
-import { updateIneterstAmt } from 'src/network/interest-service';
-import Header from '../../components/header';
-import { currencyInput } from '../../utils/dateformat';
+import { useRoute } from '@react-navigation/native';
+import Button from '@components/button';
+import Input from '@components/input';
+import { currentStamp } from '@utils/dateformat';
+import Loader from '@components/loader';
+import BaseView from '@container/base';
+import { ToastError, ToastSuccess } from '@utils/toast';
+import { strings } from '@translations/locale';
+import { useStore } from '@context/context';
+import { goBack } from '@navigation/ref';
+import { updateIneterstAmt } from '@network/interest-service';
+import Header from '@components/header';
+import { currencyInput } from '@utils/dateformat';
 import { FadeInDown } from 'react-native-reanimated';
 import { onChangeValue } from '@utils/helper';
 import { addAadhatiya } from '@network/aadhat-service';
 
 export default function AddAadhatiya() {
   const {
-    setGivers,
-    interest_rate: storeRate,
     setInterstRate,
-    givers,
+    interest_rate: storeRate,
   } = useStore();
   const { params } = useRoute();
   const editData = params?.data ?? {};
-  const [data, setData] = React.useState({
+
+  const [data, setData] = useState({
     name: editData?.name ?? '',
     phone: editData?.phone ?? '',
     interest_rate: editData?.interest_rate ?? storeRate ?? '',
   });
-  const [loading, setLoading] = React.useState(false);
+  const [loading, setLoading] = useState(false);
   const { name, phone, interest_rate } = data;
 
-  const onPress = () => {
-    if (editData.id) updateData();
-    else AddNew();
-  };
-  const updateData = async () => {
-    if (name == '') {
-      return ToastError(strings.name, strings.aadhtiya);
-    }
-    if (phone.trim() == '' || parseInt(phone) <= 0) {
-      return ToastError(strings.phone, strings.aadhtiya);
-    }
-    if (interest_rate.trim() == '' || parseInt(interest_rate) <= 0) {
-      return ToastError(strings.interest_rate, strings.aadhtiya);
-    }
+  const validateInputs = useCallback(() => {
+    if (name === '') return ToastError(strings.name, strings.aadhtiya);
+    if (phone.trim() === '' || parseInt(phone) <= 0) return ToastError(strings.phone, strings.aadhtiya);
+    if (interest_rate.trim() === '' || parseInt(interest_rate) <= 0) return ToastError(strings.interest_rate, strings.aadhtiya);
+    return true;
+  }, [name, phone, interest_rate]);
+
+  const handleResponse = useCallback(async (operation) => {
+    setLoading(true);
     try {
-      setLoading(true);
-      let res = await updateIneterstAmt({
-        ...data,
-        date: currentStamp(date),
-      });
-      setLoading(false);
-      setInterstRate(interest_rate);
+      const response = await operation();
+      setInterstRate(data.interest_rate);
       ToastSuccess(strings.amount_added, strings.amount);
       goBack();
+      return response;
     } catch (error) {
-      setLoading(false);
       ToastError(error?.message, strings.aadhtiya);
+    } finally {
+      setLoading(false);
     }
-  };
+  }, [data.interest_rate]);
 
-  const AddNew = async () => {
-    if (name == '') {
-      return ToastError(strings.name, strings.aadhtiya);
-    }
-    if (phone.trim() == '' || parseInt(phone) <= 0) {
-      return ToastError(strings.phone, strings.aadhtiya);
-    }
-    if (interest_rate.trim() == '' || parseInt(interest_rate) <= 0) {
-      return ToastError(strings.interest_rate, strings.aadhtiya);
-    }
-    try {
-      setLoading(true);
-      await addAadhatiya({
-        ...data,
-        name: name.trim(),
-      });
-      setLoading(false);
-      ToastSuccess(strings.aadhtiya, strings.aadhtiya);
-      goBack();
-    } catch (error) {
-      setLoading(false);
-      ToastError(error?.message, strings.aadhtiya);
-    }
-  };
+  const onPress = useCallback(() => {
+    const validation = validateInputs();
+    if (validation !== true) return;
+
+    const operation = editData.id
+      ? () => updateIneterstAmt({ ...data, date: currentStamp() })
+      : () => addAadhatiya({ ...data, name: name.trim() });
+
+    handleResponse(operation);
+  }, [data, editData, validateInputs, handleResponse]);
 
   return (
     <BaseView space>
@@ -97,6 +73,7 @@ export default function AddAadhatiya() {
       <ScrollView
         keyboardShouldPersistTaps="always"
         showsVerticalScrollIndicator={false}>
+
         <Input
           entering={FadeInDown.delay(300)}
           label={strings.name}
@@ -104,6 +81,7 @@ export default function AddAadhatiya() {
           value={name}
           setValue={value => onChangeValue({ setData, key: 'name', value })}
         />
+
         <Input
           entering={FadeInDown.delay(350)}
           label={strings.phone}
@@ -113,16 +91,16 @@ export default function AddAadhatiya() {
           keyboardType="number-pad"
           setValue={value => onChangeValue({ setData, key: 'phone', value, isPhone: true })}
         />
+
         <Input
           entering={FadeInDown.delay(400)}
           label={strings.interest}
           placeholder={strings.interest_rate}
           value={currencyInput(interest_rate)}
           keyboardType="number-pad"
-          setValue={value =>
-            onChangeValue({ setData, key: 'interest_rate', value, isAmount: true })
-          }
+          setValue={value => onChangeValue({ setData, key: 'interest_rate', value, isAmount: true })}
         />
+
         <Button
           entering={FadeInDown.delay(500)}
           label={strings.save}
@@ -132,6 +110,7 @@ export default function AddAadhatiya() {
     </BaseView>
   );
 }
+
 const styles = StyleSheet.create({
   container: {
     padding: 10,

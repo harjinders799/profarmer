@@ -14,120 +14,114 @@ import { navigate } from '@navigation/ref';
 
 const CropEventDetail = ({ data, events }) => {
     const { colors } = useTheme();
+
     return (
         <View>
-            {events.map((item, index) => (
-                <Animated.View
-                    key={index}
-                    entering={
-                        item?.expense_amount
-                            ? BounceInLeft.delay(index * 150)
-                            : item?.earning_amount
-                                ? BounceInRight.delay(index * 50)
-                                : BounceIn.delay(index * 50)
-                    }
-                    style={{ margin: 20 }}>
-                    <TouchableOpacity
-                        style={[
-                            common.row_btw,
-                            {
-                                flexDirection: item?.expense_amount
-                                    ? 'row-reverse'
-                                    : item?.earning_amount
-                                        ? 'row'
-                                        : 'column-reverse',
-                                alignItems:
-                                    item?.expense_amount || item?.earning_amount
-                                        ? 'stretch'
-                                        : 'center',
-                            },
-                        ]}
-                        onPress={() => navigate('AddEvent', { item, data })}>
-                        <View
-                            style={{
-                                justifyContent:
-                                    item?.expense_amount || item?.earning_amount
-                                        ? 'center'
-                                        : 'space-around',
-                                flexDirection:
-                                    item?.expense_amount || item?.earning_amount
-                                        ? 'column'
-                                        : 'row',
-                                width:
-                                    item?.expense_amount || item?.earning_amount ? 'auto' : '50%',
-                            }}>
-                            <Text center style={{ textAlignVertical: 'center' }}>
-                                {dateFormat(item?.date)}
-                            </Text>
-                            <Text center style={{ textAlignVertical: 'center' }}>
-                                {dayCount(item?.date)} {strings.day} ago
-                            </Text>
-                        </View>
-                        <Animated.View
-                            entering={BounceIn}
-                            style={{
-                                height:
-                                    item?.expense_amount || item?.earning_amount ? 'auto' : 0,
-                                width: 1,
-                                opacity: 0.3,
-                                margin: item?.expense_amount || item?.earning_amount ? 0 : '1%',
-                                backgroundColor: item?.expense_amount
-                                    ? colors.error
-                                    : item?.earning_amount
-                                        ? colors.success
-                                        : colors.secondaryBackground,
-                            }}
-                        />
-                        <View
+            {events.map((item, index) => {
+                const isExpense = !!item?.expense_amount;
+                const isEarning = !!item?.earning_amount;
+
+                return (
+                    <Animated.View
+                        key={index}
+                        entering={
+                            isExpense
+                                ? BounceInLeft.delay(index * 150)
+                                : isEarning
+                                    ? BounceInRight.delay(index * 50)
+                                    : BounceIn.delay(index * 50)
+                        }
+                        style={styles.eventContainer}>
+                        <TouchableOpacity
                             style={[
-                                common.shadow,
-                                common.card,
-                                {
-                                    backgroundColor: colors.background,
-                                    width:
-                                        item?.expense_amount || item?.earning_amount
-                                            ? '70%'
-                                            : '90%',
-                                    marginHorizontal:
-                                        item?.expense_amount || item?.earning_amount ? '0%' : '5%',
-                                },
-                            ]}>
-                            <View
-                                style={{
-                                    ...common.card,
-                                    ...StyleSheet.absoluteFill,
-                                    backgroundColor: item?.expense_amount
-                                        ? colors.error
-                                        : item?.earning_amount
-                                            ? colors.success
-                                            : colors.secondaryCard,
-                                    opacity: 0.2,
-                                }}
+                                common.row_btw,
+                                styles.touchableContainer(isExpense, isEarning),
+                            ]}
+                            onPress={() => navigate('AddEvent', { item, data })}>
+                            <View style={styles.dateContainer(isExpense, isEarning)}>
+                                <Text center>{dateFormat(item?.date)}</Text>
+                                <Text center>
+                                    {dayCount(item?.date)} {strings.day} {strings.ago}
+                                </Text>
+                            </View>
+                            <Animated.View
+                                entering={BounceIn}
+                                style={styles.divider(isExpense, isEarning, colors)}
                             />
-                            <Text bold h4>
-                                {item?.title}
-                            </Text>
-                            <Text h5 style={{ marginTop: 5 }}>
-                                {item?.description}
-                            </Text>
-                            {item?.expense_amount ? (
-                                <Text bold style={{ marginTop: 5 }}>
-                                    {currencyFormat(item?.expense_amount)}
-                                </Text>
-                            ) : null}
-                            {item?.earning_amount ? (
-                                <Text bold style={{ marginTop: 5 }}>
-                                    {currencyFormat(item?.earning_amount)}
-                                </Text>
-                            ) : null}
-                        </View>
-                    </TouchableOpacity>
-                </Animated.View>
-            ))}
+                            <View style={styles.cardContainer(isExpense, isEarning, colors)}>
+                                <View
+                                    style={[
+                                        common.card,
+                                        styles.backgroundOverlay(isExpense, isEarning, colors),
+                                    ]}
+                                />
+                                <Text bold h4>{item?.title}</Text>
+                                <Text h5 style={styles.description}>{item?.description}</Text>
+                                {isExpense && (
+                                    <Text bold style={styles.amount}>
+                                        {currencyFormat(item?.expense_amount)}
+                                    </Text>
+                                )}
+                                {isEarning && (
+                                    <Text bold style={styles.amount}>
+                                        {currencyFormat(item?.earning_amount)}
+                                    </Text>
+                                )}
+                            </View>
+                        </TouchableOpacity>
+                    </Animated.View>
+                );
+            })}
         </View>
     );
 };
 
-export default CropEventDetail;
+const styles = StyleSheet.create({
+    eventContainer: {
+        margin: 20,
+    },
+    touchableContainer: (isExpense, isEarning) => ({
+        flexDirection: isExpense ? 'row-reverse' : isEarning ? 'row' : 'column-reverse',
+        alignItems: isExpense || isEarning ? 'stretch' : 'center',
+    }),
+    dateContainer: (isExpense, isEarning) => ({
+        justifyContent: isExpense || isEarning ? 'center' : 'space-around',
+        flexDirection: isExpense || isEarning ? 'column' : 'row',
+        width: isExpense || isEarning ? 'auto' : '50%',
+    }),
+    divider: (isExpense, isEarning, colors) => ({
+        height: isExpense || isEarning ? 'auto' : 0,
+        width: 1,
+        opacity: 0.3,
+        margin: isExpense || isEarning ? 0 : '1%',
+        backgroundColor: isExpense
+            ? colors.error
+            : isEarning
+                ? colors.success
+                : colors.secondaryBackground,
+    }),
+    cardContainer: (isExpense, isEarning, colors) => ({
+        ...common.shadow,
+        ...common.card,
+        backgroundColor: colors.background,
+        width: isExpense || isEarning ? '70%' : '90%',
+        marginHorizontal: isExpense || isEarning ? '0%' : '5%',
+    }),
+    backgroundOverlay: (isExpense, isEarning, colors) => ({
+        backgroundColor: isExpense
+            ? colors.error
+            : isEarning
+                ? colors.success
+                : colors.secondaryCard,
+        opacity: 0.2,
+        ...StyleSheet.absoluteFillObject,
+    }),
+    description: {
+        marginTop: 5,
+    },
+    amount: {
+        marginTop: 5,
+    },
+});
 
-const styles = StyleSheet.create({});
+export default CropEventDetail;

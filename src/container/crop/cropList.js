@@ -40,11 +40,12 @@ const CropList = React.memo(({ data }) => {
             <View style={[common.row_btw, { width: '80%' }]}>
               <Button
                 label={
-                  strings.add_event
+                  strings.add_activity
                 }
                 hitSlop={10}
                 btnStyle={{
-                  maxWidth: '40%',
+                  maxWidth: '50%',
+                  width: 'auto',
                   height: 25,
                   marginVertical: 0,
                 }}
@@ -57,7 +58,7 @@ const CropList = React.memo(({ data }) => {
               />
             </View>
             <Text numberOfLines={1} h3 color={balanceColor}>
-              {finalAmount == 0 ? '--' : finalAmount > 0 ? "Profit" : "Loss"}
+              {finalAmount == 0 ? '--' : finalAmount > 0 ? strings.profit : strings.loss}
             </Text>
           </Animated.View>
         </TouchableOpacity>

@@ -35,7 +35,7 @@ export default function Crop() {
   return (
     <BaseView>
       <Loader visible={loading} />
-      <Header label={strings.crop_hisab} />
+      <Header label={strings.crop_tracker} />
       <Suspense fallback={<Loader visible={true} />}>
         <CropList data={data} />
       </Suspense>

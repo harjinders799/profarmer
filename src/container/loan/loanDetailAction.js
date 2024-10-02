@@ -1,15 +1,13 @@
 import { View, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import React from 'react';
-import Text from './text';
 import { navigate } from 'src/navigation/ref';
-import { dateTimeFormat, dayCount } from 'src/utils/dateformat';
+import { currencyFormat, dateTimeFormat, dayCount } from '@utils/dateformat';
 import { useTheme } from '@react-navigation/native';
-import moment from 'moment';
-import { currencyFormat } from '../utils/dateformat';
 import { common } from '@utils/style';
 import { strings } from '@translations/locale';
 import { getInterest } from '@utils/helper';
 import auth from '@react-native-firebase/auth';
+import Text from '@components/text';
 
 export default function LoanDetailAction({ data, item }) {
   const { colors } = useTheme();

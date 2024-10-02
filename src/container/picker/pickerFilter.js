@@ -7,6 +7,7 @@ import Animated, { FadeInLeft, LinearTransition } from 'react-native-reanimated'
 import Icon from '@components/icon';
 import { useTheme } from '@react-navigation/native';
 import PickerList from './pickerList';
+import { strings } from '@translations/locale';
 
 const PickerFilter = ({
     isFocus,
@@ -53,7 +54,7 @@ const PickerFilter = ({
                             name={'sort-alpha-down'}
                             type="FontAwesome5"
                         />{' '}
-                        Name
+                        {strings.name}
                     </Text>
                 ) : null}
                 {!isFocus ? (
@@ -67,7 +68,7 @@ const PickerFilter = ({
                             type="MaterialCommunityIcons"
                             color={orderBy.key == 'updatedAt' ? colors.primary : colors.text}
                         />{' '}
-                        Modify
+                        {strings.latest}
                     </Text>
                 ) : null}
                 <SearchBar

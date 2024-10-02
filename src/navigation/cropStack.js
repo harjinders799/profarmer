@@ -1,6 +1,6 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import Crop from '../screens/crop';
+import Crop from '@screens/cropTracker';
 
 const Stack = createNativeStackNavigator();
 

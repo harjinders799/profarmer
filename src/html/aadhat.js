@@ -125,7 +125,7 @@ export function aadhatHTMLFormat(strings, user, data) {
       .join('')}
         </table>
 
-        <h2>${strings.crop / strings.given_amount}</h2>
+        <h2>${strings.crop}/${strings.given_amount}</h2>
         <table style="width:100%">
           <tr>
             <th>${strings.date}</th>

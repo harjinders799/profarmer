@@ -11,7 +11,6 @@ import { submitInterestAmount } from 'src/network/interest-service';
 import Loader from 'src/components/loader';
 import BaseView from 'src/container/base';
 import { ToastError, ToastSuccess } from 'src/utils/toast';
-import DataPicker from 'src/components/dataPicker';
 import { strings } from 'src/translations/locale';
 import { navigate } from 'src/navigation/ref';
 import { useStore } from 'src/context/context';

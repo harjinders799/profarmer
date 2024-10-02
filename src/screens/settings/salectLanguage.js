@@ -16,7 +16,7 @@ const langs = [
     { code: 'hi', label: 'hindi' },
     { code: 'en', label: 'english' },
 ];
-const SalectLanguage = props => {
+const SelectLanguage = props => {
     const { style } = props;
     const { lang, setLang } = useLang();
     const { colors } = useTheme();
@@ -50,7 +50,7 @@ const SalectLanguage = props => {
         </BaseView>
     )
 }
-export default SalectLanguage
+export default SelectLanguage
 
 const styles = StyleSheet.create({
     main: {

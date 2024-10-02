@@ -1,108 +1,113 @@
+import React, { useState, useCallback } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
-import Button from '../../components/button';
-import Input from 'src/components/input';
-import { useAuth } from '../../context/authContext';
-import Text from '../../components/text';
-import Loader from 'src/components/loader';
-import BaseView from 'src/container/base';
-import Profile from 'src/container/profile';
-import auth from '@react-native-firebase/auth';
-import { ToastError, ToastSuccess } from 'src/utils/toast';
-import React, { useEffect } from 'react';
-import Header from '../../components/header';
-import Icon from '../../components/icon';
-import { goBack } from '../../navigation/ref';
+import { useAuth } from '@context/authContext';
+import BaseView from '@container/base';
+import Header from '@components/header';
+import Input from '@components/input';
+import Button from '@components/button';
+import Loader from '@components/loader';
+import { ToastError, ToastSuccess } from '@utils/toast';
 import { useTheme } from '@react-navigation/native';
-import { getUserByPhone, UpdateUser } from '../../network/auth-service';
-import { strings } from '../../translations/locale';
+import { getUserByPhone, UpdateUser } from '@network/auth-service';
+import auth from '@react-native-firebase/auth';
+import { strings } from '@translations/locale';
 
-export default function EditProfile({ navigation }) {
-    const { user: data, getUser } = useAuth();
+const EditProfile = () => {
+    const { user, getUser } = useAuth();
     const { colors } = useTheme();
-    const [loading, setLoading] = React.useState(false);
-    const [user, setUser] = React.useState({
-        name: data?.name ?? '',
-        phone: data?.phone ?? auth().currentUser?.phoneNumber ?? '',
-        email: data?.email ?? auth().currentUser?.email,
-        // img: data?.profile ?? '',
+    const [loading, setLoading] = useState(false);
+    const [userData, setUserData] = useState({
+        name: user?.name ?? '',
+        phone: user?.phone ?? auth().currentUser?.phoneNumber ?? '',
+        email: user?.email ?? auth().currentUser?.email,
     });
 
-    const { name, email, phone } = user;
-    const updateData = (key, value) => {
-        setUser({
-            ...user,
-            [key]: value,
-        });
-    };
-    const update = async () => {
-        if (!user?.name) ToastError('Please Fill Name', 'Profile');
-        else if (!user?.phone || user?.phone.length < 10)
-            ToastError('Please Fill Valid Phone Number', 'Profile');
-        else {
-            try {
-                setLoading(true);
-                let res = await getUserByPhone(phone);
-                console.log({ res });
-                if (res?.id && res?.id != auth()?.currentUser?.uid) {
-                    setLoading(false);
-                    return ToastError('Phone number already in use:(');
-                }
-                await UpdateUser(user);
-                ToastSuccess('Successfully updated!', 'Profile');
-                getUser();
-                setLoading(false);
-            } catch (error) {
-                setLoading(false);
-                ToastError(error?.message, 'Profile');
+    const showToastError = useCallback((message) => {
+        ToastError(message, strings.profile);
+    }, []);
+
+    const updateUserData = async () => {
+        const { name, phone } = userData;
+
+        if (!name) {
+            showToastError(strings.fillName);
+            return false;
+        }
+        if (!phone || phone.length < 10) {
+            showToastError(strings.validPhone);
+            return false;
+        }
+
+        try {
+            setLoading(true);
+            const res = await getUserByPhone(phone);
+            if (res?.id && res.id !== auth().currentUser?.uid) {
+                showToastError(strings.phoneInUse);
+                return false;
             }
+            await UpdateUser(userData);
+            ToastSuccess(strings.updateSuccess, strings.profile);
+            getUser();
+            return true;
+        } catch (error) {
+            showToastError(error?.message || strings.unknownError);
+            return false;
+        } finally {
+            setLoading(false);
         }
     };
+
+    const handleUpdate = useCallback(async () => {
+        await updateUserData();
+    }, [userData]);
+
     return (
         <BaseView space>
             <Loader visible={loading} />
-            <Header back label={'Profile'} />
-            <ScrollView style={{ width: '100%' }} keyboardDismissMode='on-drag' keyboardShouldPersistTaps='handled' showsVerticalScrollIndicator={false}>
-                {/* <Profile
-                    size={150}
-                    style={{ alignSelf: 'center' }}
-                    imgEdit
-                    img={img}
-                    setImg={v => updateData('img', v)}
-                    name={name}
-                /> */}
+            <Header back label={strings.profile} />
+            <ScrollView
+                style={styles.scrollView}
+                keyboardDismissMode="on-drag"
+                keyboardShouldPersistTaps="handled"
+                showsVerticalScrollIndicator={false}
+            >
                 <View style={styles.body}>
                     <Input
                         placeholder={strings.name}
-                        value={name}
-                        setValue={v => updateData('name', v)}
+                        value={userData.name}
+                        setValue={(value) => setUserData((prev) => ({ ...prev, name: value }))}
                     />
                     <Input
-                        value={phone}
                         placeholder={strings.phone}
-                        editable={data?.phone ? false : true}
+                        value={userData.phone}
+                        editable={!user.phone}
                         innerStyle={{
-                            backgroundColor: data?.phone ? colors.disable : colors.background,
+                            backgroundColor: user.phone ? colors.disable : colors.background,
                         }}
                         maxLength={10}
                         keyboardType="phone-pad"
-                        setValue={v => updateData('phone', v)}
+                        setValue={(value) => setUserData((prev) => ({ ...prev, phone: value }))}
                     />
                     <Input
-                        keyboardType="email-address"
                         placeholder={strings.email}
-                        value={email}
+                        value={userData.email}
                         editable={false}
                         innerStyle={{ backgroundColor: colors.disable }}
-                        setValue={v => updateData('email', v)}
                     />
-                    <Button label={'Update'} onPress={update} />
+                    <Button label={strings.update} onPress={handleUpdate} />
                 </View>
             </ScrollView>
         </BaseView>
     );
-}
+};
+
 const styles = StyleSheet.create({
+    scrollView: {
+        width: '100%',
+    },
     body: {
         paddingTop: 10,
     },
 });
+
+export default EditProfile;
