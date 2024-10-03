@@ -79,7 +79,7 @@ const EditProfile = () => {
                     />
                     <Input
                         placeholder={strings.phone}
-                        value={userData.phone}
+                        value={userData.phone.replace('+91', '')}
                         editable={!user.phone}
                         innerStyle={{
                             backgroundColor: user.phone ? colors.disable : colors.background,

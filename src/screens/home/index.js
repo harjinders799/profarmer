@@ -1,5 +1,5 @@
 import { ScrollView, TouchableOpacity, View } from 'react-native';
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import BaseView from '@container/base';
 import Header from '@components/header';
 import { tabsData } from '@utils/helper';
@@ -13,19 +13,38 @@ import { useAuth } from '@context/authContext';
 import { ToastError, ToastProgress } from '@utils/toast';
 import { red } from '@utils/colors';
 import { useLang } from '@context/langContext';
+import { getAccessToken, updateReadAccessToUID } from '@network/auth-service';
+import Loader from '@components/loader';
 
 export default function Home() {
     const { colors } = useTheme();
     const { user } = useAuth();
     const { lang } = useLang();
+    const [loading, setLoading] = useState(true);
 
     const tabs = [...tabsData];
     tabs.shift();
+
     useFocusEffect(
         useCallback(() => {
-            if (user?.id && !user?.phone) {
+            if (
+                user?.id &&
+                (!user?.phone || (user?.phone && user.phone.length == 10))
+            ) {
                 navigate('EditProfile');
                 return ToastError('Please Complete your profile!!');
+            }
+            if (user?.id && user?.phone) {
+                (async () => {
+                    try {
+                        await updateReadAccessToUID(user?.phone);
+                        await updateReadAccessToUID(user?.phone.replace('+91', ''));
+                    } catch (error) {
+                        console.log({ error }, 'home');
+                    } finally {
+                        setLoading(false);
+                    }
+                })();
             }
         }, [user, lang]),
     );
@@ -36,6 +55,7 @@ export default function Home() {
                 label={`Welcome ${user?.name ?? user?.phone ?? user?.email ?? '...'
                     } !!`}
             />
+            <Loader visible={loading} />
             <ScrollView
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={[
@@ -133,7 +153,8 @@ export default function Home() {
                     </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                    onPress={() => ToastProgress(strings.in_progress)}
+                    onPress={getAccessToken}
+                    // onPress={() => ToastProgress(strings.in_progress)}
                     style={[
                         common.card,
                         // common.shadow,

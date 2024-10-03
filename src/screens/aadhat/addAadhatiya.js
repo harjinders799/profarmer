@@ -14,7 +14,7 @@ import { updateIneterstAmt } from '@network/interest-service';
 import Header from '@components/header';
 import { currencyInput } from '@utils/dateformat';
 import { FadeInDown } from 'react-native-reanimated';
-import { onChangeValue } from '@utils/helper';
+import { formatPhoneNumber, onChangeValue } from '@utils/helper';
 import { addAadhatiya } from '@network/aadhat-service';
 
 export default function AddAadhatiya() {
@@ -61,7 +61,7 @@ export default function AddAadhatiya() {
 
     const operation = editData.id
       ? () => updateIneterstAmt({ ...data, date: currentStamp() })
-      : () => addAadhatiya({ ...data, name: name.trim() });
+      : () => addAadhatiya({ ...data, name: name.trim(), phone: formatPhoneNumber(phone) });
 
     handleResponse(operation);
   }, [data, editData, validateInputs, handleResponse]);
@@ -86,7 +86,7 @@ export default function AddAadhatiya() {
           entering={FadeInDown.delay(350)}
           label={strings.phone}
           placeholder={'99xxxxxx99'}
-          value={phone}
+          value={phone.replace('+91', '')}
           maxLength={10}
           keyboardType="number-pad"
           setValue={value => onChangeValue({ setData, key: 'phone', value, isPhone: true })}

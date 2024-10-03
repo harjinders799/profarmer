@@ -2,6 +2,7 @@ import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import { ToastSuccess } from 'src/utils/toast';
 import messaging from '@react-native-firebase/messaging';
+import { formatPhoneNumber, sanitizeData } from '@utils/helper';
 
 export const SignUpUser = async (email, password) => {
   try {
@@ -56,13 +57,13 @@ export const submitUser = async data => {
   return new Promise(async function (resolve, reject) {
     try {
       let id = auth().currentUser?.uid;
-      await firestore().collection('users').doc(id).set({
+      await firestore().collection('users').doc(id).set(sanitizeData({
         name: data?.name,
-        phone: data?.phone,
+        phone: formatPhoneNumber(data?.phone),
         // profileUrl: url,
         email: data?.email,
         id: id,
-      });
+      }));
       resolve('success');
     } catch (error) {
       reject(new Error(error));
@@ -74,12 +75,12 @@ export const UpdateUser = async data => {
   try {
     let id = auth().currentUser?.uid;
     await auth().currentUser.updateProfile({ displayName: data?.name });
-    return await firestore().collection('users').doc(id).update({
+    return await firestore().collection('users').doc(id).update(sanitizeData({
       name: data?.name,
-      phone: data?.phone,
       email: data?.email,
+      phone: formatPhoneNumber(data?.phone),
       id: id,
-    });
+    }));
   } catch (error) {
     submitUser(data);
     return error;
@@ -159,4 +160,34 @@ export const getUserById = async id => {
       reject(new Error(error));
     }
   });
+};
+
+export const updateReadAccessToUID = async (phone) => {
+  const collections = [
+    'aadhat_data',
+    'crops_data',
+    'labours_data',
+    'loans_data',
+    'pickers_data',
+  ];
+  const uid = auth().currentUser.uid;
+  for (const collection of collections) {
+    const snapshot = await firestore()
+      .collection(collection)
+      .where('read_access', 'array-contains', phone)
+      .get();
+
+    const batch = firestore().batch();
+
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      const newReadAccess = data.read_access.map(item =>
+        item === phone ? uid : item,
+      ); // Replace phone with uid
+      console.log({ newReadAccess })
+      batch.update(doc.ref, { read_access: newReadAccess });
+    });
+
+    await batch.commit();
+  }
 };

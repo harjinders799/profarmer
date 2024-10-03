@@ -1,7 +1,7 @@
 import React from 'react';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
-import { storage } from '@utils/helper';
+import { formatPhoneNumber, storage } from '@utils/helper';
 
 const initialState = {
   user: undefined,
@@ -65,7 +65,7 @@ export const AuthProvider = props => {
               // console.log(auth().currentUser);
               let data = {
                 name: auth().currentUser?.displayName,
-                phone: auth().currentUser?.phoneNumber,
+                phone: formatPhoneNumber(auth().currentUser?.phoneNumber),
                 email: auth().currentUser?.email,
                 id: auth().currentUser?.uid,
               };

@@ -1,7 +1,7 @@
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import RNFS from 'react-native-fs';
-import { sanitizeData } from '@utils/helper';
+import { formatPhoneNumber, sanitizeData } from '@utils/helper';
 import { currentStamp } from '@utils/dateformat';
 import { ToastError, ToastSuccess } from '@utils/toast';
 
@@ -48,7 +48,7 @@ export const addNewLabour = data => {
           sanitizeData({
             name: data?.name,
             is_regular: data?.is_regular,
-            phone: data?.phone,
+            phone: formatPhoneNumber(data?.phone),
             start_date: data?.start_date,
             total_labour_amount: data?.total_labour_amount,
             total_labour_count: data?.total_labour_count,

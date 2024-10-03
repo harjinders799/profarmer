@@ -30,6 +30,7 @@ import { blue, gray3, black, orange } from '../../utils/colors';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { common } from '@utils/style';
 import firestore from '@react-native-firebase/firestore';
+import { onChangeValue } from '@utils/helper';
 
 export default function NewLabour() {
   const { colors } = useTheme();
@@ -48,20 +49,6 @@ export default function NewLabour() {
   const [showDate, setShowDate] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const { name, phone, rate, start_date, count, is_regular } = data;
-
-  const onChangeValue = (key, value) => {
-    if (key == 'rate') {
-      setData({
-        ...data,
-        rate: value.replace(/[^0-9]/g, ''),
-      });
-    } else {
-      setData({
-        ...data,
-        [key]: value,
-      });
-    }
-  };
 
   const onPress = async () => {
     if (editData?.id) updateWt();
@@ -138,16 +125,16 @@ export default function NewLabour() {
           label={strings.labour_name}
           placeholder={strings.labour_name}
           value={name}
-          setValue={value => onChangeValue('name', value)}
+          setValue={value => onChangeValue({ setData, key: 'name', value, isName: true })}
         />
         <Input
           entering={FadeInDown.delay(350)}
           label={strings.phone}
           placeholder={'9999XXXX99'}
-          value={phone}
+          value={phone.replace('+91', '')}
           maxLength={10}
           keyboardType="number-pad"
-          setValue={value => onChangeValue('phone', value)}
+          setValue={value => onChangeValue({ setData, key: 'phone', value, isPhone: true })}
         />
         <View style={common.row_btw}>
           <Input
@@ -156,7 +143,7 @@ export default function NewLabour() {
             placeholder={'1, 2, 3...'}
             value={count}
             keyboardType="number-pad"
-            setValue={value => onChangeValue('count', value)}
+            setValue={value => onChangeValue({ setData, key: 'count', value, isAmount: true })}
             style={{ width: '48%' }}
           />
           <Input
@@ -165,7 +152,7 @@ export default function NewLabour() {
             placeholder={' ₹300, ₹400...'}
             value={currencyInput(rate)}
             keyboardType="number-pad"
-            setValue={value => onChangeValue('rate', value)}
+            setValue={value => onChangeValue({ setData, key: 'rate', value, isAmount: true })}
             style={{ width: '48%' }}
           />
         </View>
@@ -174,13 +161,13 @@ export default function NewLabour() {
           style={styles.label}>
           <Text h3> {strings.is_regular} </Text>
           <TouchableOpacity
-            style={styles.button} onPress={() => onChangeValue('is_regular', true)}>
+            style={styles.button} onPress={() => onChangeValue({ setData, key: 'is_regular', value: true })}>
             <Text h3 style={{ color: data.is_regular ? blue : black + 50 }}>
               {strings.yes}
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={styles.button} onPress={() => onChangeValue('is_regular', false)}>
+            style={styles.button} onPress={() => onChangeValue({ setData, key: 'is_regular', value: false })}>
             <Text h3 style={{ color: data.is_regular ? black + 50 : blue }}>
               {strings.no} </Text>
           </TouchableOpacity>

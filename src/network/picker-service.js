@@ -15,8 +15,8 @@ export const pickersDataListener = (onUpdate, phone, orderBy) => {
       // .orderBy('name', 'asc');
       .orderBy(orderBy.key, orderBy.type);
 
-    const query2 = firestore().collection('pickers_data').where('read_access', 'array-contains', phone);
-
+    const query2 = firestore().collection('pickers_data').where('read_access', 'array-contains', userId);
+    // if (phone != null || phone != undefined) query2.where('read_access', 'array-contains', phone)
     // Subscribe to the first query's snapshot changes
     const unsubscribe = query1.onSnapshot(
       snapshot1 => {

@@ -18,6 +18,7 @@ import {
   statusCodes,
 } from '@react-native-google-signin/google-signin';
 import { navigate } from '../../navigation/ref';
+import { orange } from '@utils/colors';
 
 GoogleSignin.configure({
   webClientId:
@@ -117,7 +118,7 @@ const LoginMethods = ({ navigation }) => {
           iconName="email"
           iconType="Fontisto"
           iconColor={colors.background}
-          btnStyle={{ backgroundColor: '#00bfff' }}
+          btnStyle={{ backgroundColor: orange }}
           onPress={() => navigate('SignInWithEmail')}
         />
         <Button
@@ -125,14 +126,14 @@ const LoginMethods = ({ navigation }) => {
           iconName="screen-smartphone"
           iconType="SimpleLineIcons"
           iconColor={colors.background}
-          btnStyle={{ backgroundColor: '#a020f0' }}
+          btnStyle={{ backgroundColor: '#34A853' }}
           onPress={() => navigate('Login')}
         />
         <Button
           label="Sign-In With Google"
           iconName="google"
           iconColor={colors.background}
-          btnStyle={{ backgroundColor: '#db4437' }}
+          btnStyle={{ backgroundColor: '#4285F4' }}
           onPress={signInG}
         />
         {/* <Button

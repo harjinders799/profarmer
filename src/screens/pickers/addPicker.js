@@ -93,7 +93,7 @@ export default function AddPicker() {
                 <Input
                     label={strings.phone}
                     placeholder={strings.phone}
-                    value={phone}
+                    value={phone.replace('+91', '')}
                     maxLength={10}
                     setValue={value => {
                         onChangeValue({ setData, key: 'phone', value, isPhone: true });

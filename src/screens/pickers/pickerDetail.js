@@ -38,14 +38,11 @@ const PickerWeightDetail = lazy(() =>
 function PickerDetail() {
     const { user } = useAuth();
     const {
-        params: { item, pickers, groups },
+        params: { item, pickers, groups, owner },
     } = useRoute();
     const uid = auth()?.currentUser?.uid;
     const { lang } = useLang();
-    const { colors } = useTheme();
     const [loading, setLoading] = useState(true);
-    const [activeTab, setActiveTab] = useState('Group List');
-    const [orderBy, setOrderBy] = useState({ key: 'name', type: 'asc' });
     const [pickersWeightData, setPickersWeightData] = useState([]);
     const [pickersExpensesData, setPickersExpensesData] = useState([]);
     const [openModal, setOpenModal] = useState(false);
@@ -89,14 +86,14 @@ function PickerDetail() {
         <BaseView>
             <Header
                 back
-                label={item?.name}
+                label={owner?.name}
                 deleteIcon={item?.uid == uid}
                 onDeletePress={() => setOpenModal(true)}
                 share
                 onSharePress={() => ToastProgress(strings.in_progress)}
             />
             <Text center h5 style={{ textDecorationLine: 'underline' }}>
-                <Icon name={'phone'} type="Feather" size={16} /> {item?.phone}
+                <Icon name={'phone'} type="Feather" size={16} /> {owner?.phone}
             </Text>
             <ScrollView contentContainerStyle={{ paddingBottom: 150 }}>
                 <PickerConclusion

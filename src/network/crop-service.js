@@ -2,7 +2,6 @@ import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import RNFS from 'react-native-fs';
 import { sanitizeData } from '@utils/helper';
-import { currentStamp } from '@utils/dateformat';
 
 const getDocumentsListener = (query, onUpdate) => {
   try {

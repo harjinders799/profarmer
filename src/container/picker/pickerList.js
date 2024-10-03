@@ -1,6 +1,12 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import Text from '@components/text';
-import { FlatList, RefreshControl, StyleSheet, TouchableOpacity, View } from 'react-native';
+import {
+    FlatList,
+    RefreshControl,
+    StyleSheet,
+    TouchableOpacity,
+    View,
+} from 'react-native';
 import { strings } from '@translations/locale';
 import { navigate } from '@navigation/ref';
 import { currencyFormat } from '@utils/dateformat';
@@ -51,7 +57,12 @@ function PickerList({ data, groups, refreshing, onRefresh }) {
                 <TouchableOpacity
                     style={[styles.list, { backgroundColor: colors.background }]}
                     onPress={() =>
-                        navigate('PickerDetail', { item, pickers: data, groups })
+                        navigate('PickerDetail', {
+                            item,
+                            pickers: data,
+                            groups,
+                            owner: item?.uid === uid ? item : owner,
+                        })
                     }>
                     <View style={styles.row}>
                         <Text h3 style={{ maxWidth: '60%' }}>

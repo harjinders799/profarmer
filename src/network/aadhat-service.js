@@ -10,12 +10,12 @@ export const addAadhatiya = data => {
       let uid = auth().currentUser?.uid;
       firestore()
         .collection('aadhat_data')
-        .add({
+        .add(sanitizeData({
           ...data,
           read_access: [data?.phone],
           full_access: [uid],
           uid,
-        });
+        }));
       resolve('success');
     } catch (error) {
       reject(new Error(error));

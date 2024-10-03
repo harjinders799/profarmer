@@ -150,7 +150,11 @@ export const sanitizeData = data => {
     const sanitizedData = {};
     Object.keys(data).forEach(key => {
         if (data[key] !== undefined) {
-            sanitizedData[key] = data[key];
+            if (key === 'phone') {
+                sanitizedData[key] = formatPhoneNumber(data[key]);
+            } else {
+                sanitizedData[key] = data[key];
+            }
         }
     });
     return sanitizedData;
@@ -373,6 +377,25 @@ export const processAmounts = (data, date) => {
 
     return processedData;
 };
+
+
+export const formatPhoneNumber = (phone) => {
+    // Remove any non-digit characters
+    const cleanedPhone = phone.replace(/\D/g, '');
+
+    // Check if the cleaned phone number has exactly 10 digits
+    if (cleanedPhone.length === 10) {
+        return `+91${cleanedPhone}`; // Add Indian code
+    }
+
+    // If the phone number already starts with the country code or is longer than 10 digits, return as is
+    if (cleanedPhone.startsWith('91')) {
+        return `+${cleanedPhone}`; // Already has country code, return it
+    }
+
+    // Return the original cleaned phone number (it might be invalid or too long)
+    return cleanedPhone;
+}
 
 
 export const tabsData = [

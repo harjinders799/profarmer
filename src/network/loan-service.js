@@ -2,7 +2,7 @@ import firestore, { Filter } from '@react-native-firebase/firestore';
 import Auth from '@react-native-firebase/auth';
 import auth from '@react-native-firebase/auth';
 import { ToastError } from '@utils/toast';
-import { calculateLoanDetails, sanitizeData } from '@utils/helper';
+import { calculateLoanDetails, formatPhoneNumber, sanitizeData } from '@utils/helper';
 
 export const loansDataListener = (
   onUpdate,
@@ -227,7 +227,7 @@ export const updateLoanName = (name, data) => {
               ? userId
               : data?.receiver,
           interest_rate: data?.interest_rate,
-          phone: data?.phone,
+          phone: formatPhoneNumber(data?.phone),
         });
       });
 
