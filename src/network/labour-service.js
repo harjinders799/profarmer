@@ -17,13 +17,13 @@ const getDocumentsListener = (query, onUpdate) => {
         if (onUpdate) onUpdate(documents); // Call the callback function with updated documents
       },
       error => {
-        ToastError(error?.message, 'Labour');
+        ToastError(error?.message);
         throw new Error(error);
       },
     );
     return unsubscribe;
   } catch (error) {
-    ToastError(error?.message, 'Labour');
+    ToastError(error?.message);
     throw new Error(error);
   }
 };
@@ -638,6 +638,217 @@ export const backupData = async () => {
         ToastSuccess(filePath, 'Data backup completed!!');
       })
       .catch(err => {
+        console.log(err.message);
+        ToastError(err.message);
+      });
+  } catch (error) {
+    ToastError(error?.message, 'Error backing up data');
+  }
+};
+
+export const backupUserData = async () => {
+  try {
+    let userId = auth().currentUser?.uid;
+    const backup = {};
+    ToastSuccess('Backup started take some time to complete it');
+
+    const cropSnapshot = await firestore().collection('crop')
+      .where('uid', '==', userId)
+      .get();
+    backup.crop = cropSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+    const interest_amountSnapshot = await firestore()
+      .collection('interest_amount')
+      .where('uid', '==', userId)
+      .get();
+    backup.interest_amount = interest_amountSnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+
+    const pickerSnapshot = await firestore().collection('picker')
+      .where('uid', '==', userId)
+      .get();
+    backup.picker = pickerSnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+
+    const picker_expenseSnapshot = await firestore()
+      .collection('picker_expense')
+      .where('uid', '==', userId)
+      .get();
+    backup.picker_expense = picker_expenseSnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+
+    const loanSnapshot = await firestore().collection('loan')
+      .where('uid', '==', userId)
+      .get();
+    backup.loan = loanSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+    const usersSnapshot = await firestore().collection('users').where('uid', '==', userId).get();
+    backup.users = usersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+    // Backup labour collection
+    const labourSnapshot = await firestore().collection('labour')
+      .where('uid', '==', userId)
+      .get();
+    backup.labour = labourSnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+
+    const laboursSnapshot = await firestore().collection('labours')
+      .where('uid', '==', userId)
+      .get();
+    backup.labours = laboursSnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+
+    // Backup labour_expense collection
+    const expenseSnapshot = await firestore()
+      .collection('labour_expense')
+      .where('uid', '==', userId)
+      .get();
+    backup.labour_expense = expenseSnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+
+    // Backup labour_leave collection
+    const leaveSnapshot = await firestore().collection('labour_leave').get();
+    backup.labour_leave = leaveSnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+
+    // Backup pickers_data collection
+    const pickers_dataSnapshot = await firestore()
+      .collection('pickers_data')
+      .where('uid', '==', userId)
+      .get();
+    backup.labour_pickers_data = pickers_dataSnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+
+    // Backup pickers_groups collection
+    const pickers_groupsSnapshot = await firestore()
+      .collection('pickers_groups')
+      .where('uid', '==', userId)
+      .get();
+    backup.labour_pickers_groups = pickers_groupsSnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+
+    // Backup picker_cotton_weight collection
+    const picker_cotton_weightSnapshot = await firestore()
+      .collection('picker_cotton_weight')
+      .where('uid', '==', userId)
+      .get();
+    backup.labour_picker_cotton_weight = picker_cotton_weightSnapshot.docs.map(
+      doc => ({ id: doc.id, ...doc.data() }),
+    );
+
+    // Backup labours_data collection
+    const labours_dataSnapshot = await firestore()
+      .collection('labours_data')
+      .where('uid', '==', userId)
+      .get();
+
+    backup.labour_labours_data = await Promise.all(
+      labours_dataSnapshot.docs.map(async doc => {
+        const [leaveSnapshot, expenseSnapshot, workSnapshot] =
+          await Promise.all([
+            firestore()
+              .collection('labours_data')
+              .doc(doc.id)
+              .collection('labour_leave')
+              .get(),
+            firestore()
+              .collection('labours_data')
+              .doc(doc.id)
+              .collection('labour_expense')
+              .get(),
+            firestore()
+              .collection('labours_data')
+              .doc(doc.id)
+              .collection('labour_work')
+              .get(),
+          ]);
+
+        const leaveData = leaveSnapshot.docs.map(leaveDoc => ({
+          id: leaveDoc.id,
+          ...leaveDoc.data(),
+        }));
+
+        const expenseData = expenseSnapshot.docs.map(expenseDoc => ({
+          id: expenseDoc.id,
+          ...expenseDoc.data(),
+        }));
+
+        const workData = workSnapshot.docs.map(workDoc => ({
+          id: workDoc.id,
+          ...workDoc.data(),
+        }));
+
+        return {
+          id: doc.id,
+          ...doc.data(),
+          labour_leave: leaveData,
+          labour_expense: expenseData,
+          labour_work: workData,
+        };
+      }),
+    );
+
+    // Backup aadhat_data collection
+    const aadhat_dataSnapshot = await firestore()
+      .collection('aadhat_data')
+      .where('uid', '==', userId)
+      .get();
+
+    backup.labour_labours_data = await Promise.all(
+      aadhat_dataSnapshot.docs.map(async doc => {
+        const [transactionsSnapshot] = await Promise.all([
+          firestore()
+            .collection('aadhat_data')
+            .doc(doc.id)
+            .collection('transactions')
+            .get(),
+        ]);
+
+        const transData = transactionsSnapshot.docs.map(transDoc => ({
+          id: transDoc.id,
+          ...transDoc.data(),
+        }));
+
+        return {
+          id: doc.id,
+          ...doc.data(),
+          transactions: transData,
+        };
+      }),
+    );
+
+    // Save backup to file
+    // Convert backup to JSON string
+    const backupJson = JSON.stringify(backup, null, 2);
+
+    // Define file path
+    const filePath = `${RNFS.DownloadDirectoryPath}/firestore-backup${Date.now()}.json`;
+    console.log(filePath);
+    // Write backup to file
+    await RNFS.writeFile(filePath, backupJson, 'utf8')
+      .then(success => {
+        ToastSuccess(filePath, 'Data backup completed!!');
+      })
+      .catch(err => {
+        console.log(err.message);
         ToastError(err.message);
       });
   } catch (error) {

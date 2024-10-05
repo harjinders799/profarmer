@@ -5,6 +5,8 @@ import Header from '@components/header';
 import Loader from '@components/loader';
 import { getGroupMembersData } from '@network/picker-service';
 import { ToastError } from '@utils/toast';
+import { orderBy } from 'lodash'
+
 const PickerList = lazy(() => import('@container/picker/pickerList'));
 
 const PickerGroupDetail = () => {
@@ -36,7 +38,7 @@ const PickerGroupDetail = () => {
         <BaseView>
             <Header back label={item?.name} />
             <Suspense fallback={<Loader visible={true} />}>
-                <PickerList data={grpPickers} groups={[item]} />
+                <PickerList data={orderBy(grpPickers, ['updatedAt'], ['desc'])} groups={[item]} />
             </Suspense>
         </BaseView>
     );

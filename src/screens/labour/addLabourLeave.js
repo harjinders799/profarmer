@@ -53,7 +53,7 @@ export default function AddLabourLeave() {
 
   const updateData = React.useCallback(async () => {
     if (count.trim() == '' || parseInt(count) <= 0) {
-      return ToastError(strings.rate, strings.labour);
+      return ToastError(strings.rate);
     }
     try {
       setLoading(true);
@@ -68,17 +68,17 @@ export default function AddLabourLeave() {
         ).toFixed(2),
       });
       setLoading(false);
-      ToastSuccess(strings.labour_leave_added, strings.labour);
+      ToastSuccess(strings.successfully_saved);
       navigate('Labour');
     } catch (error) {
       setLoading(false);
-      ToastError(error?.message, strings.labour);
+      ToastError(error?.message);
     }
   }, [data, editData, labourData, count, date]);
 
   const addNewData = React.useCallback(async () => {
     if (count.trim() == '' || parseInt(count) <= 0) {
-      return ToastError(strings.count, strings.labour);
+      return ToastError(strings.count);
     }
     try {
       setLoading(true);
@@ -91,7 +91,7 @@ export default function AddLabourLeave() {
         cid: labourData?.id,
       });
       setLoading(false);
-      ToastSuccess(strings.labour_leave_added, strings.labour);
+      ToastSuccess(strings.successfully_saved);
       goBack();
     } catch (error) {
       setLoading(false);
@@ -106,7 +106,7 @@ export default function AddLabourLeave() {
       goBack();
     } catch (error) {
       setLoading(false);
-      ToastError(error?.message, strings.labour);
+      ToastError(error?.message);
     }
   }, [editData]);
 

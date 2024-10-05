@@ -51,27 +51,27 @@ export default function AddLoan() {
       setLoading(true);
       await updateLoanName(editData?.name, { ...data, name: name.trim() });
       setLoading(false);
-      ToastSuccess(strings.update);
+      ToastSuccess(strings.successfully_updated);
       goBack();
     }
   };
 
   const addNew = useCallback(async () => {
     if (!name || name.trim() == '') {
-      return ToastError(strings.name, strings.loan);
+      return ToastError(strings.name);
     }
     if (interest_rate.trim() == '' || parseInt(interest_rate) <= 0) {
-      return ToastError(strings.interest_rate, strings.loan);
+      return ToastError(strings.interest_rate);
     }
     try {
       setLoading(true);
       await submitLoan({ ...data, name: name.trim() });
       setLoading(false);
-      ToastSuccess(strings.receiver_added);
+      ToastSuccess(strings.successfully_saved);
       goBack();
     } catch (error) {
       setLoading(false);
-      ToastError(error?.message, strings.loan);
+      ToastError(error?.message);
     }
   }, [name, phone, interest_rate]);
 
@@ -109,7 +109,7 @@ export default function AddLoan() {
             } catch (error) {
               setChecking(false);
               console.log(error);
-              ToastError(error?.messageHI);
+              ToastError(error?.message);
             }
           }}
         />

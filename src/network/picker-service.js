@@ -1,13 +1,18 @@
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
-import { currentStamp } from '@utils/dateformat';
+import { currencyFormat, currentStamp } from '@utils/dateformat';
 import { processAmounts, processWeights, sanitizeData } from '@utils/helper';
 import { ToastError } from '@utils/toast';
+import {
+  addMultipleNotification,
+  addNotification,
+} from '@network/common-service';
+import { strings } from '@translations/locale';
 
 export const pickersDataListener = (onUpdate, phone, orderBy) => {
   try {
     const userId = auth().currentUser?.uid;
-    console.log({ phone, userId })
+    console.log({ phone, userId });
     // Define the two queries
     const query1 = firestore()
       .collection('pickers_data')
@@ -15,7 +20,9 @@ export const pickersDataListener = (onUpdate, phone, orderBy) => {
       // .orderBy('name', 'asc');
       .orderBy(orderBy.key, orderBy.type);
 
-    const query2 = firestore().collection('pickers_data').where('read_access', 'array-contains', userId);
+    const query2 = firestore()
+      .collection('pickers_data')
+      .where('read_access', 'array-contains', userId);
     // if (phone != null || phone != undefined) query2.where('read_access', 'array-contains', phone)
     // Subscribe to the first query's snapshot changes
     const unsubscribe = query1.onSnapshot(
@@ -52,7 +59,7 @@ export const pickersDataListener = (onUpdate, phone, orderBy) => {
       unsubscribe(); // Call unsubscribe for the first query
     };
   } catch (error) {
-    ToastError(error?.message, 'Loan');
+    ToastError(error?.message);
     console.error('Unexpected error:', error);
   }
 };
@@ -159,9 +166,9 @@ export const submitPicker = data => {
       let uid = auth().currentUser?.uid;
       firestore()
         .collection('pickers_data')
-        .add({
+        .add(sanitizeData({
           ...data,
-          read_access: [data?.phone],
+          read_access: [data?.receiverId ?? data?.phone],
           full_access: [uid],
           total_earning: 0,
           total_given: 0,
@@ -169,6 +176,14 @@ export const submitPicker = data => {
           uid: uid,
           createdAt: currentStamp(new Date()),
           updatedAt: currentStamp(new Date()),
+        }));
+      if (data?.receiverId)
+        addNotification({
+          data,
+          type: 'picker',
+          message: `${auth().currentUser.displayName
+            } added you as new picker!!`,
+          receiverId: data?.receiverId,
         });
       resolve(true);
     } catch (error) {
@@ -177,7 +192,7 @@ export const submitPicker = data => {
   });
 };
 
-export const addPickerWeight = data => {
+export const addPickerWeight = (data, picker) => {
   return new Promise(function (resolve, reject) {
     try {
       let uid = auth().currentUser?.uid;
@@ -194,6 +209,15 @@ export const addPickerWeight = data => {
           rate: data?.rate,
           updatedAt: currentStamp(new Date()),
         });
+      addMultipleNotification(
+        {
+          data,
+          type: 'picker',
+          message: `${auth().currentUser.displayName} added ${data?.weight}Kg ${strings.weight
+            }!!`,
+        },
+        picker,
+      );
       resolve('success');
     } catch (error) {
       reject(new Error(error));
@@ -317,7 +341,7 @@ export const addPickerExpenseBulk = (data, date, pickers) => {
   });
 };
 
-export const addPickerExpense = data => {
+export const addPickerExpense = (data, picker) => {
   return new Promise(function (resolve, reject) {
     try {
       let uid = auth().currentUser?.uid;
@@ -331,6 +355,16 @@ export const addPickerExpense = data => {
           total_given: data?.total_given,
           updatedAt: currentStamp(new Date()),
         });
+      addMultipleNotification(
+        {
+          data,
+          type: 'picker',
+          message: `${auth().currentUser.displayName} added ${currencyFormat(
+            data?.amount,
+          )} ${strings.given_amount}!!`,
+        },
+        picker,
+      );
       resolve('success');
     } catch (error) {
       reject(new Error(error));
@@ -422,10 +456,19 @@ export const updatePicker = data => {
   });
 };
 
-export const updatePickerCottonWeight = data => {
+export const updatePickerCottonWeight = (data, oldData, picker) => {
   return new Promise(function (resolve, reject) {
     try {
       firestore().collection('picker_cotton_weight').doc(data?.id).update(data);
+      addMultipleNotification(
+        {
+          data,
+          type: 'picker',
+          message: `${auth().currentUser.displayName} updated ${oldData?.weight
+            } Kg to ${data?.weight}Kg ${strings.weight}!!`,
+        },
+        picker,
+      );
       resolve(true);
     } catch (error) {
       reject(new Error(error));
@@ -452,10 +495,20 @@ export const updatePickersCalculation = data => {
   });
 };
 
-export const updatePickerExpense = data => {
+export const updatePickerExpense = (data, oldData, picker) => {
   return new Promise(function (resolve, reject) {
     try {
       firestore().collection('picker_expense').doc(data?.id).update(data);
+      addMultipleNotification(
+        {
+          data,
+          type: 'picker',
+          message: `${auth().currentUser.displayName} updated ${currencyFormat(
+            oldData?.amount,
+          )} to ${currencyFormat(data?.amount)} ${strings.taken_amount}!!`,
+        },
+        picker,
+      );
       resolve(true);
     } catch (error) {
       reject(new Error(error));
@@ -463,10 +516,20 @@ export const updatePickerExpense = data => {
   });
 };
 
-export const deletePicker = id => {
+
+export const deletePickerCottonWeight = (data, picker) => {
   return new Promise(function (resolve, reject) {
     try {
-      firestore().collection('picker').doc(id).delete();
+      firestore().collection('picker_cotton_weight').doc(data?.id).delete();
+      addMultipleNotification(
+        {
+          data,
+          type: 'picker',
+          message: `${auth().currentUser.displayName} deleted ${data?.weight
+            } Kg ${strings.weight}!!`,
+        },
+        picker,
+      );
       resolve('success');
     } catch (error) {
       reject(new Error(error));
@@ -474,80 +537,12 @@ export const deletePicker = id => {
   });
 };
 
-export const deletePickerCottonWeight = id => {
-  return new Promise(function (resolve, reject) {
-    try {
-      firestore().collection('picker_cotton_weight').doc(id).delete();
-      resolve('success');
-    } catch (error) {
-      reject(new Error(error));
-    }
-  });
-};
-
-export const submitPickerExpense = data => {
-  return new Promise(function (resolve, reject) {
-    try {
-      let id = auth().currentUser?.uid;
-      firestore()
-        .collection('picker_expense')
-        .add({ ...data, uid: id });
-      resolve(true);
-    } catch (error) {
-      reject(new Error(error));
-    }
-  });
-};
-
-export const getPickerExpense = name => {
-  return new Promise(function (resolve, reject) {
-    try {
-      let userId = auth().currentUser?.uid;
-      firestore()
-        .collection('picker_expense')
-        .where('uid', '==', userId)
-        .where('picker', '==', name)
-        .get()
-        .then(querySnapshot => {
-          let arr = [];
-          querySnapshot.forEach(documentSnapshot => {
-            arr.push({ ...documentSnapshot.data(), id: documentSnapshot.id });
-          });
-          resolve(arr);
-        });
-    } catch (error) {
-      reject(new Error(error));
-    }
-  });
-};
-
-export const getCottonByPicker = search => {
-  return new Promise(function (resolve, reject) {
-    let userId = auth().currentUser?.uid;
-    firestore()
-      .collection('cotton')
-      .where('uid', '==', userId)
-      .where('picker', '==', search)
-      .get()
-      .then(querySnapshot => {
-        let arr = [];
-        querySnapshot.forEach(documentSnapshot => {
-          arr.push({ ...documentSnapshot.data(), id: documentSnapshot.id });
-        });
-        resolve(arr);
-      })
-      .catch(error => {
-        reject(new Error(error));
-      });
-  });
-};
-
-export const deletePickerCollection = async id => {
+export const deletePickerCollection = async (picker) => {
   try {
     const uid = auth()?.currentUser?.uid;
     const deletePickerCottonWeight = await firestore()
       .collection('picker_cotton_weight')
-      .where('pid', '==', id)
+      .where('pid', '==', picker?.id)
       .get()
       .then(querySnapshot => {
         const deletePromises = [];
@@ -559,7 +554,7 @@ export const deletePickerCollection = async id => {
 
     const deletePickerExpense = await firestore()
       .collection('picker_expense')
-      .where('pid', '==', id)
+      .where('pid', '==', picker?.id)
       .get()
       .then(querySnapshot => {
         const deletePromises = [];
@@ -572,10 +567,11 @@ export const deletePickerCollection = async id => {
     const querySnapshot = await firestore()
       .collection('picker_groups')
       .where('uid', '==', uid)
-      .where('members', 'array-contains', id)
+      .where('members', 'array-contains', picker?.id)
       .get();
 
     // Assume only one group due to single membership rule
+    const groupDoc = querySnapshot.docs[0];
     const members = querySnapshot.size
       ? (await querySnapshot.docs[0].data().members) || []
       : [];
@@ -587,14 +583,14 @@ export const deletePickerCollection = async id => {
         : members.length === 1
           ? await groupDoc.ref.delete()
           : await groupDoc.ref.update({
-            members: firestore.FieldValue.arrayRemove(id),
+            members: firestore.FieldValue.arrayRemove(picker?.id),
           });
 
     action;
 
     const deletePicker = await firestore()
       .collection('pickers_data')
-      .doc(id)
+      .doc(picker?.id)
       .delete();
 
     Promise.all([
@@ -603,6 +599,13 @@ export const deletePickerCollection = async id => {
       deletePickerCottonWeight,
       action,
     ]);
+    addNotification(
+      {
+        type: 'picker',
+        message: `${auth().currentUser.displayName} deleted your whole data!!`,
+        receiverId: picker?.id
+      },
+    );
   } catch (error) {
     throw new Error(error);
   }
@@ -639,27 +642,6 @@ export const deleteGroup = id => {
     try {
       firestore().collection('picker_groups').doc(id).delete();
       resolve('success');
-    } catch (error) {
-      reject(new Error(error));
-    }
-  });
-};
-
-export const getPickerGroup = () => {
-  return new Promise(function (resolve, reject) {
-    try {
-      let userId = auth().currentUser?.uid;
-      let arr = [];
-      firestore()
-        .collection('picker_groups')
-        .where('uid', '==', userId)
-        .get()
-        .then(querySnapshot => {
-          querySnapshot.forEach(documentSnapshot => {
-            arr.push({ ...documentSnapshot.data(), id: documentSnapshot.id });
-          });
-          resolve(arr);
-        });
     } catch (error) {
       reject(new Error(error));
     }

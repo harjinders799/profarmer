@@ -38,7 +38,7 @@ export default function LabourUpdate() {
                         // if ((data, rate?.fid)) await deleteLabour(data, rate?.fid);
                         // getLabour();
                         setLoading(false);
-                        ToastSuccess(strings.labour_deleted, strings.labour);
+                        ToastSuccess(strings.successfully_deleted);
                         goBack();
                     },
                 },

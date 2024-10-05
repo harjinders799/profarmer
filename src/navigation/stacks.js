@@ -41,6 +41,7 @@ import pickerDetail from '@screens/pickers/pickerDetail';
 import AddPickerBulkExpense from '@screens/pickers/addPickerBulkExpense';
 import LoanStack from './loanStack';
 import AadhatCropDetail from '@screens/aadhat/cropDetail';
+import Notifications from '@screens/notifications'
 
 const Stack = createNativeStackNavigator();
 
@@ -115,6 +116,7 @@ export default function Stacks() {
       {/* <Stack.Screen name="Analysis" component={Analysis} /> */}
       {/* <Stack.Screen name="Group" component={Group} /> */}
       {/* <Stack.Screen name="GroupDetail" component={GroupDetail} /> */}
+      <Stack.Screen name="Notifications" component={Notifications} />
       <Stack.Screen name="AboutUs" component={AboutUs} />
       <Stack.Screen name="ContactUs" component={ContactUs} />
       <Stack.Screen name="SelectLanguage" component={SelectLanguage} />

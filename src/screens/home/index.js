@@ -2,7 +2,7 @@ import { ScrollView, TouchableOpacity, View } from 'react-native';
 import React, { useCallback, useState } from 'react';
 import BaseView from '@container/base';
 import Header from '@components/header';
-import { tabsData } from '@utils/helper';
+import { storage, tabsData } from '@utils/helper';
 import Icon from '@components/icon';
 import { strings } from '@translations/locale';
 import { common } from '@utils/style';
@@ -15,12 +15,14 @@ import { red } from '@utils/colors';
 import { useLang } from '@context/langContext';
 import { getAccessToken, updateReadAccessToUID } from '@network/auth-service';
 import Loader from '@components/loader';
+import { notificationCountListener } from '@network/common-service';
 
 export default function Home() {
     const { colors } = useTheme();
     const { user } = useAuth();
     const { lang } = useLang();
     const [loading, setLoading] = useState(true);
+    const [notificationCount, setNotificationCount] = useState(0);
 
     const tabs = [...tabsData];
     tabs.shift();
@@ -29,16 +31,17 @@ export default function Home() {
         useCallback(() => {
             if (
                 user?.id &&
-                (!user?.phone || (user?.phone && user.phone.length == 10))
+                (!user?.phone || !user?.name || (user?.phone && user.phone.length == 10))
             ) {
                 navigate('EditProfile');
-                return ToastError('Please Complete your profile!!');
+                return ToastError(strings.complete_profile);
             }
             if (user?.id && user?.phone) {
                 (async () => {
                     try {
-                        await updateReadAccessToUID(user?.phone);
-                        await updateReadAccessToUID(user?.phone.replace('+91', ''));
+                        let res = storage.getBoolean('replace_phone_with_id');
+                        if (!res) await updateReadAccessToUID(user?.phone);
+                        storage.set('replace_phone_with_id', true);
                     } catch (error) {
                         console.log({ error }, 'home');
                     } finally {
@@ -46,6 +49,15 @@ export default function Home() {
                     }
                 })();
             }
+            const unsubscribeNotificationCount = notificationCountListener(
+                updatedDocuments => {
+                    setNotificationCount(updatedDocuments);
+                },
+            );
+
+            return () => {
+                unsubscribeNotificationCount && unsubscribeNotificationCount();
+            }; // Cleanup on unmount or dependency change
         }, [user, lang]),
     );
 
@@ -54,6 +66,8 @@ export default function Home() {
             <Header
                 label={`Welcome ${user?.name ?? user?.phone ?? user?.email ?? '...'
                     } !!`}
+                notification
+                notificationCount={notificationCount}
             />
             <Loader visible={loading} />
             <ScrollView

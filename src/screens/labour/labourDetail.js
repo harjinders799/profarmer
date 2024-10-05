@@ -55,12 +55,6 @@ const LabourDetail = ({ navigation }) => {
   const finalAmount = useMemo(() => currencyFormat(totalLabour * parseFloat(work?.[0]?.rate) - sumBy(expense, o => parseFloat(o?.amount))), [totalLabour, expense]);
 
   const handleShare = useCallback(async () => {
-    if (!user?.name) {
-      ToastError('Please Complete your profile');
-      navigate('EditProfile');
-      return;
-    }
-
     const html = laborHTMLFormat(strings, user, data, work, expense);
     const options = {
       html,

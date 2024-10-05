@@ -17,19 +17,13 @@ import { strings } from '@translations/locale';
 import Header from '@components/header';
 import Loader from '@components/loader';
 import { ToastError, ToastSuccess } from '@utils/toast';
-import { submitLoan, updateLoanName } from '@network/loan-service';
 import { currencyInput, currentStamp, dateFormat } from '@utils/dateformat';
 import { onChangeValue } from '@utils/helper';
 import { getUserByPhone } from '@network/auth-service';
 import auth from '@react-native-firebase/auth';
-import Icon from '@components/icon';
-import Animated from 'react-native-reanimated';
-import { common } from '@utils/style';
 import {
     addPickerExpense,
-    addPickerWeight,
     deletePickerExpense,
-    submitPicker,
     updatePickerExpense,
 } from '@network/picker-service';
 import DateTimePicker from '@components/DateTime';
@@ -61,7 +55,7 @@ export default function AddPickerExpense() {
 
     const updateData = useCallback(async () => {
         if (amount.trim() == '' || parseInt(amount) <= 0) {
-            return ToastError(strings.amount, strings.picker);
+            return ToastError(strings.amount);
         }
         try {
             setLoading(true);
@@ -73,19 +67,19 @@ export default function AddPickerExpense() {
                 ).toFixed(2),
                 id: editItem?.id,
                 date: currentStamp(date),
-            });
+            }, editItem, editData);
             setLoading(false);
-            ToastSuccess(strings.update);
+            ToastSuccess(strings.successfully_updated);
             goBack();
         } catch (error) {
             setLoading(false);
-            ToastError(error?.message, strings.picker);
+            ToastError(error?.message);
         }
     }, [detail, amount, date]);
 
     const addNew = useCallback(async () => {
         if (amount.trim() == '' || parseInt(amount) <= 0) {
-            return ToastError(strings.amount, strings.picker);
+            return ToastError(strings.amount);
         }
         try {
             setLoading(true);
@@ -96,13 +90,13 @@ export default function AddPickerExpense() {
                 ).toFixed(2),
                 pid: editData?.id,
                 date: currentStamp(date),
-            });
+            }, editData);
             setLoading(false);
-            ToastSuccess(strings.weight_added);
+            ToastSuccess(strings.successfully_saved);
             goBack();
         } catch (error) {
             setLoading(false);
-            ToastError(error?.message, strings.picker);
+            ToastError(error?.message);
         }
     }, [detail, amount, date]);
 
@@ -111,11 +105,11 @@ export default function AddPickerExpense() {
             setLoading(true);
             await deletePickerExpense(editItem.id);
             setLoading(false);
-            ToastSuccess(strings.amount_deleted, strings.picker);
+            ToastSuccess(strings.successfully_deleted);
             goBack();
         } catch (error) {
             setLoading(false);
-            ToastError(error?.message, strings.loan);
+            ToastError(error?.message);
         }
     }, [editItem]);
 

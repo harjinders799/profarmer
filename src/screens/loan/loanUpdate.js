@@ -47,11 +47,11 @@ export default function LoanUpdate() {
       setLoading(true);
       await deleteLoanTransaction(item);
       setLoading(false);
-      ToastSuccess(strings.amount_deleted, strings.amount);
+      ToastSuccess(strings.successfully_deleted);
       navigate('Loan');
     } catch (error) {
       setLoading(false);
-      ToastError(error?.message, strings.loan);
+      ToastError(error?.message);
     }
   };
 

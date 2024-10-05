@@ -46,9 +46,9 @@ export default function Aadhat() {
     try {
       setLoading(true);
       await deleteAadhatCollection(data[0]?.id);
-      ToastSuccess(strings.amount_deleted, strings.amount);
+      ToastSuccess(strings.successfully_deleted);
     } catch (error) {
-      ToastError(error?.message, strings.loan);
+      ToastError(error?.message);
     } finally {
       setLoading(false);
       setOpenModal(false);

@@ -432,7 +432,7 @@ export const tabsData = [
     {
         id: 5,
         name: 'CropStack',
-        title: 'crop',
+        title: 'crop_tracker',
         component: CropStack,
         icon: 'wheat-awn',
         iconType: 'FontAwesome6',

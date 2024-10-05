@@ -52,7 +52,7 @@ export default function AddTransaction() {
       const transactionData = { ...data, date: currentStamp(date) };
       if (editItem?.aid) {
         await updateAmountTransaction({ ...transactionData, aid: editData?.id, id: editItem?.id });
-        ToastSuccess(strings.given_amount_added);
+        ToastSuccess(strings.updateSuccess);
       } else {
         await addAmountTransaction({ aid: editData?.id, ...transactionData });
         ToastSuccess(strings.amount_added);

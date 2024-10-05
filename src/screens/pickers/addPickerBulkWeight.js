@@ -48,11 +48,11 @@ export default function AddPickerBulkWeight() {
             setLoading(true);
             await addPickerWeightBulk(data, date, pickers);
             setLoading(false);
-            ToastSuccess(strings.weight_added);
+            ToastSuccess(strings.successfully_saved);
             goBack();
         } catch (error) {
             setLoading(false);
-            ToastError(error?.message, strings.picker);
+            ToastError(error?.message);
         }
     };
 

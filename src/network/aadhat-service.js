@@ -24,6 +24,25 @@ export const addAadhatiya = data => {
 };
 
 
+export const updateAadhatiya = data => {
+  return new Promise(function (resolve, reject) {
+    try {
+      let uid = auth().currentUser?.uid;
+      firestore()
+        .collection('aadhat_data')
+        .doc(data?.id)
+        .set(sanitizeData({
+          ...data,
+          uid,
+        }), { merge: true });
+      resolve('success');
+    } catch (error) {
+      reject(new Error(error));
+    }
+  });
+};
+
+
 export const aadhatDataListener = (onUpdate, unsubscribeFunctions = []) => {
   try {
     let uid = auth().currentUser?.uid;
@@ -72,7 +91,7 @@ export const aadhatDataListener = (onUpdate, unsubscribeFunctions = []) => {
       });
     return unsubscribeMain;
   } catch (error) {
-    ToastError(error?.message, 'Aadhat');
+    ToastError(error?.message);
     throw new Error(error);
   }
 };

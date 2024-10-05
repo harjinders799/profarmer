@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 import Text from './text';
 import { common } from '@utils/style';
 import { wp } from '@utils/fonts';
@@ -10,7 +10,8 @@ import Animated, {
   FadeInRight,
   FadeInUp,
 } from 'react-native-reanimated';
-import { red } from '@utils/colors';
+import { red, white } from '@utils/colors';
+import { useTheme } from '@react-navigation/native';
 
 const Header = ({
   label,
@@ -19,12 +20,16 @@ const Header = ({
   share = false,
   deleteIcon = false,
   fullScreen = false,
+  notification = false,
+  notificationCount = 0,
   onSharePress = null,
   onDeletePress = null,
   rightComponent,
   style,
   txtStyle,
 }) => {
+  const { colors } = useTheme();
+
   return (
     <View
       style={[
@@ -67,11 +72,31 @@ const Header = ({
         style={{ width: '15%', alignItems: 'flex-end' }}
         entering={FadeInRight.delay(100).duration(500)}
         exiting={FadeInRight.delay(100).duration(500)}>
+        {notification ? (
+          <Pressable
+            style={{ alignItems: 'center', justifyContent: 'center' }}
+            onPress={() => navigate('Notifications')}>
+            <Icon
+              name={notificationCount ? 'bell-ring-outline' : 'bell-outline'}
+              type="MaterialCommunityIcons"
+              size={25}
+              onPress={() => navigate('Notifications')}
+            />
+            {notificationCount ? (
+              <Text color={white} h8 style={styles.notification}>
+                {notificationCount < 100 ? notificationCount : '99+'}
+              </Text>
+            ) : null}
+          </Pressable>
+        ) : null}
         {share || deleteIcon ? (
           <View
             style={[
               common.row_btw,
-              { justifyContent: deleteIcon && share ? 'space-between' : 'flex-end' },
+              {
+                justifyContent:
+                  deleteIcon && share ? 'space-between' : 'flex-end',
+              },
             ]}>
             <Icon
               name="delete"
@@ -81,7 +106,12 @@ const Header = ({
               onPress={onDeletePress}
               style={{ display: deleteIcon ? 'flex' : 'none', marginLeft: -10 }}
             />
-            <Icon name="pdffile1" size={25} onPress={onSharePress} style={{ display: share ? 'flex' : 'none' }} />
+            <Icon
+              name="pdffile1"
+              size={25}
+              onPress={onSharePress}
+              style={{ display: share ? 'flex' : 'none' }}
+            />
           </View>
         ) : (
           rightComponent
@@ -97,5 +127,16 @@ const styles = StyleSheet.create({
     padding: 10,
     zIndex: 1,
   },
+  notification: {
+    position: 'absolute',
+    backgroundColor: red,
+    top: -5,
+    right: -5,
+    borderRadius: 50,
+    width: 18,
+    aspectRatio: 1,
+    textAlign: 'center',
+    lineHeight: 18,
+  },
 });
-export default Header
+export default Header;

@@ -47,11 +47,6 @@ export default function LoanDetail() {
   };
 
   const handleShare = async () => {
-    if (!user?.name) {
-      ToastError('Please Complete your profile');
-      navigate('EditProfile');
-      return;
-    }
     const html = loanHTMLFormat(strings, user, data);
     const options = {
       html: html,

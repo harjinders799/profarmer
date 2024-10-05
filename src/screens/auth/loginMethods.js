@@ -52,7 +52,7 @@ const LoginMethods = ({ navigation }) => {
       } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
         // play services not available or outdated
       } else {
-        ToastError(error?.message, 'Login');
+        ToastError(error?.message);
       }
     }
   };

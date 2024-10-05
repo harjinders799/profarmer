@@ -44,12 +44,6 @@ const RegularLabourDetail = () => {
   }, [data]);
 
   const onShare = async () => {
-    if (!user?.name) {
-      ToastError('Please Complete your profile');
-      navigate('EditProfile');
-      return;
-    }
-
     const html = regularLaborHTMLFormat(strings, user, data, leaves, expense);
     const options = { html, base64: true, fileName: data?.name, directory: 'Documents' };
     const file = await RNHTMLtoPDF.convert(options);

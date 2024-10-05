@@ -79,6 +79,14 @@ export const dateTimeFormat = (value) => moment(value).format('DD/MM/YY hh:mm A'
 
 export const currentStamp = (value) => moment(value).valueOf();
 
+export const timeAgo = (timestamp) => {
+  // Create a moment object from the timestamp
+  const time = moment(timestamp);
+
+  // Use moment's fromNow function to get a human-readable string
+  return time.fromNow();
+}
+
 export const currencyFormat = (value, fraction = 0) => {
   const formatter = createCurrencyFormatter(fraction);
   return `${!isNaN(value) ? formatter.format(parseFloat(value)) : 0} /-`;

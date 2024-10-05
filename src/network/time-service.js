@@ -17,13 +17,13 @@ const getDocumentsListener = (query, onUpdate) => {
         if (onUpdate) onUpdate(documents); // Call the callback function with updated documents
       },
       error => {
-        ToastError(error?.message, 'Labour');
+        ToastError(error?.message);
         throw new Error(error);
       },
     );
     return unsubscribe;
   } catch (error) {
-    ToastError(error?.message, 'Labour');
+    ToastError(error?.message);
     throw new Error(error);
   }
 };

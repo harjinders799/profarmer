@@ -15,7 +15,7 @@ import Header from '@components/header';
 import { currencyInput } from '@utils/dateformat';
 import { FadeInDown } from 'react-native-reanimated';
 import { formatPhoneNumber, onChangeValue } from '@utils/helper';
-import { addAadhatiya } from '@network/aadhat-service';
+import { addAadhatiya, updateAadhatiya } from '@network/aadhat-service';
 
 export default function AddAadhatiya() {
   const {
@@ -34,9 +34,9 @@ export default function AddAadhatiya() {
   const { name, phone, interest_rate } = data;
 
   const validateInputs = useCallback(() => {
-    if (name === '') return ToastError(strings.name, strings.aadhtiya);
-    if (phone.trim() === '' || parseInt(phone) <= 0) return ToastError(strings.phone, strings.aadhtiya);
-    if (interest_rate.trim() === '' || parseInt(interest_rate) <= 0) return ToastError(strings.interest_rate, strings.aadhtiya);
+    if (name === '') return ToastError(strings.name);
+    if (phone.trim() === '' || parseInt(phone) <= 0) return ToastError(strings.phone);
+    if (interest_rate.trim() === '' || parseInt(interest_rate) <= 0) return ToastError(strings.interest_rate);
     return true;
   }, [name, phone, interest_rate]);
 
@@ -45,11 +45,11 @@ export default function AddAadhatiya() {
     try {
       const response = await operation();
       setInterstRate(data.interest_rate);
-      ToastSuccess(strings.amount_added, strings.amount);
+      ToastSuccess(strings.updateSuccess);
       goBack();
       return response;
     } catch (error) {
-      ToastError(error?.message, strings.aadhtiya);
+      ToastError(error?.message);
     } finally {
       setLoading(false);
     }
@@ -60,7 +60,7 @@ export default function AddAadhatiya() {
     if (validation !== true) return;
 
     const operation = editData.id
-      ? () => updateIneterstAmt({ ...data, date: currentStamp() })
+      ? () => updateAadhatiya({ ...data, id: editData.id, name: name.trim(), phone: formatPhoneNumber(phone) })
       : () => addAadhatiya({ ...data, name: name.trim(), phone: formatPhoneNumber(phone) });
 
     handleResponse(operation);

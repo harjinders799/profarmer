@@ -171,10 +171,9 @@ const styles = StyleSheet.create({
     list: {
         ...common.card,
         ...common.shadow,
-        padding: 10,
-        marginHorizontal: '5%',
+        marginHorizontal: '2.5%',
         marginTop: '5%',
-        width: '90%',
+        width: '95%',
     },
     row: {
         ...common.row_btw,

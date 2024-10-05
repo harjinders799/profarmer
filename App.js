@@ -18,8 +18,6 @@ import messaging from '@react-native-firebase/messaging';
 import auth from '@react-native-firebase/auth';
 import { getFCMToken, saveTokenToFirestore } from '@network/auth-service';
 import notifee, { AndroidImportance } from '@notifee/react-native';
-import { isIOS } from '@utils/constants';
-import { green } from '@utils/colors';
 
 export default function App() {
   const [version, setVersion] = useState();
@@ -28,7 +26,7 @@ export default function App() {
   useEffect(() => {
     (async () => {
       const res = await checkVersion({
-        platform: 'android',
+        // platform: 'android',
       });
       setVersion(res);
     })();

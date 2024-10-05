@@ -32,7 +32,7 @@ export default function CropUpdate() {
                         setLoading(true);
                         await deleteCrop(data?.id);
                         setLoading(false);
-                        ToastSuccess(strings.amount_deleted, strings.amount);
+                        ToastSuccess(strings.successfully_deleted);
                         goBack();
                     },
                 },

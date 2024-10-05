@@ -132,7 +132,7 @@ export const getUserByPhone = async phone => {
     try {
       await firestore()
         .collection('users')
-        .where('phone', '==', phone)
+        .where('phone', '==', formatPhoneNumber(phone))
         .get()
         .then(querySnapshot => {
           if (!querySnapshot.empty)

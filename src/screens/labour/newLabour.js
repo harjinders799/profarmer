@@ -69,7 +69,7 @@ export default function NewLabour() {
         start_date: currentStamp(start_date),
       });
       setLoading(false);
-      ToastSuccess(strings.labour_added, strings.labour);
+      ToastSuccess(strings.successfully_updated);
       navigate('Labour');
     }
   };
@@ -98,7 +98,7 @@ export default function NewLabour() {
         given_amount: "0.00"
       });
       setLoading(false);
-      ToastSuccess(strings.labour_added, strings.labour);
+      ToastSuccess(strings.labour_added);
       goBack();
     } catch (error) {
       setLoading(false);

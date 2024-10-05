@@ -48,10 +48,10 @@ export default function AddLabour() {
 
   const updateData = useCallback(async () => {
     if (rate.trim() === '' || parseInt(rate) <= 0) {
-      return ToastError(strings.rate, strings.labour);
+      return ToastError(strings.rate);
     }
     if (count.trim() === '' || parseInt(count) <= 0) {
-      return ToastError(strings.labour_count, strings.labour);
+      return ToastError(strings.labour_count);
     }
 
     try {
@@ -73,20 +73,20 @@ export default function AddLabour() {
         labour_rate: parseFloat(rate).toFixed(2),
       });
       setLoading(false);
-      ToastSuccess(strings.labour_added, strings.labour);
+      ToastSuccess(strings.successfully_saved);
       goBack();
     } catch (error) {
       setLoading(false);
-      ToastError(error?.message, strings.labour);
+      ToastError(error?.message);
     }
   }, [data, editData, labourData, rate, count, date]);
 
   const addNewData = useCallback(async () => {
     try {
       if (rate.trim() === '' || parseInt(rate) <= 0) {
-        ToastError(strings.rate, strings.labour);
+        ToastError(strings.rate);
       } else if (count.trim() === '' || parseInt(count) <= 0) {
-        ToastError(strings.labour_count, strings.labour);
+        ToastError(strings.labour_count);
       } else {
         setLoading(true);
         await submitLabour({
@@ -102,7 +102,7 @@ export default function AddLabour() {
           ).toFixed(2),
         });
         setLoading(false);
-        ToastSuccess(strings.labour_added, strings.labour);
+        ToastSuccess(strings.successfully_saved);
         goBack();
       }
     } catch (error) {
@@ -118,7 +118,7 @@ export default function AddLabour() {
       goBack();
     } catch (error) {
       setLoading(false);
-      ToastError(error?.message, strings.labour);
+      ToastError(error?.message);
     }
   }, [editData]);
 

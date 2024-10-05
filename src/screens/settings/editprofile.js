@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { Keyboard, ScrollView, StyleSheet, View } from 'react-native';
 import { useAuth } from '@context/authContext';
 import BaseView from '@container/base';
 import Header from '@components/header';
@@ -11,6 +11,7 @@ import { useTheme } from '@react-navigation/native';
 import { getUserByPhone, UpdateUser } from '@network/auth-service';
 import auth from '@react-native-firebase/auth';
 import { strings } from '@translations/locale';
+import Profile from '@container/profile';
 
 const EditProfile = () => {
     const { user, getUser } = useAuth();
@@ -21,36 +22,36 @@ const EditProfile = () => {
         phone: user?.phone ?? auth().currentUser?.phoneNumber ?? '',
         email: user?.email ?? auth().currentUser?.email,
     });
-
-    const showToastError = useCallback((message) => {
-        ToastError(message, strings.profile);
-    }, []);
+    const [alreadyUsedPhone, setAlreadyUsedPhone] = useState(false)
 
     const updateUserData = async () => {
         const { name, phone } = userData;
 
         if (!name) {
-            showToastError(strings.fillName);
+            ToastError(strings.fillName);
             return false;
         }
         if (!phone || phone.length < 10) {
-            showToastError(strings.validPhone);
+            ToastError(strings.validPhone);
             return false;
         }
 
         try {
             setLoading(true);
+            Keyboard.dismiss()
             const res = await getUserByPhone(phone);
             if (res?.id && res.id !== auth().currentUser?.uid) {
-                showToastError(strings.phoneInUse);
+                ToastError(strings.phoneInUse);
+                setUserData((prev) => ({ ...prev, phone: '' }))
+                setAlreadyUsedPhone(true)
                 return false;
             }
             await UpdateUser(userData);
-            ToastSuccess(strings.updateSuccess, strings.profile);
+            ToastSuccess(strings.successfully_updated);
             getUser();
             return true;
         } catch (error) {
-            showToastError(error?.message || strings.unknownError);
+            ToastError(error?.message || strings.unknownError);
             return false;
         } finally {
             setLoading(false);
@@ -72,6 +73,7 @@ const EditProfile = () => {
                 showsVerticalScrollIndicator={false}
             >
                 <View style={styles.body}>
+                    <Profile imgEdit />
                     <Input
                         placeholder={strings.name}
                         value={userData.name}
@@ -80,9 +82,9 @@ const EditProfile = () => {
                     <Input
                         placeholder={strings.phone}
                         value={userData.phone.replace('+91', '')}
-                        editable={!user.phone}
+                        editable={alreadyUsedPhone ? true : !user?.phone}
                         innerStyle={{
-                            backgroundColor: user.phone ? colors.disable : colors.background,
+                            backgroundColor: user.phone && !alreadyUsedPhone ? colors.disable : colors.background,
                         }}
                         maxLength={10}
                         keyboardType="phone-pad"
@@ -106,7 +108,7 @@ const styles = StyleSheet.create({
         width: '100%',
     },
     body: {
-        paddingTop: 10,
+        alignItems: 'center'
     },
 });
 

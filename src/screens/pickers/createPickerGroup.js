@@ -39,31 +39,31 @@ export default function CreatePickerGroup() {
             return ToastError(strings.receiver_name);
         }
         if (members.length == 0) {
-            return ToastError(strings.members, strings.loan);
+            return ToastError(strings.select_picker);
         }
         setLoading(true);
         await updateGroup({ id: editData?.id, ...data, name: name.trim() });
         setLoading(false);
-        ToastSuccess(strings.update);
+        ToastSuccess(strings.successfully_updated);
         goBack();
     };
 
     const addNew = useCallback(async () => {
         if (!name || name.trim() == '') {
-            return ToastError(strings.name, strings.loan);
+            return ToastError(strings.name);
         }
         if (members.length == 0) {
-            return ToastError(strings.members, strings.loan);
+            return ToastError(strings.select_picker);
         }
         try {
             setLoading(true);
             await createGroup({ ...data, name: name.trim() });
             setLoading(false);
-            ToastSuccess(strings.picker_added);
+            ToastSuccess(strings.successfully_saved);
             goBack();
         } catch (error) {
             setLoading(false);
-            ToastError(error?.message, strings.loan);
+            ToastError(error?.message);
         }
     }, [name, phone, members]);
 
@@ -72,11 +72,11 @@ export default function CreatePickerGroup() {
             setLoading(true);
             await deleteGroup(editData?.id);
             setLoading(false);
-            ToastSuccess(strings.picker_added);
+            ToastSuccess(strings.successfully_deleted);
             goBack();
         } catch (error) {
             setLoading(false);
-            ToastError(error?.message, strings.loan);
+            ToastError(error?.message);
         }
     };
 

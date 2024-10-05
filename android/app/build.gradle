@@ -80,8 +80,8 @@ android {
         applicationId "com.profarmer"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 35
-        versionName "2.1.5"
+        versionCode 38
+        versionName "2.1.8"
     }
     signingConfigs {
         debug {

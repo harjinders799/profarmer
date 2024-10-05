@@ -27,10 +27,10 @@ export default function AadhatTransactionDetail() {
     setLoading(true);
     try {
       await deleteAmountTransaction(item);
-      ToastSuccess(strings.amount_deleted, strings.amount);
+      ToastSuccess(strings.successfully_deleted);
       navigate('Aadhat');
     } catch (error) {
-      ToastError(error?.message, strings.loan);
+      ToastError(error?.message);
     } finally {
       setLoading(false);
     }

@@ -30,7 +30,7 @@ export default function AddCrop() {
       setLoading(true);
       await addNewCrop(data);
       setLoading(false);
-      ToastSuccess(strings.labour_added, strings.labour);
+      ToastSuccess(strings.successfully_saved,);
       goBack();
     } catch (error) {
       setLoading(false);

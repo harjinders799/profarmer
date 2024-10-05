@@ -74,7 +74,7 @@ const Login = ({ navigation }) => {
 
   const signIn = async () => {
     if (state.phone.length != 10) {
-      ToastError('Please fill valid Phone Number', 'Login');
+      ToastError('Please fill valid Phone Number');
       return;
     }
     try {
@@ -88,12 +88,12 @@ const Login = ({ navigation }) => {
         })
         .catch(error => {
           setLoading(false);
-          ToastError(error?.message, 'Login');
+          ToastError(error?.message);
         });
     } catch (error) {
       setLoading(false);
       console.log(error);
-      ToastError(error?.message, 'Login');
+      ToastError(error?.message);
     }
   };
 
@@ -114,15 +114,15 @@ const Login = ({ navigation }) => {
           .then(userCredentials => {
             setLoading(false);
             // replace('Main');
-            ToastSuccess('Successfully Logged In!', 'OTP');
+            ToastSuccess('Successfully Logged In!');
           })
           .catch(error => {
             setLoading(false);
-            ToastError(error?.message, 'OTP');
+            ToastError(error?.message);
           });
       } catch (error) {
         setLoading(false);
-        ToastError(error?.message, 'OTP');
+        ToastError(error?.message);
       }
     }
   };

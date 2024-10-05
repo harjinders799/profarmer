@@ -46,11 +46,11 @@ export default function AddPickerBulkExpense() {
             setLoading(true);
             await addPickerExpenseBulk(data, date, pickers);
             setLoading(false);
-            ToastSuccess(strings.weight_added);
+            ToastSuccess(strings.successfully_saved);
             goBack();
         } catch (error) {
             setLoading(false);
-            ToastError(error?.message, strings.picker);
+            ToastError(error?.message);
         }
     };
 

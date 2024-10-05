@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const Loader = ({ visible, small = false, style }) => {
+const Loader = ({ visible, small = false, label = "Loading...", style }) => {
   const { colors } = useTheme();
   return visible ? (
     <View
@@ -38,7 +38,7 @@ const Loader = ({ visible, small = false, style }) => {
           top: Platform.OS === 'ios' ? 1 : 0,
         }}
       />
-      <Text>Loading...</Text>
+      {label ? <Text>{label}</Text> : null}
     </View>
   ) : null;
 };

@@ -47,10 +47,10 @@ export default function AddPickerWeight() {
 
     const updateData = async () => {
         if (rate.trim() == '' || parseInt(rate) <= 0) {
-            return ToastError(strings.rate, strings.picker);
+            return ToastError(strings.rate);
         }
         if (weight.trim() == '' || parseInt(weight) <= 0) {
-            return ToastError(strings.weight, strings.picker);
+            return ToastError(strings.weight);
         }
         try {
             setLoading(true);
@@ -68,22 +68,22 @@ export default function AddPickerWeight() {
 
                 id: editItem?.id,
                 date: currentStamp(date),
-            });
+            }, editItem, editData);
             setLoading(false);
-            ToastSuccess(strings.update);
+            ToastSuccess(strings.successfully_updated);
             goBack();
         } catch (error) {
             setLoading(false);
-            ToastError(error?.message, strings.picker);
+            ToastError(error?.message);
         }
     };
 
     const addNew = useCallback(async () => {
         if (rate.trim() == '' || parseInt(rate) <= 0) {
-            return ToastError(strings.rate, strings.picker);
+            return ToastError(strings.rate);
         }
         if (weight.trim() == '' || parseInt(weight) <= 0) {
-            return ToastError(strings.weight, strings.picker);
+            return ToastError(strings.weight);
         }
         try {
             setLoading(true);
@@ -98,22 +98,22 @@ export default function AddPickerWeight() {
                 ).toFixed(2),
                 pid: editData?.id,
                 date: currentStamp(date),
-            });
+            }, editData);
             setLoading(false);
-            ToastSuccess(strings.weight_added);
+            ToastSuccess(strings.successfully_saved);
             goBack();
         } catch (error) {
             setLoading(false);
-            ToastError(error?.message, strings.picker);
+            ToastError(error?.message);
         }
     }, [detail, weight, rate, date]);
 
     const onDelete = useCallback(async () => {
         try {
             setLoading(true);
-            await deletePickerCottonWeight(editItem.id);
+            await deletePickerCottonWeight(editItem, editData);
             setLoading(false);
-            ToastSuccess(strings.weight_delete, strings.picker);
+            ToastSuccess(strings.successfully_saved);
             goBack();
         } catch (error) {
             setLoading(false);

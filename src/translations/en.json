@@ -211,5 +211,8 @@
   "date_wise": "Date Wise",
   "latest": "Latest",
   "important_note": "Important Note: ",
-  "backup_data_warning": "We are currently enhancing the app. During this phase, we recommend keeping your data backed up using the previous method to ensure its safety. Thank you for using the app!"
+  "backup_data_warning": "We are currently enhancing the app. During this phase, we recommend keeping your data backed up using the previous method to ensure its safety. Thank you for using the app!",
+  "successfully_saved": "Successfully Saved!!",
+  "successfully_updated": "Successfully Updated!!",
+  "successfully_deleted": "Successfully Deleted!!"
 }

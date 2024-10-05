@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import {
+  ActivityIndicator,
   ScrollView,
   Share,
   StyleSheet,
@@ -18,13 +19,14 @@ import { useAuth } from '@context/authContext';
 import Loader from '@components/loader';
 import Header from '@components/header';
 import { navigate } from '@navigation/ref';
-import { backupData } from '@network/labour-service';
+import { backupData, backupUserData } from '@network/labour-service';
 import { ToastError } from '@utils/toast';
 
 export default function Setting({ navigation }) {
   const { lang, setTheme, theme } = useLang();
   const { user, reset } = useAuth();
   const [loading, setLoading] = useState(false);
+  const [creatingBackup, setCreatingBackup] = useState(false);
 
   useEffect(() => { }, [lang]);
 
@@ -40,12 +42,28 @@ export default function Setting({ navigation }) {
   }, [reset]);
 
   const handleShare = () => {
-    Share.share({
-      title: 'ProFarmer App',
-      message: strings.shareMessage,
-    }, {
-      dialogTitle: 'ProFarmer App',
-    });
+    Share.share(
+      {
+        title: 'ProFarmer App',
+        message: strings.shareMessage,
+      },
+      {
+        dialogTitle: 'ProFarmer App',
+      },
+    );
+  };
+
+  const onBackupPress = async () => {
+    try {
+      setCreatingBackup(true);
+      user?.email == 'harjinders799@gmail.com'
+        ? await backupData()
+        : await backupUserData();
+    } catch (error) {
+      ToastError(error?.message);
+    } finally {
+      setCreatingBackup(false);
+    }
   };
 
   return (
@@ -66,41 +84,33 @@ export default function Setting({ navigation }) {
       <ScrollView
         style={{ width: '100%' }}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ height: HEIGHT, paddingBottom: 200 }}
-      >
+        contentContainerStyle={{ height: HEIGHT, paddingBottom: 200 }}>
         <View style={styles.footer}>
           <TouchableOpacity
             style={styles.row}
-            onPress={() => navigate('SelectLanguage')}
-          >
+            onPress={() => navigate('SelectLanguage')}>
             <Text style={styles.txt}>{strings.language}</Text>
             <Icon name="chevron-right" type="Entypo" size={25} />
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.row}
-            onPress={() => navigate('ContactUs')}
-          >
+            onPress={() => navigate('ContactUs')}>
             <Text style={styles.txt}>{strings.contactUs}</Text>
             <Icon name="chevron-right" type="Entypo" size={25} />
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.row}
-            onPress={() => navigate('AboutUs')}
-          >
+            onPress={() => navigate('AboutUs')}>
             <Text style={styles.txt}>{strings.aboutUs}</Text>
             <Icon name="chevron-right" type="Entypo" size={25} />
           </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.row}
-            onPress={handleShare}
-          >
+          <TouchableOpacity style={styles.row} onPress={handleShare}>
             <Text style={styles.txt}>{strings.share}</Text>
             <Icon name="share" type="Entypo" size={25} />
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.row}
-            onPress={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-          >
+            onPress={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>
             <Text style={styles.txt}>
               {theme === 'light' ? strings.lightTheme : strings.darkTheme}
             </Text>
@@ -108,16 +118,19 @@ export default function Setting({ navigation }) {
               value={theme === 'dark'}
               trackColor={{ false: gray3, true: gray3 }}
               thumbColor={theme === 'dark' ? white : black}
-              onValueChange={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+              onValueChange={() =>
+                setTheme(theme === 'dark' ? 'light' : 'dark')
+              }
             />
           </TouchableOpacity>
-          {user?.email == 'harjinders799@gmail.com' || __DEV__ ? (
-            <TouchableOpacity
-              style={styles.row}
-              onPress={backupData}>
-              <Text style={styles.txt}>Backup Now</Text>
-            </TouchableOpacity>
-          ) : null}
+          <TouchableOpacity style={styles.row} onPress={onBackupPress}>
+            <Text style={styles.txt}>Backup Now</Text>
+            {creatingBackup ? (
+              <ActivityIndicator />
+            ) : (
+              <Icon name="download" size={22} />
+            )}
+          </TouchableOpacity>
 
           <TouchableOpacity style={styles.row} onPress={onLogOut}>
             <Text style={styles.txt}>{strings.logOut}</Text>

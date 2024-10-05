@@ -26,6 +26,9 @@ import DeleteModal from '@container/deleteModal';
 import { ToastError, ToastProgress, ToastSuccess } from '@utils/toast';
 import auth from '@react-native-firebase/auth';
 import Icon from '@components/icon';
+import { pickerHTMLFormat } from '@html/picker';
+import RNHTMLtoPDF from 'react-native-html-to-pdf';
+import Share from 'react-native-share';
 
 // Lazy load components
 const PickerExpenseDetail = lazy(() =>
@@ -72,15 +75,42 @@ function PickerDetail() {
     const onDelete = useCallback(async () => {
         try {
             setLoading(true);
-            await deletePickerCollection(item.id);
+            await deletePickerCollection(item);
             setLoading(false);
-            ToastSuccess(strings.delete, strings.picker);
+            ToastSuccess(strings.successfully_deleted);
             goBack();
         } catch (error) {
             setLoading(false);
-            ToastError(error?.message, strings.picker);
+            ToastError(error?.message);
         }
     }, [item]);
+
+    const handleShare = async () => {
+        const html = pickerHTMLFormat(
+            strings,
+            user,
+            item,
+            pickersExpensesData,
+            pickersWeightData,
+        );
+        const options = {
+            html: html,
+            base64: true,
+            fileName: item?.name,
+            directory: 'Documents',
+        };
+        const file = await RNHTMLtoPDF.convert(options);
+        Share.open({
+            url: `data:application/pdf;base64,${file?.base64}`,
+            type: 'application/pdf',
+            title: item?.name,
+            saveToFiles: true,
+            showAppsToView: true,
+            filename: item?.name,
+        })
+            .then(res => console.log(res, '---res'))
+            .catch(err => console.log(err, '----err'));
+    };
 
     return (
         <BaseView>
@@ -90,7 +120,7 @@ function PickerDetail() {
                 deleteIcon={item?.uid == uid}
                 onDeletePress={() => setOpenModal(true)}
                 share
-                onSharePress={() => ToastProgress(strings.in_progress)}
+                onSharePress={handleShare}
             />
             <Text center h5 style={{ textDecorationLine: 'underline' }}>
                 <Icon name={'phone'} type="Feather" size={16} /> {owner?.phone}

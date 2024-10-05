@@ -52,29 +52,43 @@ export default function AddPicker() {
             setLoading(true);
             await updateLoanName(editData?.name, { ...data, name: name.trim() });
             setLoading(false);
-            ToastSuccess(strings.update);
+            ToastSuccess(strings.successfully_updated);
             goBack();
         }
     };
 
     const addNew = useCallback(async () => {
         if (!name || name.trim() == '') {
-            return ToastError(strings.name, strings.loan);
+            return ToastError(strings.name);
         }
         if (rate.trim() == '' || parseInt(rate) <= 0) {
-            return ToastError(strings.rate, strings.loan);
+            return ToastError(strings.rate);
         }
         try {
             setLoading(true);
-            await submitPicker({ ...data, name: name.trim() });
+            await submitPicker({ ...data, name: name.trim(), receiverId: verifiedUser?.id });
             setLoading(false);
-            ToastSuccess(strings.picker_added);
+            ToastSuccess(strings.successfully_saved);
             goBack();
         } catch (error) {
             setLoading(false);
-            ToastError(error?.message, strings.loan);
+            ToastError(error?.message);
         }
     }, [name, phone, rate]);
+
+    const checkUser = useCallback(async (value) => {
+        try {
+            setChecking(true);
+            let res = await getUserByPhone(value ?? phone);
+            if (user.uid == res?.id) ToastError("You can't add yourself");
+            else setVerifiedUser(res);
+            setChecking(false);
+        } catch (error) {
+            setChecking(false);
+            console.log(error);
+            ToastError(error?.messageHI);
+        }
+    }, [phone])
 
     return (
         <BaseView space>
@@ -97,37 +111,26 @@ export default function AddPicker() {
                     maxLength={10}
                     setValue={value => {
                         onChangeValue({ setData, key: 'phone', value, isPhone: true });
-                        setVerifiedUser(undefined);
+                        if (value && value.length == 10) checkUser(value)
+                        else setVerifiedUser(undefined);
                     }}
                     keyboardType="numeric"
-                    onBlur={async () => {
-                        try {
-                            setChecking(true);
-                            let res = await getUserByPhone(phone);
-                            if (user.uid == res?.id) ToastError("You can't add yourself");
-                            else setVerifiedUser(res);
-                            setChecking(false);
-                        } catch (error) {
-                            setChecking(false);
-                            console.log(error);
-                            ToastError(error?.messageHI);
-                        }
-                    }}
+                // onBlur={checkUser}
                 />
                 {verifiedUser?.id ? (
                     <Animated.View
                         style={[
                             common.row_btw,
                             {
-                                backgroundColor: colors.success,
+                                // backgroundColor: colors.success,
                                 borderRadius: 8,
                                 padding: 5,
                                 paddingHorizontal: 10,
                             },
                         ]}>
-                        <Text color={colors.background}>
+                        <Text color={colors.success}>
                             {`User registered with name -`}
-                            <Text bold color={colors.background}>
+                            <Text bold color={colors.success}>
                                 {` ${verifiedUser?.name}`}
                             </Text>
                         </Text>

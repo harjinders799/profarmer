@@ -70,7 +70,7 @@ export default function AddEvent() {
       };
 
       await eventFunction(eventData);
-      ToastSuccess(strings.labour_added, strings.labour);
+      ToastSuccess(strings.successfully_saved);
       goBack();
     } catch (error) {
       ToastError(error?.message);
@@ -92,7 +92,7 @@ export default function AddEvent() {
         cid: editData.id,
       });
 
-      ToastSuccess(strings.labour_deleted, strings.labour);
+      ToastSuccess(strings.successfully_deleted);
       goBack();
     } catch (error) {
       ToastError(error?.message);

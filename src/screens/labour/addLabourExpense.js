@@ -61,7 +61,7 @@ export default function AddLabourExpense() {
   // Update existing data
   const updateData = React.useCallback(async () => {
     if (amount.trim() === '' || amount < 0) {
-      return ToastError(strings.given_amount_to_labour, strings.labour);
+      return ToastError(strings.given_amount_to_labour);
     }
     try {
       setLoading(true);
@@ -76,18 +76,18 @@ export default function AddLabourExpense() {
         ).toFixed(2),
       });
       setLoading(false);
-      ToastSuccess(strings.labour_expense_added, strings.labour);
+      ToastSuccess(strings.successfully_saved);
       goBack();
     } catch (error) {
       setLoading(false);
-      ToastError(error?.message, strings.labour);
+      ToastError(error?.message);
     }
   }, [data, editData, labourData, amount, date]);
 
   // Add new data
   const addNewData = React.useCallback(async () => {
     if (amount.trim() === '' || amount <= 0) {
-      return ToastError(strings.given_amount_to_labour, strings.labour);
+      return ToastError(strings.given_amount_to_labour);
     }
     try {
       setLoading(true);
@@ -100,11 +100,11 @@ export default function AddLabourExpense() {
         date: currentStamp(date),
       });
       setLoading(false);
-      ToastSuccess(strings.labour_expense_added, strings.labour);
+      ToastSuccess(strings.successfully_saved);
       goBack();
     } catch (error) {
       setLoading(false);
-      ToastError(error?.message, strings.labour);
+      ToastError(error?.message);
     }
   }, [data, labourData, amount, date]);
 
@@ -116,7 +116,7 @@ export default function AddLabourExpense() {
       goBack();
     } catch (error) {
       setLoading(false);
-      ToastError(error?.message, strings.labour);
+      ToastError(error?.message);
     }
   }, [editData]);
 

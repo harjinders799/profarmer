@@ -87,11 +87,11 @@ export const loansDataListener = (
         handleQueryResults(snapshot1, snapshot2),
       )
       .catch(error => {
-        ToastError(error?.message, 'Loan');
+        ToastError(error?.message);
         throw new Error(error);
       });
   } catch (error) {
-    ToastError(error?.message, 'Loan');
+    ToastError(error?.message);
     throw new Error(error);
   }
 };

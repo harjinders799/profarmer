@@ -62,7 +62,7 @@ export default function AddCredit() {
           date: currentStamp(date),
         });
         setLoading(false);
-        ToastSuccess(strings.given_amount_added);
+        ToastSuccess(strings.successfully_saved);
         navigate('Loan');
       }
     } catch (error) {
@@ -85,7 +85,7 @@ export default function AddCredit() {
         date: currentStamp(date),
       });
       setLoading(false);
-      ToastSuccess(strings.amount_added);
+      ToastSuccess(strings.successfully_saved);
       navigate('Loan');
     } catch (error) {
       setLoading(false);
