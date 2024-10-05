@@ -214,5 +214,6 @@
   "backup_data_warning": "We are currently enhancing the app. During this phase, we recommend keeping your data backed up using the previous method to ensure its safety. Thank you for using the app!",
   "successfully_saved": "Successfully Saved!!",
   "successfully_updated": "Successfully Updated!!",
-  "successfully_deleted": "Successfully Deleted!!"
+  "successfully_deleted": "Successfully Deleted!!",
+  "loginMessage": "Please use an email or Google login method to access your account. We are offering this service for free to farmers; however, please note that OTP verification incurs a charge of ₹2 per OTP. Thank you for your continued support."
 }

@@ -132,11 +132,12 @@ const styles = StyleSheet.create({
     backgroundColor: red,
     top: -5,
     right: -5,
-    borderRadius: 50,
+    borderRadius: 10,
     width: 18,
     aspectRatio: 1,
     textAlign: 'center',
     lineHeight: 18,
+    overflow: 'hidden'
   },
 });
 export default Header;

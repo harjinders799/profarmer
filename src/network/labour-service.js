@@ -630,7 +630,7 @@ export const backupData = async () => {
     const backupJson = JSON.stringify(backup, null, 2);
 
     // Define file path
-    const filePath = `${RNFS.DownloadDirectoryPath}/firestore-backup.json`;
+    const filePath = `${RNFS.DownloadDirectoryPath}/firestore-backup${Date.now()}.json`;
     console.log(filePath);
     // Write backup to file
     await RNFS.writeFile(filePath, backupJson, 'utf8')

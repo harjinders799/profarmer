@@ -12,7 +12,6 @@ import { strings } from '@translations/locale';
 export const pickersDataListener = (onUpdate, phone, orderBy) => {
   try {
     const userId = auth().currentUser?.uid;
-    console.log({ phone, userId });
     // Define the two queries
     const query1 = firestore()
       .collection('pickers_data')
@@ -130,7 +129,7 @@ export const pickersExpenseListener = (onUpdate, pid) => {
   try {
     const userId = auth().currentUser?.uid;
     let query = firestore()
-      .collection('picker_expense')
+      .collection('pickers_expense')
       .orderBy('date', 'desc');
 
     // Add the optional `where` clause if `pid` is provided
@@ -196,19 +195,18 @@ export const addPickerWeight = (data, picker) => {
   return new Promise(function (resolve, reject) {
     try {
       let uid = auth().currentUser?.uid;
-      console.log(sanitizeData({ ...data, uid }));
       firestore()
         .collection('picker_cotton_weight')
         .add(sanitizeData({ ...data, uid }));
       firestore()
         .collection('pickers_data')
         .doc(data?.pid)
-        .update({
+        .update(sanitizeData({
           total_weight: data?.total_weight,
           total_earning: data?.total_earning,
           rate: data?.rate,
           updatedAt: currentStamp(new Date()),
-        });
+        }));
       addMultipleNotification(
         {
           data,
@@ -242,6 +240,7 @@ export const addPickerWeightBulk = (data, date, pickers) => {
 
         // Initialize totals for this picker
         pickerTotals[pickerData.id] = {
+          read_access: pickerData?.read_access,
           totalWeight: lastTotalWeight,
           totalEarning: lastTotalEarning,
         };
@@ -257,6 +256,14 @@ export const addPickerWeightBulk = (data, date, pickers) => {
         if (pickerTotals[pid]) {
           pickerTotals[pid].totalWeight += entry.weight; // Add current weight
           pickerTotals[pid].totalEarning += entry.weight * entry.rate; // Update total earning
+          addMultipleNotification(
+            {
+              data: entry,
+              type: 'picker',
+              message: `${auth().currentUser.displayName} added ${entry.weight} Kg ${strings.weight}!!`,
+            },
+            pickerTotals[pid] // Assuming each entry has a picker field
+          );
         }
       });
 
@@ -302,19 +309,30 @@ export const addPickerExpenseBulk = (data, date, pickers) => {
 
         // Initialize totals for this picker
         pickerTotals[pickerData.id] = {
+          read_access: pickerData?.read_access,
           totalGiven: lastTotalGiven,
         };
       }
 
       // Loop through processed data and add to the batch
       processedData.forEach(entry => {
-        const docRef = firestore().collection('picker_expense').doc(); // Create a new document reference
+        const docRef = firestore().collection('pickers_expense').doc(); // Create a new document reference
         batch.set(docRef, sanitizeData({ ...entry, uid })); // Add to the batch
 
         // Update totals for the corresponding picker
         const pid = entry.pid; // Assuming entry contains pid
         if (pickerTotals[pid]) {
           pickerTotals[pid].totalGiven += parseFloat(entry.amount); // Add current amount
+          addMultipleNotification(
+            {
+              data: entry,
+              type: 'picker',
+              message: `${auth().currentUser.displayName} added ${currencyFormat(
+                entry?.amount,
+              )} ${strings.given_amount}!!`,
+            },
+            pickerTotals[pid] // Assuming each entry has a picker field
+          );
         }
       });
 
@@ -346,7 +364,7 @@ export const addPickerExpense = (data, picker) => {
     try {
       let uid = auth().currentUser?.uid;
       firestore()
-        .collection('picker_expense')
+        .collection('pickers_expense')
         .add(sanitizeData({ ...data, uid }));
       firestore()
         .collection('pickers_data')
@@ -418,7 +436,7 @@ export const getAllPickerExpense = name => {
     try {
       let userId = auth().currentUser?.uid;
       firestore()
-        .collection('picker_expense')
+        .collection('pickers_expense')
         .where('uid', '==', userId)
         .get()
         .then(querySnapshot => {
@@ -437,7 +455,7 @@ export const getAllPickerExpense = name => {
 export const deletePickerExpense = id => {
   return new Promise(function (resolve, reject) {
     try {
-      firestore().collection('picker_expense').doc(id).delete();
+      firestore().collection('pickers_expense').doc(id).delete();
       resolve('success');
     } catch (error) {
       reject(new Error(error));
@@ -498,7 +516,7 @@ export const updatePickersCalculation = data => {
 export const updatePickerExpense = (data, oldData, picker) => {
   return new Promise(function (resolve, reject) {
     try {
-      firestore().collection('picker_expense').doc(data?.id).update(data);
+      firestore().collection('pickers_expense').doc(data?.id).update(data);
       addMultipleNotification(
         {
           data,
@@ -540,6 +558,7 @@ export const deletePickerCottonWeight = (data, picker) => {
 export const deletePickerCollection = async (picker) => {
   try {
     const uid = auth()?.currentUser?.uid;
+
     const deletePickerCottonWeight = await firestore()
       .collection('picker_cotton_weight')
       .where('pid', '==', picker?.id)
@@ -553,7 +572,7 @@ export const deletePickerCollection = async (picker) => {
       });
 
     const deletePickerExpense = await firestore()
-      .collection('picker_expense')
+      .collection('pickers_expense')
       .where('pid', '==', picker?.id)
       .get()
       .then(querySnapshot => {
@@ -666,3 +685,180 @@ export const getGroupMembersData = group => {
     }
   });
 };
+
+export const migrateData = async () => {
+  try {
+    // Fetch all documents from the old collections
+    const oldPickersSnapshot = await firestore().collection('picker').get();
+    const oldExpensesSnapshot = await firestore().collection('picker_expense').get();
+
+    const batch = firestore().batch();
+    console.log('------1--------')
+    // Migrate pickers to pickers_data
+    // Migrate pickers to pickers_data
+    const uniqueNamesMap = {}; // Track unique names for each UID
+
+    for (const doc of oldPickersSnapshot.docs) {
+      const oldData = doc.data();
+      const uid = oldData.uid;
+      const basePickerName = oldData.picker;
+
+      // Initialize the unique names map for the UID if not already set
+      if (!uniqueNamesMap[uid]) {
+        uniqueNamesMap[uid] = {}; // Use a Set to track unique picker names
+      }
+
+      // Check if the basePickerName already exists for this UID
+      if (!uniqueNamesMap[uid][basePickerName]) {
+        // Store the base picker name and its pid
+        uniqueNamesMap[uid][basePickerName] = {
+          pid: doc.id // Store the pid here
+        };
+
+        const newPickerData = {
+          createdAt: oldData.date,
+          full_access: [uid],
+          name: basePickerName, // Use the original name here
+          phone: oldData.phone || "",
+          rate: oldData.rate,
+          read_access: [],
+          total_earning: 0,
+          total_given: 0,
+          total_weight: 0,
+          uid: uid,
+          id: doc.id, // Use old document ID if needed
+          updatedAt: Date.now(),
+        };
+
+        const newPickerDocRef = firestore().collection('pickers_data').doc(doc.id); // Use auto-generated ID
+        batch.set(newPickerDocRef, newPickerData);
+        // console.log('----', { newPickerData });
+      }
+    }
+
+
+    console.log(oldPickersSnapshot.size, uniqueNamesMap);
+    console.log('------2-------');
+
+    // Migrate expenses to pickers_expense
+    // Create a map to track unique expenses by date
+    const uniqueExpenses = new Map();
+
+    // Migrate expenses to pickers_expense
+    for (const doc of oldExpensesSnapshot.docs) {
+      const oldExpenseData = doc.data();
+
+      // Skip processing if the amount is zero
+      if (oldExpenseData.amount === "0" || oldExpenseData.amount === 0) {
+        continue;
+      }
+
+      const date = oldExpenseData.date;
+
+      // Check if this date has already been processed
+      if (!uniqueExpenses.has(date)) {
+        uniqueExpenses.set(date, oldExpenseData); // Store the data for this date
+
+        const existingExpenseRef = firestore().collection('pickers_expense').where('date', '==', date);
+        const existingExpenses = await existingExpenseRef.get();
+
+        // Check if an entry with the same date already exists in the new collection
+        if (existingExpenses.empty) {
+          // Retrieve the pid from uniqueNamesMap
+          const uniquePickerName = oldExpenseData.picker;
+          const uid = oldExpenseData.uid;
+
+          // Find the corresponding pid from uniqueNamesMap
+          let pid = null;
+          if (uniqueNamesMap[uid] && uniqueNamesMap[uid][uniquePickerName]) {
+            pid = uniqueNamesMap[uid][uniquePickerName].pid; // Access the pid directly
+          }
+          if (pid) {
+            const newExpenseData = {
+              amount: oldExpenseData.amount,
+              date: oldExpenseData.date,
+              detail: oldExpenseData.detail || "",
+              pid: pid || "", // Use the pid found from uniqueNamesMap
+              uid: oldExpenseData.uid,
+            };
+
+            // Set the new document in the batch
+            const newExpenseDocRef = firestore().collection('pickers_expense').doc(); // Use auto-generated ID
+            batch.set(newExpenseDocRef, newExpenseData);
+            console.log({ newExpenseData });
+          }
+        }
+      }
+    }
+
+
+
+    console.log('------3--------', oldPickersSnapshot.size)
+    // Migrate cotton weight to picker_cotton_weight
+    // Create a map to track unique entries by date
+    const uniqueCottonWeights = new Map();
+
+    // Migrate cotton weight to picker_cotton_weight
+    for (const doc of oldPickersSnapshot.docs) {
+      const oldCottonWeightData = doc.data();
+
+      // Only proceed if weight is greater than zero
+      if (oldCottonWeightData.weight > 0) {
+        const date = oldCottonWeightData.date;
+
+        // Check if this date has already been processed
+        if (!uniqueCottonWeights.has(date)) {
+          uniqueCottonWeights.set(date, oldCottonWeightData); // Store the data for this date
+
+          const existingCottonWeightRef = firestore().collection('picker_cotton_weight').where('date', '==', date);
+          const existingCottonWeights = await existingCottonWeightRef.get();
+
+          console.log(existingCottonWeights.empty, 'existingCottonWeights.empty', oldCottonWeightData.weight);
+
+          // Check if an entry with the same date already exists in the new collection
+          if (existingCottonWeights.empty) {
+            // Retrieve the pid from uniqueNamesMap
+            const uniquePickerName = oldCottonWeightData.picker;
+            const uid = oldCottonWeightData.uid;
+
+            // Find the corresponding picker to get the pid
+            let pid = null;
+            if (uniqueNamesMap[uid] && uniqueNamesMap[uid][uniquePickerName]) {
+              pid = uniqueNamesMap[uid][uniquePickerName].pid; // Access the pid directly
+            }
+            if (pid) {
+              const newCottonWeightData = {
+                date: oldCottonWeightData.date,
+                detail: oldCottonWeightData.detail || "",
+                pid: pid, // Use the pid found from the picker data
+                rate: oldCottonWeightData.rate,
+                uid: oldCottonWeightData.uid,
+                weight: oldCottonWeightData.weight || "0",
+              };
+
+              // Set the new document in the batch
+              const newCottonWeightDocRef = firestore().collection('picker_cotton_weight').doc(); // Use auto-generated ID
+              batch.set(newCottonWeightDocRef, newCottonWeightData);
+
+              console.log({ newCottonWeightData });
+            }
+          }
+        }
+      }
+    }
+
+    console.log('------4--------')
+
+    // Commit the batch if there are any writes
+    if (batch._writes.length > 0) {
+      await batch.commit();
+      console.log('Migration completed successfully.');
+    } else {
+      console.log('No new entries to migrate.');
+    }
+  } catch (error) {
+    console.error('Migration failed:', error);
+  }
+};
+
+

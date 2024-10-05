@@ -25,7 +25,7 @@ export default function Notifications() {
     }, []);
 
     useFocusEffect(fetchData);
-    console.log({ notifications });
+
     return (
         <BaseView>
             <Header back label={'Notifications'} />

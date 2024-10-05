@@ -56,7 +56,7 @@ export default function Setting({ navigation }) {
   const onBackupPress = async () => {
     try {
       setCreatingBackup(true);
-      user?.email == 'harjinders799@gmail.com'
+      user?.email == 'harjinders799@gmail.com' || __DEV__
         ? await backupData()
         : await backupUserData();
     } catch (error) {

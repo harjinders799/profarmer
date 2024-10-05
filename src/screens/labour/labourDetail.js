@@ -48,7 +48,7 @@ const LabourDetail = ({ navigation }) => {
       if (unsubscribeExpense) unsubscribeExpense();
     };
   }, [data]);
-  console.log({ work, expense })
+
   const totalLabour = useMemo(() => sumBy(work, o => parseFloat(o?.count)), [work]);
   const labourAmount = useMemo(() => currencyFormat(sumBy(work, o => parseFloat(o?.count) * parseFloat(o?.rate))), [work]);
   const givenAmount = useMemo(() => currencyFormat(sumBy(expense, o => parseFloat(o?.amount))), [expense]);

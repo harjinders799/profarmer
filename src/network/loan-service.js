@@ -55,16 +55,18 @@ export const loansDataListener = (
           .orderBy('date', 'desc')
           .onSnapshot(subSnapshot => {
             const transactions = [];
-            subSnapshot.forEach(transactionDoc => {
-              transactions.push({
-                ...transactionDoc.data(),
-                lid: doc.id,
-                id: transactionDoc.id,
+            if (!subSnapshot?.empty) {
+              subSnapshot.forEach(transactionDoc => {
+                transactions.push({
+                  ...transactionDoc.data(),
+                  lid: doc.id,
+                  id: transactionDoc.id,
+                });
               });
-            });
-            loanData.transactions = transactions;
+              loanData.transactions = transactions;
 
-            calculateLoanDetails(loansData, loanData);
+              calculateLoanDetails(loansData, loanData);
+            }
           });
 
         unsubscribeFunctions.push(unsubscribe);
@@ -253,55 +255,55 @@ export const deleteLoanCollection = id => {
 
 const db = firestore();
 
-function migrateLoanData() {
-  const userId = auth().currentUser?.uid;
+export async function migrateLoanData() {
   try {
     const oldLoansRef = db.collection('loan');
-    const snapshot = oldLoansRef.where('uid', '==', userId).get();
+    const snapshot = await oldLoansRef.get();
 
     if (snapshot.empty) {
       console.log('No loan documents found.');
       return;
     }
+
     const userMap = new Map();
-    // Organize data by UID and third-party names
+
     snapshot.forEach(doc => {
       const oldData = doc.data();
       const uid = oldData.uid;
       const id = doc.id;
       const interest_rate = oldData.interest_rate;
-      // console.log(oldData.giver, '---', oldData.receiver, '==', oldData.giver == uid, '---', uid)
-      const name = oldData.giver == uid ? oldData.receiver : oldData.giver;
-      // console.log(name)
+      const name = oldData.giver === uid ? oldData.receiver : oldData.giver;
 
-      if (!userMap.has(name) && name != uid) {
+      if (!userMap.has(name) && name !== uid) {
         userMap.set(name, {
           name,
           uid,
           id,
           interest_rate,
           phone: oldData?.phone ?? '',
-          transactions: [],
+          transactions: new Map(), // Store transactions by date
         });
       }
 
+      const transactionDate = oldData.date; // Ensure this is in a comparable format
       const transactionData = {
-        amount: parseFloat(oldData.amount), // Convert to number
+        amount: parseFloat(oldData.amount),
         type: oldData.giver === uid ? 'giver' : 'receiver',
-        date: oldData.date,
+        date: transactionDate,
         detail: oldData.detail,
-        id: id + 'x',
+        id: id + 'x', // Append 'x' to ensure uniqueness
       };
 
-      if (name != uid && parseFloat(oldData.amount) !== 0)
-        userMap.get(name).transactions.push(transactionData);
+      // Check if the transaction date already exists for the user
+      if (name !== uid && parseFloat(oldData.amount) !== 0 && !userMap.get(name).transactions.has(transactionDate)) {
+        userMap.get(name).transactions.set(transactionDate, transactionData);
+      }
     });
+
     const batch = db.batch();
 
     userMap.forEach(userData => {
       const newLoanRef = db.collection('loans_data').doc(userData.id);
-
-      // Main user document
       const newLoanData = {
         uid: userData.uid,
         id: userData.id,
@@ -310,25 +312,27 @@ function migrateLoanData() {
         interest_rate: userData.interest_rate,
         read_access: [],
         full_access: [userData.uid],
-        transactions: [], // This field can be omitted if you don't need an array in the main document
+        transactions: [], // This field can still be kept if needed
       };
+
       batch.set(newLoanRef, newLoanData);
 
       // Transactions subcollection
-      userData.transactions.forEach(transaction => {
-        const transactionRef = newLoanRef
-          .collection('transactions')
-          .doc(transaction.id);
-        batch.set(transactionRef, transaction);
+      userData.transactions.forEach((transaction) => {
+        console.log({ transaction })
+        // const transactionData = transaction[1]; // Get the transaction data from the Map
+        // console.log({ transactionData })
+        const transactionRef = newLoanRef.collection('transactions').doc(transaction.id);
+        batch.set(transactionRef, transaction); // Use the transactionData directly
       });
     });
 
-    batch.commit();
+    await batch.commit(); // Await the batch commit
     console.log('Migration completed successfully.');
   } catch (error) {
     console.log('Migration not completed successfully:', error);
   }
 }
 
-// migrateLoanData().catch(error => console.log(error));
-// debounce(migrateLoanData, 300)
+
+

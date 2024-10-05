@@ -137,11 +137,15 @@ const Login = ({ navigation }) => {
           alignItems: 'center',
           width: '90%',
           margin: '5%',
+          paddingBottom: 150
         }}
         keyboardShouldPersistTaps="handled">
         <Logo />
-        <Text h2 style={{ marginBottom: 50 }}>
+        <Text h2 style={{ marginBottom: 20 }}>
           {strings.welcome}
+        </Text>
+        <Text h4 justify color={colors.warning} style={{ marginBottom: 10 }}>
+          {strings.loginMessage}
         </Text>
         <Input
           numberType
