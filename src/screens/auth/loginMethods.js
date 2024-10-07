@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
 import BaseView from 'src/container/base';
-import { WIDTH } from 'src/utils/constants';
+import { isIOS, WIDTH } from 'src/utils/constants';
 import Button from 'src/components/button';
 import auth from '@react-native-firebase/auth';
 import Logo from 'src/container/logo';
@@ -23,6 +23,11 @@ import { orange } from '@utils/colors';
 GoogleSignin.configure({
   webClientId:
     '416058833468-5rn56d49jdg3ar3e0mp2o4e5nio1o65g.apps.googleusercontent.com',
+  scopes: [
+    'https://www.googleapis.com/auth/userinfo.email', // Request email
+    'https://www.googleapis.com/auth/userinfo.profile', // Request basic profile info
+    'https://www.googleapis.com/auth/user.phonenumbers.read', // Request basic phone info
+  ],
 });
 const LoginMethods = ({ navigation }) => {
   const { colors } = useTheme();
@@ -39,9 +44,6 @@ const LoginMethods = ({ navigation }) => {
 
       // Sign-in the user with the credential
       auth().signInWithCredential(googleCredential);
-      // replace('Main');
-      // this.setState({ userInfo });
-      setLoading(false);
     } catch (error) {
       setLoading(false);
       console.log(error);
@@ -64,7 +66,7 @@ const LoginMethods = ({ navigation }) => {
           borderRadius: 0,
           borderTopLeftRadius: 10,
           borderBottomLeftRadius: 10,
-          width: '40%',
+          maxWidth: '40%',
           height: 40,
         }}
       />
@@ -77,42 +79,9 @@ const LoginMethods = ({ navigation }) => {
         }}
         keyboardShouldPersistTaps="handled">
         <Logo />
-        <Text h2>{strings.welcome}</Text>
-        {/* <Input
-          numberType
-          maxLength={10}
-          leftComponent={
-            <View style={styles.row}>
-              <Icon
-                name="phone"
-                type="Feather"
-                color={colors.primary}
-                size={20}
-              />
-              <Text h3 pl={10}>
-                +91123
-              </Text>
-            </View>
-          }
-          placeholder={strings.phone}
-          value={state.phone}
-          inputStyle={{width: '70%'}}
-          setValue={text => setState({...state, phone: text})}
-        /> */}
-        {/* {confirm ? (
-          <OtpInputs
-            autofillFromClipboard
-            autofillListenerIntervalMS={3000}
-            handleChange={handleOtp}
-            numberOfInputs={6}
-            style={styles.otp}
-            inputContainerStyles={[styles.cell, {borderColor: colors.text}]}
-            inputStyles={[styles.cellTxt, {color: colors.text}]}
-            textBreakStrategy="highQuality"
-          />
-        ) : (
-          <Button label={strings.login} onPress={signIn} />
-        )} */}
+        <Text h2 style={{ marginBottom: 30 }}>
+          {strings.welcome}
+        </Text>
         <Button
           label="Sign-In With Email"
           iconName="email"
@@ -121,14 +90,16 @@ const LoginMethods = ({ navigation }) => {
           btnStyle={{ backgroundColor: orange }}
           onPress={() => navigate('SignInWithEmail')}
         />
-        <Button
-          label="Sign-In With Phone"
-          iconName="screen-smartphone"
-          iconType="SimpleLineIcons"
-          iconColor={colors.background}
-          btnStyle={{ backgroundColor: '#34A853' }}
-          onPress={() => navigate('Login')}
-        />
+        {__DEV__ ? (
+          <Button
+            label="Sign-In With Phone"
+            iconName="screen-smartphone"
+            iconType="SimpleLineIcons"
+            iconColor={colors.background}
+            btnStyle={{ backgroundColor: '#34A853' }}
+            onPress={() => navigate('Login')}
+          />
+        ) : null}
         <Button
           label="Sign-In With Google"
           iconName="google"
@@ -136,6 +107,9 @@ const LoginMethods = ({ navigation }) => {
           btnStyle={{ backgroundColor: '#4285F4' }}
           onPress={signInG}
         />
+        <Text center h4 onPress={() => navigate('ContactUs')}>
+          {strings.needHelp}
+        </Text>
         {/* <Button
           label="Sign-In With FaceBook"
           iconName="facebook"

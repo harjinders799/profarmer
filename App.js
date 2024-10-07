@@ -18,6 +18,8 @@ import messaging from '@react-native-firebase/messaging';
 import auth from '@react-native-firebase/auth';
 import { getFCMToken, saveTokenToFirestore } from '@network/auth-service';
 import notifee, { AndroidImportance } from '@notifee/react-native';
+import { MenuProvider } from 'react-native-popup-menu';
+import { black } from '@utils/colors';
 
 export default function App() {
   const [version, setVersion] = useState();
@@ -132,7 +134,14 @@ export default function App() {
               <AadtProvider>
                 {/* <TimelineProvider> */}
                 <LangProvider>
-                  <Navigation />
+                  <MenuProvider customStyles={{
+                    backdrop: {
+                      backgroundColor: black,
+                      opacity: 0.5,
+                    }
+                  }}>
+                    <Navigation />
+                  </MenuProvider>
                 </LangProvider>
                 {/* </TimelineProvider> */}
               </AadtProvider>

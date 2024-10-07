@@ -14,6 +14,7 @@ import { deleteLabour, submitLabour, updateLabour } from '@network/labour-servic
 import Header from '@components/header';
 import { FadeInDown } from 'react-native-reanimated';
 import { common } from '@utils/style';
+import { onChangeValue } from '@utils/helper';
 
 export default function AddLabour() {
   const { colors } = useTheme();
@@ -31,12 +32,6 @@ export default function AddLabour() {
   const [loading, setLoading] = useState(false);
   const { detail, rate, date, count } = data;
 
-  const onChangeValue = (key, value, isNumberOnly = false) => {
-    setData(prevData => ({
-      ...prevData,
-      [key]: isNumberOnly ? value.replace(/[^0-9]/g, '') : value,
-    }));
-  };
 
   const handleSubmit = useCallback(async () => {
     if (editData?.date && editData?.count && editData?.cid) {
@@ -140,7 +135,7 @@ export default function AddLabour() {
               placeholder={'1, 2, 3...'}
               value={count}
               keyboardType="number-pad"
-              setValue={value => onChangeValue('count', value, true)}
+              setValue={value => onChangeValue({ setData, key: 'count', value, isAmount: true })}
               style={{ width: '48%' }}
             />
             <Input
@@ -149,7 +144,7 @@ export default function AddLabour() {
               placeholder={' ₹300, ₹400...'}
               value={currencyInput(rate)}
               keyboardType="number-pad"
-              setValue={value => onChangeValue('rate', value, true)}
+              setValue={value => onChangeValue({ setData, key: 'rate', value, isAmount: true })}
               style={{ width: '48%' }}
             />
           </View>
@@ -160,7 +155,7 @@ export default function AddLabour() {
             multiline
             autoCapitalize="words"
             value={detail}
-            setValue={value => onChangeValue('detail', value)}
+            setValue={value => onChangeValue({ setData, key: 'detail', value })}
           />
           <Pressable
             onPress={() => {
@@ -184,7 +179,7 @@ export default function AddLabour() {
             show={showDate}
             setShow={setShowDate}
             date={date}
-            setDate={data => onChangeValue('date', data)}
+            setDate={value => onChangeValue({ setData, key: 'date', value })}
           />
           <Button
             entering={FadeInDown.delay(600)}

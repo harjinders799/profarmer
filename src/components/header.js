@@ -18,12 +18,14 @@ const Header = ({
   leftComponent,
   back = false,
   share = false,
+  more = false,
   deleteIcon = false,
   fullScreen = false,
   notification = false,
   notificationCount = 0,
   onSharePress = null,
   onDeletePress = null,
+  onMorePress = null,
   rightComponent,
   style,
   txtStyle,
@@ -89,7 +91,14 @@ const Header = ({
             ) : null}
           </Pressable>
         ) : null}
-        {share || deleteIcon ? (
+        {more ? (
+          <Icon
+            name="more-vert"
+            type="MaterialIcons"
+            size={30}
+            onPress={onMorePress}
+          />
+        ) : share || deleteIcon ? (
           <View
             style={[
               common.row_btw,
@@ -137,7 +146,7 @@ const styles = StyleSheet.create({
     aspectRatio: 1,
     textAlign: 'center',
     lineHeight: 18,
-    overflow: 'hidden'
+    overflow: 'hidden',
   },
 });
 export default Header;

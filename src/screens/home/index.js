@@ -16,12 +16,15 @@ import { useLang } from '@context/langContext';
 import { getAccessToken, updateReadAccessToUID } from '@network/auth-service';
 import Loader from '@components/loader';
 import { notificationCountListener } from '@network/common-service';
-
+import Button from '@components/button';
+import { backupUserData } from '@network/labour-service';
+import auth from '@react-native-firebase/auth';
 export default function Home() {
     const { colors } = useTheme();
     const { user } = useAuth();
     const { lang } = useLang();
     const [loading, setLoading] = useState(true);
+    const [backupCreating, setBackupCreating] = useState(false);
     const [notificationCount, setNotificationCount] = useState(0);
 
     const tabs = [...tabsData];
@@ -31,7 +34,9 @@ export default function Home() {
         useCallback(() => {
             if (
                 user?.id &&
-                (!user?.phone || !user?.name || (user?.phone && user.phone.length == 10))
+                (!user?.phone ||
+                    !user?.name ||
+                    (user?.phone && user.phone.length == 10))
             ) {
                 navigate('EditProfile');
                 return ToastError(strings.complete_profile);
@@ -61,6 +66,17 @@ export default function Home() {
         }, [user, lang]),
     );
 
+    const onBackupPress = async () => {
+        try {
+            setBackupCreating(true);
+            await backupUserData();
+        } catch (error) {
+            ToastError(error?.message);
+        } finally {
+            setBackupCreating(false);
+        }
+    };
+
     return (
         <BaseView>
             <Header
@@ -70,11 +86,11 @@ export default function Home() {
                 notificationCount={notificationCount}
             />
             <Loader visible={loading} />
-            <ScrollView
-                showsVerticalScrollIndicator={false}
-                contentContainerStyle={[
-                    common.row_btw,
-                    { flexWrap: 'wrap', paddingHorizontal: 20, paddingBottom: 150 },
+            <View
+                style={[
+                    { width: '90%', backgroundColor: colors.background },
+                    common.shadow,
+                    common.card,
                 ]}>
                 <Text justify color={colors.warning} style={{ width: '100%' }}>
                     <Text bold color={colors.warning}>
@@ -82,6 +98,19 @@ export default function Home() {
                     </Text>
                     {strings.backup_data_warning}
                 </Text>
+                <Button
+                    small
+                    label={'Backup Now'}
+                    loading={backupCreating}
+                    onPress={onBackupPress}
+                />
+            </View>
+            <ScrollView
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={[
+                    common.row_btw,
+                    { flexWrap: 'wrap', paddingHorizontal: 20, paddingBottom: 150 },
+                ]}>
                 {tabs.map(tab => (
                     <TouchableOpacity
                         onPress={() => navigate(tab.name)}

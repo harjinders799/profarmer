@@ -7,7 +7,6 @@ import Input from 'src/components/input';
 import Text from 'src/components/text';
 import DateTimePick from 'src/components/DateTime';
 import { currentStamp, dateFormat } from 'src/utils/dateformat';
-import { submitInterestAmount } from 'src/network/interest-service';
 import Loader from 'src/components/loader';
 import BaseView from 'src/container/base';
 import { ToastError, ToastSuccess } from 'src/utils/toast';
@@ -15,21 +14,15 @@ import { strings } from 'src/translations/locale';
 import { navigate } from 'src/navigation/ref';
 import { useStore } from 'src/context/context';
 import { goBack } from 'src/navigation/ref';
-import { updateIneterstAmt } from 'src/network/interest-service';
-import Checkbox from '../../components/checkbox';
 import {
   addNewLabour,
-  getLabourRagular,
-  submitLabour,
   updateLabour,
 } from '../../network/labour-service';
 import Header from '../../components/header';
-import Icon from '../../components/icon';
 import { currencyInput } from '../../utils/dateformat';
 import { blue, gray3, black, orange } from '../../utils/colors';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { common } from '@utils/style';
-import firestore from '@react-native-firebase/firestore';
 import { onChangeValue } from '@utils/helper';
 
 export default function NewLabour() {
@@ -194,7 +187,7 @@ export default function NewLabour() {
           show={showDate}
           setShow={setShowDate}
           date={start_date}
-          setDate={data => onChangeValue('start_date', data)}
+          setDate={value => onChangeValue({ setData, key: 'start_date', value })}
         />
         <Button
           entering={FadeInDown.delay(600)}

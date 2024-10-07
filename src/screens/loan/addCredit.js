@@ -22,6 +22,7 @@ import { FadeInDown } from 'react-native-reanimated';
 import Checkbox from '@components/checkbox';
 import { common } from '@utils/style';
 import { useLang } from '@context/langContext';
+import { onChangeValue } from '@utils/helper';
 
 export default function AddCredit() {
   const { colors } = useTheme();
@@ -39,12 +40,6 @@ export default function AddCredit() {
   });
   const { type, amount, detail, date } = data;
 
-  const onChangeValue = (key, value, isNumberOnly = false) => {
-    setData({
-      ...data,
-      [key]: isNumberOnly ? value.replace(/[^0-9]/g, '') : value,
-    });
-  };
   const onPress = () => {
     if (editItem?.lid) updateData();
     else AddNew();
@@ -107,7 +102,7 @@ export default function AddCredit() {
             label={`${lang?.code !== 'en' ? editData?.name : ''} ${strings.gave_him
               } ${lang?.code == 'en' ? editData?.name : ''}`}
             style={{ width: '50%', marginTop: 10 }}
-            onPress={() => onChangeValue('type', 'giver')}
+            onPress={() => onChangeValue({ setData, key: 'type', value: 'giver' })}
           />
           <Checkbox
             isChecked={type == 'receiver'}
@@ -115,7 +110,7 @@ export default function AddCredit() {
             label={`${lang?.code !== 'en' ? editData?.name : ''} ${strings.received_from
               } ${lang?.code == 'en' ? editData?.name : ''}`}
             style={{ width: '50%', marginTop: 10 }}
-            onPress={() => onChangeValue('type', 'receiver')}
+            onPress={() => onChangeValue({ setData, key: 'type', value: 'receiver' })}
           />
         </View>
         <Input
@@ -126,7 +121,7 @@ export default function AddCredit() {
           placeholder={'Rs'}
           value={currencyInput(amount)}
           autoFocus
-          setValue={value => onChangeValue('amount', value, true)}
+          setValue={value => onChangeValue({ setData, key: 'amount', value, isAmount: true })}
           keyboardType="numeric"
         />
         <Input
@@ -136,7 +131,7 @@ export default function AddCredit() {
           multiline
           autoCapitalize="words"
           value={detail}
-          setValue={value => onChangeValue('detail', value)}
+          setValue={value => onChangeValue({ setData, key: 'detail', value })}
         />
         <Pressable
           onPress={() => {
@@ -159,7 +154,7 @@ export default function AddCredit() {
           show={showDate}
           setShow={setShowDate}
           date={date}
-          setDate={data => onChangeValue('date', data)}
+          setDate={value => onChangeValue({ setData, key: 'date', value })}
         />
         <Button
           entering={FadeInDown.delay(500)}

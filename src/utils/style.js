@@ -73,10 +73,11 @@ export const common = StyleSheet.create({
     width: '90%',
   },
   card: {
-    borderRadius: 10,
     padding: 10,
     alignItems: 'center',
     justifyContent: 'center',
+    borderRadius: 10,
+    overflow: 'hidden',
   },
   fullWidth: {
     width: '100%',

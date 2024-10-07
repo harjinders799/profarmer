@@ -24,6 +24,7 @@ import {
 import Header from '@components/header';
 import { currencyInput } from '@utils/dateformat';
 import { FadeInDown } from 'react-native-reanimated';
+import { onChangeValue } from '@utils/helper';
 
 export default function AddLabourExpense() {
   const { colors } = useTheme();
@@ -41,13 +42,6 @@ export default function AddLabourExpense() {
   const [loading, setLoading] = React.useState(false);
   const { detail, amount, date } = data;
 
-  // Handle input changes
-  const onChangeValue = (key, value, isNumberOnly = false) => {
-    setData({
-      ...data,
-      [key]: isNumberOnly ? value.replace(/[^0-9]/g, '') : value,
-    });
-  };
 
   // Handle form submission
   const handleSubmit = React.useCallback(async () => {
@@ -133,7 +127,7 @@ export default function AddLabourExpense() {
             placeholder={strings.given_amount_to_labour}
             value={currencyInput(amount)}
             keyboardType="number-pad"
-            setValue={value => onChangeValue('amount', value, true)}
+            setValue={value => onChangeValue({ setData, key: 'amount', value, isAmount: true })}
           />
           <Input
             entering={FadeInDown.delay(400)}
@@ -142,7 +136,7 @@ export default function AddLabourExpense() {
             multiline
             autoCapitalize="words"
             value={detail}
-            setValue={value => onChangeValue('detail', value)}
+            setValue={value => onChangeValue({ setData, key: 'detail', value })}
           />
           <Pressable
             onPress={() => {
@@ -166,7 +160,7 @@ export default function AddLabourExpense() {
             show={showDate}
             setShow={setShowDate}
             date={date}
-            setDate={data => onChangeValue('date', data)}
+            setDate={value => onChangeValue({ setData, key: 'date', value })}
           />
           <Button
             entering={FadeInDown.delay(600)}

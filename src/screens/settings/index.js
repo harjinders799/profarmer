@@ -13,7 +13,7 @@ import Text from '@components/text';
 import { HEIGHT } from '@utils/constants';
 import { useLang } from '@context/langContext';
 import Icon from '@components/icon';
-import { gray3, white, black } from '@utils/colors';
+import { gray3, white, black, red } from '@utils/colors';
 import { strings } from '@translations/locale';
 import { useAuth } from '@context/authContext';
 import Loader from '@components/loader';
@@ -21,11 +21,14 @@ import Header from '@components/header';
 import { navigate } from '@navigation/ref';
 import { backupData, backupUserData } from '@network/labour-service';
 import { ToastError } from '@utils/toast';
+import DeleteModal from '@container/deleteModal';
+import auth from '@react-native-firebase/auth';
 
 export default function Setting({ navigation }) {
   const { lang, setTheme, theme } = useLang();
   const { user, reset } = useAuth();
   const [loading, setLoading] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
   const [creatingBackup, setCreatingBackup] = useState(false);
 
   useEffect(() => { }, [lang]);
@@ -63,6 +66,47 @@ export default function Setting({ navigation }) {
       ToastError(error?.message);
     } finally {
       setCreatingBackup(false);
+    }
+  };
+
+  const onDelete = async () => {
+    try {
+      setLoading(true)
+      // Get the current user's token
+      const token = await auth().currentUser.getIdToken();
+
+      // Prepare headers
+      const headers = new Headers({
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      });
+
+      // Prepare the request body
+      const body = JSON.stringify({
+        userId: auth().currentUser.uid,
+      });
+
+      // Make the API request
+      const response = await fetch(
+        'https://deleteuseranddata-ipdubtzi4q-uc.a.run.app',
+        {
+          method: 'POST',
+          headers: headers,
+          body: body,
+        },
+      );
+
+      // Handle the response
+      const result = await response.json();
+      if (response.ok) {
+        reset(); // Call reset function on success
+      } else {
+        ToastError(result?.error || strings.unknownError);
+      }
+    } catch (error) {
+      ToastError(error?.message || strings.unknownError);
+    } finally {
+      setLoading(false)
     }
   };
 
@@ -136,7 +180,22 @@ export default function Setting({ navigation }) {
             <Text style={styles.txt}>{strings.logOut}</Text>
             <Icon name="logout" size={25} />
           </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.row}
+            onPress={() => setOpenModal(true)}>
+            <Text color={red} style={styles.txt}>
+              {strings.delete_account}
+            </Text>
+            <Icon color={red} name="deleteuser" size={25} />
+          </TouchableOpacity>
         </View>
+        <DeleteModal
+          openModal={openModal}
+          setOpenModal={setOpenModal}
+          data={{}}
+          customDescription={`${strings.alert_account_delete}`}
+          onDelete={onDelete}
+        />
       </ScrollView>
     </BaseView>
   );

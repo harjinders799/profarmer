@@ -4,7 +4,7 @@ import { useLang } from '@context/langContext';
 import Loader from '@components/loader';
 import { strings } from '@translations/locale';
 import Button from '@components/button';
-import { goBack, navigate } from '@navigation/ref';
+import { goBack, navigate, replace } from '@navigation/ref';
 import { useFocusEffect, useRoute, useTheme } from '@react-navigation/native';
 import Header from '@components/header';
 import { useAuth } from '@context/authContext';
@@ -29,6 +29,7 @@ import Icon from '@components/icon';
 import { pickerHTMLFormat } from '@html/picker';
 import RNHTMLtoPDF from 'react-native-html-to-pdf';
 import Share from 'react-native-share';
+import PickerMenuModal from '@container/picker/pickerMenuModal';
 
 // Lazy load components
 const PickerExpenseDetail = lazy(() =>
@@ -117,11 +118,23 @@ function PickerDetail() {
             <Header
                 back
                 label={owner?.name}
-                deleteIcon={item?.uid == uid}
-                onDeletePress={() => setOpenModal(true)}
-                share
-                onSharePress={handleShare}
+                // deleteIcon={item?.uid == uid}
+                // onDeletePress={() => setOpenModal(true)}
+                // share
+                // more
+                // // onMorePress={se}
+                // onSharePress={handleShare}
+                rightComponent={
+                    item?.uid == uid ? (
+                        <PickerMenuModal
+                            handleShare={handleShare}
+                            onDeletePress={() => setOpenModal(true)}
+                            onEditPress={() => replace('AddPicker', { item, weights: pickersWeightData })}
+                        />
+                    ) : null
+                }
             />
+
             <Text center h5 style={{ textDecorationLine: 'underline' }}>
                 <Icon name={'phone'} type="Feather" size={16} /> {owner?.phone}
             </Text>

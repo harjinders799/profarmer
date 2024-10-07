@@ -23,6 +23,7 @@ import {
 } from '@network/labour-service';
 import Header from '@components/header';
 import { FadeInDown } from 'react-native-reanimated';
+import { onChangeValue } from '@utils/helper';
 
 export default function AddLabourLeave() {
   const { colors } = useTheme();
@@ -38,13 +39,6 @@ export default function AddLabourLeave() {
   const [loading, setLoading] = React.useState(false);
 
   const { detail, date, count } = data;
-
-  const onChangeValue = (key, value, isNumberOnly = false) => {
-    setData({
-      ...data,
-      [key]: isNumberOnly ? value.replace(/[^0-9]/g, '') : value,
-    });
-  };
 
   const handleSubmit = React.useCallback(async () => {
     if (editData?.date && editData?.count && editData?.cid) updateData();
@@ -123,7 +117,7 @@ export default function AddLabourLeave() {
             autoFocus
             value={count}
             keyboardType="number-pad"
-            setValue={value => onChangeValue('count', value, true)}
+            setValue={value => onChangeValue({ setData, key: 'count', value, isAmount: true })}
           />
           <Input
             entering={FadeInDown.delay(400)}
@@ -132,7 +126,7 @@ export default function AddLabourLeave() {
             multiline
             autoCapitalize="words"
             value={detail}
-            setValue={value => onChangeValue('detail', value)}
+            setValue={value => onChangeValue({ setData, key: 'detail', value })}
           />
           <Pressable
             onPress={() => {
@@ -156,7 +150,7 @@ export default function AddLabourLeave() {
             show={showDate}
             setShow={setShowDate}
             date={date}
-            setDate={data => onChangeValue('date', data)}
+            setDate={value => onChangeValue({ setData, key: 'date', value })}
           />
           <Button
             entering={FadeInDown.delay(600)}

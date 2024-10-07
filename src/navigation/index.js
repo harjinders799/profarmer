@@ -15,6 +15,8 @@ import Stacks from './stacks';
 import LocalAuth from '../screens/auth/localAuth';
 import PinSecurity from '../screens/auth/pinSecurity';
 import { useTab } from '../context/tabContext';
+import ContactUs from '@screens/settings/contactUs';
+import SignUp from '@screens/auth/registerWithEmail';
 
 const Stack = createNativeStackNavigator();
 
@@ -63,22 +65,24 @@ export default function Navigation() {
           </Stack.Navigator>
         )
       ) : (
-        <Stack.Navigator>
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
           <Stack.Screen
             name="LoginMethods"
             component={LoginMethods}
-            options={{ headerShown: false }}
           />
           <Stack.Screen
             name="SignInWithEmail"
             component={SignInWithEmail}
-            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="SignUp"
+            component={SignUp}
           />
           <Stack.Screen
             name="Login"
             component={Login}
-            options={{ headerShown: false }}
           />
+          <Stack.Screen name="ContactUs" component={ContactUs} />
         </Stack.Navigator>
       )}
       {/* <AdBanner /> */}

@@ -18,13 +18,14 @@ import auth from '@react-native-firebase/auth';
 import Icon from '@components/icon';
 import Animated from 'react-native-reanimated';
 import { common } from '@utils/style';
-import { submitPicker } from '@network/picker-service';
+import { submitPicker, updatePicker } from '@network/picker-service';
 
 export default function AddPicker() {
     const user = auth().currentUser;
     const { colors } = useTheme();
     const { params } = useRoute();
-    const editData = params?.data ?? {};
+    const editData = params?.item ?? {};
+    const weights = params?.weights ?? {};
     const [data, setData] = React.useState({
         name: editData?.name ?? '',
         phone: editData?.phone ?? '',
@@ -34,6 +35,10 @@ export default function AddPicker() {
     const { name, phone, rate } = data;
     const [verifiedUser, setVerifiedUser] = useState({});
     const [checking, setChecking] = useState(false);
+
+    useEffect(() => {
+        if (editData?.phone) checkUser(editData?.phone);
+    }, [editData]);
 
     const onPress = useCallback(() => {
         if (editData?.name) {
@@ -46,14 +51,29 @@ export default function AddPicker() {
     const updateData = async () => {
         if (!name || name.trim() == '') {
             ToastError(strings.receiver_name);
-        } else if (rate.trim() == '' || parseInt(rate) <= 0) {
+        }
+        if (rate.trim() == '' || parseInt(rate) <= 0) {
             ToastError(strings.rate);
-        } else {
+        }
+        if (phone.trim() == '' || parseInt(phone) <= 0) {
+            return ToastError(strings.phone);
+        }
+        try {
             setLoading(true);
-            await updateLoanName(editData?.name, { ...data, name: name.trim() });
+            const isRateChange = editData?.rate != rate
+            await updatePicker({
+                ...data,
+                id: editData?.id,
+                total_earning: editData?.total_earning,
+                name: name.trim(),
+                receiverId: verifiedUser?.id,
+            }, isRateChange);
             setLoading(false);
             ToastSuccess(strings.successfully_updated);
             goBack();
+        } catch (error) {
+            setLoading(false);
+            ToastError(error?.message);
         }
     };
 
@@ -64,9 +84,16 @@ export default function AddPicker() {
         if (rate.trim() == '' || parseInt(rate) <= 0) {
             return ToastError(strings.rate);
         }
+        if (phone.trim() == '' || parseInt(phone) <= 0) {
+            return ToastError(strings.phone);
+        }
         try {
             setLoading(true);
-            await submitPicker({ ...data, name: name.trim(), receiverId: verifiedUser?.id });
+            await submitPicker({
+                ...data,
+                name: name.trim(),
+                receiverId: verifiedUser?.id,
+            });
             setLoading(false);
             ToastSuccess(strings.successfully_saved);
             goBack();
@@ -76,25 +103,39 @@ export default function AddPicker() {
         }
     }, [name, phone, rate]);
 
-    const checkUser = useCallback(async (value) => {
-        try {
-            setChecking(true);
-            let res = await getUserByPhone(value ?? phone);
-            if (user.uid == res?.id) ToastError("You can't add yourself");
-            else setVerifiedUser(res);
-            setChecking(false);
-        } catch (error) {
-            setChecking(false);
-            console.log(error);
-            ToastError(error?.messageHI);
-        }
-    }, [phone])
-
+    const checkUser = useCallback(
+        async value => {
+            try {
+                setChecking(true);
+                let res = await getUserByPhone(value ?? phone);
+                if (user.uid == res?.id) ToastError("You can't add yourself");
+                else setVerifiedUser(res);
+                setChecking(false);
+            } catch (error) {
+                setChecking(false);
+                console.log(error);
+                ToastError(error?.messageHI);
+            }
+        },
+        [phone],
+    );
+    let isRateEditable =
+        Array.isArray(weights) && weights.length
+            ? weights.every(item => item.rate === weights[0].rate)
+            : true;
     return (
         <BaseView space>
             <Loader visible={loading} />
-            <Header back label={editData?.name ? strings.update : strings.add_picker} />
-            <ScrollView style={styles.form} showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 150 }} automaticallyAdjustKeyboardInsets keyboardShouldPersistTaps="always">
+            <Header
+                back
+                label={editData?.name ? strings.update : strings.add_picker}
+            />
+            <ScrollView
+                style={styles.form}
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={{ paddingBottom: 150 }}
+                automaticallyAdjustKeyboardInsets
+                keyboardShouldPersistTaps="always">
                 <Input
                     label={strings.name}
                     autoFocus
@@ -111,7 +152,7 @@ export default function AddPicker() {
                     maxLength={10}
                     setValue={value => {
                         onChangeValue({ setData, key: 'phone', value, isPhone: true });
-                        if (value && value.length == 10) checkUser(value)
+                        if (value && value.length == 10) checkUser(value);
                         else setVerifiedUser(undefined);
                     }}
                     keyboardType="numeric"
@@ -152,6 +193,7 @@ export default function AddPicker() {
                     placeholder={strings.enter_rate}
                     value={currencyInput(rate)}
                     maxLength={10}
+                    editable={isRateEditable}
                     setValue={value =>
                         onChangeValue({
                             setData,
@@ -162,6 +204,11 @@ export default function AddPicker() {
                     }
                     keyboardType="numeric"
                 />
+                {isRateEditable ? null : (
+                    <Text color={colors.warning}>
+                        Warning: You can't make changes because the rates are different. Please check the rates first.
+                    </Text>
+                )}
                 <Button label={strings.save} onPress={onPress} />
             </ScrollView>
         </BaseView>

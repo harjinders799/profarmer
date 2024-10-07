@@ -150,6 +150,11 @@ export const sanitizeData = data => {
     const sanitizedData = {};
     Object.keys(data).forEach(key => {
         if (data[key] !== undefined) {
+            // Remove 'password' key and value
+            if (key === 'password') {
+                return; // Skip adding this key to sanitizedData
+            }
+
             if (key === 'phone') {
                 sanitizedData[key] = formatPhoneNumber(data[key]);
             } else {
@@ -397,6 +402,36 @@ export const formatPhoneNumber = (phone) => {
     return cleanedPhone;
 }
 
+export const checkUserLinkedData = (user) => {
+    const providerData = user?.providerData;
+    let isPhoneLinked = false;
+    let isEmailLinked = false;
+    let isEmailVerified = user?.emailVerified;
+    let isPhoneVerified = false;
+
+    // Iterate through providerData to check linked methods
+    providerData?.forEach((provider) => {
+        if (provider.providerId === 'phone') {
+            isPhoneLinked = true;
+            isPhoneVerified = true; // Phone verified if they have a phone provider
+        }
+        if (provider.providerId === 'password') {
+            isEmailLinked = true;
+        }
+    });
+
+    return {
+        isPhoneLinked,
+        isPhoneVerified,
+        isEmailLinked,
+        isEmailVerified,
+    };
+};
+
+export const isValidEmail = (email) => {
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailPattern.test(email);
+};
 
 export const tabsData = [
     {

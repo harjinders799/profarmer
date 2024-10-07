@@ -4,6 +4,8 @@ import RNFS from 'react-native-fs';
 import { formatPhoneNumber, sanitizeData } from '@utils/helper';
 import { currentStamp } from '@utils/dateformat';
 import { ToastError, ToastSuccess } from '@utils/toast';
+import RNHTMLtoPDF from 'react-native-html-to-pdf';
+
 
 const getDocumentsListener = (query, onUpdate) => {
   try {
@@ -657,15 +659,6 @@ export const backupUserData = async () => {
       .get();
     backup.crop = cropSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-    const interest_amountSnapshot = await firestore()
-      .collection('interest_amount')
-      .where('uid', '==', userId)
-      .get();
-    backup.interest_amount = interest_amountSnapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
-
     const pickerSnapshot = await firestore().collection('picker')
       .where('uid', '==', userId)
       .get();
@@ -683,13 +676,22 @@ export const backupUserData = async () => {
       ...doc.data(),
     }));
 
+    const pickers_expenseSnapshot = await firestore()
+      .collection('pickers_expense')
+      .where('uid', '==', userId)
+      .get();
+    backup.pickers_expense = pickers_expenseSnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+
     const loanSnapshot = await firestore().collection('loan')
       .where('uid', '==', userId)
       .get();
     backup.loan = loanSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-    const usersSnapshot = await firestore().collection('users').where('uid', '==', userId).get();
-    backup.users = usersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const doc = await firestore().collection('users').doc(userId).get();
+    backup.my = ({ id: doc.id, ...doc.data() });
 
     // Backup labour collection
     const labourSnapshot = await firestore().collection('labour')
@@ -730,17 +732,17 @@ export const backupUserData = async () => {
       .collection('pickers_data')
       .where('uid', '==', userId)
       .get();
-    backup.labour_pickers_data = pickers_dataSnapshot.docs.map(doc => ({
+    backup.pickers_data = pickers_dataSnapshot.docs.map(doc => ({
       id: doc.id,
       ...doc.data(),
     }));
 
     // Backup pickers_groups collection
     const pickers_groupsSnapshot = await firestore()
-      .collection('pickers_groups')
+      .collection('picker_groups')
       .where('uid', '==', userId)
       .get();
-    backup.labour_pickers_groups = pickers_groupsSnapshot.docs.map(doc => ({
+    backup.picker_groups = pickers_groupsSnapshot.docs.map(doc => ({
       id: doc.id,
       ...doc.data(),
     }));
@@ -750,7 +752,7 @@ export const backupUserData = async () => {
       .collection('picker_cotton_weight')
       .where('uid', '==', userId)
       .get();
-    backup.labour_picker_cotton_weight = picker_cotton_weightSnapshot.docs.map(
+    backup.picker_cotton_weight = picker_cotton_weightSnapshot.docs.map(
       doc => ({ id: doc.id, ...doc.data() }),
     );
 
@@ -760,7 +762,7 @@ export const backupUserData = async () => {
       .where('uid', '==', userId)
       .get();
 
-    backup.labour_labours_data = await Promise.all(
+    backup.labours_data = await Promise.all(
       labours_dataSnapshot.docs.map(async doc => {
         const [leaveSnapshot, expenseSnapshot, workSnapshot] =
           await Promise.all([
@@ -812,7 +814,7 @@ export const backupUserData = async () => {
       .where('uid', '==', userId)
       .get();
 
-    backup.labour_labours_data = await Promise.all(
+    backup.aadhat_data = await Promise.all(
       aadhat_dataSnapshot.docs.map(async doc => {
         const [transactionsSnapshot] = await Promise.all([
           firestore()
@@ -835,17 +837,75 @@ export const backupUserData = async () => {
       }),
     );
 
+    // Backup crops_data collection
+    const crops_dataSnapshot = await firestore()
+      .collection('crops_data')
+      .where('uid', '==', userId)
+      .get();
+
+    backup.crop_tracker = await Promise.all(
+      crops_dataSnapshot.docs.map(async doc => {
+        const [eventsSnapshot] = await Promise.all([
+          firestore()
+            .collection('crops_data')
+            .doc(doc.id)
+            .collection('events')
+            .get(),
+        ]);
+
+        const transData = eventsSnapshot.docs.map(transDoc => ({
+          id: transDoc.id,
+          ...transDoc.data(),
+        }));
+
+        return {
+          id: doc.id,
+          ...doc.data(),
+          events: transData,
+        };
+      }),
+    );
+
+    // Convert backup to HTML
+    let htmlContent = '<h1>Backup Data</h1>';
+    Object.keys(backup).forEach(key => {
+      htmlContent += `<h2>${key}</h2><pre>${JSON.stringify(backup[key], null, 2)}</pre>`;
+    });
+
+    // Create PDF
+    const options = {
+      html: htmlContent,
+      base64: true,
+      fileName: `firestore-backup-${Date.now()}`,
+      directory: 'Documents', // or 'Download' if you prefer
+    };
+
+    const file = await RNHTMLtoPDF.convert(options);
+    ToastSuccess(`PDF created at: ${file.filePath}`);
+    console.log(`PDF created at: ${file.filePath}`);
+
     // Save backup to file
     // Convert backup to JSON string
     const backupJson = JSON.stringify(backup, null, 2);
 
     // Define file path
     const filePath = `${RNFS.DownloadDirectoryPath}/firestore-backup${Date.now()}.json`;
+    const filePathPdf = `${RNFS.DownloadDirectoryPath}/firestore-backup${Date.now()}.pdf`;
     console.log(filePath);
+
     // Write backup to file
     await RNFS.writeFile(filePath, backupJson, 'utf8')
       .then(success => {
         ToastSuccess(filePath, 'Data backup completed!!');
+      })
+      .catch(err => {
+        console.log(err.message);
+        ToastError(err.message);
+      });
+    // Write backup to file
+    await RNFS.moveFile(file.filePath, filePathPdf)
+      .then(success => {
+        ToastSuccess(`PDF created at: ${filePathPdf}`);
       })
       .catch(err => {
         console.log(err.message);
@@ -856,7 +916,7 @@ export const backupUserData = async () => {
   }
 };
 
-// backupData()
+
 
 const migrateLabourData = async () => {
   try {

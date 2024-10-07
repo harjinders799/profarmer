@@ -3,6 +3,7 @@ import firestore from '@react-native-firebase/firestore';
 import { ToastSuccess } from 'src/utils/toast';
 import messaging from '@react-native-firebase/messaging';
 import { formatPhoneNumber, sanitizeData } from '@utils/helper';
+import { strings } from '@translations/locale';
 
 export const SignUpUser = async (email, password) => {
   try {
@@ -57,13 +58,18 @@ export const submitUser = async data => {
   return new Promise(async function (resolve, reject) {
     try {
       let id = auth().currentUser?.uid;
-      await firestore().collection('users').doc(id).set(sanitizeData({
-        name: data?.name,
-        phone: formatPhoneNumber(data?.phone),
-        // profileUrl: url,
-        email: data?.email,
-        id: id,
-      }));
+      await firestore()
+        .collection('users')
+        .doc(id)
+        .set(
+          sanitizeData({
+            name: data?.name,
+            phone: formatPhoneNumber(data?.phone),
+            // profileUrl: url,
+            email: data?.email,
+            id: id,
+          }),
+        );
       resolve('success');
     } catch (error) {
       reject(new Error(error));
@@ -75,12 +81,17 @@ export const UpdateUser = async data => {
   try {
     let id = auth().currentUser?.uid;
     await auth().currentUser.updateProfile({ displayName: data?.name });
-    return await firestore().collection('users').doc(id).update(sanitizeData({
-      name: data?.name,
-      email: data?.email,
-      phone: formatPhoneNumber(data?.phone),
-      id: id,
-    }));
+    return await firestore()
+      .collection('users')
+      .doc(id)
+      .update(
+        sanitizeData({
+          name: data?.name,
+          email: data?.email,
+          phone: formatPhoneNumber(data?.phone),
+          id: id,
+        }),
+      );
   } catch (error) {
     submitUser(data);
     return error;
@@ -162,7 +173,7 @@ export const getUserById = async id => {
   });
 };
 
-export const updateReadAccessToUID = async (phone) => {
+export const updateReadAccessToUID = async phone => {
   const collections = [
     'aadhat_data',
     'crops_data',
@@ -184,10 +195,34 @@ export const updateReadAccessToUID = async (phone) => {
       const newReadAccess = data.read_access.map(item =>
         item === phone ? uid : item,
       ); // Replace phone with uid
-      console.log({ newReadAccess })
+      console.log({ newReadAccess });
       batch.update(doc.ref, { read_access: newReadAccess });
     });
 
     await batch.commit();
+  }
+};
+
+const getEmailCredential = (email, password) => {
+  return auth.EmailAuthProvider.credential(email, password);
+};
+
+export const linkEmailWithPhone = async (email, password) => {
+  try {
+    const user = auth().currentUser;
+    const credential = getEmailCredential(email, password);
+    console.log({ credential });
+    // Link email and password to the current user
+    const linkedUser = await user.linkWithCredential(credential);
+    return linkedUser;
+  } catch (error) {
+    console.error('Error linking email with phone auth:', error);
+    if (error.code == 'auth/email-already-in-use') {
+      throw new Error(strings.emailInUse);
+    }
+    if (error.code === 'auth/credential-already-in-use') {
+      throw new Error(strings.phoneInUse);
+    }
+    throw error;
   }
 };

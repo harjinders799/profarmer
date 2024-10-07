@@ -10,7 +10,6 @@ import { ToastError, ToastSuccess } from '@utils/toast';
 import { strings } from '@translations/locale';
 import { useStore } from '@context/context';
 import { goBack } from '@navigation/ref';
-import { updateIneterstAmt } from '@network/interest-service';
 import Header from '@components/header';
 import { currencyInput } from '@utils/dateformat';
 import { FadeInDown } from 'react-native-reanimated';

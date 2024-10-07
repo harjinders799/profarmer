@@ -36,7 +36,7 @@ export default ({
           )}
         </TouchableOpacity>
       </View>
-      {imgEdit ? (
+      {/* {imgEdit ? (
         <View
           style={[
             styles.editImgContainer,
@@ -50,7 +50,7 @@ export default ({
             color={colors.text}
           />
         </View>
-      ) : null}
+      ) : null} */}
     </View>
   );
 };

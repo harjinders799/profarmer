@@ -25,7 +25,7 @@ function DeleteModal({
                     <Text h2 center bold style={common.underline}>
                         {strings.are_you_sure}
                     </Text>
-                    <Text h3 style={styles.text}>
+                    <Text justify h3 style={styles.text}>
                         <Text h2 style={{ color: colors.error }}>
                             {data?.name}
                         </Text>
@@ -60,11 +60,12 @@ const styles = StyleSheet.create({
     },
     modalView: {
         ...common.modalView,
-        width: '90%',
-        padding: 20,
+        width: '95%',
+        padding: 10,
     },
     text: {
         marginTop: 10,
+        lineHeight: 30
     },
     buttonContainer: {
         flexDirection: 'row',
@@ -72,7 +73,7 @@ const styles = StyleSheet.create({
         marginTop: 20,
     },
     button: {
-        width: '40%',
+        width: '45%',
     },
 });
 
