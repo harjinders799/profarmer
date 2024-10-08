@@ -236,5 +236,11 @@
   "don't_have_account": "पहले से खाता नहीं है? रजिस्टर करें",
   "already_have_account": "पहले से एक खाता है? रजिस्टर करें",
   "passwords_do_not_match": "पासवर्ड मेल नहीं खाते।",
-  "registration_success": "रजिस्ट्रेशन सफल!"
+  "registration_success": "रजिस्ट्रेशन सफल!",
+  "full_access": "फुल परमिशन",
+  "read_access": "केवल पढ़ने की परमिशन",
+  "cannot_remove_self": "आप खुद को फुल परमिशन से हटा नहीं सकते।",
+  "cannot_add_self": "आप खुद को केवल पढ़ने की परमिशन में नहीं जोड़ सकते।",
+  "full_access_description": "फुल परमिशन वाले उपयोगकर्ता {picker} के डेटा को पढ़, लिख, अपडेट और हटा सकते हैं।",
+  "read_access_description": "केवल पढ़ने की परमिशन वाले उपयोगकर्ता केवल {picker} का डेटा देख सकते हैं।"
 }

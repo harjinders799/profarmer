@@ -54,7 +54,7 @@ function Pickers() {
             setLoading(false);
             setRefreshing(false);
         }, orderBy);
-
+        setIsFocus(false)
         return () => {
             unsubscribePicker && unsubscribePicker();
             unsubscribeGroup && unsubscribeGroup();
@@ -133,32 +133,30 @@ function Pickers() {
                 />
             )}
             {!isFocus && renderContent()}
-            {!isFocus && (
-                <View style={[common.row_btw, { marginTop: 20, position: 'absolute', bottom: 20 }]}>
-                    <Button
-                        iconLeft="plus"
-                        label={strings.create_group} // Updated for localization
-                        btnStyle={{
-                            maxWidth: '48%',
-                            width: 'auto',
-                            left: -5,
-                            ...common.shadow,
-                        }}
-                        onPress={() => navigate('CreatePickerGroup', { pickers: pickers.filter(o => o?.uid === uid), groups })}
-                    />
-                    <Button
-                        iconLeft="plus"
-                        label={strings.add_picker} // Updated for localization
-                        btnStyle={{
-                            maxWidth: '48%',
-                            width: 'auto',
-                            right: -5,
-                            ...common.shadow,
-                        }}
-                        onPress={() => navigate('AddPicker')}
-                    />
-                </View>
-            )}
+            <View style={[common.row_btw, { marginTop: 20, position: 'absolute', bottom: 20 }]}>
+                <Button
+                    iconLeft="plus"
+                    label={strings.create_group} // Updated for localization
+                    btnStyle={{
+                        maxWidth: '48%',
+                        width: 'auto',
+                        left: -5,
+                        ...common.shadow,
+                    }}
+                    onPress={() => navigate('CreatePickerGroup', { pickers: pickers.filter(o => o?.uid === uid), groups })}
+                />
+                <Button
+                    iconLeft="plus"
+                    label={strings.add_picker} // Updated for localization
+                    btnStyle={{
+                        maxWidth: '48%',
+                        width: 'auto',
+                        right: -5,
+                        ...common.shadow,
+                    }}
+                    onPress={() => navigate('AddPicker')}
+                />
+            </View>
         </BaseView>
     );
 }

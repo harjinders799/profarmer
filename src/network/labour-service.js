@@ -651,6 +651,7 @@ export const backupData = async () => {
 export const backupUserData = async () => {
   try {
     let userId = auth().currentUser?.uid;
+    let userName = auth().currentUser?.displayName ?? 'User';
     const backup = {};
     ToastSuccess('Backup started take some time to complete it');
 
@@ -876,7 +877,7 @@ export const backupUserData = async () => {
     const options = {
       html: htmlContent,
       base64: true,
-      fileName: `firestore-backup-${Date.now()}`,
+      fileName: `${userName}-backup-${Date.now()}`,
       directory: 'Documents', // or 'Download' if you prefer
     };
 
@@ -889,8 +890,8 @@ export const backupUserData = async () => {
     const backupJson = JSON.stringify(backup, null, 2);
 
     // Define file path
-    const filePath = `${RNFS.DownloadDirectoryPath}/firestore-backup${Date.now()}.json`;
-    const filePathPdf = `${RNFS.DownloadDirectoryPath}/firestore-backup${Date.now()}.pdf`;
+    const filePath = `${RNFS.DownloadDirectoryPath}/${userName}-backup${Date.now()}.json`;
+    const filePathPdf = `${RNFS.DownloadDirectoryPath}/${userName}-backup${Date.now()}.pdf`;
     console.log(filePath);
 
     // Write backup to file

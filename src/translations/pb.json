@@ -235,5 +235,11 @@
   "already_have_account": "ਪਹਿਲਾਂ ਤੋਂ ਖਾਤਾ ਹੈ? ਰਜਿਸਟਰ ਕਰੋ",
   "don't_have_account": "ਪਹਿਲਾਂ ਤੋਂ ਖਾਤਾ ਨਹੀ ਹੈ? ਰਜਿਸਟਰ ਕਰੋ",
   "passwords_do_not_match": "ਪਾਸਵਰਡ ਮਿਲਦੇ ਨਹੀਂ।",
-  "registration_success": "ਰਜਿਸਟ੍ਰੇਸ਼ਨ ਸਫਲ!"
+  "registration_success": "ਰਜਿਸਟ੍ਰੇਸ਼ਨ ਸਫਲ!",
+  "full_access": "ਫੁਲ ਪਰਮਿਸ਼ਨ",
+  "read_access": "ਕੇਵਲ ਪੜ੍ਹਨ ਦੀ ਪਰਮਿਸ਼ਨ",
+  "cannot_remove_self": "ਤੁਸੀਂ ਆਪਣੀ ਆਪ ਨੂੰ ਫੁਲ ਪਰਮਿਸ਼ਨ ਤੋਂ ਹਟਾ ਨਹੀਂ ਸਕਦੇ।",
+  "cannot_add_self": "ਤੁਸੀਂ ਆਪਣੀ ਆਪ ਨੂੰ ਪੜ੍ਹਨ ਦੀ ਪਰਮਿਸ਼ਨ ਵਿੱਚ ਨਹੀਂ ਜੋੜ ਸਕਦੇ।",
+  "full_access_description": "ਫੁਲ ਪਰਮਿਸ਼ਨ ਵਾਲੇ ਉਪਭੋਗਤਾ {picker} ਦੇ ਡੇਟਾ ਨੂੰ ਪੜ੍ਹ ਸਕਦੇ ਹਨ, ਲਿਖ ਸਕਦੇ ਹਨ, ਅੱਪਡੇਟ ਕਰ ਸਕਦੇ ਹਨ ਅਤੇ ਹਟਾ ਸਕਦੇ ਹਨ।",
+  "read_access_description": "ਪੜ੍ਹਨ ਦੀ ਪਰਮਿਸ਼ਨ ਵਾਲੇ ਉਪਭੋਗਤਾ ਸਿਰਫ {picker} ਦਾ ਡੇਟਾ ਦੇਖ ਸਕਦੇ ਹਨ।"
 }

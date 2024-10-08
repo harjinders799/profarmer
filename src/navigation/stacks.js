@@ -42,6 +42,7 @@ import AddPickerBulkExpense from '@screens/pickers/addPickerBulkExpense';
 import LoanStack from './loanStack';
 import AadhatCropDetail from '@screens/aadhat/cropDetail';
 import Notifications from '@screens/notifications'
+import PickerAccessSetting from '@screens/pickers/pickerAccessSetting';
 
 const Stack = createNativeStackNavigator();
 
@@ -101,6 +102,7 @@ export default function Stacks() {
       <Stack.Screen name="AddPickerExpense" component={AddPickerExpense} />
       <Stack.Screen name="AddPickerBulkWeight" component={AddPickerBulkWeight} />
       <Stack.Screen name="AddPickerBulkExpense" component={AddPickerBulkExpense} />
+      <Stack.Screen name="PickerAccessSetting" component={PickerAccessSetting} />
       <Stack.Screen name="AadhatCropDetail" component={AadhatCropDetail} />
       {/* <Stack.Screen name="AddPicker" component={AddPicker} />
       <Stack.Screen name="AddPickerExpense" component={AddPickerExpense} />

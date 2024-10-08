@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import BaseView from '@container/base';
 import Text from '@components/text';
-import { HEIGHT } from '@utils/constants';
+import { HEIGHT, isIOS } from '@utils/constants';
 import { useLang } from '@context/langContext';
 import Icon from '@components/icon';
 import { gray3, white, black, red } from '@utils/colors';
@@ -167,14 +167,14 @@ export default function Setting({ navigation }) {
               }
             />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.row} onPress={onBackupPress}>
+          {isIOS ? null : <TouchableOpacity style={styles.row} onPress={onBackupPress}>
             <Text style={styles.txt}>Backup Now</Text>
             {creatingBackup ? (
               <ActivityIndicator />
             ) : (
               <Icon name="download" size={22} />
             )}
-          </TouchableOpacity>
+          </TouchableOpacity>}
 
           <TouchableOpacity style={styles.row} onPress={onLogOut}>
             <Text style={styles.txt}>{strings.logOut}</Text>

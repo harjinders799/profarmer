@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { ScrollView, StyleSheet } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import BaseView from 'src/container/base';
 import { isIOS, WIDTH } from 'src/utils/constants';
 import Button from 'src/components/button';
@@ -19,10 +19,15 @@ import {
 } from '@react-native-google-signin/google-signin';
 import { navigate } from '../../navigation/ref';
 import { orange } from '@utils/colors';
+import Input from '@components/input';
+import { common } from '@utils/style';
+import { SignInWithEmailUser } from '@network/auth-service';
 
 GoogleSignin.configure({
   webClientId:
     '416058833468-5rn56d49jdg3ar3e0mp2o4e5nio1o65g.apps.googleusercontent.com',
+  iosClientId:
+    '416058833468-u3tduh7p714tu0v7iu4i3tstkoqbcee6.apps.googleusercontent.com',
   scopes: [
     'https://www.googleapis.com/auth/userinfo.email', // Request email
     'https://www.googleapis.com/auth/userinfo.profile', // Request basic profile info
@@ -33,6 +38,21 @@ const LoginMethods = ({ navigation }) => {
   const { colors } = useTheme();
   const { lang } = useLang();
   const [loading, setLoading] = React.useState(false);
+  const [showBtns, setShowBtns] = useState(false);
+  const [email, setEmail] = useState(__DEV__ ? 'test@tes.com' : '');
+  const [password, setPassword] = useState(__DEV__ ? '123456' : '');
+
+  const signIn = async () => {
+    setLoading(true);
+    try {
+      await SignInWithEmailUser(email, password);
+      // Handle successful sign-in (e.g., redirect or show success message)
+    } catch (error) {
+      ToastError(error?.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const signInG = async () => {
     try {
@@ -76,10 +96,17 @@ const LoginMethods = ({ navigation }) => {
           alignItems: 'center',
           width: '90%',
           margin: '5%',
+          paddingBottom: 150,
         }}
+        automaticallyAdjustKeyboardInsets
+        keyboardDismissMode='interactive'
         keyboardShouldPersistTaps="handled">
-        <Logo />
-        <Text h2 style={{ marginBottom: 30 }}>
+        <Pressable
+          delayLongPress={showBtns ? 500 : 5000}
+          onLongPress={() => setShowBtns(!showBtns)}>
+          <Logo />
+        </Pressable>
+        {/* <Text h2 style={{ marginBottom: 30 }}>
           {strings.welcome}
         </Text>
         <Button
@@ -89,25 +116,59 @@ const LoginMethods = ({ navigation }) => {
           iconColor={colors.background}
           btnStyle={{ backgroundColor: orange }}
           onPress={() => navigate('SignInWithEmail')}
+        /> */}
+        <Text h2 style={{ marginBottom: 20 }}>
+          {strings.welcome}
+        </Text>
+        <Input
+          emailType
+          iconName="email"
+          iconType="Zocial"
+          placeholder={strings.email}
+          value={email}
+          setValue={setEmail}
         />
-        {__DEV__ ? (
-          <Button
-            label="Sign-In With Phone"
-            iconName="screen-smartphone"
-            iconType="SimpleLineIcons"
-            iconColor={colors.background}
-            btnStyle={{ backgroundColor: '#34A853' }}
-            onPress={() => navigate('Login')}
-          />
-        ) : null}
-        <Button
-          label="Sign-In With Google"
-          iconName="google"
-          iconColor={colors.background}
-          btnStyle={{ backgroundColor: '#4285F4' }}
-          onPress={signInG}
+        <Input
+          iconName="locked"
+          iconType="Fontisto"
+          placeholder={strings.password}
+          value={password}
+          setValue={setPassword}
         />
-        <Text center h4 onPress={() => navigate('ContactUs')}>
+        <Button label={strings.login} onPress={signIn} />
+        <Text onPress={() => navigate('SignUp')}>
+          {strings["don't_have_account"]}
+        </Text>
+        <View style={showBtns ? common.row_btw : common.centerAligned}>
+          {showBtns ? (
+            <Button
+              label="Sign-In With"
+              iconRight="phone"
+              iconType="Feather"
+              iconColor={colors.background}
+              btnStyle={{
+                backgroundColor: '#34A853',
+                maxWidth: '45%',
+                height: 40,
+              }}
+              onPress={() => navigate('Login')}
+            />
+          ) : null}
+          {(isIOS && showBtns) || !isIOS ? (
+            <Button
+              label="Sign-In With"
+              iconRight="google"
+              iconColor={colors.background}
+              btnStyle={{
+                backgroundColor: '#4285F4',
+                maxWidth: '45%',
+                height: 40,
+              }}
+              onPress={signInG}
+            />
+          ) : null}
+        </View>
+        <Text center onPress={() => navigate('ContactUs')}>
           {strings.needHelp}
         </Text>
         {/* <Button

@@ -78,7 +78,7 @@ const PickerFilter = ({
                     setIsFocus={setIsFocus}
                 />
             </Animated.View>
-            {isFocus ? <PickerList data={filteredPickers} groups={groups} /> : null}
+            {isFocus ? <PickerList data={filteredPickers} groups={groups} onPress={setSearch} /> : null}
         </Fragment>
     );
 };

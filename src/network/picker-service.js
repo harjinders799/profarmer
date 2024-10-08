@@ -1,7 +1,12 @@
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import { currencyFormat, currentStamp } from '@utils/dateformat';
-import { processAmounts, processWeights, sanitizeData } from '@utils/helper';
+import {
+  formatPhoneNumber,
+  processAmounts,
+  processWeights,
+  sanitizeData,
+} from '@utils/helper';
 import { ToastError } from '@utils/toast';
 import {
   addMultipleNotification,
@@ -15,13 +20,18 @@ export const pickersDataListener = (onUpdate, phone, orderBy) => {
     // Define the two queries
     const query1 = firestore()
       .collection('pickers_data')
-      .where('uid', '==', userId)
+      // .where('uid', '==', userId)
+      .where('full_access', 'array-contains', userId)
       // .orderBy('name', 'asc');
       .orderBy(orderBy.key, orderBy.type);
 
     const query2 = firestore()
       .collection('pickers_data')
       .where('read_access', 'array-contains', userId);
+
+    // const query3 = firestore()
+    //   .collection('pickers_data')
+    //   .where('full_access', 'array-contains', userId);
     // if (phone != null || phone != undefined) query2.where('read_access', 'array-contains', phone)
     // Subscribe to the first query's snapshot changes
     const unsubscribe = query1.onSnapshot(
@@ -168,7 +178,7 @@ export const submitPicker = data => {
         .add(
           sanitizeData({
             ...data,
-            read_access: [data?.receiverId ?? data?.phone],
+            read_access: [data?.receiverId ?? formatPhoneNumber(data?.phone)],
             full_access: [uid],
             total_earning: 0,
             total_given: 0,
@@ -511,7 +521,7 @@ export const updatePicker = (data, isRateChange) => {
         sanitizeData({
           ...data,
           total_earning: total_earning,
-          read_access: [data?.receiverId ?? data?.phone],
+          read_access: [data?.receiverId ?? formatPhoneNumber(data?.phone)],
           full_access: [uid],
           uid: uid,
           updatedAt: currentStamp(new Date()),
@@ -550,6 +560,26 @@ export const updatePickerCottonWeight = (data, oldData, picker) => {
             } Kg to ${data?.weight}Kg ${strings.weight}!!`,
         },
         picker,
+      );
+      resolve(true);
+    } catch (error) {
+      reject(new Error(error));
+    }
+  });
+};
+
+export const updatePickerAccess = data => {
+  return new Promise(async function (resolve, reject) {
+    try {
+      await firestore().collection('pickers_data').doc(data?.id).update(data);
+      await addMultipleNotification(
+        {
+          data,
+          type: 'picker',
+          message: `${auth().currentUser.displayName
+            } updated to in picker access permission!!`,
+        },
+        data,
       );
       resolve(true);
     } catch (error) {

@@ -129,15 +129,20 @@ function PickerDetail() {
                         <PickerMenuModal
                             handleShare={handleShare}
                             onDeletePress={() => setOpenModal(true)}
-                            onEditPress={() => replace('AddPicker', { item, weights: pickersWeightData })}
+                            onEditPress={() =>
+                                replace('AddPicker', { item, weights: pickersWeightData })
+                            }
+                            onSettingPress={() => navigate('PickerAccessSetting', { owner })}
                         />
                     ) : null
                 }
             />
 
-            <Text center h5 style={{ textDecorationLine: 'underline' }}>
-                <Icon name={'phone'} type="Feather" size={16} /> {owner?.phone}
-            </Text>
+            {owner?.phone ? (
+                <Text center h5 style={{ textDecorationLine: 'underline' }}>
+                    <Icon name={'phone'} type="Feather" size={16} /> {owner?.phone}
+                </Text>
+            ) : null}
             <ScrollView contentContainerStyle={{ paddingBottom: 150 }}>
                 <PickerConclusion
                     item={item}

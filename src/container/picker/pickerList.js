@@ -19,7 +19,7 @@ import { getUserById } from '@network/auth-service';
 import { findPickerGroupNames } from '@utils/helper';
 import Animated, { LinearTransition } from 'react-native-reanimated';
 
-function PickerList({ data, groups, refreshing, onRefresh }) {
+function PickerList({ data, groups, refreshing, onRefresh, onPress }) {
     const { colors } = useTheme();
     const uid = auth()?.currentUser?.uid;
     const [owners, setOwners] = useState({});
@@ -56,14 +56,15 @@ function PickerList({ data, groups, refreshing, onRefresh }) {
             return (
                 <TouchableOpacity
                     style={[styles.list, { backgroundColor: colors.background }]}
-                    onPress={() =>
+                    onPress={() => {
+                        if (onPress) onPress();
                         navigate('PickerDetail', {
                             item,
                             pickers: data,
                             groups,
                             owner: item?.uid === uid ? item : owner,
-                        })
-                    }>
+                        });
+                    }}>
                     <View style={styles.row}>
                         <Text h3 style={{ maxWidth: '60%' }}>
                             {item?.uid === uid ? item?.name : owner?.name || '--'}

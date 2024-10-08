@@ -234,5 +234,11 @@
   "already_have_account": "Already have an account? Sign In",
   "don't_have_account": "Don't have an account? Sign Up",
   "passwords_do_not_match": "Passwords do not match.",
-  "registration_success": "Registration successful!"
+  "registration_success": "Registration successful!",
+  "full_access": "Full Access",
+  "read_access": "Only Read Access",
+  "cannot_remove_self": "You can't remove yourself from full access.",
+  "cannot_add_self": "You can't add yourself to read access.",
+  "full_access_description": "Users with full access can read, write, update, and delete {picker}'s data.",
+  "read_access_description": "Users with read access can only view {picker}'s data."
 }

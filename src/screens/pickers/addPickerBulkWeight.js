@@ -100,7 +100,7 @@ export default function AddPickerBulkWeight() {
                 </Pressable>
                 {data.map((picker, i) => (
                     <View key={picker?.name} style={common.row_btw}>
-                        <Icon
+                        {/* <Icon
                             name={'close'}
                             size={20}
                             color={colors.error}
@@ -111,7 +111,7 @@ export default function AddPickerBulkWeight() {
                                     return filtered;
                                 })
                             }
-                        />
+                        /> */}
                         <DropdownPicker
                             value={picker?.name}
                             data={pickers.filter(
@@ -121,8 +121,16 @@ export default function AddPickerBulkWeight() {
                             // disable={data.length == pickers.length && picker?.name}
                             labelField="name"
                             valueField="name"
-                            style={{ width: '40%' }}
-                            dropdownStyle={{ minHeight: 45, marginTop: 0 }}
+                            style={{ width: '48%' }}
+                            dropdownStyle={{
+                                minHeight: 45,
+                                marginTop: 0,
+                                overflow: 'hidden',
+                                borderColor: picker?.weight ? colors.success : colors.error,
+                                backgroundColor: picker?.weight
+                                    ? colors.success + 20
+                                    : colors.error + 20,
+                            }}
                             onChange={value => {
                                 setData(prevs => {
                                     let data = [...prevs];
@@ -145,13 +153,31 @@ export default function AddPickerBulkWeight() {
                             setValue={value =>
                                 setData(prevs => {
                                     let data = [...prevs];
-                                    data[i].weight = value.replace(/[^0-9+]/g, '');
+
+                                    // Remove any non-numeric characters except for '+'
+                                    let newValue = value.replace(/[^0-9+]/g, '');
+
+                                    // Prevent starting with '+' and multiple consecutive '+'
+                                    if (newValue.startsWith('+')) {
+                                        newValue = newValue.substring(1); // Remove leading '+'
+                                    }
+
+                                    // Replace multiple '+' with a single '+' (if needed)
+                                    newValue = newValue.replace(/\++/g, '+');
+
+                                    data[i].weight = newValue;
                                     return data;
                                 })
                             }
                             style={{ width: '50%' }}
-                            inputStyle={{ width: '85%', height: 45 + picker?.weight.length }}
-                            keyboardType="numeric"
+                            innerStyle={{
+                                borderColor: picker?.weight ? colors.success : colors.error,
+                            }}
+                            inputStyle={{
+                                width: '85%',
+                                height: 45 + picker?.weight.length,
+                            }}
+                            keyboardType="phone-pad"
                             rightComponent={
                                 <>
                                     <Text style={{ position: 'absolute', bottom: 0, right: 5 }}>

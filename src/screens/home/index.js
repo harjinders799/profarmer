@@ -19,6 +19,7 @@ import { notificationCountListener } from '@network/common-service';
 import Button from '@components/button';
 import { backupUserData } from '@network/labour-service';
 import auth from '@react-native-firebase/auth';
+import { isIOS } from '@utils/constants';
 export default function Home() {
     const { colors } = useTheme();
     const { user } = useAuth();
@@ -98,12 +99,12 @@ export default function Home() {
                     </Text>
                     {strings.backup_data_warning}
                 </Text>
-                <Button
+                {isIOS ? null : <Button
                     small
                     label={'Backup Now'}
                     loading={backupCreating}
                     onPress={onBackupPress}
-                />
+                />}
             </View>
             <ScrollView
                 showsVerticalScrollIndicator={false}

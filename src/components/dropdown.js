@@ -52,6 +52,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         paddingHorizontal: 10,
         minHeight: 50,
+        overflow: 'hidden'
     },
     selectedTextStyle: {
         // color: 'green',

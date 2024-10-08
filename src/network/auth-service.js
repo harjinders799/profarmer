@@ -173,6 +173,32 @@ export const getUserById = async id => {
   });
 };
 
+
+export const getAllUsers = async id => {
+  return new Promise(async function (resolve, reject) {
+    try {
+      firestore()
+        .collection('users')
+        .onSnapshot(snapshot => {
+          const users = [];
+          if (!snapshot?.empty) {
+            snapshot?.forEach(user => {
+              if (user.data()?.name) users.push({
+                name: user.data()?.name,
+                email: user.data()?.email,
+                phone: user.data()?.phone,
+                id: user.id,
+              });
+            });
+            resolve(users);
+          }
+        });
+    } catch (error) {
+      reject(new Error(error));
+    }
+  });
+};
+
 export const updateReadAccessToUID = async phone => {
   const collections = [
     'aadhat_data',

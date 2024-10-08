@@ -12,7 +12,7 @@ import { navigate } from '@navigation/ref';
 
 const SignInWithEmail = () => {
   const [loading, setLoading] = useState(false);
-  const [email, setEmail] = useState(__DEV__ ? 'aaabbb@gmg.com' : '');
+  const [email, setEmail] = useState(__DEV__ ? 'test@tes.com' : '');
   const [password, setPassword] = useState(__DEV__ ? '123456' : '');
 
   const signIn = async () => {

@@ -28,7 +28,7 @@ const MenuOptionItem = React.memo(
     ),
 );
 
-const PickerMenuModal = ({ handleShare, onDeletePress, onEditPress }) => {
+const PickerMenuModal = ({ handleShare, onDeletePress, onEditPress, onSettingPress }) => {
     const { colors } = useTheme();
     const [showPopup, setShowPopup] = useState(false);
 
@@ -66,6 +66,12 @@ const PickerMenuModal = ({ handleShare, onDeletePress, onEditPress }) => {
                     label={strings.share}
                     onSelect={() => { setShowPopup(false); handleShare() }}
                 />
+                {<MenuOptionItem
+                    iconName="admin-panel-settings"
+                    iconType="MaterialIcons"
+                    label={strings.settings}
+                    onSelect={() => { setShowPopup(false); onSettingPress() }}
+                />}
                 <MenuOptionItem
                     iconName="trash-can"
                     label={strings.delete}

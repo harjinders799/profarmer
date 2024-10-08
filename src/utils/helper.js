@@ -433,6 +433,10 @@ export const isValidEmail = (email) => {
     return emailPattern.test(email);
 };
 
+export const userHasFullAccess = (picker) => {
+    return picker.full_access.includes(auth()?.currentUser?.uid)
+}
+
 export const tabsData = [
     {
         id: 1,

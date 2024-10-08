@@ -1,4 +1,5 @@
 import Icon from '@components/icon';
+import { red } from '@utils/colors';
 import React, { useState } from 'react';
 import Animated, { SequencedTransition } from 'react-native-reanimated';
 import Input from 'src/components/input';
@@ -12,13 +13,14 @@ export default function SearchBar({ setSearch, search, isFocus, setIsFocus }) {
           value={search}
           autoFocus={isFocus}
           setValue={setSearch}
-          inputStyle={{ width: '95%' }}
+          inputStyle={{ width: '94%' }}
           innerStyle={{ borderWidth: 0, borderBottomWidth: 0.4 }}
           style={{ marginVertical: 0, width: '100%' }}
           rightComponent={
             <Icon
-              name={'close'}
-              size={16}
+              name={'closecircle'}
+              size={20}
+              color={red}
               onPress={() => setIsFocus(!isFocus)}
             />
           }
