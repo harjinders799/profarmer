@@ -197,7 +197,7 @@
   "darkTheme": "Dark Theme",
   "logOut": "Log Out",
   "somethingWentWrong": "Something went wrong!",
-  "shareMessage": "Hello! I've been using an amazing app that makes managing labor and accounting for farmers easy. It's a great tool for my farmer friends! 🌾👨‍🌾📊\n\nDownload the app here:\nhttps://play.google.com/store/apps/details?id=com.profarmer\n\nPlease share this important tool with all your farmer friends!",
+  "shareMessage": "Hello! 🌾 If you’re a farmer or know someone in agriculture, I highly recommend the Pro Farmer app. It simplifies cotton management, labor management, accounting, and other farming tasks in a user-friendly way. This tool has made farm management much easier for me, and I’m sure it will do the same for you. 👨‍🌾📈\n\nDownload the app now:\n\n• For Android: https://play.google.com/store/apps/details?id=com.profarmer\n• For iOS: https://apps.apple.com/in/app/profarmer/id6723898053\n\nFeel free to share this app with your farmer community and friends—it’s an invaluable tool! 🚜",
   "crop_tracker": "Crop Tracker",
   "add_activity": "Add Activity",
   "optional": "If Any (Optional)",
@@ -240,5 +240,13 @@
   "cannot_remove_self": "You can't remove yourself from full access.",
   "cannot_add_self": "You can't add yourself to read access.",
   "full_access_description": "Users with full access can read, write, update, and delete {picker}'s data.",
-  "read_access_description": "Users with read access can only view {picker}'s data."
+  "read_access_description": "Users with read access can only view {picker}'s data.",
+  "previous": "Previous",
+  "next": "Next",
+  "skip": "Skip",
+  "finish": "Finish",
+  "add_picker_tour": "By pressing this button, you can add a picker.",
+  "create_group_tour": "After adding multiple pickers, create a group by pressing the button below.",
+  "tab_tour": "Use the tabs to navigate through different views.\n\n Select the 'Pickers List' to see all available pickers,\n\n 'Group List' to view the groups you have created, \n\n 'Date-wise' to check activities based on dates.\n\n Tap on a tab to switch between these options.",
+  "contributors": "Contributors"
 }

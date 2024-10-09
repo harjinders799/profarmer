@@ -65,10 +65,12 @@ const LabourDetail = ({ navigation }) => {
 
     const file = await RNHTMLtoPDF.convert(options);
     Share.open({
-      url: `data:application/pdf;base64,${file?.base64}`,
+      // url: `data:application/pdf;base64,${file?.base64}`,
+      url: `file://${file?.filePath}`,
+      message: strings.shareMessage,
       type: 'application/pdf',
       title: data?.name,
-      saveToFiles: true,
+      // saveToFiles: true,
       showAppsToView: true,
       filename: data?.name,
     }).catch(err => console.log(err));

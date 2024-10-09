@@ -1,6 +1,6 @@
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
-import RNFS from 'react-native-fs';
+import * as RNFS from '@dr.pogodin/react-native-fs';
 import { sanitizeData } from '@utils/helper';
 
 const getDocumentsListener = (query, onUpdate) => {
@@ -140,6 +140,7 @@ export const submitLabourLeave = data => {
 
 export const getCropData = onUpdate =>
   getDocumentsListener(
+    // __DEV__ ? firestore().collection('crops_data') :
     firestore().collection('crops_data').where('uid', '==', auth().currentUser?.uid),
     onUpdate,
   );

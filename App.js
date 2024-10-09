@@ -39,6 +39,9 @@ export default function App() {
 
   useEffect(() => {
     requestUserPermission();
+    messaging()
+      .subscribeToTopic('info')
+      .then(() => console.log('Subscribed to topic!'));
     const unsubscribe = messaging().onMessage(async remoteMessage => {
       // Handle the message
       console.log('A new FCM message arrived!', remoteMessage);
@@ -59,13 +62,13 @@ export default function App() {
   }, [auth()?.currentUser?.uid]);
 
   async function requestUserPermission() {
-    const authStatus = await messaging().requestPermission();
+    const authStatus = await messaging().requestPermission({ sound: true, provisional: true, badge: true });
     const enabled =
       authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
       authStatus === messaging.AuthorizationStatus.PROVISIONAL;
 
+    console.log('Authorization status:', authStatus);
     if (enabled) {
-      console.log('Authorization status:', authStatus);
       if (auth()?.currentUser?.uid) await getFCMToken();
     }
   }

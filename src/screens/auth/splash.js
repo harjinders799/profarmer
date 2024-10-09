@@ -6,14 +6,14 @@ import auth from '@react-native-firebase/auth';
 export default function Splash({ navigation }) {
 
   useEffect(() => {
-    setTimeout(() => {
-      try {
-        let id = auth().currentUser?.uid;
-        navigation.replace(id ? 'Main' : 'Login');
-      } catch (error) {
-        navigation.replace('Login');
-      }
-    }, 2000);
+    // setTimeout(() => {
+    //   try {
+    //     let id = auth().currentUser?.uid;
+    //     navigation.replace(id ? 'Main' : 'Login');
+    //   } catch (error) {
+    //     navigation.replace('Login');
+    //   }
+    // }, 2000);
   }, []);
 
   return (

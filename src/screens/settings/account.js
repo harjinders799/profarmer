@@ -6,7 +6,7 @@ import Button from 'src/components/button';
 import { F18, FBOLD } from 'src/utils/typograpy';
 import { black, gray } from 'src/utils/colors';
 import Loader from 'src/components/loader';
-import Profile from 'src/container/profile';
+// import Profile from 'src/container/profile';
 import auth from '@react-native-firebase/auth';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import Text from '../../components/text';
@@ -40,13 +40,13 @@ const Account = ({ }) => {
   ];
   return (
     <View style={[common.row_btw]}>
-      <Profile
+      {/* <Profile
         // style={{ alignSelf: 'center' }}
         small
         img={user?.img?.uri ?? auth().currentUser?.photoURL}
         name={user?.name}
         setImg={v => updateData('img', v)}
-      />
+      /> */}
       <Text h2 style={styles.txt}>
         {user?.name}
       </Text>

@@ -80,7 +80,8 @@ function PickerList({ data, groups, refreshing, onRefresh, onPress }) {
                     </View>
                     <View style={styles.row}>
                         <Text h6 color={item?.uid === uid ? colors.warning : colors.border}>
-                            {item?.uid === uid ? pickerGroupName : 'Read Only'}
+                            {item?.uid === uid ? null : <Text h5>{item?.name}</Text>}
+                            {item?.uid === uid ? pickerGroupName : `  (Read Only)`}
                         </Text>
                         <Text h6 color={finalAmount < 0 ? colors.error : colors.success}>
                             {finalAmount === 0

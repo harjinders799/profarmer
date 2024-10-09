@@ -4,6 +4,7 @@ import { ToastSuccess } from 'src/utils/toast';
 import messaging from '@react-native-firebase/messaging';
 import { formatPhoneNumber, sanitizeData } from '@utils/helper';
 import { strings } from '@translations/locale';
+import storage from '@react-native-firebase/storage';
 
 export const SignUpUser = async (email, password) => {
   try {
@@ -80,7 +81,17 @@ export const submitUser = async data => {
 export const UpdateUser = async data => {
   try {
     let id = auth().currentUser?.uid;
-    await auth().currentUser.updateProfile({ displayName: data?.name });
+
+    // Handle image upload if profile image is provided
+    let updatedImageUri = null;
+    if (data?.photoURL?.uri) {
+      const uri = data.photoURL.uri;
+      const imgRef = storage().ref(`profile/${id}`);
+
+      await imgRef.putFile(uri); // Upload image to Firebase Storage
+      updatedImageUri = await imgRef.getDownloadURL(); // Get the download URL of the uploaded image
+    }
+    await auth().currentUser.updateProfile({ photoURL: updatedImageUri, displayName: data?.name });
     return await firestore()
       .collection('users')
       .doc(id)
@@ -89,6 +100,7 @@ export const UpdateUser = async data => {
           name: data?.name,
           email: data?.email,
           phone: formatPhoneNumber(data?.phone),
+          photoURL: updatedImageUri,
           id: id,
         }),
       );
@@ -108,10 +120,11 @@ export const logout = async () => {
 
 export const getFCMToken = async () => {
   try {
+    let res = await messaging().registerDeviceForRemoteMessages()
     const token = await messaging().getToken();
 
     if (token) {
-      console.log('FCM Token:', token);
+      console.log('FCM Token:-', token);
       // Save the token to Firestore
       await saveTokenToFirestore(token);
     }

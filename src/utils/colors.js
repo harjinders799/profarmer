@@ -37,7 +37,7 @@ export const brown = '#CD853F';
 // Main Colors
 export const green = '#4CAF99'; // Beautiful green for positive elements
 export const red = '#c94036'; // Red for danger or alerts
-export const black = '#333333'; // Standard text color
+export const black = '#000000'; // Standard text color
 export const white = '#ffffff'; // White background or accents
 export const blue = '#38a4fc'; // Blue for accents or interactive elements
 export const yellow = '#FFD666'; // Yellow for attention or warnings

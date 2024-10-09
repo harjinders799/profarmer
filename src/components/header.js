@@ -81,7 +81,7 @@ const Header = ({
             <Icon
               name={notificationCount ? 'bell-ring-outline' : 'bell-outline'}
               type="MaterialCommunityIcons"
-              size={25}
+              size={30}
               onPress={() => navigate('Notifications')}
             />
             {notificationCount ? (

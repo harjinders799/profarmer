@@ -72,10 +72,12 @@ export default function Aadhat() {
     try {
       const file = await RNHTMLtoPDF.convert(options);
       await Share.open({
-        url: `data:application/pdf;base64,${file?.base64}`,
+        // url: `data:application/pdf;base64,${file?.base64}`,
+        url: `file://${file?.filePath}`,
+        message: strings.shareMessage,
         type: 'application/pdf',
         title: strings.aadhatiya_hisab,
-        saveToFiles: true,
+        // saveToFiles: true,
         showAppsToView: true,
         filename: strings.aadhatiya_hisab,
       });
@@ -131,11 +133,12 @@ export default function Aadhat() {
             label={strings.add_aadhatiya}
             iconLeft="plus"
             btnStyle={{
-              maxWidth: '60%',
+              maxWidth: '80%',
               width: 'auto',
               position: 'absolute',
               bottom: 20,
               right: -5,
+              paddingRight: 20,
               zIndex: 999,
               ...common.shadow,
             }}

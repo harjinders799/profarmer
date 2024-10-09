@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const Loader = ({ visible, small = false, label = "Loading...", style }) => {
+const Loader = ({ visible, small = false, label = "Loading...", style, size = "large" }) => {
   const { colors } = useTheme();
   return visible ? (
     <View
@@ -30,7 +30,7 @@ const Loader = ({ visible, small = false, label = "Loading...", style }) => {
         style,
       ]}>
       <ActivityIndicator
-        size="large"
+        size={size}
         animating={visible}
         color={colors.text}
         style={{

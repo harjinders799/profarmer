@@ -18,6 +18,14 @@ import PickerFilter from '@container/picker/pickerFilter';
 import Icon from '@components/icon';
 import PickersConclusion from '@container/picker/pickersConclusion';
 import auth from '@react-native-firebase/auth';
+import {
+    TourGuideProvider, // Main provider
+    TourGuideZone, // Main wrapper of highlight component
+    useTourGuideController, // hook to start, etc.
+} from 'rn-tourguide';
+import { white } from '@utils/colors';
+import { storage } from '@utils/helper';
+import { isIOS } from '@utils/constants';
 
 // Lazy load components
 const PickerList = lazy(() => import('@container/picker/pickerList'));
@@ -37,6 +45,33 @@ function Pickers() {
     const [isFocus, setIsFocus] = useState();
     const [showConclusion, setShowConclusion] = useState(false);
     const [refreshing, setRefreshing] = useState(false);
+    // Use Hooks to control!
+    const {
+        canStart, // a boolean indicate if you can start tour guide
+        start, // a function to start the tourguide
+        stop, // a function  to stopping it
+        eventEmitter, // an object for listening some events
+    } = useTourGuideController();
+
+    // Can start at mount 🎉
+    // you need to wait until everything is registered 😁
+    React.useEffect(() => {
+        if (canStart) {
+            // 👈 test if you can start otherwise nothing will happen
+            let res = storage.getBoolean('is_guide_done');
+            if (!res) start();
+        }
+    }, [canStart]); // 👈 don't miss it!
+
+    const handleOnStop = () => storage.set('is_guide_done', true);
+
+    React.useEffect(() => {
+        eventEmitter.on('stop', handleOnStop);
+
+        return () => {
+            eventEmitter.off('stop', () => { });
+        };
+    }, []);
 
     // Optimized data fetching with useCallback
     const fetchData = useCallback(() => {
@@ -54,7 +89,7 @@ function Pickers() {
             setLoading(false);
             setRefreshing(false);
         }, orderBy);
-        setIsFocus(false)
+        setIsFocus(false);
         return () => {
             unsubscribePicker && unsubscribePicker();
             unsubscribeGroup && unsubscribeGroup();
@@ -106,21 +141,37 @@ function Pickers() {
                 back
                 label={strings.pickers} // Updated for localization
                 rightComponent={
-                    <Icon
-                        name={showConclusion ? 'eye-off' : 'eye'}
-                        size={20}
-                        type="Ionicons"
-                        onPress={() => setShowConclusion(!showConclusion)}
-                    />
+                    <View style={common.row_center}>
+                        <Icon
+                            name={'information-circle-outline'}
+                            size={22}
+                            type="Ionicons"
+                            onPress={() => {
+                                if (canStart) {
+                                    // 👈 test if you can start otherwise nothing will happen
+                                    start();
+                                }
+                            }}
+                            style={{ marginRight: 10 }}
+                        />
+                        <Icon
+                            name={showConclusion ? 'eye-off' : 'eye'}
+                            size={25}
+                            type="Ionicons"
+                            onPress={() => setShowConclusion(!showConclusion)}
+                        />
+                    </View>
                 }
             />
             {showConclusion && <PickersConclusion pickers={pickers} />}
             {!isFocus && (
-                <Tabs
-                    tabs={[strings.pickers_list, strings.group_list, strings.date_wise]} // Updated for localization
-                    activeTab={activeTab}
-                    setActiveTab={setActiveTab}
-                />
+                <TourGuideZone zone={4} text={strings.tab_tour} style={{}}>
+                    <Tabs
+                        tabs={[strings.pickers_list, strings.group_list, strings.date_wise]} // Updated for localization
+                        activeTab={activeTab}
+                        setActiveTab={setActiveTab}
+                    />
+                </TourGuideZone>
             )}
             {activeTab !== strings.date_wise && (
                 <PickerFilter
@@ -133,32 +184,83 @@ function Pickers() {
                 />
             )}
             {!isFocus && renderContent()}
-            <View style={[common.row_btw, { marginTop: 20, position: 'absolute', bottom: 20 }]}>
-                <Button
-                    iconLeft="plus"
-                    label={strings.create_group} // Updated for localization
-                    btnStyle={{
-                        maxWidth: '48%',
-                        width: 'auto',
-                        left: -5,
-                        ...common.shadow,
-                    }}
-                    onPress={() => navigate('CreatePickerGroup', { pickers: pickers.filter(o => o?.uid === uid), groups })}
-                />
-                <Button
-                    iconLeft="plus"
-                    label={strings.add_picker} // Updated for localization
-                    btnStyle={{
-                        maxWidth: '48%',
-                        width: 'auto',
-                        right: -5,
-                        ...common.shadow,
-                    }}
-                    onPress={() => navigate('AddPicker')}
-                />
+            <View
+                style={[
+                    common.row_btw,
+                    { marginTop: 20, position: 'absolute', bottom: 20 },
+                ]}>
+                <TourGuideZone
+                    zone={3}
+                    text={strings.create_group_tour}
+                    borderRadius={10}
+                    shape="rectangle"
+                    style={{ width: 'auto', maxWidth: '48%' }}>
+                    <Button
+                        iconLeft="plus"
+                        label={strings.create_group} // Updated for localization
+                        btnStyle={{
+                            left: -5,
+                            ...common.shadow,
+                        }}
+                        onPress={() =>
+                            navigate('CreatePickerGroup', {
+                                pickers: pickers.filter(o => o?.uid === uid),
+                                groups,
+                            })
+                        }
+                    />
+                </TourGuideZone>
+                <TourGuideZone
+                    zone={2}
+                    text={strings.add_picker_tour}
+                    borderRadius={10}
+                    shape="rectangle"
+                    style={{ width: 'auto', maxWidth: '48%' }}>
+                    <Button
+                        iconLeft="plus"
+                        label={strings.add_picker} // Updated for localization
+                        btnStyle={{
+                            right: -5,
+                            ...common.shadow,
+                        }}
+                        // onPress={() => {
+                        //     if (canStart) {
+                        //         // 👈 test if you can start otherwise nothing will happen
+                        //         start();
+                        //     }
+                        // }}
+                        onPress={() => navigate('AddPicker')}
+                    />
+                </TourGuideZone>
             </View>
         </BaseView>
     );
 }
 
-export default React.memo(Pickers);
+const PickerGuider = () => {
+    const { colors } = useTheme();
+    return (
+        <TourGuideProvider
+            {...{
+                borderRadius: 10,
+                backdropColor: colors.opposite + 99,
+                verticalOffset: isIOS ? -5 : 30,
+                animationDuration: 100,
+                maskOffset: 0,
+                // preventOutsideInteraction:true,
+                tooltipStyle: {
+                    backgroundColor: white,
+                },
+                labels: {
+                    previous: strings.previous,
+                    next: strings.next,
+                    skip: strings.skip,
+                    finish: strings.finish,
+                },
+            }}>
+            <Pickers />
+        </TourGuideProvider>
+    );
+};
+
+export default React.memo(PickerGuider);

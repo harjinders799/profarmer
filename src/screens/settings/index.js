@@ -44,8 +44,8 @@ export default function Setting({ navigation }) {
     }
   }, [reset]);
 
-  const handleShare = () => {
-    Share.share(
+  const handleShare = async () => {
+    await Share.share(
       {
         title: 'ProFarmer App',
         message: strings.shareMessage,
@@ -53,7 +53,12 @@ export default function Setting({ navigation }) {
       {
         dialogTitle: 'ProFarmer App',
       },
-    );
+    ).then((res) => {
+      console.log(res);
+    })
+      .catch((err) => {
+        err && console.log(err);
+      });
   };
 
   const onBackupPress = async () => {
@@ -193,6 +198,7 @@ export default function Setting({ navigation }) {
           openModal={openModal}
           setOpenModal={setOpenModal}
           data={{}}
+          loading={loading}
           customDescription={`${strings.alert_account_delete}`}
           onDelete={onDelete}
         />

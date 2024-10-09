@@ -123,3 +123,29 @@ export const readNotification = async id => {
         handleError(error);
     }
 };
+
+export const contributorsDataListener = onUpdate => {
+    try {
+        // Listen for real-time updates
+        const unsubscribe = firestore()
+            .collection('contributors')
+            .orderBy('id', 'asc')
+            .onSnapshot(
+                querySnapshot => {
+                    const documents = querySnapshot.docs.map(doc => ({
+                        ...doc.data(),
+                        id: doc.id,
+                    }));
+                    if (onUpdate) onUpdate(documents); // Call the callback function with updated documents
+                },
+                error => {
+                    ToastError(error?.message);
+                    throw new Error(error);
+                },
+            );
+        return unsubscribe;
+    } catch (error) {
+        ToastError(error?.message);
+        throw new Error(error);
+    }
+};

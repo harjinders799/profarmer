@@ -90,13 +90,13 @@ export default function CreatePickerGroup() {
             <Loader visible={loading} />
             <Header
                 back
-                label={editData?.name ? strings.update : strings.add_picker}
+                label={editData?.name ? strings.update : strings.create_group}
             />
             <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
                 <Input
-                    label={strings.name}
+                    label={strings.group_name}
                     autoFocus
-                    placeholder={strings.name}
+                    placeholder={strings.group_name}
                     value={name}
                     setValue={value =>
                         onChangeValue({ setData, key: 'name', value, isName: true })
@@ -105,11 +105,11 @@ export default function CreatePickerGroup() {
                 <DropdownPicker
                     data={unassignedPickersData}
                     search
-                    label={'Select Pickers'}
+                    label={strings.select_picker}
                     multiple
                     labelField="name"
                     valueField="id"
-                    placeholder={'Select Pickers'}
+                    placeholder={strings.select_picker}
                     value={members}
                     onChange={value => {
                         onChangeValue({ setData, key: 'members', value });

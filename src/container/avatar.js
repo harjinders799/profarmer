@@ -1,34 +1,41 @@
-import React from 'react';
-import { Image, View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import { black, blue, white } from '../utils/colors';
-import { WIDTH } from '../utils/constants';
+import React, { useState } from 'react';
+import { Image, View, StyleSheet, TouchableOpacity } from 'react-native';
+import { LOGO, WIDTH } from '@utils/constants';
 import { useTheme } from '@react-navigation/native';
 import auth from '@react-native-firebase/auth';
 import { common } from '@utils/style';
 import Icon from '@components/icon';
-import { ToastProgress } from '@utils/toast';
-import { strings } from '@translations/locale';
+import Loader from '@components/loader';
+import Text from '@components/text';
 
 export default ({
   small,
   style,
   img = auth()?.currentUser?.photoURL,
   name = auth()?.currentUser?.displayName,
-  onImgTap,
+  onEditImgTap,
   imgEdit,
 }) => {
   const { colors } = useTheme();
+  const [loading, setLoading] = useState(true);
 
-  const onEditImgTap = () => { ToastProgress(strings.in_progress) };
   return (
     <View style={[styles.container, small && styles.small, style]}>
       <View style={styles.imgContainer}>
-        <TouchableOpacity onPress={onImgTap} activeOpacity={0.8}>
+        <TouchableOpacity onPress={onEditImgTap} activeOpacity={0.8}>
+          <Loader visible={loading && !!img} small />
           {img ? (
-            <Image source={{ uri: img }} style={styles.img} resizeMode="cover" />
+            <Image
+              // source={{ uri: typeof img == 'string' ? img : img?.uri }}
+              source={{
+                uri: loading ? LOGO : typeof img === 'string' ? img : img?.uri,
+              }}
+              style={styles.img}
+              onLoad={() => setLoading(false)}
+              resizeMode="cover"
+            />
           ) : (
-            <View style={[styles.img, { backgroundColor: colors.border }]}>
+            <View style={[styles.img, { backgroundColor: colors.disable }]}>
               <Text style={[styles.name, small && { fontSize: 30 }]}>
                 {name ? name.charAt(0) : '😊'}
               </Text>
@@ -36,8 +43,8 @@ export default ({
           )}
         </TouchableOpacity>
       </View>
-      {/* {imgEdit ? (
-        <View
+      {imgEdit ? (
+        <TouchableOpacity
           style={[
             styles.editImgContainer,
             { backgroundColor: colors.background },
@@ -49,8 +56,8 @@ export default ({
             onPress={onEditImgTap}
             color={colors.text}
           />
-        </View>
-      ) : null} */}
+        </TouchableOpacity>
+      ) : null}
     </View>
   );
 };
@@ -95,7 +102,6 @@ const styles = StyleSheet.create({
     ...common.shadow,
   },
   name: {
-    color: black,
     fontSize: 50,
     fontWeight: 'bold',
   },

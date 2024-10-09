@@ -1,10 +1,11 @@
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
-import RNFS from 'react-native-fs';
+import * as RNFS from '@dr.pogodin/react-native-fs';
 import { formatPhoneNumber, sanitizeData } from '@utils/helper';
 import { currentStamp } from '@utils/dateformat';
 import { ToastError, ToastSuccess } from '@utils/toast';
 import RNHTMLtoPDF from 'react-native-html-to-pdf';
+import { isIOS } from '@utils/constants';
 
 
 const getDocumentsListener = (query, onUpdate) => {
@@ -632,7 +633,7 @@ export const backupData = async () => {
     const backupJson = JSON.stringify(backup, null, 2);
 
     // Define file path
-    const filePath = `${RNFS.DownloadDirectoryPath}/firestore-backup${Date.now()}.json`;
+    const filePath = `${isIOS ? RNFS.DocumentDirectoryPath : RNFS.DownloadDirectoryPath}/firestore-backup${Date.now()}.json`;
     console.log(filePath);
     // Write backup to file
     await RNFS.writeFile(filePath, backupJson, 'utf8')
@@ -890,8 +891,8 @@ export const backupUserData = async () => {
     const backupJson = JSON.stringify(backup, null, 2);
 
     // Define file path
-    const filePath = `${RNFS.DownloadDirectoryPath}/${userName}-backup${Date.now()}.json`;
-    const filePathPdf = `${RNFS.DownloadDirectoryPath}/${userName}-backup${Date.now()}.pdf`;
+    const filePath = `${isIOS ? RNFS.DocumentDirectoryPath : RNFS.DownloadDirectoryPath}/${userName}-backup${Date.now()}.json`;
+    const filePathPdf = `${isIOS ? RNFS.DocumentDirectoryPath : RNFS.DownloadDirectoryPath}/${userName}-backup${Date.now()}.pdf`;
     console.log(filePath);
 
     // Write backup to file

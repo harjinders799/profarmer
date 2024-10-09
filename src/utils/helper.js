@@ -437,6 +437,28 @@ export const userHasFullAccess = (picker) => {
     return picker.full_access.includes(auth()?.currentUser?.uid)
 }
 
+export const handleImageSelection = async (
+    imagePickerFunction,
+    onSelect,
+    setOpenModal,
+) => {
+    try {
+        const { errorMessage, assets } = await imagePickerFunction({
+            mediaType: 'photo',
+            maxHeight: 1000,
+            maxWidth: 1000,
+        });
+        if (errorMessage) {
+            ToastError(errorMessage);
+        } else if (Array.isArray(assets)) {
+            onSelect(assets[0]);
+        }
+        setOpenModal(false);
+    } catch (error) {
+        console.log(error);
+    }
+};
+
 export const tabsData = [
     {
         id: 1,

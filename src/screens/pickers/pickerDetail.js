@@ -30,6 +30,7 @@ import { pickerHTMLFormat } from '@html/picker';
 import RNHTMLtoPDF from 'react-native-html-to-pdf';
 import Share from 'react-native-share';
 import PickerMenuModal from '@container/picker/pickerMenuModal';
+import { isIOS } from '@utils/constants';
 
 // Lazy load components
 const PickerExpenseDetail = lazy(() =>
@@ -102,12 +103,13 @@ function PickerDetail() {
         };
         const file = await RNHTMLtoPDF.convert(options);
         Share.open({
-            url: `data:application/pdf;base64,${file?.base64}`,
+            url: `file://${file?.filePath}`,
             type: 'application/pdf',
             title: item?.name,
-            saveToFiles: true,
+            // saveToFiles: true,
             showAppsToView: true,
             filename: item?.name,
+            message: strings.shareMessage
         })
             .then(res => console.log(res, '---res'))
             .catch(err => console.log(err, '----err'));

@@ -23,7 +23,7 @@ export const themeLight = {
     secondaryTab: colors.gray4,
     thirdText: colors.gray3,
     modal: colors.white,
-    chevronRight: colors.black,
+    opposite: colors.black,
   },
 };
 
@@ -50,6 +50,6 @@ export const themeDark = {
     forthBackground: colors.gray5,
     thirdText: colors.gray3,
     modal: colors.gray7,
-    chevronRight: colors.gray9,
+    opposite: colors.white,
   },
 };

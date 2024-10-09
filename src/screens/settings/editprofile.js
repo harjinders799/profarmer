@@ -15,12 +15,14 @@ import {
 } from '@network/auth-service';
 import auth from '@react-native-firebase/auth';
 import { strings } from '@translations/locale';
-import Profile from '@container/profile';
-import { checkUserLinkedData, isValidEmail } from '@utils/helper';
+import Avatar from '@container/avatar';
+import { checkUserLinkedData, handleImageSelection, isValidEmail, onChangeValue } from '@utils/helper';
 import Icon from '@components/icon';
 import Text from '@components/text';
 import { common } from '@utils/style';
 import { goBack } from '@navigation/ref';
+import ImagePickerModal from '@components/imagePickerModal';
+import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 
 const EditProfile = () => {
     const { user, getUser, reset } = useAuth();
@@ -30,8 +32,10 @@ const EditProfile = () => {
         name: user?.name ?? '',
         phone: user?.phone ?? auth().currentUser?.phoneNumber ?? '',
         email: user?.email ?? auth().currentUser?.email,
+        photoURL: user?.photoURL ?? auth().currentUser?.photoURL,
         password: '',
     });
+    const [openModal, setOpenModal] = useState(false);
 
     const [alreadyUsedPhone, setAlreadyUsedPhone] = useState(false);
     const { isEmailLinked, isPhoneLinked, isEmailVerified, isPhoneVerified } =
@@ -95,6 +99,21 @@ const EditProfile = () => {
         }
     }, [reset]);
 
+
+    const openCamera = () =>
+        handleImageSelection(
+            launchCamera,
+            value => setUserData(prev => ({ ...prev, photoURL: value })),
+            setOpenModal,
+        );
+    const openGallery = () =>
+        handleImageSelection(
+            launchImageLibrary,
+            value => setUserData(prev => ({ ...prev, photoURL: value })),
+            setOpenModal,
+        );
+
+
     return (
         <BaseView space>
             <Loader visible={loading} />
@@ -109,7 +128,8 @@ const EditProfile = () => {
                 keyboardShouldPersistTaps="handled"
                 showsVerticalScrollIndicator={false}>
                 <View style={styles.body}>
-                    <Profile imgEdit />
+                    <Avatar imgEdit
+                        img={userData?.photoURL} onEditImgTap={() => setOpenModal(true)} />
                     <Input
                         placeholder={strings.name}
                         value={userData.name}
@@ -118,7 +138,7 @@ const EditProfile = () => {
                     <Input
                         placeholder={strings.phone}
                         value={userData.phone.replace('+91', '')}
-                        editable={alreadyUsedPhone ? true : isPhoneVerified}
+                        editable={alreadyUsedPhone ? true : !isPhoneVerified}
                         innerStyle={{
                             backgroundColor:
                                 isPhoneVerified && !alreadyUsedPhone
@@ -127,7 +147,7 @@ const EditProfile = () => {
                         }}
                         maxLength={10}
                         keyboardType="phone-pad"
-                        setValue={value => setUserData(prev => ({ ...prev, phone: value }))}
+                        setValue={value => onChangeValue({ setData: setUserData, key: 'phone', value, isPhone: true })}
                         rightComponent={
                             <Icon
                                 name={isPhoneVerified ? 'verified' : 'report'}
@@ -227,6 +247,12 @@ const EditProfile = () => {
                     />
                 </View>
             </ScrollView>
+            <ImagePickerModal
+                isVisible={openModal}
+                onClose={() => setOpenModal(false)}
+                onCameraPress={openCamera}
+                onGalleryPress={openGallery}
+            />
         </BaseView>
     );
 };

@@ -18,8 +18,11 @@ import Loader from '@components/loader';
 import { notificationCountListener } from '@network/common-service';
 import Button from '@components/button';
 import { backupUserData } from '@network/labour-service';
-import auth from '@react-native-firebase/auth';
-import { isIOS } from '@utils/constants';
+import moment from 'moment';
+import Contributors from '@container/home/contributors';
+import Avatar from '@container/avatar';
+import analytics from '@react-native-firebase/analytics'
+
 export default function Home() {
     const { colors } = useTheme();
     const { user } = useAuth();
@@ -27,12 +30,14 @@ export default function Home() {
     const [loading, setLoading] = useState(true);
     const [backupCreating, setBackupCreating] = useState(false);
     const [notificationCount, setNotificationCount] = useState(0);
-
+    const [lastBackupTime, setLastBackupTime] = useState();
     const tabs = [...tabsData];
     tabs.shift();
 
     useFocusEffect(
         useCallback(() => {
+            let res = storage.getNumber('last_backup');
+            if (!res || !lastBackupTime) setLastBackupTime(res);
             if (
                 user?.id &&
                 (!user?.phone ||
@@ -45,6 +50,10 @@ export default function Home() {
             if (user?.id && user?.phone) {
                 (async () => {
                     try {
+                        await analytics().logEvent('user', {
+                            id: user?.id,
+                            data: user,
+                        })
                         let res = storage.getBoolean('replace_phone_with_id');
                         if (!res) await updateReadAccessToUID(user?.phone);
                         storage.set('replace_phone_with_id', true);
@@ -71,6 +80,8 @@ export default function Home() {
         try {
             setBackupCreating(true);
             await backupUserData();
+            storage.set('last_backup', Date.now());
+            setLastBackupTime(Date.now());
         } catch (error) {
             ToastError(error?.message);
         } finally {
@@ -81,15 +92,16 @@ export default function Home() {
     return (
         <BaseView>
             <Header
-                label={`Welcome ${user?.name ?? user?.phone ?? user?.email ?? '...'
+                label={`Hey ${user?.name ?? user?.phone ?? user?.email ?? '...'
                     } !!`}
                 notification
                 notificationCount={notificationCount}
+                leftComponent={<Avatar small onEditImgTap={() => navigate('EditProfile')} />}
             />
             <Loader visible={loading} />
             <View
                 style={[
-                    { width: '90%', backgroundColor: colors.background },
+                    { width: '95%', backgroundColor: colors.background, marginBottom: 15 },
                     common.shadow,
                     common.card,
                 ]}>
@@ -99,18 +111,25 @@ export default function Home() {
                     </Text>
                     {strings.backup_data_warning}
                 </Text>
-                {isIOS ? null : <Button
-                    small
-                    label={'Backup Now'}
-                    loading={backupCreating}
-                    onPress={onBackupPress}
-                />}
+                <View style={common.row_btw}>
+                    <Button
+                        small
+                        label={'Backup Now'}
+                        loading={backupCreating}
+                        onPress={onBackupPress}
+                    />
+                    <Text>
+                        {`${lastBackupTime ? moment(lastBackupTime).format('lll') : 'NEVER'
+                            } `}
+                        <Text h7>Last Backup</Text>
+                    </Text>
+                </View>
             </View>
             <ScrollView
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={[
                     common.row_btw,
-                    { flexWrap: 'wrap', paddingHorizontal: 20, paddingBottom: 150 },
+                    { flexWrap: 'wrap', paddingHorizontal: 10, paddingBottom: 50 },
                 ]}>
                 {tabs.map(tab => (
                     <TouchableOpacity
@@ -121,13 +140,13 @@ export default function Home() {
                             common.shadow,
                             {
                                 backgroundColor: colors.secondaryCard,
-                                marginVertical: '3%',
-                                paddingVertical: 20,
+                                marginTop: '5%',
+                                // paddingVertical: 20,
                                 width: '47%',
                             },
                         ]}>
                         <Icon name={tab.icon} type={tab.iconType} size={25} />
-                        <Text h3 semi style={{ marginTop: 5 }}>
+                        <Text h4 semi style={{ marginTop: 5 }}>
                             {strings[tab.title]}
                         </Text>
                     </TouchableOpacity>
@@ -140,12 +159,12 @@ export default function Home() {
                         {
                             backgroundColor: colors.secondaryCard,
                             marginVertical: '3%',
-                            paddingVertical: 20,
+                            // paddingVertical: 20,
                             width: '47%',
                         },
                     ]}>
                     <Icon name={'tractor'} type={'FontAwesome5'} size={25} />
-                    <Text h3 semi style={{ marginTop: 5 }}>
+                    <Text h4 semi style={{ marginTop: 5 }}>
                         {'Harvest'}
                     </Text>
                     <Text h7 semi color={red}>
@@ -160,7 +179,7 @@ export default function Home() {
                         {
                             backgroundColor: colors.secondaryCard,
                             marginVertical: '3%',
-                            paddingVertical: 20,
+                            // paddingVertical: 20,
                             width: '47%',
                         },
                     ]}>
@@ -169,7 +188,7 @@ export default function Home() {
                         type={'MaterialCommunityIcons'}
                         size={25}
                     />
-                    <Text h3 semi style={{ marginTop: 5 }}>
+                    <Text h4 semi style={{ marginTop: 5 }}>
                         {'Doc Reminder'}
                     </Text>
                     <Text h7 semi color={red}>
@@ -184,12 +203,12 @@ export default function Home() {
                         {
                             backgroundColor: colors.secondaryCard,
                             marginVertical: '3%',
-                            paddingVertical: 20,
+                            // paddingVertical: 20,
                             width: '47%',
                         },
                     ]}>
                     <Icon name={'local-grocery-store'} type={'MaterialIcons'} size={25} />
-                    <Text h3 semi style={{ marginTop: 5 }}>
+                    <Text h4 semi style={{ marginTop: 5 }}>
                         {'Home Expense'}
                     </Text>
                     <Text h7 semi color={red}>
@@ -205,12 +224,12 @@ export default function Home() {
                         {
                             backgroundColor: colors.secondaryCard,
                             marginVertical: '3%',
-                            paddingVertical: 20,
+                            // paddingVertical: 20,
                             width: '47%',
                         },
                     ]}>
                     <Icon name={'cow'} type={'FontAwesome6'} size={25} />
-                    <Text h3 semi style={{ marginTop: 5 }}>
+                    <Text h4 semi style={{ marginTop: 5 }}>
                         {'Milk'}
                     </Text>
                     <Text h7 semi color={red}>
@@ -218,6 +237,7 @@ export default function Home() {
                     </Text>
                 </TouchableOpacity>
             </ScrollView>
+            <Contributors />
         </BaseView>
     );
 }

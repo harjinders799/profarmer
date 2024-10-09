@@ -125,3 +125,9 @@ export const dayCount = (value) => {
   const today = moment().startOf('day');
   return today.diff(start_date, 'days');
 };
+
+export const isSameDay = (value1, value2) => {
+  const date1 = moment(value1).startOf('day');
+  const date2 = moment(value2).startOf('day');
+  return date1.isSame(date2);
+};
