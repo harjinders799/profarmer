@@ -27,7 +27,7 @@ export default function Home() {
     const { colors } = useTheme();
     const { user } = useAuth();
     const { lang } = useLang();
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const [backupCreating, setBackupCreating] = useState(false);
     const [notificationCount, setNotificationCount] = useState(0);
     const [lastBackupTime, setLastBackupTime] = useState();
@@ -50,6 +50,7 @@ export default function Home() {
             if (user?.id && user?.phone) {
                 (async () => {
                     try {
+                        setLoading(true);
                         await analytics().logEvent('user', {
                             id: user?.id,
                             data: user,
@@ -117,6 +118,7 @@ export default function Home() {
                         label={'Backup Now'}
                         loading={backupCreating}
                         onPress={onBackupPress}
+                        btnStyle={{ width: 'auto', maxWidth: '40%' }}
                     />
                     <Text>
                         {`${lastBackupTime ? moment(lastBackupTime).format('lll') : 'NEVER'

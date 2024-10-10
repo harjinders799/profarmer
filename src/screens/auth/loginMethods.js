@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { Image, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import BaseView from 'src/container/base';
 import { isIOS, WIDTH } from 'src/utils/constants';
 import Button from 'src/components/button';
@@ -31,8 +31,6 @@ GoogleSignin.configure({
     '416058833468-u78siqkj7nt15a8can4vi7qafnraeb2i.apps.googleusercontent.com',
   scopes: [
     'https://www.googleapis.com/auth/userinfo.email', // Request email
-    'https://www.googleapis.com/auth/userinfo.profile', // Request basic profile info
-    'https://www.googleapis.com/auth/user.phonenumbers.read', // Request basic phone info
   ],
 });
 const LoginMethods = ({ navigation }) => {
@@ -100,7 +98,7 @@ const LoginMethods = ({ navigation }) => {
           paddingBottom: 150,
         }}
         automaticallyAdjustKeyboardInsets
-        keyboardDismissMode='interactive'
+        keyboardDismissMode="interactive"
         keyboardShouldPersistTaps="handled">
         <Pressable
           delayLongPress={showBtns ? 500 : 5000}
@@ -121,26 +119,11 @@ const LoginMethods = ({ navigation }) => {
         <Text h2 style={{ marginBottom: 20 }}>
           {strings.welcome}
         </Text>
-        <Input
-          emailType
-          iconName="email"
-          iconType="Zocial"
-          placeholder={strings.email}
-          value={email}
-          setValue={setEmail}
-        />
-        <Input
-          iconName="locked"
-          iconType="Fontisto"
-          placeholder={strings.password}
-          value={password}
-          setValue={setPassword}
-        />
-        <Button label={strings.login} onPress={signIn} />
-        <Text onPress={() => navigate('SignUp')}>
-          {strings["don't_have_account"]}
-        </Text>
-        <View style={showBtns ? common.row_btw : common.centerAligned}>
+        <View
+          style={[
+            showBtns ? common.row_btw : common.centerAligned,
+            { width: '100%' },
+          ]}>
           {showBtns ? (
             <Button
               label="Sign-In With"
@@ -158,18 +141,54 @@ const LoginMethods = ({ navigation }) => {
           {(isIOS && showBtns) || !isIOS ? (
             <Button
               label="Sign-In With"
-              iconRight="google"
-              iconColor={colors.background}
               btnStyle={{
-                backgroundColor: '#4285F4',
-                maxWidth: '45%',
+                maxWidth: !showBtns ? '100%' : '45%',
                 height: 40,
               }}
               onPress={signInG}
+              rightComponent={
+                <Image
+                  source={require('@assets/google.png')}
+                  style={{ width: 20, aspectRatio: 1, marginLeft: 10 }}
+                />
+              }
             />
           ) : null}
         </View>
-        <Text center onPress={() => navigate('ContactUs')}>
+
+        {/* <Input
+          emailType
+          iconName="email"
+          iconType="Zocial"
+          placeholder={strings.email}
+          value={email}
+          setValue={setEmail}
+        />
+        <Input
+          iconName="locked"
+          iconType="Fontisto"
+          placeholder={strings.password}
+          value={password}
+          setValue={setPassword}
+        /> */}
+        <Button
+          label={strings.already_have_account}
+          btnStyle={{
+            height: 40,
+          }}
+          onPress={() => navigate('SignInWithEmail')}
+        />
+        <Button
+          label={strings["don't_have_account"]}
+          btnStyle={{
+            height: 40,
+          }}
+          onPress={() => navigate('SignUp')}
+        />
+        <Text
+          center
+          style={{ marginTop: 20 }}
+          onPress={() => navigate('ContactUs')}>
           {strings.needHelp}
         </Text>
         {/* <Button

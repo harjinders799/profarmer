@@ -58,18 +58,19 @@ export const AuthProvider = props => {
         try {
           let id = auth().currentUser?.uid;
           if (id) {
+            console.log('==============id', id)
             let user = await firestore().collection('users').doc(id).get();
-            if (user.exists) {
+            if (user.exists && user?.data()?.id) {
               dispatch({ type: 'USER', user: user.data() });
             } else {
               // console.log(auth().currentUser);
               let data = {
                 name: auth().currentUser?.displayName,
-                phone: formatPhoneNumber(auth().currentUser?.phoneNumber),
+                phone: auth().currentUser?.phoneNumber ? formatPhoneNumber(auth().currentUser?.phoneNumber) : null,
                 email: auth().currentUser?.email,
                 id: auth().currentUser?.uid,
               };
-              await firestore().collection('users').doc(id).set(data);
+              await firestore().collection('users').doc(id).set(data, { merge: true });
               dispatch({ type: 'USER', user: data });
             }
           }

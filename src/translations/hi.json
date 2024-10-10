@@ -234,7 +234,7 @@
   "create_account_confirmation": "क्या आप नया खाता बनाना चाहते हैं?",
   "confirm_password": "पासवर्ड की पुष्टि करें",
   "don't_have_account": "पहले से खाता नहीं है? रजिस्टर करें",
-  "already_have_account": "पहले से एक खाता है? रजिस्टर करें",
+  "already_have_account": "पहले से एक खाता है? लॉग इन करें",
   "passwords_do_not_match": "पासवर्ड मेल नहीं खाते।",
   "registration_success": "रजिस्ट्रेशन सफल!",
   "full_access": "फुल परमिशन",

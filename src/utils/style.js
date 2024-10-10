@@ -108,4 +108,25 @@ export const common = StyleSheet.create({
     width: '100%',
     backgroundColor: borderLight
   },
+  tooltip: {
+    position: 'absolute',
+    paddingHorizontal: 15,
+    overflow: 'hidden',
+    width: '100%',
+    borderRadius: 16,
+    paddingTop: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingBottom: 16,
+    zIndex: 99,
+  },
+  tooltipText: {
+    textAlign: 'center',
+    color: 'black'
+  },
+  bottomBar: {
+    marginTop: 10,
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+  },
 });

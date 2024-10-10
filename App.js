@@ -20,6 +20,7 @@ import { getFCMToken, saveTokenToFirestore } from '@network/auth-service';
 import notifee, { AndroidImportance } from '@notifee/react-native';
 import { MenuProvider } from 'react-native-popup-menu';
 import { black } from '@utils/colors';
+import { isIOS } from '@utils/constants';
 
 export default function App() {
   const [version, setVersion] = useState();
@@ -29,6 +30,8 @@ export default function App() {
     (async () => {
       const res = await checkVersion({
         // platform: 'android',
+        currentVersion: isIOS ? '1.0.3' : '2.2.5',
+        bundleId: isIOS ? 'com.harjinder.profarmer' : 'com.profarmer',
       });
       setVersion(res);
     })();

@@ -26,6 +26,7 @@ import {
 import { white } from '@utils/colors';
 import { storage } from '@utils/helper';
 import { isIOS } from '@utils/constants';
+import { Tooltip } from '@components/tooltip';
 
 // Lazy load components
 const PickerList = lazy(() => import('@container/picker/pickerList'));
@@ -249,7 +250,7 @@ const PickerGuider = () => {
                 maskOffset: 0,
                 // preventOutsideInteraction:true,
                 tooltipStyle: {
-                    backgroundColor: white,
+                    backgroundColor: colors.background,
                 },
                 labels: {
                     previous: strings.previous,
@@ -257,6 +258,7 @@ const PickerGuider = () => {
                     skip: strings.skip,
                     finish: strings.finish,
                 },
+                tooltipComponent: Tooltip
             }}>
             <Pickers />
         </TourGuideProvider>

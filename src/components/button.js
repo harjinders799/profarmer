@@ -25,6 +25,7 @@ const Button = ({
   iconLeft = null,
   iconType,
   small = false,
+  rightComponent = null,
   onPress,
   disabled,
   ...props
@@ -83,6 +84,7 @@ const Button = ({
                 color={txtColor ? txtColor : colors.background}
               />
             ) : null}
+            {rightComponent}
           </View>
         )}
       </TouchableOpacity>

@@ -9,6 +9,8 @@ import { ToastError } from 'src/utils/toast';
 import { strings } from 'src/translations/locale';
 import { SignInWithEmailUser } from '../../network/auth-service';
 import { navigate } from '@navigation/ref';
+import { ScrollView, TouchableOpacity } from 'react-native';
+import Header from '@components/header';
 
 const SignInWithEmail = () => {
   const [loading, setLoading] = useState(false);
@@ -29,26 +31,39 @@ const SignInWithEmail = () => {
 
   return (
     <BaseView space>
+      <Header back />
       <Loader visible={loading} />
-      <Logo />
-      <Text h2 style={{ marginBottom: 20 }}>{strings.welcome}</Text>
-      <Input
-        emailType
-        iconName="email"
-        iconType="Zocial"
-        placeholder={strings.email}
-        value={email}
-        setValue={setEmail}
-      />
-      <Input
-        iconName="locked"
-        iconType="Fontisto"
-        placeholder={strings.password}
-        value={password}
-        setValue={setPassword}
-      />
-      <Button label={strings.login} onPress={signIn} />
-      <Text onPress={() => navigate('SignUp')}>{strings['don\'t_have_account']}</Text>
+      <ScrollView
+        style={{ width: '100%' }}
+        contentContainerStyle={{
+          alignItems: 'center',
+          paddingBottom: 150,
+        }}
+        automaticallyAdjustKeyboardInsets
+        keyboardDismissMode='interactive'
+        keyboardShouldPersistTaps="handled">
+        <Logo />
+        <Text h2 style={{ marginBottom: 20 }}>{strings.welcome}</Text>
+        <Input
+          emailType
+          iconName="email"
+          iconType="Zocial"
+          placeholder={strings.email}
+          value={email}
+          setValue={setEmail}
+        />
+        <Input
+          iconName="locked"
+          iconType="Fontisto"
+          placeholder={strings.password}
+          value={password}
+          setValue={setPassword}
+        />
+        <Button label={strings.login} onPress={signIn} />
+        <TouchableOpacity hitSlop={20} onPress={() => navigate('SignUp')}>
+          <Text >{strings['don\'t_have_account']}</Text>
+        </TouchableOpacity>
+      </ScrollView>
     </BaseView>
   );
 };
