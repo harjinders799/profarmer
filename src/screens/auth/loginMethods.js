@@ -27,7 +27,8 @@ GoogleSignin.configure({
   webClientId:
     '416058833468-5rn56d49jdg3ar3e0mp2o4e5nio1o65g.apps.googleusercontent.com',
   iosClientId:
-    '416058833468-u3tduh7p714tu0v7iu4i3tstkoqbcee6.apps.googleusercontent.com',
+    // '416058833468-u3tduh7p714tu0v7iu4i3tstkoqbcee6.apps.googleusercontent.com',
+    '416058833468-u78siqkj7nt15a8can4vi7qafnraeb2i.apps.googleusercontent.com',
   scopes: [
     'https://www.googleapis.com/auth/userinfo.email', // Request email
     'https://www.googleapis.com/auth/userinfo.profile', // Request basic profile info

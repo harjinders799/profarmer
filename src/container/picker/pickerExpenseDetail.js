@@ -25,7 +25,7 @@ function PickerExpenseDetail({ data, expense }) {
   return (
     <Animated.View
       layout={LinearTransition}
-      style={[styles.container, { backgroundColor: colors.background }]}>
+      style={[styles.container, { backgroundColor: colors.secondaryCard }]}>
       <View style={common.row_btw}>
         <Text h4 center bold>
           {data?.uid == uid ? strings.given_amount : strings.taken_amount}

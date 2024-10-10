@@ -24,7 +24,7 @@ export let ToastProgress = (message, title = 'ProFarmer') => {
   });
 };
 
-export let ToastSuccess = (message, title = 'ProFarmer') => {
+export let ToastSuccess = (message, title = 'ProFarmer', duration = 1000) => {
   const backgroundColor = greenDark;
   showMessageRNFM({
     backgroundColor,
@@ -32,6 +32,6 @@ export let ToastSuccess = (message, title = 'ProFarmer') => {
     message: title,
     description: message,
     type: 'success',
-    duration: 1000,
+    duration,
   });
 };

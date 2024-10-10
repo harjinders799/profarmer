@@ -6,6 +6,8 @@ import Text from '@components/text';
 import { contributorsDataListener } from '@network/common-service';
 import Loader from '@components/loader';
 import { strings } from '@translations/locale';
+import Icon from '@components/icon';
+import { navigate } from '@navigation/ref';
 
 export default function Contributors() {
     const { colors } = useTheme();
@@ -40,6 +42,14 @@ export default function Contributors() {
             <Text semi h5 color={colors.success} style={{ marginBottom: 8 }}>
                 {strings.contributors}
             </Text>
+            <Icon
+                name={'person-add'}
+                type='Octicons'
+                color={colors.success}
+                size={20}
+                style={{ position: 'absolute', right: 20, top: 20 }}
+                onPress={() => navigate('AboutUs')}
+            />
             <ScrollView horizontal>
                 {contributors.map((c, i) => (
                     <View key={i}>

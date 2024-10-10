@@ -25,7 +25,7 @@ function PickerWeightDetail({ data, weights }) {
   return (
     <Animated.View
       layout={LinearTransition}
-      style={[styles.container, { backgroundColor: colors.background }]}>
+      style={[styles.container, { backgroundColor: colors.secondaryCard }]}>
       <View style={[common.row_btw, { paddingHorizontal: 10 }]}>
         <Text h4 bold>
           {strings.pickers_weight}
@@ -91,8 +91,8 @@ function PickerWeightDetail({ data, weights }) {
 
 const styles = StyleSheet.create({
   container: {
-    ...common.shadow,
     ...common.card,
+    ...common.shadow,
     margin: '5%',
     paddingHorizontal: 0,
     marginVertical: 15,

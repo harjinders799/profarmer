@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, StyleSheet } from 'react-native';
-import { useRoute, useTheme } from '@react-navigation/native';
+import { useFocusEffect, useRoute, useTheme } from '@react-navigation/native';
 import BaseView from '@container/base';
 import Text from '@components/text';
 import Header from '@components/header';
@@ -26,22 +26,23 @@ export default function PickerAccessSetting() {
     const [fullAccess, setFullAccess] = useState(owner.full_access || []);
     const [readAccess, setReadAccess] = useState(owner.read_access || []);
     const [saving, setSaving] = useState(false);
-    console.log(owner)
-    useEffect(() => {
+
+    const fetchData = useCallback(() => {
+        const fetchUserDetails = async () => {
+            try {
+                setLoading(true);
+                const users = await getAllUsers();
+                setUserDetails(users);
+            } catch (error) {
+                ToastError(error?.message);
+            } finally {
+                setLoading(false);
+            }
+        };
         fetchUserDetails();
     }, [owner]);
 
-    const fetchUserDetails = async () => {
-        try {
-            setLoading(true);
-            const users = await getAllUsers();
-            setUserDetails(users);
-        } catch (error) {
-            ToastError(error?.message);
-        } finally {
-            setLoading(false);
-        }
-    };
+    useFocusEffect(fetchData);
 
     const handleFullAccessChange = value => {
         if (value.includes(myId)) {
@@ -67,7 +68,7 @@ export default function PickerAccessSetting() {
                 full_access: fullAccess,
                 read_access: readAccess,
             });
-            ToastSuccess(strings.successfully_updated)
+            ToastSuccess(strings.successfully_updated);
             setTimeout(goBack, 2000);
         } catch (error) {
             ToastError(error?.message);

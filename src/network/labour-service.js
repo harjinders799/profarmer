@@ -6,7 +6,7 @@ import { currentStamp } from '@utils/dateformat';
 import { ToastError, ToastSuccess } from '@utils/toast';
 import RNHTMLtoPDF from 'react-native-html-to-pdf';
 import { isIOS } from '@utils/constants';
-
+import Aes from 'react-native-aes-crypto';
 
 const getDocumentsListener = (query, onUpdate) => {
   try {
@@ -633,7 +633,8 @@ export const backupData = async () => {
     const backupJson = JSON.stringify(backup, null, 2);
 
     // Define file path
-    const filePath = `${isIOS ? RNFS.DocumentDirectoryPath : RNFS.DownloadDirectoryPath}/firestore-backup${Date.now()}.json`;
+    const filePath = `${isIOS ? RNFS.DocumentDirectoryPath : RNFS.DownloadDirectoryPath
+      }/firestore-backup${Date.now()}.json`;
     console.log(filePath);
     // Write backup to file
     await RNFS.writeFile(filePath, backupJson, 'utf8')
@@ -649,6 +650,21 @@ export const backupData = async () => {
   }
 };
 
+const generateKey = (password, salt, cost, length) =>
+  Aes.pbkdf2(password, salt, cost, length, 'sha256');
+
+const encryptData = (text, key) => {
+  return Aes.randomKey(16).then(iv => {
+    return Aes.encrypt(text, key, iv, 'aes-256-cbc').then(cipher => ({
+      cipher,
+      iv,
+    }));
+  });
+};
+
+const decryptData = (encryptedData, key) =>
+  Aes.decrypt(encryptedData.cipher, key, encryptedData.iv, 'aes-256-cbc');
+
 export const backupUserData = async () => {
   try {
     let userId = auth().currentUser?.uid;
@@ -656,12 +672,14 @@ export const backupUserData = async () => {
     const backup = {};
     ToastSuccess('Backup started take some time to complete it');
 
-    const cropSnapshot = await firestore().collection('crop')
+    const cropSnapshot = await firestore()
+      .collection('crop')
       .where('uid', '==', userId)
       .get();
     backup.crop = cropSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-    const pickerSnapshot = await firestore().collection('picker')
+    const pickerSnapshot = await firestore()
+      .collection('picker')
       .where('uid', '==', userId)
       .get();
     backup.picker = pickerSnapshot.docs.map(doc => ({
@@ -687,16 +705,18 @@ export const backupUserData = async () => {
       ...doc.data(),
     }));
 
-    const loanSnapshot = await firestore().collection('loan')
+    const loanSnapshot = await firestore()
+      .collection('loan')
       .where('uid', '==', userId)
       .get();
     backup.loan = loanSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
     const doc = await firestore().collection('users').doc(userId).get();
-    backup.my = ({ id: doc.id, ...doc.data() });
+    backup.my = { id: doc.id, ...doc.data() };
 
     // Backup labour collection
-    const labourSnapshot = await firestore().collection('labour')
+    const labourSnapshot = await firestore()
+      .collection('labour')
       .where('uid', '==', userId)
       .get();
     backup.labour = labourSnapshot.docs.map(doc => ({
@@ -704,7 +724,8 @@ export const backupUserData = async () => {
       ...doc.data(),
     }));
 
-    const laboursSnapshot = await firestore().collection('labours')
+    const laboursSnapshot = await firestore()
+      .collection('labours')
       .where('uid', '==', userId)
       .get();
     backup.labours = laboursSnapshot.docs.map(doc => ({
@@ -868,57 +889,42 @@ export const backupUserData = async () => {
       }),
     );
 
-    // Convert backup to HTML
-    let htmlContent = '<h1>Backup Data</h1>';
-    Object.keys(backup).forEach(key => {
-      htmlContent += `<h2>${key}</h2><pre>${JSON.stringify(backup[key], null, 2)}</pre>`;
-    });
-
-    // Create PDF
-    const options = {
-      html: htmlContent,
-      base64: true,
-      fileName: `${userName}-backup-${Date.now()}`,
-      directory: 'Documents', // or 'Download' if you prefer
-    };
-
-    const file = await RNHTMLtoPDF.convert(options);
-    ToastSuccess(`PDF created at: ${file.filePath}`);
-    console.log(`PDF created at: ${file.filePath}`);
-
     // Save backup to file
     // Convert backup to JSON string
     const backupJson = JSON.stringify(backup, null, 2);
 
+    const key = await generateKey(userId, 'proFarmer', 5000, 256);
+
+    const { cipher, iv } = await encryptData(backupJson, key);
+
+    const finalData = {
+      name: userName,
+      phone: auth().currentUser?.phoneNumber,
+      email: auth().currentUser?.email,
+      data: cipher,
+      helper: iv,
+    };
+
+    const finalDataJson = JSON.stringify(finalData, null, 2);
+
     // Define file path
-    const filePath = `${isIOS ? RNFS.DocumentDirectoryPath : RNFS.DownloadDirectoryPath}/${userName}-backup${Date.now()}.json`;
-    const filePathPdf = `${isIOS ? RNFS.DocumentDirectoryPath : RNFS.DownloadDirectoryPath}/${userName}-backup${Date.now()}.pdf`;
-    console.log(filePath);
+    const filePath = `${isIOS ? RNFS.DocumentDirectoryPath : RNFS.DownloadDirectoryPath
+      }/${userName}-backup${Date.now()}.json`;
 
     // Write backup to file
-    await RNFS.writeFile(filePath, backupJson, 'utf8')
+    await RNFS.writeFile(filePath, finalDataJson, 'utf8')
       .then(success => {
-        ToastSuccess(filePath, 'Data backup completed!!');
-      })
-      .catch(err => {
-        console.log(err.message);
-        ToastError(err.message);
-      });
-    // Write backup to file
-    await RNFS.moveFile(file.filePath, filePathPdf)
-      .then(success => {
-        ToastSuccess(`PDF created at: ${filePathPdf}`);
+        ToastSuccess(filePath, 'Data backup completed!!', 3000);
       })
       .catch(err => {
         console.log(err.message);
         ToastError(err.message);
       });
   } catch (error) {
+    console.log(error.message);
     ToastError(error?.message, 'Error backing up data');
   }
 };
-
-
 
 const migrateLabourData = async () => {
   try {

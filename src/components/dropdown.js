@@ -30,6 +30,7 @@ export default function DropdownPicker({
                 placeholderStyle={{ color: colors.border }}
                 visibleSelectedItem
                 selectedTextProps={{ style: { color: colors.text } }}
+                inputSearchStyle={{ color: colors.text }}
                 data={data}
                 search={search}
                 searchPlaceholder="Search..."

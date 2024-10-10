@@ -81,7 +81,7 @@ const EditProfile = () => {
         if (!email || !isValidEmail(email)) return ToastError(strings.invalidEmail);
 
         try {
-            if (!isEmailLinked) await linkEmailWithPhone(email, userData.password);
+            // if (!isEmailLinked) await linkEmailWithPhone(email, userData.password);
             await updateUserData();
         } catch (error) {
             ToastError(error?.message);
@@ -234,15 +234,15 @@ const EditProfile = () => {
                                         : strings.notVerified,
                         )}
                     </Text> */}
-                    {!isEmailLinked && (
+                    {/* {!isEmailLinked && (
                         <Input
                             placeholder={strings.password}
                             value={userData.password}
                             setValue={password => setUserData(prev => ({ ...prev, password }))}
                         />
-                    )}
+                    )} */}
                     <Button
-                        label={!isEmailLinked ? strings.linkEmail : strings.update}
+                        label={strings.update}
                         onPress={handleUpdate}
                     />
                 </View>

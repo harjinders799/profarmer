@@ -53,6 +53,10 @@
 	</dict>
 	<key>NSFaceIDUsageDescription</key>
 	<string>$(App_Name) requires FaceID access to allows you quick and secure access.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>$(App_Name) requires Photo Library access to allows you choose and upload your photo for profile image.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>$(App_Name) requires Camera access to allows you capture and upload your photo for profile image.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string></string>
 	<key>NSPhotoLibraryAddUsageDescription</key>

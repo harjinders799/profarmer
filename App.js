@@ -67,7 +67,7 @@ export default function App() {
       authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
       authStatus === messaging.AuthorizationStatus.PROVISIONAL;
 
-    console.log('Authorization status:', authStatus);
+    console.log(enabled, 'Authorization status:', authStatus);
     if (enabled) {
       if (auth()?.currentUser?.uid) await getFCMToken();
     }

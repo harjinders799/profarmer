@@ -112,8 +112,8 @@ export default function Aadhat() {
           <Text center style={{ marginTop: 20 }}>{strings.no_data}</Text>
         )}
       </ScrollView>
-      <View style={[common.row_btw, { marginTop: 20, position: 'absolute', bottom: 20 }]}>
-        {data.length ? (
+      {data.length ? (
+        <View style={[common.row_btw, { marginTop: 20, position: 'absolute', bottom: 20 }]}>
           <>
             <Button
               iconLeft="plus"
@@ -128,24 +128,23 @@ export default function Aadhat() {
               onPress={() => navigate('AddTransaction', { data: data[0], isCrop: true })}
             />
           </>
-        ) : (
-          <Button
-            label={strings.add_aadhatiya}
-            iconLeft="plus"
-            btnStyle={{
-              maxWidth: '80%',
-              width: 'auto',
-              position: 'absolute',
-              bottom: 20,
-              right: -5,
-              paddingRight: 20,
-              zIndex: 999,
-              ...common.shadow,
-            }}
-            onPress={() => navigate('AddAadhatiya')}
-          />
-        )}
-      </View>
+        </View>
+      ) : (
+        <Button
+          label={strings.add_aadhatiya}
+          iconLeft="plus"
+          btnStyle={{
+            maxWidth: '60%',
+            width: 'auto',
+            position: 'absolute',
+            bottom: 20,
+            right: -5,
+            zIndex: 999,
+            ...common.shadow,
+          }}
+          onPress={() => navigate('AddAadhatiya')}
+        />
+      )}
       <DeleteModal
         openModal={openModal}
         setOpenModal={setOpenModal}
