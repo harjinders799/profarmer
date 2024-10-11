@@ -24,6 +24,7 @@ import { useLang } from 'src/context/langContext';
 import OtpInputs from 'react-native-otp-inputs';
 import Icon from 'src/components/icon';
 import { black, gray3, green } from '../../utils/colors';
+import Header from '@components/header';
 
 const Login = ({ navigation }) => {
   const { colors } = useTheme();
@@ -131,6 +132,7 @@ const Login = ({ navigation }) => {
     <BaseView>
       <Loader visible={loading} />
       {/* <LanguagePicker /> */}
+      <Header back />
       <ScrollView
         style={{ width: '100%' }}
         contentContainerStyle={{

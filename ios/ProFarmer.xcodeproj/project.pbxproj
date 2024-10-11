@@ -11,6 +11,8 @@
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+		267C3F922CB8D44E0031E3FA /* GoogleService-Info-real.plist in Resources */ = {isa = PBXBuildFile; fileRef = 267C3F912CB8D44E0031E3FA /* GoogleService-Info-real.plist */; };
+		267C3F932CB8D44E0031E3FA /* GoogleService-Info-real.plist in Resources */ = {isa = PBXBuildFile; fileRef = 267C3F912CB8D44E0031E3FA /* GoogleService-Info-real.plist */; };
 		2689D82D2C8C3A6700353536 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2689D82C2C8C3A6700353536 /* GoogleService-Info.plist */; };
 		66F3702E0AC370ECB38539E5 /* Pods_ProFarmer_ProFarmerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAC8D56F0C42AF5B024DEA21 /* Pods_ProFarmer_ProFarmerTests.framework */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
@@ -41,6 +43,7 @@
 		13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = PrivacyInfo.xcprivacy; path = ProFarmer/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		1F209C83EF7AEB0CF3DDF41C /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = ProFarmer/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		26017F4B2CB6E45C0097512E /* ProFarmer.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = ProFarmer.entitlements; path = ProFarmer/ProFarmer.entitlements; sourceTree = "<group>"; };
+		267C3F912CB8D44E0031E3FA /* GoogleService-Info-real.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info-real.plist"; sourceTree = "<group>"; };
 		2689D82C2C8C3A6700353536 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		7427F7733F06A3B937620698 /* Pods-ProFarmer.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProFarmer.release.xcconfig"; path = "Target Support Files/Pods-ProFarmer/Pods-ProFarmer.release.xcconfig"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = ProFarmer/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -125,6 +128,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				267C3F912CB8D44E0031E3FA /* GoogleService-Info-real.plist */,
 				2689D82C2C8C3A6700353536 /* GoogleService-Info.plist */,
 				13B07FAE1A68108700A75B9A /* ProFarmer */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
@@ -245,6 +249,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				267C3F922CB8D44E0031E3FA /* GoogleService-Info-real.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -253,6 +258,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
+				267C3F932CB8D44E0031E3FA /* GoogleService-Info-real.plist in Resources */,
 				2689D82D2C8C3A6700353536 /* GoogleService-Info.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				FE3100E20D407EDE7E41EEDB /* PrivacyInfo.xcprivacy in Resources */,
@@ -494,7 +500,7 @@
 				CODE_SIGN_ENTITLEMENTS = ProFarmer/ProFarmer.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = GNR6M9CPZT;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = ProFarmer/Info.plist;
@@ -504,7 +510,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.2;
+				MARKETING_VERSION = 1.0.3;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -528,7 +534,7 @@
 				CODE_SIGN_ENTITLEMENTS = ProFarmer/ProFarmer.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = GNR6M9CPZT;
 				INFOPLIST_FILE = ProFarmer/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Pro Farmer";
@@ -537,7 +543,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.2;
+				MARKETING_VERSION = 1.0.3;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",

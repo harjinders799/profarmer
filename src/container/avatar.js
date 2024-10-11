@@ -23,7 +23,7 @@ export default ({
     <View style={[styles.container, small && styles.small, style]}>
       <View style={styles.imgContainer}>
         <TouchableOpacity onPress={onEditImgTap} activeOpacity={0.8}>
-          <Loader visible={loading && !!img} small />
+          <Loader visible={loading && !!img} small label={false} />
           {img ? (
             <Image
               // source={{ uri: typeof img == 'string' ? img : img?.uri }}

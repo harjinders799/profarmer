@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>416058833468-u78siqkj7nt15a8can4vi7qafnraeb2i.apps.googleusercontent.com</string>
+	<string>416058833468-u3tduh7p714tu0v7iu4i3tstkoqbcee6.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.416058833468-u78siqkj7nt15a8can4vi7qafnraeb2i</string>
+	<string>com.googleusercontent.apps.416058833468-u3tduh7p714tu0v7iu4i3tstkoqbcee6</string>
 	<key>ANDROID_CLIENT_ID</key>
 	<string>416058833468-22rqvjnolkk9sjcrss8s9mpsbk2cg6va.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
@@ -15,7 +15,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.harjinder.profarmer</string>
+	<string>com.profarmer</string>
 	<key>PROJECT_ID</key>
 	<string>pro--farmer</string>
 	<key>STORAGE_BUCKET</key>
@@ -31,6 +31,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:416058833468:ios:dec431a56d2bd6417de139</string>
+	<string>1:416058833468:ios:6b717515b8a5f44d7de139</string>
 </dict>
 </plist>

@@ -7,8 +7,8 @@ import auth from '@react-native-firebase/auth';
 import Logo from 'src/container/logo';
 import Text from 'src/components/text';
 import Loader from 'src/components/loader';
-import { useIsFocused, useRoute, useTheme } from '@react-navigation/native';
-import { ToastError, ToastSuccess } from 'src/utils/toast';
+import { useTheme } from '@react-navigation/native';
+import { ToastError } from 'src/utils/toast';
 import LanguagePicker from 'src/components/languagePicker';
 import { strings } from 'src/translations/locale';
 import { useLang } from 'src/context/langContext';
@@ -18,17 +18,11 @@ import {
   statusCodes,
 } from '@react-native-google-signin/google-signin';
 import { navigate } from '../../navigation/ref';
-import { orange } from '@utils/colors';
-import Input from '@components/input';
 import { common } from '@utils/style';
-import { SignInWithEmailUser } from '@network/auth-service';
 
 GoogleSignin.configure({
   webClientId:
     '416058833468-5rn56d49jdg3ar3e0mp2o4e5nio1o65g.apps.googleusercontent.com',
-  iosClientId:
-    // '416058833468-u3tduh7p714tu0v7iu4i3tstkoqbcee6.apps.googleusercontent.com',
-    '416058833468-u78siqkj7nt15a8can4vi7qafnraeb2i.apps.googleusercontent.com',
   scopes: [
     'https://www.googleapis.com/auth/userinfo.email', // Request email
   ],
@@ -38,31 +32,17 @@ const LoginMethods = ({ navigation }) => {
   const { lang } = useLang();
   const [loading, setLoading] = React.useState(false);
   const [showBtns, setShowBtns] = useState(false);
-  const [email, setEmail] = useState(__DEV__ ? 'test@tes.com' : '');
-  const [password, setPassword] = useState(__DEV__ ? '123456' : '');
-
-  const signIn = async () => {
-    setLoading(true);
-    try {
-      await SignInWithEmailUser(email, password);
-      // Handle successful sign-in (e.g., redirect or show success message)
-    } catch (error) {
-      ToastError(error?.message);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const signInG = async () => {
     try {
       setLoading(true);
-      await GoogleSignin.hasPlayServices();
+      await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
       const { idToken } = await GoogleSignin.signIn();
       // Create a Google credential with the token
       const googleCredential = auth.GoogleAuthProvider.credential(idToken);
 
       // Sign-in the user with the credential
-      auth().signInWithCredential(googleCredential);
+      await auth().signInWithCredential(googleCredential);
     } catch (error) {
       setLoading(false);
       console.log(error);
@@ -138,22 +118,20 @@ const LoginMethods = ({ navigation }) => {
               onPress={() => navigate('Login')}
             />
           ) : null}
-          {(isIOS && showBtns) || !isIOS ? (
-            <Button
-              label="Sign-In With"
-              btnStyle={{
-                maxWidth: !showBtns ? '100%' : '45%',
-                height: 40,
-              }}
-              onPress={signInG}
-              rightComponent={
-                <Image
-                  source={require('@assets/google.png')}
-                  style={{ width: 20, aspectRatio: 1, marginLeft: 10 }}
-                />
-              }
-            />
-          ) : null}
+          <Button
+            label="Sign-In With"
+            btnStyle={{
+              maxWidth: !showBtns ? '100%' : '45%',
+              height: 40,
+            }}
+            onPress={signInG}
+            rightComponent={
+              <Image
+                source={require('@assets/google.png')}
+                style={{ width: 20, aspectRatio: 1, marginLeft: 10 }}
+              />
+            }
+          />
         </View>
 
         {/* <Input
