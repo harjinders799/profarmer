@@ -1,5 +1,5 @@
 import { StyleSheet, View } from 'react-native';
-import React from 'react';
+import React, { useState } from 'react';
 import { Dropdown, MultiSelect } from 'react-native-element-dropdown';
 import Text from './text';
 import { useTheme } from '@react-navigation/native';
@@ -13,20 +13,22 @@ export default function DropdownPicker({
     multiple = false,
     ...rest
 }) {
+    const [insideShow, setInsideShow] = useState(true)
     const { colors } = useTheme();
     let Component = multiple ? MultiSelect : Dropdown;
     return (
         <View style={[styles.container, style]}>
             {label ? <Text h4>{label}</Text> : null}
             <Component
-                {...rest}
                 style={[styles.dropdown, { borderColor: colors.border }, dropdownStyle]}
                 selectedTextStyle={styles.selectedTextStyle}
                 containerStyle={{
                     borderBottomLeftRadius: 10,
                     borderBottomRightRadius: 10,
+                    overflow: 'hidden'
                 }}
-                itemTextStyle={{ color: colors.text }}
+                activeColor={colors.border + 99}
+                itemTextStyle={{ color: colors.text, }}
                 placeholderStyle={{ color: colors.border }}
                 visibleSelectedItem
                 selectedTextProps={{ style: { color: colors.text } }}
@@ -35,7 +37,10 @@ export default function DropdownPicker({
                 search={search}
                 searchPlaceholder="Search..."
                 selectedStyle={styles.selectedStyle}
-                inside
+                inside={insideShow}
+                onFocus={() => setInsideShow(multiple ? false : true)}
+                onBlur={() => setInsideShow(true)}
+                {...rest}
             />
         </View>
     );
@@ -56,6 +61,7 @@ const styles = StyleSheet.create({
         overflow: 'hidden'
     },
     selectedTextStyle: {
+        // backgroundColor: 'green'
         // color: 'green',
         // padding: 20,
     },
@@ -63,7 +69,6 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         // borderWidth: 0,
         // padding: 0,
-        // backgroundColor: 'red'
         paddingVertical: 3,
         // paddingHorizontal: 10
     },

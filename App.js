@@ -30,7 +30,7 @@ export default function App() {
     (async () => {
       const res = await checkVersion({
         // platform: 'android',
-        currentVersion: isIOS ? '1.0.3' : '2.2.5',
+        currentVersion: isIOS ? '1.0.4' : '2.2.6',
         bundleId: isIOS ? 'com.harjinder.profarmer' : 'com.profarmer',
       });
       setVersion(res);

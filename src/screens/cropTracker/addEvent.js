@@ -171,6 +171,7 @@ export default function AddEvent() {
             entering={FadeInDown.delay(550)}
             placeholder={'₹1000, ₹15,000....'}
             value={currencyInput(amount)}
+            keyboardType={"numeric"}
             setValue={(value) => onChangeValue({ setData, key: 'amount', value, isAmount: true })}
           />
           <DateTimePick

@@ -12,9 +12,14 @@ import { ToastError } from 'src/utils/toast';
 import LanguagePicker from 'src/components/languagePicker';
 import { strings } from 'src/translations/locale';
 import { useLang } from 'src/context/langContext';
+import {
+  appleAuth,
+  AppleButton,
+} from '@invertase/react-native-apple-authentication';
 
 import {
   GoogleSignin,
+  GoogleSigninButton,
   statusCodes,
 } from '@react-native-google-signin/google-signin';
 import { navigate } from '../../navigation/ref';
@@ -57,6 +62,36 @@ const LoginMethods = ({ navigation }) => {
       }
     }
   };
+
+  const onAppleButtonPress = async () => {
+    try {
+      // Start the sign-in request
+      const appleAuthRequestResponse = await appleAuth.performRequest({
+        requestedOperation: appleAuth.Operation.LOGIN,
+        // As per the FAQ of react-native-apple-authentication, the name should come first in the following array.
+        // See: https://github.com/invertase/react-native-apple-authentication#faqs
+        requestedScopes: [appleAuth.Scope.FULL_NAME, appleAuth.Scope.EMAIL],
+      });
+
+      // Ensure Apple returned a user identityToken
+      if (!appleAuthRequestResponse.identityToken) {
+        throw new Error('Apple Sign-In failed - no identify token returned');
+      }
+
+      // Create a Firebase credential from the response
+      const { identityToken, nonce } = appleAuthRequestResponse;
+      const appleCredential = auth.AppleAuthProvider.credential(
+        identityToken,
+        nonce,
+      );
+
+      // Sign the user in with the credential
+      return auth().signInWithCredential(appleCredential);
+    } catch (error) {
+      console.log({ error });
+    }
+  }
+
   return (
     <BaseView>
       <Loader visible={loading} />
@@ -66,8 +101,9 @@ const LoginMethods = ({ navigation }) => {
           borderTopLeftRadius: 10,
           borderBottomLeftRadius: 10,
           maxWidth: '40%',
-          height: 40,
+          height: 45,
         }}
+        ask={true}
       />
       <ScrollView
         style={{ width: '100%' }}
@@ -85,54 +121,45 @@ const LoginMethods = ({ navigation }) => {
           onLongPress={() => setShowBtns(!showBtns)}>
           <Logo />
         </Pressable>
-        {/* <Text h2 style={{ marginBottom: 30 }}>
-          {strings.welcome}
-        </Text>
-        <Button
-          label="Sign-In With Email"
-          iconName="email"
-          iconType="Fontisto"
-          iconColor={colors.background}
-          btnStyle={{ backgroundColor: orange }}
-          onPress={() => navigate('SignInWithEmail')}
-        /> */}
         <Text h2 style={{ marginBottom: 20 }}>
           {strings.welcome}
         </Text>
-        <View
-          style={[
-            showBtns ? common.row_btw : common.centerAligned,
-            { width: '100%' },
-          ]}>
-          {showBtns ? (
-            <Button
-              label="Sign-In With"
-              iconRight="phone"
-              iconType="Feather"
-              iconColor={colors.background}
-              btnStyle={{
-                backgroundColor: '#34A853',
-                maxWidth: '45%',
-                height: 40,
-              }}
-              onPress={() => navigate('Login')}
-            />
-          ) : null}
+        {showBtns ? (
           <Button
             label="Sign-In With"
+            iconRight="phone"
+            iconType="Feather"
+            iconColor={colors.background}
             btnStyle={{
-              maxWidth: !showBtns ? '100%' : '45%',
-              height: 40,
+              backgroundColor: '#34A853',
+              maxWidth: '45%',
+              height: 45,
             }}
-            onPress={signInG}
-            rightComponent={
-              <Image
-                source={require('@assets/google.png')}
-                style={{ width: 20, aspectRatio: 1, marginLeft: 10 }}
-              />
-            }
+            onPress={() => navigate('Login')}
           />
-        </View>
+        ) : null}
+        <GoogleSigninButton
+          style={{
+            width: '100%',
+            height: 50,
+            marginBottom: 20,
+          }}
+          onPress={signInG}
+          size={GoogleSigninButton.Size.Wide}
+          color={GoogleSigninButton.Color.Dark}
+        // disabled={isInProgress}
+        />
+        {isIOS ? (
+          <AppleButton
+            buttonStyle={AppleButton.Style.WHITE_OUTLINE}
+            buttonType={AppleButton.Type.SIGN_IN}
+            style={{
+              width: '100%',
+              height: 45,
+            }}
+            onPress={onAppleButtonPress}
+          />
+        ) : null}
 
         {/* <Input
           emailType
@@ -152,14 +179,15 @@ const LoginMethods = ({ navigation }) => {
         <Button
           label={strings.already_have_account}
           btnStyle={{
-            height: 40,
+            height: 45,
           }}
           onPress={() => navigate('SignInWithEmail')}
         />
         <Button
           label={strings["don't_have_account"]}
           btnStyle={{
-            height: 40,
+            height: 45,
+            marginVertical: 0,
           }}
           onPress={() => navigate('SignUp')}
         />

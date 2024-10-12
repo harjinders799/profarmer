@@ -95,6 +95,7 @@ export const AuthProvider = props => {
         auth()
           .signOut()
           .then(() => {
+            storage.clearAll();
             dispatch({ type: 'RESET' });
             // replace("Login")
           });

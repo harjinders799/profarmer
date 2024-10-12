@@ -98,8 +98,7 @@ function Modal(props) {
           style={[
             styles.flex,
             {
-              backgroundColor: white,
-              opacity: opacity,
+              backgroundColor: colors.text + 99,
             },
           ]}>
           <TouchableOpacity
@@ -112,16 +111,16 @@ function Modal(props) {
             styles.modal,
             {
               height: height,
-              backgroundColor: gray1,
+              backgroundColor: colors.background,
               bottom: bottom,
             },
           ]}>
           <View style={styles.header}>
-            {topLeft}
-            {topRight}
+            {/* {topLeft} */}
+            {/* {underTopElement} */}
+            {/* {topRight} */}
           </View>
 
-          {underTopElement}
 
           <View style={styles.flex}>{children}</View>
         </Animated.View>
@@ -144,7 +143,7 @@ const styles = StyleSheet.create({
     bottom: 0,
   },
   header: {
-    padding: 20,
+    padding: 10,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',

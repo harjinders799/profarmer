@@ -121,6 +121,7 @@ export default function AddTransaction() {
               label={strings.weight}
               placeholder={strings.weight}
               value={weight}
+              keyboardType={"numeric"}
               setValue={value => onChangeValue({ setData, key: 'weight', value, isAmount: true })}
               style={{ width: '48%' }}
             />
@@ -129,6 +130,7 @@ export default function AddTransaction() {
               label={strings.enter_rate}
               placeholder={strings.enter_rate}
               value={currencyInput(rate)}
+              keyboardType={"numeric"}
               setValue={value => onChangeValue({ setData, key: 'rate', value, isAmount: true })}
               style={{ width: '48%' }}
             />

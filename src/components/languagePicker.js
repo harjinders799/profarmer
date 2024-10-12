@@ -15,14 +15,14 @@ const langs = [
   { code: 'en', label: 'english' },
 ];
 const LanguagePicker = props => {
-  const { style, btnStyle } = props;
+  const { style, btnStyle, ask } = props;
   const { lang, setLang } = useLang();
   const { colors } = useTheme();
   const [show, setShow] = useState(false);
 
   useEffect(() => {
-    if (!lang?.code) setShow(true);
-  }, [lang]);
+    if (ask) setShow(true);
+  }, [ask]);
 
   return (
     <View style={[styles.container, style]}>
@@ -31,15 +31,20 @@ const LanguagePicker = props => {
         btnStyle={[styles.btn, btnStyle]}
         onPress={() => setShow(!show)}
       />
-      <Modal visible={show} setModalVisible={setShow} ratioHeight={0.3}>
+      <Modal
+        visible={show}
+        setModalVisible={setShow}
+        ratioHeight={0.3}
+      >
         <View style={[styles.menu]}>
           {langs.map((v, i) => (
             <TouchableOpacity
               key={i}
               style={[styles.main]}
               onPress={() => {
+                console.log(v)
                 setLang(v);
-                setShow();
+                setShow(false);
               }}>
               <Text h3 black style={[styles.txt]}>
                 {strings[v?.label]}
@@ -74,7 +79,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   txt: {
-    marginVertical: 5,
+    marginVertical: 10,
   },
   menu: {
     borderRadius: 5,

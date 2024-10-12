@@ -48,6 +48,11 @@ export default function AddPicker() {
         }
     }, [name, phone, rate]);
 
+    let isRateEditable =
+        Array.isArray(weights) && weights.length
+            ? weights.every(item => item.rate === weights[0].rate)
+            : true;
+
     const updateData = async () => {
         if (!name || name.trim() == '') {
             ToastError(strings.receiver_name);
@@ -60,7 +65,7 @@ export default function AddPicker() {
         }
         try {
             setLoading(true);
-            const isRateChange = editData?.rate != rate
+            const isRateChange = isRateEditable ? editData?.rate != rate : true
             await updatePicker({
                 ...data,
                 id: editData?.id,
@@ -119,10 +124,6 @@ export default function AddPicker() {
         },
         [phone],
     );
-    let isRateEditable =
-        Array.isArray(weights) && weights.length
-            ? weights.every(item => item.rate === weights[0].rate)
-            : true;
     return (
         <BaseView space>
             <Loader visible={loading} />
@@ -186,14 +187,13 @@ export default function AddPicker() {
                 ) : checking ? (
                     <ActivityIndicator color={colors.text} />
                 ) : verifiedUser == 'user not found' ? (
-                    <Text color={colors.error}>User not using this app yet</Text>
+                    <Text color={colors.error}>{strings.userNotUsingApp}</Text>
                 ) : null}
                 <Input
                     label={strings.enter_rate}
                     placeholder={strings.enter_rate}
                     value={currencyInput(rate)}
                     maxLength={10}
-                    editable={isRateEditable}
                     setValue={value =>
                         onChangeValue({
                             setData,
@@ -204,11 +204,9 @@ export default function AddPicker() {
                     }
                     keyboardType="numeric"
                 />
-                {isRateEditable ? null : (
-                    <Text color={colors.warning}>
-                        Warning: You can't make changes because the rates are different. Please check the rates first.
-                    </Text>
-                )}
+                <Text color={colors.warning}>
+                    Warning: {strings.different_rate_warning}
+                </Text>
                 <Button label={strings.save} onPress={onPress} />
             </ScrollView>
         </BaseView>

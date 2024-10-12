@@ -3,7 +3,7 @@ import { strings } from 'src/translations/locale';
 import { storage } from '@utils/helper';
 
 const initialState = {
-  lang: undefined,
+  lang: { "code": "hi", "label": "hindi" },
   theme: 'dark',
   fingerLock: true,
   authenticate: false
@@ -65,7 +65,7 @@ export const LangProvider = props => {
         const lang = jsonLang ? JSON.parse(jsonLang) : null
         const jsonLock = storage.getString('fingerLock')
         const lock = jsonLock ? JSON.parse(jsonLock) : null
-        if (lang?.code) strings.setLanguage(lang.code);
+        strings.setLanguage(lang.code ?? "hi");
         dispatch({ type: 'THEME', theme });
         dispatch({ type: 'FINGER', fingerLock: lock });
         dispatch({ type: 'LANG', lang: lang });

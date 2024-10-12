@@ -54,8 +54,12 @@ export const onChangeValue = ({
 
             data[key] = newValue;
         } else if (isNameOnly) {
-            // Remove invalid characters
-            data[key] = value.replace(/[^a-zA-Z0-9\s]/g, '');
+            // // Remove invalid characters
+            // data[key] = value.replace(/[^a-zA-Z0-9\s]/g, '');
+            // // Remove leading whitespace and special characters
+            // data[key] = value.replace(/^[^\w]+|^\s+/g, '').trim();
+            // Remove invalid characters (allow English, Hindi, Punjabi, and numbers)
+            data[key] = value.replace(/[^a-zA-Z0-9\s\u0900-\u097F\u0A00-\u0A7F]/g, '');
         } else {
             // Default case: assign value directly
             data[key] = value;
