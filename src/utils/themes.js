@@ -39,7 +39,7 @@ export const themeDark = {
     success: colors.greenDark,
     warning: colors.orange,
     waiting: colors.yellow,
-    disable: colors.gray10,
+    disable: colors.gray7,
     secondaryCard: colors.gray7,
     thirdCard: colors.gray8,
     secondaryBorder: colors.gray4,

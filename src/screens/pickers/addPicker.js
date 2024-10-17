@@ -65,14 +65,17 @@ export default function AddPicker() {
         }
         try {
             setLoading(true);
-            const isRateChange = isRateEditable ? editData?.rate != rate : true
-            await updatePicker({
-                ...data,
-                id: editData?.id,
-                total_earning: editData?.total_earning,
-                name: name.trim(),
-                receiverId: verifiedUser?.id,
-            }, isRateChange);
+            const isRateChange = isRateEditable ? editData?.rate != rate : true;
+            await updatePicker(
+                {
+                    ...data,
+                    id: editData?.id,
+                    total_earning: editData?.total_earning,
+                    name: name.trim(),
+                    receiverId: verifiedUser?.id,
+                },
+                isRateChange,
+            );
             setLoading(false);
             ToastSuccess(strings.successfully_updated);
             goBack();
@@ -139,6 +142,7 @@ export default function AddPicker() {
                 keyboardShouldPersistTaps="always">
                 <Input
                     label={strings.name}
+                    autoCapitalize="words"
                     autoFocus
                     placeholder={strings.name}
                     value={name}
@@ -204,9 +208,11 @@ export default function AddPicker() {
                     }
                     keyboardType="numeric"
                 />
-                <Text color={colors.warning}>
-                    Warning: {strings.different_rate_warning}
-                </Text>
+                {editData?.name ? (
+                    <Text color={colors.warning}>
+                        Warning: {strings.different_rate_warning}
+                    </Text>
+                ) : null}
                 <Button label={strings.save} onPress={onPress} />
             </ScrollView>
         </BaseView>

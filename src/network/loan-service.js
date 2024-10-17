@@ -1,5 +1,4 @@
 import firestore, { Filter } from '@react-native-firebase/firestore';
-import Auth from '@react-native-firebase/auth';
 import auth from '@react-native-firebase/auth';
 import { ToastError } from '@utils/toast';
 import { calculateLoanDetails, formatPhoneNumber, sanitizeData } from '@utils/helper';

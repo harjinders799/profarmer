@@ -236,11 +236,11 @@ export const addPickerWeight = (data, picker) => {
     }
   });
 };
-export const addPickerWeightBulk = (data, date, pickers) => {
+export const addPickerWeightBulk = (data, date, pickers, remark) => {
   return new Promise((resolve, reject) => {
     try {
       let uid = auth().currentUser?.uid;
-      const processedData = processWeights(data, date); // Process weights before saving
+      const processedData = processWeights(data, date, remark); // Process weights before saving
       // console.log({ processedData, data, date });
       const batch = firestore().batch(); // Create a batch for bulk operations
 
@@ -548,6 +548,68 @@ export const updatePicker = (data, isRateChange) => {
   });
 };
 
+export const updateAllPickerRate = async newRate => {
+  try {
+    const uid = auth().currentUser?.uid;
+    const batch = firestore().batch(); // Create a batch instance
+
+    const pickersCollectionRef = firestore().collection('pickers_data');
+    const pickersSnapshot = await pickersCollectionRef
+      .where('uid', '==', uid)
+      .get();
+
+    const updatePromises = pickersSnapshot.docs.map(async picker => {
+      const cottonWeightCollection = firestore().collection(
+        'picker_cotton_weight',
+      );
+      const cottonWeightSnapshot = await cottonWeightCollection
+        .where('pid', '==', picker.id)
+        .get();
+
+      let totalEarning = 0;
+
+      cottonWeightSnapshot.docs.forEach(doc => {
+        const totalWeight = parseFloat(doc.data().weight) || 0; // Ensure totalWeight is a number
+        const earning = totalWeight * parseFloat(newRate); // Calculate earning safely
+
+        // Update rate in the batch
+        batch.update(cottonWeightCollection.doc(doc.id), {
+          rate: newRate,
+        });
+
+        totalEarning += earning; // Sum up the earnings safely
+      });
+
+      // Update the pickers_data with sanitized data
+      batch.update(
+        pickersCollectionRef.doc(picker.id),
+        sanitizeData({
+          total_earning: totalEarning,
+          rate: newRate
+        }),
+      );
+
+      addMultipleNotification(
+        {
+          data: picker.data, // Ensure `data` is correctly referenced
+          type: 'picker',
+          message: `${auth().currentUser.displayName
+            } updated the rate to ${currencyFormat(newRate)}!`,
+        },
+        picker,
+      );
+    });
+
+    // Wait for all updates to complete
+    await Promise.all(updatePromises);
+
+    // Commit the batch after all updates
+    return await batch.commit();
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
 export const updatePickerCottonWeight = (data, oldData, picker) => {
   return new Promise(function (resolve, reject) {
     try {
@@ -738,7 +800,6 @@ export const createGroup = data => {
 export const updateGroup = data => {
   return new Promise(function (resolve, reject) {
     try {
-      let id = auth().currentUser?.uid;
       firestore().collection('picker_groups').doc(data?.id).update(data);
       resolve(data?.id);
     } catch (error) {

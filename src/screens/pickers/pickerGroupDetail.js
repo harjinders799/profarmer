@@ -6,6 +6,7 @@ import Loader from '@components/loader';
 import { getGroupMembersData } from '@network/picker-service';
 import { ToastError } from '@utils/toast';
 import { orderBy } from 'lodash'
+import PickerFilter from '@container/picker/pickerFilter';
 
 const PickerList = lazy(() => import('@container/picker/pickerList'));
 
@@ -14,6 +15,11 @@ const PickerGroupDetail = () => {
         params: { item, pickers },
     } = useRoute();
     const [grpPickersData, setGrpPickersData] = useState([]);
+    const [isFocus, setIsFocus] = useState(false)
+    const [orderByFilter, setOrderByFilter] = useState({
+        key: 'updatedAt',
+        value: 'desc'
+    })
 
     // Optimized data fetching with useCallback
     const fetchData = useCallback(() => {
@@ -34,12 +40,22 @@ const PickerGroupDetail = () => {
             ? grpPickersData
             : pickers.filter(p => item.members.includes(p.id));
 
+    let orderByPickers = orderBy(grpPickers, [orderByFilter.key], [orderByFilter.value])
+
     return (
         <BaseView>
             <Header back label={item?.name} />
-            <Suspense fallback={<Loader visible={true} />}>
-                <PickerList data={orderBy(grpPickers, ['updatedAt'], ['desc'])} groups={[item]} />
-            </Suspense>
+            <PickerFilter
+                isFocus={isFocus}
+                setIsFocus={setIsFocus}
+                orderBy={orderByFilter}
+                pickers={orderByPickers}
+                groups={[item]}
+                setOrderBy={setOrderByFilter}
+            />
+            {isFocus ? null : <Suspense fallback={<Loader visible={true} />}>
+                <PickerList data={orderByPickers} groups={[item]} />
+            </Suspense>}
         </BaseView>
     );
 };

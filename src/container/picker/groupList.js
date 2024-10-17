@@ -67,7 +67,7 @@ function GroupList({ data, pickers, refreshing, onRefresh }) {
                                     backgroundColor: navy,
                                 },
                             ]}
-                            onPress={() => navigate('AddPickerBulkExpense', { item, pickers })}
+                            onPress={() => navigate('AddPickerBulkExpense', { item, groups: data, pickers })}
                         />
                         <Button
                             small
@@ -79,7 +79,7 @@ function GroupList({ data, pickers, refreshing, onRefresh }) {
                                     backgroundColor: colors.warning,
                                 },
                             ]}
-                            onPress={() => navigate('AddPickerBulkWeight', { item, pickers })}
+                            onPress={() => navigate('AddPickerBulkWeight', { item, groups: data, pickers })}
                         />
                     </View>
                 </TouchableOpacity>

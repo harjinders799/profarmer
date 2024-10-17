@@ -59,7 +59,10 @@ export const onChangeValue = ({
             // // Remove leading whitespace and special characters
             // data[key] = value.replace(/^[^\w]+|^\s+/g, '').trim();
             // Remove invalid characters (allow English, Hindi, Punjabi, and numbers)
-            data[key] = value.replace(/[^a-zA-Z0-9\s\u0900-\u097F\u0A00-\u0A7F]/g, '');
+            data[key] = value.replace(
+                /[^a-zA-Z0-9\s\u0900-\u097F\u0A00-\u0A7F]/g,
+                '',
+            );
         } else {
             // Default case: assign value directly
             data[key] = value;
@@ -153,7 +156,7 @@ export const getInterest = (data = []) => {
 export const sanitizeData = data => {
     const sanitizedData = {};
     Object.keys(data).forEach(key => {
-        if (data[key] !== undefined) {
+        if (data[key] != undefined && data[key] != null) {
             // Remove 'password' key and value
             if (key === 'password') {
                 return; // Skip adding this key to sanitizedData
@@ -216,7 +219,9 @@ export const assignedPickers = (pickers, group) => {
     const assignedPickerIds = new Set(group.members);
 
     // Filter pickers to include only those who are assigned in the group
-    const assignedPickers = pickers.filter(picker => assignedPickerIds.has(picker.id));
+    const assignedPickers = pickers.filter(picker =>
+        assignedPickerIds.has(picker.id),
+    );
 
     return assignedPickers;
 };
@@ -260,7 +265,11 @@ export const findPickerGroupNames = (picker, groups) => {
     return pickerGroupMap[picker.id] || 'no group';
 };
 
-export function groupPickersByDate(pickers, pickersWeightData, pickersExpenseData) {
+export function groupPickersByDate(
+    pickers,
+    pickersWeightData,
+    pickersExpenseData,
+) {
     // Create a map of picker ID to name and uid
     const pickerMap = {};
     pickers.forEach(picker => {
@@ -293,7 +302,9 @@ export function groupPickersByDate(pickers, pickersWeightData, pickersExpenseDat
             groupedData[date].total_weight += parseFloat(entry.weight);
 
             // Check if the picker is already in the list for that date
-            const existingPicker = groupedData[date].pickers.find(p => p.name === pickerName);
+            const existingPicker = groupedData[date].pickers.find(
+                p => p.name === pickerName,
+            );
             if (existingPicker) {
                 existingPicker.total_weight += parseFloat(entry.weight); // Aggregate picker weight
             } else {
@@ -327,7 +338,9 @@ export function groupPickersByDate(pickers, pickersWeightData, pickersExpenseDat
             groupedData[date].total_expense += parseFloat(entry.amount);
 
             // Check if the picker is already in the list for that date
-            const existingPicker = groupedData[date].pickers.find(p => p.name === pickerName);
+            const existingPicker = groupedData[date].pickers.find(
+                p => p.name === pickerName,
+            );
             if (existingPicker) {
                 existingPicker.total_expense += parseFloat(entry.amount); // Aggregate picker expense
             } else {
@@ -352,9 +365,7 @@ export function groupPickersByDate(pickers, pickersWeightData, pickersExpenseDat
     return result;
 }
 
-
-
-export const processWeights = (data, date) => {
+export const processWeights = (data, date, remark) => {
     const processedData = data
         .filter(entry => entry.weight.trim() !== '') // Filter out entries with blank weights
         .flatMap(entry => {
@@ -367,6 +378,7 @@ export const processWeights = (data, date) => {
                 .map(weight => ({
                     ...entry,
                     weight: weight,
+                    detail: remark,
                     date: currentStamp(date),
                 }));
         });
@@ -381,14 +393,13 @@ export const processAmounts = (data, date) => {
             return {
                 ...entry,
                 date: currentStamp(date),
-            }
+            };
         });
 
     return processedData;
 };
 
-
-export const formatPhoneNumber = (phone) => {
+export const formatPhoneNumber = phone => {
     // Remove any non-digit characters
     const cleanedPhone = phone.replace(/\D/g, '');
 
@@ -404,9 +415,9 @@ export const formatPhoneNumber = (phone) => {
 
     // Return the original cleaned phone number (it might be invalid or too long)
     return cleanedPhone;
-}
+};
 
-export const checkUserLinkedData = (user) => {
+export const checkUserLinkedData = user => {
     const providerData = user?.providerData;
     let isPhoneLinked = false;
     let isEmailLinked = false;
@@ -414,7 +425,7 @@ export const checkUserLinkedData = (user) => {
     let isPhoneVerified = false;
 
     // Iterate through providerData to check linked methods
-    providerData?.forEach((provider) => {
+    providerData?.forEach(provider => {
         if (provider.providerId === 'phone') {
             isPhoneLinked = true;
             isPhoneVerified = true; // Phone verified if they have a phone provider
@@ -432,14 +443,14 @@ export const checkUserLinkedData = (user) => {
     };
 };
 
-export const isValidEmail = (email) => {
+export const isValidEmail = email => {
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailPattern.test(email);
 };
 
-export const userHasFullAccess = (picker) => {
-    return picker.full_access.includes(auth()?.currentUser?.uid)
-}
+export const userHasFullAccess = picker => {
+    return picker.full_access.includes(auth()?.currentUser?.uid);
+};
 
 export const handleImageSelection = async (
     imagePickerFunction,

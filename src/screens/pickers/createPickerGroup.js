@@ -97,6 +97,7 @@ export default function CreatePickerGroup() {
                     label={strings.group_name}
                     autoFocus
                     placeholder={strings.group_name}
+                    autoCapitalize="words"
                     value={name}
                     setValue={value =>
                         onChangeValue({ setData, key: 'name', value, isName: true })

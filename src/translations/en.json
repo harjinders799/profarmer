@@ -249,7 +249,20 @@
   "create_group_tour": "After adding multiple pickers, create a group by pressing the button below.",
   "tab_tour": "Use the tabs to navigate through different views.\n\n Select the 'Pickers List' to see all available pickers,\n\n 'Group List' to view the groups you have created, \n\n 'Date-wise' to check activities based on dates.\n\n Tap on a tab to switch between these options.",
   "contributors": "Contributors",
-  "different_rate_warning": "Please note that some entries have different rates. If you make changes, it will overwrite the rates for all entries.",
+  "change_rate": "Change Rate",
+  "change_rate_waring": "Please note that may some pickers have different rates. If you make changes, it will overwrite the rates of all pickers",
+  "different_rate_warning": "Please note that may some entries have different rates. If you make changes, it will overwrite the rates for all entries.",
   "userNotUsingApp": "This user has not yet accessed the application.",
-  "assistanceMessage": "We're here to assist you with any inquiries or support you may need."
+  "assistanceMessage": "We're here to assist you with any inquiries or support you may need.",
+  "public_access": "Public Access",
+  "public_access_placeholder": "Can everyone see your crop tracking, or do you want to keep it private?",
+  "total_area": "Total Area",
+  "total_area_placeholder": "Total area of the crop",
+  "area_unit": "Area Unit",
+  "area_unit_placeholder": "Select the unit of area",
+  "public": "Public",
+  "private": "Private",
+  "hectare": "Hectare",
+  "acre": "Acre",
+  "bigha": "Bigha"
 }

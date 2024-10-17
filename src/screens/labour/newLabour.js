@@ -117,6 +117,7 @@ export default function NewLabour() {
           entering={FadeInDown.delay(300)}
           label={strings.labour_name}
           placeholder={strings.labour_name}
+          autoCapitalize="words"
           value={name}
           setValue={value => onChangeValue({ setData, key: 'name', value, isName: true })}
         />

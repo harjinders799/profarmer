@@ -54,7 +54,7 @@ function LoanList({ data }) {
             <Text
               h3
               style={{
-                color: item?.finalAmount < 0 ? colors.error : colors.success,
+                color: item?.finalAmount > 0 ? colors.error : colors.success,
                 maxWidth: '40%',
               }}>
               {currencyFormat(
@@ -87,7 +87,7 @@ function LoanList({ data }) {
             />
             <Text
               h6
-              color={item?.finalAmount < 0 ? colors.error : colors.success}>
+              color={item?.finalAmount > 0 ? colors.error : colors.success}>
               {item?.finalAmount === 0
                 ? '____'
                 : item?.finalAmount < 0

@@ -21,12 +21,16 @@ import { assignedPickers, unassignPickers } from '@utils/helper';
 
 export default function AddPickerBulkExpense() {
     const { colors } = useTheme();
-    const { params } = useRoute();
-    const pickers = params?.pickers;
-    const group = params?.item;
+    const { params: { pickers, item: group, groups } } = useRoute();
+
     let pickersData = useCallback(
         group?.id ? assignedPickers(pickers, group) : pickers,
         [pickers, group],
+    );
+
+    let unassignedPickersData = useCallback(
+        group?.id ? unassignPickers(pickers, groups, group?.id) : pickers,
+        [pickers, group, groups],
     );
 
     const [date, setDate] = useState(new Date());
@@ -86,21 +90,9 @@ export default function AddPickerBulkExpense() {
                 </Pressable>
                 {data.map((picker, i) => (
                     <View key={picker?.name} style={common.row_btw}>
-                        <Icon
-                            name={'close'}
-                            size={20}
-                            color={colors.error}
-                            onPress={() =>
-                                setData(prevs => {
-                                    let data = [...prevs];
-                                    let filtered = data.filter(obj => obj.name != picker.name);
-                                    return filtered;
-                                })
-                            }
-                        />
                         <DropdownPicker
                             value={picker?.name}
-                            data={pickers.filter(
+                            data={unassignedPickersData.filter(
                                 p =>
                                     !data.some(d => d.name === p.name) || p.name == picker?.name,
                             )}
@@ -108,15 +100,21 @@ export default function AddPickerBulkExpense() {
                             labelField="name"
                             valueField="name"
                             style={{ width: '40%' }}
-                            dropdownStyle={{ minHeight: 45, marginTop: 0 }}
-                            onChange={value => {
+                            dropdownStyle={{
+                                minHeight: 45,
+                                marginTop: 0,
+                                overflow: 'hidden',
+                                borderColor: picker?.amount ? colors.success : colors.error,
+                                backgroundColor: picker?.amount
+                                    ? colors.success + 20
+                                    : colors.error + 20,
+                            }} onChange={value => {
                                 setData(prevs => {
                                     let data = [...prevs];
                                     data[i].name = value.name;
                                     data[i].rate = value.rate;
-                                    data[i].total_earning = value.total_earning;
-                                    data[i].total_weight = value.total_weight;
-                                    data[i].weight = '';
+                                    data[i].total_given = value.total_given;
+                                    data[i].amount = '';
                                     data[i].pid = value.id;
                                     return data;
                                 });
@@ -136,11 +134,14 @@ export default function AddPickerBulkExpense() {
                             }
                             style={{ width: '50%' }}
                             inputStyle={{ width: '85%', }}
+                            innerStyle={{
+                                borderColor: picker?.amount ? colors.success : colors.error,
+                            }}
                             keyboardType="numeric"
                         />
                     </View>
                 ))}
-                {data.length < pickers.length && data.every(o => o.name) ? (
+                {data.length < unassignedPickersData.length && data.every(o => o.name) ? (
                     <Button
                         label={strings.picker}
                         iconLeft={'plus'}

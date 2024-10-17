@@ -5,13 +5,12 @@ import FlashMessage from 'react-native-flash-message';
 import Button from 'src/components/button';
 import { checkVersion } from 'react-native-check-version';
 import Text from 'src/components/text';
-import { Linking, PermissionsAndroid, ScrollView, View } from 'react-native';
+import { Linking, PermissionsAndroid, Platform, ScrollView, View } from 'react-native';
 import { LangProvider } from 'src/context/langContext';
 import { strings } from 'src/translations/locale';
 import Navigation from 'src/navigation';
 import Modal from 'src/components/Modal';
 import { AuthProvider } from './src/context/authContext';
-import { AadtProvider } from './src/context/aadtContext';
 import { TabProvider } from './src/context/tabContext';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import messaging from '@react-native-firebase/messaging';
@@ -29,9 +28,10 @@ export default function App() {
   useEffect(() => {
     (async () => {
       const res = await checkVersion({
-        // platform: 'android',
-        currentVersion: isIOS ? '1.0.4' : '2.2.6',
+        platform: Platform.OS,
+        currentVersion: isIOS ? '1.0.4' : '2.2.7',
         bundleId: isIOS ? 'com.harjinder.profarmer' : 'com.profarmer',
+
       });
       setVersion(res);
     })();
@@ -136,22 +136,16 @@ export default function App() {
         <TabProvider>
           <AuthProvider>
             <StoreProvider>
-              {/* <CottonProvider> */}
-              <AadtProvider>
-                {/* <TimelineProvider> */}
-                <LangProvider>
-                  <MenuProvider customStyles={{
-                    backdrop: {
-                      backgroundColor: black,
-                      opacity: 0.5,
-                    }
-                  }}>
-                    <Navigation />
-                  </MenuProvider>
-                </LangProvider>
-                {/* </TimelineProvider> */}
-              </AadtProvider>
-              {/* </CottonProvider> */}
+              <LangProvider>
+                <MenuProvider customStyles={{
+                  backdrop: {
+                    backgroundColor: black,
+                    opacity: 0.5,
+                  }
+                }}>
+                  <Navigation />
+                </MenuProvider>
+              </LangProvider>
             </StoreProvider>
           </AuthProvider>
         </TabProvider>

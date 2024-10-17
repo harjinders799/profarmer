@@ -3,24 +3,17 @@ import BaseView from '@container/base';
 import { useLang } from '@context/langContext';
 import Loader from '@components/loader';
 import { strings } from '@translations/locale';
-import Button from '@components/button';
 import { goBack, navigate, replace } from '@navigation/ref';
 import { useFocusEffect, useRoute, useTheme } from '@react-navigation/native';
 import Header from '@components/header';
 import { useAuth } from '@context/authContext';
 import {
     deletePickerCollection,
-    groupsDataListener,
-    pickersDataListener,
     pickersExpenseListener,
     pickersWeightListener,
 } from '@network/picker-service';
-import Tabs from '@components/tabs';
 import { ScrollView, View } from 'react-native';
 import Text from '@components/text';
-import { common } from '@utils/style';
-import SearchBar from '@container/searchBar';
-import PickerFilter from '@container/picker/pickerFilter';
 import PickerConclusion from '@container/picker/pickerConclusion';
 import DeleteModal from '@container/deleteModal';
 import { ToastError, ToastProgress, ToastSuccess } from '@utils/toast';
@@ -30,7 +23,6 @@ import { pickerHTMLFormat } from '@html/picker';
 import RNHTMLtoPDF from 'react-native-html-to-pdf';
 import Share from 'react-native-share';
 import PickerMenuModal from '@container/picker/pickerMenuModal';
-import { isIOS } from '@utils/constants';
 
 // Lazy load components
 const PickerExpenseDetail = lazy(() =>

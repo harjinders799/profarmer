@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Dropdown, MultiSelect } from 'react-native-element-dropdown';
 import Text from './text';
 import { useTheme } from '@react-navigation/native';
+import Animated from 'react-native-reanimated';
 
 export default function DropdownPicker({
     style,
@@ -13,11 +14,11 @@ export default function DropdownPicker({
     multiple = false,
     ...rest
 }) {
-    const [insideShow, setInsideShow] = useState(true)
+    const [insideShow, setInsideShow] = useState(true);
     const { colors } = useTheme();
     let Component = multiple ? MultiSelect : Dropdown;
     return (
-        <View style={[styles.container, style]}>
+        <Animated.View {...rest} style={[styles.container, style]}>
             {label ? <Text h4>{label}</Text> : null}
             <Component
                 style={[styles.dropdown, { borderColor: colors.border }, dropdownStyle]}
@@ -25,10 +26,10 @@ export default function DropdownPicker({
                 containerStyle={{
                     borderBottomLeftRadius: 10,
                     borderBottomRightRadius: 10,
-                    overflow: 'hidden'
+                    overflow: 'hidden',
                 }}
                 activeColor={colors.border + 99}
-                itemTextStyle={{ color: colors.text, }}
+                itemTextStyle={{ color: colors.text }}
                 placeholderStyle={{ color: colors.border }}
                 visibleSelectedItem
                 selectedTextProps={{ style: { color: colors.text } }}
@@ -42,14 +43,15 @@ export default function DropdownPicker({
                 onBlur={() => setInsideShow(true)}
                 {...rest}
             />
-        </View>
+        </Animated.View>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
         width: '100%',
-        marginVertical: 10,
+        marginTop: 10,
+        marginBottom: 5
     },
     dropdown: {
         width: '100%',
@@ -58,7 +60,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         paddingHorizontal: 10,
         minHeight: 50,
-        overflow: 'hidden'
+        overflow: 'hidden',
     },
     selectedTextStyle: {
         // backgroundColor: 'green'

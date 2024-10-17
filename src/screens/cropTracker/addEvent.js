@@ -141,6 +141,10 @@ export default function AddEvent() {
               editable={false}
               placeholder={strings.date}
               value={dateFormat(date)}
+              onPress={() => {
+                setShowDate(true);
+                Keyboard.dismiss();
+              }}
             />
           </Pressable>
           <Text

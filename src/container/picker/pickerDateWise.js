@@ -33,7 +33,7 @@ function PickerDateWise({ pickers, groups, refreshing, onRefresh }) {
             if (unsubscribePickerWeight) unsubscribePickerWeight();
             if (unsubscribePickerExpense) unsubscribePickerExpense();
         }; // Cleanup on unmount or dependency change
-    }, [pickers]);
+    }, [pickers, refreshing]);
 
     useFocusEffect(fetchData);
 

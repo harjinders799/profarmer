@@ -129,6 +129,15 @@ const CropDetail = () => {
             {finalAmountText}
           </Text>
         </Animated.View>
+        <Animated.View
+          entering={FadeInUp.delay(350).duration(500)} style={[common.row_evenly, { margin: 5 }]}>
+          <Text center h4 >
+            {strings.total_area}
+          </Text>
+          <Text center h4 >
+            {`${data?.totalArea ?? '-'} ${data?.areaUnit ?? '-'}`}
+          </Text>
+        </Animated.View>
         <CropEventDetail data={data} events={events} />
       </ScrollView>
       <DeleteModal

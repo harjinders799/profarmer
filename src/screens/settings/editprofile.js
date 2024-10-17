@@ -132,6 +132,7 @@ const EditProfile = () => {
                         img={userData?.photoURL} onEditImgTap={() => setOpenModal(true)} />
                     <Input
                         placeholder={strings.name}
+                        autoCapitalize="words"
                         value={userData.name}
                         setValue={value => setUserData(prev => ({ ...prev, name: value }))}
                     />

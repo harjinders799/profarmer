@@ -15,13 +15,13 @@ import { red } from '@utils/colors';
 import { useLang } from '@context/langContext';
 import { getAccessToken, updateReadAccessToUID } from '@network/auth-service';
 import Loader from '@components/loader';
-import { notificationCountListener } from '@network/common-service';
+import { backupData, backupUserData, notificationCountListener, uploadFromJsonFile, uploadToFirestore } from '@network/common-service';
 import Button from '@components/button';
-import { backupUserData } from '@network/labour-service';
 import moment from 'moment';
 import Contributors from '@container/home/contributors';
 import Avatar from '@container/avatar';
-import analytics from '@react-native-firebase/analytics'
+import analytics from '@react-native-firebase/analytics';
+import app from '@react-native-firebase/app';
 
 export default function Home() {
     const { colors } = useTheme();
@@ -54,7 +54,7 @@ export default function Home() {
                         await analytics().logEvent('user', {
                             id: user?.id,
                             data: user,
-                        })
+                        });
                         let res = storage.getBoolean('replace_phone_with_id');
                         if (!res) await updateReadAccessToUID(user?.phone);
                         storage.set('replace_phone_with_id', true);
@@ -80,10 +80,14 @@ export default function Home() {
     const onBackupPress = async () => {
         try {
             setBackupCreating(true);
-            await backupUserData();
+            if (app.app()?.options?.projectId == 'profarmer-6180a')
+                await uploadToFirestore()
+            else await backupUserData();
+            // await backupData()
             storage.set('last_backup', Date.now());
             setLastBackupTime(Date.now());
         } catch (error) {
+            console.log({ error })
             ToastError(error?.message);
         } finally {
             setBackupCreating(false);
@@ -93,11 +97,12 @@ export default function Home() {
     return (
         <BaseView>
             <Header
-                label={`Hey ${user?.name ?? user?.phone ?? user?.email ?? '...'
-                    } !!`}
+                label={`Hey ${user?.name ?? user?.phone ?? user?.email ?? '...'} !!`}
                 notification
                 notificationCount={notificationCount}
-                leftComponent={<Avatar small onEditImgTap={() => navigate('EditProfile')} />}
+                leftComponent={
+                    <Avatar small onEditImgTap={() => navigate('EditProfile')} />
+                }
             />
             <Loader visible={loading} />
             <View

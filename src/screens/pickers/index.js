@@ -27,6 +27,7 @@ import { white } from '@utils/colors';
 import { storage } from '@utils/helper';
 import { isIOS } from '@utils/constants';
 import { Tooltip } from '@components/tooltip';
+import PickersSettingModal from '@container/picker/pickersSettingModal';
 
 // Lazy load components
 const PickerList = lazy(() => import('@container/picker/pickerList'));
@@ -153,13 +154,15 @@ function Pickers() {
                                     start();
                                 }
                             }}
-                            style={{ marginRight: 10 }}
                         />
                         <Icon
                             name={showConclusion ? 'eye-off' : 'eye'}
                             size={25}
                             type="Ionicons"
                             onPress={() => setShowConclusion(!showConclusion)}
+                            style={{ marginHorizontal: 10 }}
+                        />
+                        <PickersSettingModal
                         />
                     </View>
                 }
@@ -258,7 +261,7 @@ const PickerGuider = () => {
                     skip: strings.skip,
                     finish: strings.finish,
                 },
-                tooltipComponent: Tooltip
+                tooltipComponent: Tooltip,
             }}>
             <Pickers />
         </TourGuideProvider>

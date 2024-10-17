@@ -85,6 +85,7 @@ export default function AddLoan() {
           autoFocus
           placeholder={strings.name}
           value={name}
+          autoCapitalize="words"
           setValue={value =>
             onChangeValue({ setData, key: 'name', value, isName: true })
           }

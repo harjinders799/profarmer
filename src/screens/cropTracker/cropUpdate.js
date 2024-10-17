@@ -12,7 +12,6 @@ import Button from '../../components/button';
 import { strings } from '../../translations/locale';
 import BaseView from 'src/container/base';
 import moment from 'moment';
-import { deleteCrop } from '../../network/interest-service';
 import Loader from '../../components/loader';
 
 
@@ -21,28 +20,8 @@ export default function CropUpdate() {
     const data = params?.data ?? {};
     const [loading, setLoading] = React.useState(false);
 
-    const delteData = async () => {
-        Alert.alert(
-            `${data?.amount} Rs`,
-            `${strings.delete_wt}`,
-            [
-                {
-                    text: 'Yes',
-                    onPress: async () => {
-                        setLoading(true);
-                        await deleteCrop(data?.id);
-                        setLoading(false);
-                        ToastSuccess(strings.successfully_deleted);
-                        goBack();
-                    },
-                },
-                {
-                    text: 'No',
-                },
-            ],
-            { cancelable: true },
-        );
-    };
+
+
     let date = moment(data?.date).format("YYYY-MM-DD");
     let start_date = moment(date);
     let today = moment();
@@ -131,7 +110,7 @@ export default function CropUpdate() {
                         btnStyle={{
                             width: '40%',
                         }}
-                        onPress={delteData}
+                    // onPress={delteData}
                     />
                 </View>
             </View>

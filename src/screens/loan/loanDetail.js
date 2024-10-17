@@ -94,7 +94,7 @@ export default function LoanDetail() {
                 {currencyFormat(data?.totalGivenAmountWithInterest, 2)}
               </Text>
               <Text h5 color={colors.background}>
-                Given
+                {strings.given_amount}
               </Text>
             </View>
             <View style={{ alignItems: 'flex-end' }}>
@@ -139,7 +139,7 @@ export default function LoanDetail() {
                 {currencyFormat(data?.totalReceivedAmountWithInterest, 2)}
               </Text>
               <Text h5 color={colors.background}>
-                Taken
+                {strings.taken_amount}
               </Text>
             </View>
             <View style={{ alignItems: 'flex-end' }}>
@@ -188,12 +188,12 @@ export default function LoanDetail() {
           ]}>
           <View style={common.row_btw}>
             <Text h4 bold>
-              Final Amount
+              {strings.final_amount}
             </Text>
             <Text
               h2
               bold
-              color={data?.finalAmount < 0 ? colors.error : colors.success}>
+              color={data?.finalAmount > 0 ? colors.error : colors.success}>
               {currencyFormat(
                 data?.finalAmount > 0 ? data?.finalAmount : -data?.finalAmount,
               )}
@@ -202,7 +202,7 @@ export default function LoanDetail() {
           <Text
             h6
             center
-            color={data?.finalAmount < 0 ? colors.error : colors.success}
+            color={data?.finalAmount > 0 ? colors.error : colors.success}
             style={{ position: 'absolute', bottom: -10, alignSelf: 'center' }}>
             {data?.finalAmount < 0 ? strings.give : strings.receive}
           </Text>

@@ -77,6 +77,7 @@ export default function AddAadhatiya() {
           entering={FadeInDown.delay(300)}
           label={strings.name}
           placeholder={strings.name}
+          autoCapitalize="words"
           value={name}
           setValue={value => onChangeValue({ setData, key: 'name', value })}
         />
