@@ -264,5 +264,20 @@
   "private": "Private",
   "hectare": "Hectare",
   "acre": "Acre",
-  "bigha": "Bigha"
+  "bigha": "Bigha",
+  "category": "Category",
+  "select_category": "Select Category",
+  "diesel": "Diesel",
+  "rent": "Rent",
+  "pesticide": "Pesticide",
+  "seed": "Seed",
+  "fertilizer": "Fertilizer",
+  "total_days_from_sowing": "Total days from sowing",
+  "date_of_sowing": "Sowing Date",
+  "analysis": "Analysis",
+  "add_more": "Add More",
+  "sold": "Sold",
+  "liter": "Liter",
+  "equipment": "Equipment",
+  "quantity": "Quantity"
 }

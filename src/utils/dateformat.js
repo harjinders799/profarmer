@@ -89,7 +89,7 @@ export const timeAgo = (timestamp) => {
 
 export const currencyFormat = (value, fraction = 0) => {
   const formatter = createCurrencyFormatter(fraction);
-  return `${!isNaN(value) ? formatter.format(parseFloat(value)) : 0} /-`;
+  return `${!isNaN(value) && value ? formatter.format(parseFloat(value)) : '₹0'} /-`;
 };
 
 export const interestFormat = (value, fraction = 0) => {

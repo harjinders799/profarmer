@@ -265,5 +265,20 @@
   "private": "ਨਿੱਜੀ",
   "hectare": "ਹੈਕਟੇਰ",
   "acre": "ਏਕੜ",
-  "bigha": "ਬਿਘਾ"
+  "bigha": "ਬਿਘਾ",
+  "category": "ਕੈਟੇਗਰੀ",
+  "select_category": "ਕੈਟੇਗਰੀ ਚੁਣੋ",
+  "diesel": "ਡੀਜਲ",
+  "rent": "ਕਿਰਾਇਆ",
+  "pesticide": "ਪੈਸਟੀਸਾਈਡ (ਸਪਰੇਅ)",
+  "seed": "ਬੀਜ",
+  "fertilizer": "ਖਾਦ",
+  "total_days_from_sowing": "ਬਿਜਾਈ ਤੋਂ ਕੁੱਲ ਦਿਨ",
+  "date_of_sowing": "ਬਿਜਾਈ ਮਿਤੀ",
+  "analysis": "ਵਿਸ਼ਲੇਸ਼ਣ",
+  "add_more": "ਹੋਰ ਜੋੜੋ",
+  "sold": "ਵੇਚਿਆ",
+  "liter": "ਲੀਟਰ",
+  "equipment": "ਉਪਕਰਨ",
+  "quantity": "ਮਾਤਰਾ"
 }

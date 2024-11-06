@@ -198,6 +198,7 @@ export default function AddPickerBulkWeight() {
                                             return data;
                                         });
                                     }}
+                                    placeholder={strings.select_picker}
                                 />
                                 <Input
                                     // label={strings.weight}

@@ -182,7 +182,7 @@ export default function AddPickerWeight() {
                     placeholder={strings.remark}
                     value={detail}
                     setValue={value =>
-                        onChangeValue({ setData, key: 'detail', value, isName: true })
+                        onChangeValue({ setData, key: 'detail', value })
                     }
                 />
                 <DateTimePicker

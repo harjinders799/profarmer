@@ -10,7 +10,8 @@ import Animated, {
 } from 'react-native-reanimated';
 import { common } from '@utils/style';
 import { strings } from '@translations/locale';
-import { navigate } from '@navigation/ref';
+import { navigate, replace } from '@navigation/ref';
+import { sumBy } from 'lodash';
 
 const CropEventDetail = ({ data, events }) => {
     const { colors } = useTheme();
@@ -18,8 +19,12 @@ const CropEventDetail = ({ data, events }) => {
     return (
         <View>
             {events.map((item, index) => {
-                const isExpense = !!item?.expense_amount;
-                const isEarning = !!item?.earning_amount;
+                const isExpense = item?.type
+                    ? item?.type == 'expense'
+                    : !!item?.expense_amount;
+                const isEarning = item?.type
+                    ? item?.type == 'earning'
+                    : !!item?.earning_amount;
 
                 return (
                     <Animated.View
@@ -37,12 +42,21 @@ const CropEventDetail = ({ data, events }) => {
                                 common.row_btw,
                                 styles.touchableContainer(isExpense, isEarning),
                             ]}
-                            onPress={() => navigate('AddEvent', { item, data })}>
+                            onPress={() => replace('AddEvent', { item, data })}>
                             <View style={styles.dateContainer(isExpense, isEarning)}>
-                                <Text center>{dateFormat(item?.date)}</Text>
-                                <Text center>
+                                {item?.type ? <Text center bold>
+                                    {currencyFormat(
+                                        item?.expense_amount ||
+                                        item?.earning_amount ||
+                                        sumBy(item?.categories, o =>
+                                            parseFloat(o?.amount || '0'),
+                                        ),
+                                    )}
+                                </Text> : null}
+                                <Text center style={{ marginVertical: item?.type ? 10 : 0 }}>
                                     {dayCount(item?.date)} {strings.day} {strings.ago}
                                 </Text>
+                                <Text center>{dateFormat(item?.date)}</Text>
                             </View>
                             <Animated.View
                                 entering={BounceIn}
@@ -55,18 +69,27 @@ const CropEventDetail = ({ data, events }) => {
                                         styles.backgroundOverlay(isExpense, isEarning, colors),
                                     ]}
                                 />
-                                <Text bold h4>{item?.title}</Text>
-                                <Text h5 style={styles.description}>{item?.description}</Text>
-                                {isExpense && (
+                                <Text bold h4>
+                                    {item?.title}
+                                </Text>
+                                {item?.description ? <Text h5 style={styles.description}>
+                                    {item?.description}
+                                </Text> : null}
+                                {(isExpense && item?.expense_amount) ||
+                                    (isEarning && item?.earning_amount) ? (
                                     <Text bold style={styles.amount}>
-                                        {currencyFormat(item?.expense_amount)}
+                                        {currencyFormat(
+                                            item?.expense_amount ?? item?.earning_amount,
+                                        )}
                                     </Text>
-                                )}
-                                {isEarning && (
-                                    <Text bold style={styles.amount}>
-                                        {currencyFormat(item?.earning_amount)}
-                                    </Text>
-                                )}
+                                ) : null}
+                                {item?.categories && Array.isArray(item?.categories)
+                                    ? item.categories.map((cat, index) => (
+                                        cat?.category ? <Text key={index} bold style={styles.amount}>
+                                            {strings[cat?.category]} = {currencyFormat(cat?.amount)}
+                                        </Text> : null
+                                    ))
+                                    : null}
                             </View>
                         </TouchableOpacity>
                     </Animated.View>
@@ -78,10 +101,15 @@ const CropEventDetail = ({ data, events }) => {
 
 const styles = StyleSheet.create({
     eventContainer: {
-        margin: 20,
+        margin: 10,
+        marginVertical: 20,
     },
     touchableContainer: (isExpense, isEarning) => ({
-        flexDirection: isExpense ? 'row-reverse' : isEarning ? 'row' : 'column-reverse',
+        flexDirection: isExpense
+            ? 'row-reverse'
+            : isEarning
+                ? 'row'
+                : 'column-reverse',
         alignItems: isExpense || isEarning ? 'stretch' : 'center',
     }),
     dateContainer: (isExpense, isEarning) => ({
@@ -120,7 +148,8 @@ const styles = StyleSheet.create({
         marginTop: 5,
     },
     amount: {
-        marginTop: 5,
+        marginTop: 15,
+        width: '100%',
     },
 });
 

@@ -5,7 +5,7 @@ import Text from '@components/text';
 import Button from '@components/button';
 import { strings } from '@translations/locale';
 import { navigate } from '@navigation/ref';
-import { currencyFormat } from '@utils/dateformat';
+import { currencyFormat, dayCount } from '@utils/dateformat';
 import Animated, { FadeInUp } from 'react-native-reanimated';
 import { common } from '@utils/style';
 
@@ -15,52 +15,65 @@ const CropList = React.memo(({ data }) => {
   const { colors } = useTheme();
 
   const renderItem = useCallback(({ item }) => {
-    let finalAmount = item?.total_earning - item?.total_expense
-    const balanceColor =
-      finalAmount >= 0 ? colors.success : colors.error;
+    let finalAmount = item?.total_earning - item?.total_expense;
+    const balanceColor = finalAmount >= 0 ? colors.success : colors.error;
 
     return (
       <Animated.View style={[styles.list, styles.line]} entering={FadeInUp}>
-        <TouchableOpacity
-          onPress={() =>
-            navigate('CropDetail',
-              { item }
-            )
-          }
-        >
+        <TouchableOpacity onPress={() => navigate('CropDetail', { item })}>
           <View style={styles.row}>
             <Text numberOfLines={1} h3 style={{ width: '70%' }}>
-              {`${item?.name ?? item?.title} - ${item?.variety} - ${item?.farm}`}
+              {`${item?.name ?? item?.title} (${item?.variety})`}
             </Text>
             <Text numberOfLines={1} h3 color={balanceColor}>
               {currencyFormat(finalAmount > 0 ? finalAmount : -finalAmount)}
             </Text>
           </View>
-          <Animated.View style={styles.row}>
-            <View style={[common.row_btw, { width: '80%' }]}>
+          <View style={styles.row}>
+            <Text numberOfLines={1} h3>
+              {`${item?.farm}`}
+            </Text>
+
+            <Text numberOfLines={1} h3 color={balanceColor}>
+              {finalAmount == 0
+                ? '--'
+                : finalAmount > 0
+                  ? strings.profit
+                  : strings.loss}
+            </Text>
+          </View>
+          <View style={[styles.row, { marginVertical: 0 }]}>
+            <Button
+              label={strings.add_activity}
+              hitSlop={10}
+              small
+              btnStyle={{
+                maxWidth: '50%',
+                width: 'auto',
+              }}
+              onPress={() => navigate('AddEvent', { data: item })}
+            />
+            {item?.dateOfSowing ? (
+              <Text numberOfLines={1} h3>
+                {`${dayCount(item?.dateOfSowing) ?? '--'} ${strings.day}`}
+              </Text>
+            ) : (
               <Button
-                label={
-                  strings.add_activity
-                }
+                label={strings.date_of_sowing}
                 hitSlop={10}
+                small
                 btnStyle={{
                   maxWidth: '50%',
                   width: 'auto',
-                  height: 25,
-                  marginVertical: 0,
+                  backgroundColor: colors.success,
                 }}
-                onPress={() =>
-                  navigate(
-                    'AddEvent',
-                    { data: item }
-                  )
-                }
+                onPress={() => navigate('AddCrop', { data: item, addSowingData: true })}
               />
-            </View>
-            <Text numberOfLines={1} h3 color={balanceColor}>
-              {finalAmount == 0 ? '--' : finalAmount > 0 ? strings.profit : strings.loss}
-            </Text>
-          </Animated.View>
+            )}
+            {/* <Text numberOfLines={1} h3>
+              {item?.farm}
+            </Text> */}
+          </View>
         </TouchableOpacity>
       </Animated.View>
     );
@@ -74,14 +87,13 @@ const CropList = React.memo(({ data }) => {
       offset: ITEM_HEIGHT * index,
       index,
     }),
-    []
+    [],
   );
 
-  const memoizedEmptyComponent = useMemo(() => (
-    <Text style={styles.noDataText}>
-      {strings.no_data}
-    </Text>
-  ), []);
+  const memoizedEmptyComponent = useMemo(
+    () => <Text style={styles.noDataText}>{strings.no_data}</Text>,
+    [],
+  );
 
   return (
     <FlatList

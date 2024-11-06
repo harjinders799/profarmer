@@ -180,6 +180,27 @@ export default function Home() {
                 </TouchableOpacity>
                 <TouchableOpacity
                     onPress={() => ToastProgress(strings.in_progress)}
+                    // onPress={() => navigate('HomeExpenses')}
+                    style={[
+                        common.card,
+                        // common.shadow,
+                        {
+                            backgroundColor: colors.secondaryCard,
+                            marginVertical: '3%',
+                            // paddingVertical: 20,
+                            width: '47%',
+                        },
+                    ]}>
+                    <Icon name={'local-grocery-store'} type={'MaterialIcons'} size={25} />
+                    <Text h4 semi style={{ marginTop: 5 }}>
+                        {'Home Expense'}
+                    </Text>
+                    <Text h7 semi color={red}>
+                        {'Coming soon'}
+                    </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    onPress={() => ToastProgress(strings.in_progress)}
                     style={[
                         common.card,
                         // common.shadow,
@@ -203,28 +224,8 @@ export default function Home() {
                     </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
+                    // onPress={getAccessToken}
                     onPress={() => ToastProgress(strings.in_progress)}
-                    style={[
-                        common.card,
-                        // common.shadow,
-                        {
-                            backgroundColor: colors.secondaryCard,
-                            marginVertical: '3%',
-                            // paddingVertical: 20,
-                            width: '47%',
-                        },
-                    ]}>
-                    <Icon name={'local-grocery-store'} type={'MaterialIcons'} size={25} />
-                    <Text h4 semi style={{ marginTop: 5 }}>
-                        {'Home Expense'}
-                    </Text>
-                    <Text h7 semi color={red}>
-                        {'Coming soon'}
-                    </Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    onPress={getAccessToken}
-                    // onPress={() => ToastProgress(strings.in_progress)}
                     style={[
                         common.card,
                         // common.shadow,

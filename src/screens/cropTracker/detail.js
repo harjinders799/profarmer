@@ -2,7 +2,7 @@ import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
 import { useRoute, useTheme } from '@react-navigation/native';
 import { useAuth } from '@context/authContext';
-import { goBack } from '@navigation/ref';
+import { goBack, navigate, replace } from '@navigation/ref';
 import { deleteCropCollection, getCropEvents } from '@network/crop-service';
 import BaseView from '@container/base';
 import Loader from '@components/loader';
@@ -10,21 +10,27 @@ import Header from '@components/header';
 import DeleteModal from '@container/deleteModal';
 import CropEventDetail from '@container/crop/cropEventDetail';
 import Text from '@components/text';
-import Animated, { FadeInLeft, FadeInRight, FadeInUp } from 'react-native-reanimated';
+import Animated, {
+  FadeInLeft,
+  FadeInRight,
+  FadeInUp,
+} from 'react-native-reanimated';
 import { sumBy } from 'lodash';
-import { currencyFormat } from '@utils/dateformat';
-import { ToastError } from '@utils/toast';
+import { currencyFormat, dateFormat, dayCount } from '@utils/dateformat';
+import { ToastError, ToastProgress } from '@utils/toast';
 import { common } from '@utils/style';
 import { white } from '@utils/colors';
 import { strings } from '@translations/locale';
+import Icon from '@components/icon';
+import CropMenuModal from '@container/crop/cropMenuModal';
 
-const useCropEvents = (cropId) => {
+const useCropEvents = cropId => {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     setLoading(true);
-    const unsubscribeWork = getCropEvents(cropId, (updatedEvents) => {
+    const unsubscribeWork = getCropEvents(cropId, updatedEvents => {
       setEvents(updatedEvents);
       setLoading(false);
     });
@@ -53,18 +59,14 @@ const CropDetail = () => {
       ToastError(error?.message);
     }
   }, [data]);
+  const totalEarning = useMemo(() => data?.total_earning, [data]);
 
-  const totalEarning = useMemo(
-    () => sumBy(events, o => parseFloat(o?.earning_amount) || 0) || data?.total_earning,
-    [events, data]
+  const totalExpense = useMemo(() => data?.total_expense, [data]);
+
+  const finalAmount = useMemo(
+    () => totalEarning - totalExpense,
+    [totalEarning, totalExpense],
   );
-
-  const totalExpense = useMemo(
-    () => sumBy(events, o => parseFloat(o?.expense_amount) || 0) || data?.total_expense,
-    [events, data]
-  );
-
-  const finalAmount = useMemo(() => totalEarning - totalExpense, [totalEarning, totalExpense]);
 
   const finalAmountColor = finalAmount < 0 ? colors.error : colors.success;
   const finalAmountText = finalAmount < 0 ? strings.loss : strings.profit; // Localization
@@ -75,20 +77,24 @@ const CropDetail = () => {
       <Header
         back
         label={data?.name}
-        deleteIcon
-        onDeletePress={() => setOpenModal(true)}
+        rightComponent={
+          <CropMenuModal
+            handleShare={() => ToastProgress('Coming Soon')}
+            onDeletePress={() => setOpenModal(true)}
+            onEditPress={() => replace('AddCrop', { data })}
+            onAnalysisPress={() => navigate('CropAnalysis', { data, events })}
+          />
+        }
       />
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
         stickyHeaderIndices={[1]}
-        showsVerticalScrollIndicator={false}
-      >
+        showsVerticalScrollIndicator={false}>
         <View style={styles.row}>
           <Animated.View
             entering={FadeInLeft.delay(300).duration(500)}
-            style={[styles.card, { backgroundColor: colors.error }]}
-          >
+            style={[styles.card, { backgroundColor: colors.error }]}>
             <Text h4 bold color={white}>
               {currencyFormat(totalExpense, 2)}
             </Text>
@@ -98,8 +104,7 @@ const CropDetail = () => {
           </Animated.View>
           <Animated.View
             entering={FadeInRight.delay(300).duration(500)}
-            style={[styles.card, { backgroundColor: colors.success }]}
-          >
+            style={[styles.card, { backgroundColor: colors.success }]}>
             <Text h4 bold color={white}>
               {currencyFormat(totalEarning, 2)}
             </Text>
@@ -110,8 +115,10 @@ const CropDetail = () => {
         </View>
         <Animated.View
           entering={FadeInUp.delay(300).duration(500)}
-          style={[styles.finalAmountCard, { backgroundColor: colors.secondaryCard }]}
-        >
+          style={[
+            styles.finalAmountCard,
+            { backgroundColor: colors.secondaryCard },
+          ]}>
           <View style={common.row_btw}>
             <Text h4 bold>
               {strings.final_amount}
@@ -124,20 +131,60 @@ const CropDetail = () => {
             h6
             center
             color={finalAmountColor}
-            style={styles.finalAmountText}
-          >
+            style={styles.finalAmountText}>
             {finalAmountText}
           </Text>
         </Animated.View>
         <Animated.View
-          entering={FadeInUp.delay(350).duration(500)} style={[common.row_evenly, { margin: 5 }]}>
-          <Text center h4 >
-            {strings.total_area}
+          entering={FadeInUp.delay(350).duration(500)}
+          style={[common.row_btw, { marginTop: 15, paddingHorizontal: 20 }]}>
+          <Text center h4>
+            {strings.farm}
           </Text>
-          <Text center h4 >
-            {`${data?.totalArea ?? '-'} ${data?.areaUnit ?? '-'}`}
+          <Text center h4>
+            {`${data?.farm ?? '--'}`}
           </Text>
         </Animated.View>
+        <Animated.View
+          entering={FadeInUp.delay(350).duration(500)}
+          style={[common.row_btw, { marginVertical: 5, paddingHorizontal: 20 }]}>
+          <Text center h4>
+            {strings.total_area}
+          </Text>
+          <Text center h4>
+            {`${data?.totalArea ?? '--'} ${strings[data?.areaUnit] ?? '--'}`}
+          </Text>
+        </Animated.View>
+        {data?.dateOfSowing ? (
+          <>
+            <Animated.View
+              entering={FadeInUp.delay(350).duration(500)}
+              style={[
+                common.row_btw,
+                { marginVertical: 5, paddingHorizontal: 20 },
+              ]}>
+              <Text center h4>
+                {strings.date_of_sowing}
+              </Text>
+              <Text center h4>
+                {`${dateFormat(data?.dateOfSowing) ?? '--'}`}
+              </Text>
+            </Animated.View>
+            <Animated.View
+              entering={FadeInUp.delay(350).duration(500)}
+              style={[
+                common.row_btw,
+                { marginVertical: 5, paddingHorizontal: 20 },
+              ]}>
+              <Text center h4>
+                {strings.total_days_from_sowing}
+              </Text>
+              <Text center h4>
+                {`${dayCount(data?.dateOfSowing) ?? '--'} ${strings.day}`}
+              </Text>
+            </Animated.View>
+          </>
+        ) : null}
         <CropEventDetail data={data} events={events} />
       </ScrollView>
       <DeleteModal
@@ -163,8 +210,8 @@ const styles = StyleSheet.create({
   row: {
     ...common.row_btw,
     marginVertical: 5,
-    width: '90%',
-    marginHorizontal: '5%',
+    width: '95%',
+    marginHorizontal: '2.5%',
   },
   card: {
     ...common.card,
@@ -180,7 +227,7 @@ const styles = StyleSheet.create({
     ...common.card,
     ...common.shadow,
     paddingVertical: 15,
-    marginHorizontal: 20,
+    marginHorizontal: 10,
     borderTopLeftRadius: 0,
     borderTopRightRadius: 0,
   },

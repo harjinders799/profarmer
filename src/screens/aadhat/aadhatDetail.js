@@ -59,7 +59,7 @@ export default function AadhatDetail() {
             />
           ))
         ) : (
-          <Text>{strings.no_data}</Text>
+          <Text center>{strings.no_data}</Text>
         )}
       </ScrollView>
     </BaseView>

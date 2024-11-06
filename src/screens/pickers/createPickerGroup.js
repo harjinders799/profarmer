@@ -12,6 +12,7 @@ import { ToastError, ToastSuccess } from '@utils/toast';
 import { onChangeValue, unassignPickers } from '@utils/helper';
 import { createGroup, deleteGroup, updateGroup } from '@network/picker-service';
 import DropdownPicker from '@components/dropdown';
+import Icon from '@components/icon';
 
 export default function CreatePickerGroup() {
     const { colors } = useTheme();
@@ -115,6 +116,7 @@ export default function CreatePickerGroup() {
                     onChange={value => {
                         onChangeValue({ setData, key: 'members', value });
                     }}
+                    renderRightIcon={() => <Icon name={'plus'} size={20} color={colors.success} />}
                 />
                 <Button label={strings.save} onPress={onPress} />
                 {editData?.id ? (

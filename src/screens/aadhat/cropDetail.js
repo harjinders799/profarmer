@@ -9,6 +9,7 @@ import Animated, { FadeIn, FadeInUp } from 'react-native-reanimated';
 import { common } from '@utils/style';
 import AadhatTransacton from '@container/aadhat/aadhatTransaction';
 import { currencyFormat } from '@utils/dateformat';
+import Header from '@components/header';
 
 const { card, row_btw, shadow } = common;
 
@@ -20,6 +21,7 @@ export default function AadhatCropDetail() {
 
   return (
     <BaseView>
+      <Header back label={strings.crop_hisab} />
       <ScrollView
         style={{ width: '100%' }}
         showsVerticalScrollIndicator={false}
@@ -43,7 +45,7 @@ export default function AadhatCropDetail() {
             <AadhatTransacton type="giver" key={i} data={data} item={item} />
           ))
         ) : (
-          <Text>{strings.no_data}</Text>
+          <Text center>{strings.no_data}</Text>
         )}
       </ScrollView>
     </BaseView>

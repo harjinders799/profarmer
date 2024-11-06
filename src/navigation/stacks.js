@@ -43,6 +43,9 @@ import LoanStack from './loanStack';
 import AadhatCropDetail from '@screens/aadhat/cropDetail';
 import Notifications from '@screens/notifications'
 import PickerAccessSetting from '@screens/pickers/pickerAccessSetting';
+import HomeExpenses from '@screens/homeExpenses';
+import AddHomeExpense from '@screens/homeExpenses/addHomeExpense';
+import CropAnalysis from '@screens/cropTracker/cropAnalysis';
 
 const Stack = createNativeStackNavigator();
 
@@ -88,6 +91,7 @@ export default function Stacks() {
       <Stack.Screen name="CropUpdate" component={CropUpdate} />
       <Stack.Screen name="AddCrop" component={AddCrop} />
       <Stack.Screen name="AddEvent" component={AddEvent} />
+      <Stack.Screen name="CropAnalysis" component={CropAnalysis} />
       <Stack.Screen name="CropDetail" component={CropDetail} />
 
 
@@ -125,6 +129,8 @@ export default function Stacks() {
       <Stack.Screen name="EditProfile" component={EditProfile} />
       <Stack.Screen name="Customize" component={Customize} />
       <Stack.Screen name="SettingStack" component={SettingStack} />
+      <Stack.Screen name="HomeExpenses" component={HomeExpenses} />
+      <Stack.Screen name="AddHomeExpense" component={AddHomeExpense} />
     </Stack.Navigator>
   );
 }

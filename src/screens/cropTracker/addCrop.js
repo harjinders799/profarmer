@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
+import { View, StyleSheet, ScrollView, Keyboard, Pressable } from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import Button from '@components/button';
 import Input from '@components/input';
@@ -11,29 +11,34 @@ import { goBack } from '@navigation/ref';
 import Header from '@components/header';
 import { FadeInDown } from 'react-native-reanimated';
 import { onChangeValue } from '@utils/helper';
-import { addNewCrop } from '@network/crop-service';
+import { addNewCrop, updateCrop } from '@network/crop-service';
 import DropdownPicker from '@components/dropdown';
 import { common } from '@utils/style';
+import { currentStamp, dateFormat } from '@utils/dateformat';
+import DateTimePicker from '@components/DateTime';
 
 export default function AddCrop() {
   const { params } = useRoute();
-  const editData = params?.item ?? {};
+  const editData = params?.data ?? {};
+  const addSowingData = params?.addSowingData ?? false;
+  const [showDate, setShowDate] = useState(addSowingData);
 
   const [data, setData] = useState({
     name: editData?.name ?? '',
     variety: editData?.variety ?? '',
     farm: editData?.farm ?? '',
     totalArea: editData?.totalArea ?? '',
-    areaUnit: editData?.areaUnit ?? 'Biga',
-    isPublic: editData?.isPublic ?? false,
+    areaUnit: editData?.areaUnit ?? 'bigha',
+    isPublic: editData?.isPublic ?? 'private',
+    dateOfSowing: editData?.dateOfSowing ? new Date(editData?.dateOfSowing) : addSowingData ? new Date() : null,
   });
   const [loading, setLoading] = useState(false);
-  const { name, variety, farm, totalArea, areaUnit, isPublic } = data;
+  const { name, variety, farm, totalArea, areaUnit, isPublic, dateOfSowing } = data;
 
   const handleSubmit = useCallback(async () => {
     try {
       setLoading(true);
-      await addNewCrop(data);
+      editData?.id ? await updateCrop({ id: editData?.id, ...data, dateOfSowing: currentStamp(dateOfSowing) }) : await addNewCrop(data);
       setLoading(false);
       ToastSuccess(strings.successfully_saved);
       goBack();
@@ -41,7 +46,8 @@ export default function AddCrop() {
       setLoading(false);
       ToastError(error?.message);
     }
-  }, [data]);
+  }, [data, editData]);
+
 
   return (
     <BaseView>
@@ -61,7 +67,7 @@ export default function AddCrop() {
             value={name}
             autoFocus
             setValue={value =>
-              onChangeValue({ setData, key: 'name', value, isName: true })
+              onChangeValue({ setData, key: 'name', value })
             }
           />
           <View style={common.row_btw}>
@@ -69,10 +75,9 @@ export default function AddCrop() {
               entering={FadeInDown.delay(400)}
               label={strings.variety}
               placeholder={'ABC, BWB303...'}
-              autoCapitalize="words"
               value={variety}
               setValue={value =>
-                onChangeValue({ setData, key: 'variety', value, isName: true })
+                onChangeValue({ setData, key: 'variety', value })
               }
               style={{ width: '48%' }}
             />
@@ -82,7 +87,7 @@ export default function AddCrop() {
               placeholder={'9BGS, 2LNP...'}
               value={farm}
               setValue={value =>
-                onChangeValue({ setData, key: 'farm', value, isName: true })
+                onChangeValue({ setData, key: 'farm', value })
               }
               style={{ width: '48%' }}
             />
@@ -92,7 +97,7 @@ export default function AddCrop() {
               entering={FadeInDown.delay(400)}
               label={strings.total_area}
               placeholder={'2, 5, 20...'}
-              autoCapitalize="words"
+              numberType
               value={totalArea}
               setValue={value =>
                 onChangeValue({
@@ -138,7 +143,33 @@ export default function AddCrop() {
               onChangeValue({ setData, key: 'isPublic', value: value?.value });
             }}
           />
+          {addSowingData || editData?.dateOfSowing ?
+            <>
 
+              <Pressable
+                onPress={() => {
+                  setShowDate(true);
+                  Keyboard.dismiss();
+                }}>
+                <Input
+                  entering={FadeInDown.delay(450)}
+                  label={strings.date_of_sowing}
+                  editable={false}
+                  placeholder={strings.date}
+                  value={dateFormat(dateOfSowing)}
+                  onPress={() => {
+                    setShowDate(true);
+                    Keyboard.dismiss();
+                  }}
+                />
+              </Pressable>
+              <DateTimePicker
+                show={showDate}
+                setShow={setShowDate}
+                date={dateOfSowing}
+                setDate={value => onChangeValue({ setData, key: 'dateOfSowing', value })}
+              />
+            </> : null}
           <Button
             entering={FadeInDown.delay(600)}
             label={strings.save}

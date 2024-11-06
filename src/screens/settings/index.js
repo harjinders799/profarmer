@@ -19,10 +19,10 @@ import { useAuth } from '@context/authContext';
 import Loader from '@components/loader';
 import Header from '@components/header';
 import { navigate } from '@navigation/ref';
-import { backupData, backupUserData } from '@network/labour-service';
 import { ToastError } from '@utils/toast';
 import DeleteModal from '@container/deleteModal';
 import auth from '@react-native-firebase/auth';
+import { backupData, backupUserData } from '@network/common-service';
 
 export default function Setting({ navigation }) {
   const { lang, setTheme, theme } = useLang();

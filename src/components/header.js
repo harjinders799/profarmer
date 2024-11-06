@@ -123,8 +123,9 @@ const Header = ({
             />
           </View>
         ) : (
-          rightComponent
+          null
         )}
+        {rightComponent}
       </Animated.View>
     </View>
   );

@@ -4,6 +4,7 @@ import { Dropdown, MultiSelect } from 'react-native-element-dropdown';
 import Text from './text';
 import { useTheme } from '@react-navigation/native';
 import Animated from 'react-native-reanimated';
+import Input from './input';
 
 export default function DropdownPicker({
     style,
@@ -33,7 +34,7 @@ export default function DropdownPicker({
                 placeholderStyle={{ color: colors.border }}
                 visibleSelectedItem
                 selectedTextProps={{ style: { color: colors.text } }}
-                inputSearchStyle={{ color: colors.text }}
+                inputSearchStyle={{ color: colors.text, textTransform: 'capitalize' }}
                 data={data}
                 search={search}
                 searchPlaceholder="Search..."

@@ -1,3 +1,4 @@
+import { strings } from '@translations/locale';
 import { Dimensions, Platform } from 'react-native';
 
 export const WIDTH = Dimensions.get('screen').width;
@@ -25,5 +26,6 @@ export const Collections = {
         subCollections: ['labour_work', 'labour_expense', 'labour_leave'],
     },
     loans_data: { name: 'loans_data', subCollections: ['transactions'] },
-    users: { name: 'users', subCollections: [] }
+    users: { name: 'users', subCollections: [] },
 };
+
