@@ -1,6 +1,12 @@
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
-import { useRoute, useTheme } from '@react-navigation/native';
+import {
+  View,
+  StyleSheet,
+  ScrollView,
+  Pressable,
+  TouchableOpacity,
+} from 'react-native';
+import { useFocusEffect, useRoute, useTheme } from '@react-navigation/native';
 import { goBack, navigate } from '@navigation/ref';
 import { deleteCropCollection, getCropEvents } from '@network/crop-service';
 import BaseView from '@container/base';
@@ -14,7 +20,12 @@ import Animated, {
   FadeInRight,
   FadeInUp,
 } from 'react-native-reanimated';
-import { currencyFormat, dateFormat, dayCount } from '@utils/dateformat';
+import {
+  currencyFormat,
+  dateFormat,
+  dayCount,
+  getTimeDetails,
+} from '@utils/dateformat';
 import { ToastError, ToastProgress } from '@utils/toast';
 import { common } from '@utils/style';
 import { white } from '@utils/colors';
@@ -22,6 +33,9 @@ import { strings } from '@translations/locale';
 import CropMenuModal from '@container/crop/cropMenuModal';
 import { useCropTracker } from '@context/cropTrackerContext';
 import auth from '@react-native-firebase/auth';
+import Button from '@components/button';
+import { getRemindersData } from '@network/reminder-service';
+import ReminderList from '@container/reminder/reminderList';
 
 const useCropEvents = cropId => {
   const [events, setEvents] = useState([]);
@@ -33,6 +47,7 @@ const useCropEvents = cropId => {
       setEvents(updatedEvents);
       setLoading(false);
     });
+
     return () => {
       if (unsubscribeWork) unsubscribeWork();
     };
@@ -52,6 +67,23 @@ const CropDetail = () => {
     {};
   const [openModal, setOpenModal] = useState(false);
   const { events, loading } = useCropEvents(data?.id);
+  const [reminders, setReminders] = useState([]);
+  const [expandReminders, setExpandReminders] = useState(false);
+
+  const fetchData = useCallback(() => {
+    const unsubscribe = getRemindersData(
+      updatedDocuments => {
+        setReminders(updatedDocuments);
+      },
+      'cropTracker',
+      data?.id,
+    );
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
+  }, [colors]);
+
+  useFocusEffect(fetchData);
 
   const handleDelete = useCallback(async () => {
     try {
@@ -61,6 +93,7 @@ const CropDetail = () => {
       ToastError(error?.message);
     }
   }, [data]);
+
   const totalEarning = useMemo(() => data?.total_earning, [data]);
 
   const totalExpense = useMemo(() => data?.total_expense, [data]);
@@ -72,6 +105,17 @@ const CropDetail = () => {
 
   const finalAmountColor = finalAmount < 0 ? colors.error : colors.success;
   const finalAmountText = finalAmount < 0 ? strings.loss : strings.profit; // Localization
+
+  let remaining, passed;
+  // Check if reminders is a valid array and has items
+  if (Array.isArray(reminders) && reminders.length) {
+    const { remaining: remainingTime, passed: passedTime } = getTimeDetails(
+      Date.now(),
+      reminders[0]?.reminderDate,
+    );
+    remaining = remainingTime;
+    passed = passedTime;
+  }
 
   return (
     <BaseView style={styles.baseView}>
@@ -139,9 +183,66 @@ const CropDetail = () => {
             {finalAmountText}
           </Text>
         </Animated.View>
+        <Button
+          small
+          label={`${strings.add} ${strings.reminder}`}
+          btnStyle={{
+            width: 'auto',
+            maxWidth: '30%',
+            alignSelf: 'flex-end',
+            height: 25,
+            marginRight: 20,
+          }}
+          onPress={() =>
+            navigate('AddReminder', { type: 'cropTracker', typeId: data?.id })
+          }
+        />
+        {Array.isArray(reminders) && reminders.length ? (
+          <Animated.View
+            entering={FadeInUp.delay(300).duration(500)}
+            style={[
+              // common.row_btw,
+              common.underline,
+              { marginVertical: 5, paddingHorizontal: 20 },
+            ]}>
+            <TouchableOpacity
+              style={{
+                position: 'absolute',
+                left: 20,
+                top: expandReminders ? -10 : 5,
+              }}
+              hitSlop={40}
+              onPress={() => setExpandReminders(prevs => !prevs)}>
+              <Text onPress={() => setExpandReminders(prevs => !prevs)}>
+                {strings.view}
+              </Text>
+            </TouchableOpacity>
+            {!expandReminders ? (
+              <Text h5 right>
+                {reminders[0]?.title}{' '}
+                <Text
+                  // h5
+                  bold
+                  color={
+                    reminders[0]?.status == 'completed'
+                      ? colors.success
+                      : (remaining && remaining.includes('day')) || passed
+                        ? colors.error
+                        : colors.success
+                  }>
+                  {reminders[0]?.status == 'completed'
+                    ? strings[reminders[0]?.status]
+                    : remaining || passed}
+                </Text>
+              </Text>
+            ) : (
+              <ReminderList data={reminders} />
+            )}
+          </Animated.View>
+        ) : null}
         <Animated.View
           entering={FadeInUp.delay(350).duration(500)}
-          style={[common.row_btw, { marginTop: 15, paddingHorizontal: 20 }]}>
+          style={[common.row_btw, { paddingHorizontal: 20 }]}>
           <Text center h4>
             {strings.farm}
           </Text>

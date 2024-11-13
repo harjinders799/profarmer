@@ -281,5 +281,12 @@
   "equipment": "Equipment",
   "quantity": "Quantity",
   "crop_period_completed": "Crop Period Completed",
-  "crop_period": "Crop Period"
+  "crop_period": "Crop Period",
+  "add": "Add",
+  "reminder": "Reminder",
+  "document": "Document",
+  "document_reminder": "Document Reminder",
+  "completed": "Completed",
+  "active": "Active",
+  "canceled": "Canceled"
 }

@@ -15,6 +15,7 @@ export const Collections = {
         subCollections: ['transactions'],
     },
     notifications_data: { name: 'notifications_data', subCollections: [] },
+    reminders_data: { name: 'reminders_data', subCollections: [] },
     contributors: { name: 'contributors', subCollections: [] },
     crops_data: { name: 'crops_data', subCollections: ['events'] },
     pickers_groups: { name: 'pickers_groups', subCollections: [] },

@@ -283,5 +283,12 @@
   "equipment": "उपकरण",
   "quantity": "मात्रा",
   "crop_period_completed": "फसल कार्यकाल समाप्त",
-  "crop_period": "फसल अवधि"
+  "crop_period": "फसल अवधि",
+  "add": "जोड़ें",
+  "reminder": "याददाश्त",
+  "document": "दस्तावेज़",
+  "document_reminder": "दस्तावेज़ याददाश्त",
+  "completed": "पूरा किया",
+  "active": "चालू",
+  "canceled": "रद्द किया"
 }

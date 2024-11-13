@@ -11,7 +11,7 @@ import Animated, {
 import Text from './text';
 import { white } from '@utils/colors';
 
-const Tabs = ({ tabs, activeTab, setActiveTab, style }) => {
+const Tabs = ({ tabs, activeTab, setActiveTab, style, activeTextColor, activeBGColor, inactiveTextColor, inactiveBGColor }) => {
     const translateX = useSharedValue(0);
     const { colors } = useTheme();
     useEffect(() => {
@@ -33,12 +33,12 @@ const Tabs = ({ tabs, activeTab, setActiveTab, style }) => {
     return (
         <Animated.View
             layout={LinearTransition}
-            style={[styles.container, { backgroundColor: colors.secondaryCard }, style]}>
+            style={[styles.container, { backgroundColor: inactiveBGColor ?? colors.secondaryCard }, style]}>
             <Animated.View
                 style={[
                     styles.indicator,
                     {
-                        backgroundColor: colors.primary,
+                        backgroundColor: activeBGColor ?? colors.primary,
                         width: `${100 / tabs.length}%`,
                     },
                     indicatorStyle,
@@ -49,7 +49,7 @@ const Tabs = ({ tabs, activeTab, setActiveTab, style }) => {
                     key={tab}
                     onPress={() => handleTabPress(tab)}
                     style={[styles.tab, { width: `${100 / tabs.length}%` }]}>
-                    <Text h5 color={activeTab == tab ? white : colors.primary} bold={activeTab == tab}>
+                    <Text h5 color={activeTab == tab ? activeTextColor ?? white : inactiveTextColor ?? colors.primary} bold={activeTab == tab}>
                         {tab}
                     </Text>
                 </TouchableOpacity>
@@ -69,6 +69,7 @@ const styles = StyleSheet.create({
     tab: {
         // padding: 10,
         alignItems: 'center',
+        justifyContent: 'center'
     },
     indicator: {
         position: 'absolute',

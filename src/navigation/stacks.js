@@ -41,6 +41,8 @@ import Notifications from '@screens/notifications'
 import PickerAccessSetting from '@screens/pickers/pickerAccessSetting';
 import HomeExpenses from '@screens/homeExpenses';
 import AddHomeExpense from '@screens/homeExpenses/addHomeExpense';
+import AddReminder from '@screens/reminders/addReminder';
+import Reminders from '@screens/reminders';
 
 const Stack = createNativeStackNavigator();
 
@@ -118,6 +120,9 @@ export default function Stacks() {
       <Stack.Screen name="SettingStack" component={SettingStack} />
       <Stack.Screen name="HomeExpenses" component={HomeExpenses} />
       <Stack.Screen name="AddHomeExpense" component={AddHomeExpense} />
+      {/* Reminders */}
+      <Stack.Screen name="AddReminder" component={AddReminder} />
+      <Stack.Screen name="Reminders" component={Reminders} />
     </Stack.Navigator>
   );
 }

@@ -74,7 +74,7 @@ const createCurrencyFormatter = (fraction = 0) =>
 
 export const dateFormat = value => moment(value).format('DD/MM/YY');
 
-export const dateTimeFormat = value => moment(value).format('DD/MM/YY hh:mm A');
+export const dateTimeFormat = value => moment(value).format('DD/MM/YY - hh:mm A');
 
 export const currentStamp = value => moment(value).valueOf();
 
@@ -135,3 +135,59 @@ export const isSameDay = (value1, value2) => {
   const date2 = moment(value2).startOf('day');
   return date1.isSame(date2);
 };
+
+
+// Function to get both the remaining time and the time passed
+export function getTimeDetails(current, reminderDate) {
+  // const targetTime = new Date(reminderDate).getTime(); // Convert reminderDate to timestamp (if it's a string)
+
+  // // Calculate the difference using moment
+  // const duration = moment.duration(moment(reminderDate) - moment(now));
+  // const passedDuration = moment.duration(moment(now) - moment(reminderDate)); // Duration passed
+
+  // if (duration.asMilliseconds() < 0) {
+  //   // If the target time has already passed
+  //   return {
+  //     remaining: 'Time has passed',
+  //     passed: formatTime(passedDuration),
+  //   };
+  // }
+
+  // // Format the time remaining
+  // const remaining = formatTime(duration);
+
+  // return {
+  //   remaining: remaining,
+  //   passed: formatTime(passedDuration),
+  // };
+  const now = moment(current); // Get current time using moment
+
+  const reminderTime = moment(reminderDate); // Convert reminderDate to moment object
+
+  // Time remaining (future)
+  const remaining = reminderTime.isAfter(now)
+    ? reminderTime.fromNow() // Time remaining (e.g., "in 2 minutes", "in 3 hours")
+    : false; // If the reminder date has passed
+
+  // Time passed (past)
+  const passed = reminderTime.isBefore(now)
+    ? reminderTime.fromNow() // Time passed (e.g., "2 minutes ago", "1 day ago")
+    : false; // If the reminder date is in the future
+
+  return { remaining, passed };
+}
+
+// Helper function to format the duration into a human-readable string
+function formatTime(duration) {
+  if (duration.days() > 0) {
+    return `${duration.days()} day${duration.days() > 1 ? 's' : ''}`;
+  } else if (duration.hours() > 0) {
+    return `${duration.hours()} hour${duration.hours() > 1 ? 's' : ''}`;
+  } else if (duration.minutes() > 0) {
+    return `${duration.minutes()} minute${duration.minutes() > 1 ? 's' : ''}`;
+  } else if (duration.seconds() > 0) {
+    return `${duration.seconds()} second${duration.seconds() > 1 ? 's' : ''}`;
+  } else {
+    return 'Less than a minute';
+  }
+}

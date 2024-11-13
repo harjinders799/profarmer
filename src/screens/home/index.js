@@ -15,7 +15,13 @@ import { red } from '@utils/colors';
 import { useLang } from '@context/langContext';
 import { getAccessToken, updateReadAccessToUID } from '@network/auth-service';
 import Loader from '@components/loader';
-import { backupData, backupUserData, notificationCountListener, uploadFromJsonFile, uploadToFirestore } from '@network/common-service';
+import {
+    backupData,
+    backupUserData,
+    notificationCountListener,
+    uploadFromJsonFile,
+    uploadToFirestore,
+} from '@network/common-service';
 import Button from '@components/button';
 import moment from 'moment';
 import Contributors from '@container/home/contributors';
@@ -81,13 +87,13 @@ export default function Home() {
         try {
             setBackupCreating(true);
             if (app.app()?.options?.projectId == 'profarmer-6180a')
-                await uploadToFirestore()
+                await uploadToFirestore();
             else await backupUserData();
             // await backupData()
             storage.set('last_backup', Date.now());
             setLastBackupTime(Date.now());
         } catch (error) {
-            console.log({ error })
+            console.log({ error });
             ToastError(error?.message);
         } finally {
             setBackupCreating(false);
@@ -111,7 +117,7 @@ export default function Home() {
                     common.shadow,
                     common.card,
                 ]}>
-                <Text justify color={colors.warning} style={{ width: '100%' }}>
+                <Text justify color={colors.warning} h6 style={{ width: '100%' }}>
                     <Text bold color={colors.warning}>
                         {strings.important_note}
                     </Text>
@@ -179,28 +185,9 @@ export default function Home() {
                     </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                    onPress={() => ToastProgress(strings.in_progress)}
-                    // onPress={() => navigate('HomeExpenses')}
-                    style={[
-                        common.card,
-                        // common.shadow,
-                        {
-                            backgroundColor: colors.secondaryCard,
-                            marginVertical: '3%',
-                            // paddingVertical: 20,
-                            width: '47%',
-                        },
-                    ]}>
-                    <Icon name={'local-grocery-store'} type={'MaterialIcons'} size={25} />
-                    <Text h4 semi style={{ marginTop: 5 }}>
-                        {'Home Expense'}
-                    </Text>
-                    <Text h7 semi color={red}>
-                        {'Coming soon'}
-                    </Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    onPress={() => ToastProgress(strings.in_progress)}
+                    onPress={() =>
+                        __DEV__ ? navigate('Reminders') : ToastProgress(strings.in_progress)
+                    }
                     style={[
                         common.card,
                         // common.shadow,
@@ -216,8 +203,36 @@ export default function Home() {
                         type={'MaterialCommunityIcons'}
                         size={25}
                     />
+                    <Icon
+                        name={'progress-clock'}
+                        type={'MaterialCommunityIcons'}
+                        size={20}
+                        style={{ position: 'absolute', top: 20, right: '40%' }}
+                    />
+
                     <Text h4 semi style={{ marginTop: 5 }}>
-                        {'Doc Reminder'}
+                        {strings.reminder}
+                    </Text>
+                    <Text h7 semi color={red}>
+                        {'Coming soon'}
+                    </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    onPress={() => ToastProgress(strings.in_progress)}
+                    // onPress={() => navigate('HomeExpenses')}
+                    style={[
+                        common.card,
+                        // common.shadow,
+                        {
+                            backgroundColor: colors.secondaryCard,
+                            marginVertical: '3%',
+                            // paddingVertical: 20,
+                            width: '47%',
+                        },
+                    ]}>
+                    <Icon name={'local-grocery-store'} type={'MaterialIcons'} size={25} />
+                    <Text h4 semi style={{ marginTop: 5 }}>
+                        {'Home Expense'}
                     </Text>
                     <Text h7 semi color={red}>
                         {'Coming soon'}

@@ -282,5 +282,12 @@
   "equipment": "ਉਪਕਰਨ",
   "quantity": "ਮਾਤਰਾ",
   "crop_period_completed": "ਫ਼ਸਲ ਚੱਕਰ ਮੁਕੰਮਲ",
-  "crop_period": "ਫ਼ਸਲ ਸਮਾਂ"
+  "crop_period": "ਫ਼ਸਲ ਸਮਾਂ",
+  "add": "ਜੋੜੋ",
+  "reminder": "ਯਾਦਦਾਸ਼ਤ",
+  "document": "ਦਸਤਾਵੇਜ਼",
+  "document_reminder": "ਦਸਤਾਵੇਜ਼ ਯਾਦਦਾਸ਼ਤ",
+  "completed": "ਪੂਰਾ ਕੀਤਾ",
+  "active": "ਚਾਲੂ",
+  "canceled": "ਰੱਦ ਕੀਤਾ"
 }
