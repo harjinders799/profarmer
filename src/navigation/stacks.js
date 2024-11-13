@@ -3,7 +3,6 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Setting from 'src/screens/settings';
 import Tabs from './tab';
 import NetInfo from '@react-native-community/netinfo';
-import CropUpdate from '@screens/cropTracker/cropUpdate';
 import AboutUs from '@screens/settings/aboutUs';
 import ContactUs from '@screens/settings/contactUs';
 import SelectLanguage from '@screens/settings/salectLanguage';
@@ -19,15 +18,12 @@ import AddLoan from '@screens/loan/addLoan';
 import AddCredit from '@screens/loan/addCredit';
 import LoanDetail from '@screens/loan/loanDetail';
 import LoanUpdate from '@screens/loan/loanUpdate';
-import AddEvent from '@screens/cropTracker/addEvent';
 import Customize from '@screens/settings/customize';
 import NewLabour from '@screens/labour/newLabour';
 import AddTransaction from '@screens/aadhat/addTransaction';
 import AddAadhatiya from '@screens/aadhat/addAadhatiya';
 import AadhatDetail from '@screens/aadhat/aadhatDetail';
 import AadhatTransactionDetail from '@screens/aadhat/aadhatTransactionDetail';
-import AddCrop from '@screens/cropTracker/addCrop';
-import CropDetail from '@screens/cropTracker/detail';
 import AAdhatStack from './aadhatStack';
 import SettingStack from './settingStack';
 import Pickers from '@screens/pickers';
@@ -45,7 +41,6 @@ import Notifications from '@screens/notifications'
 import PickerAccessSetting from '@screens/pickers/pickerAccessSetting';
 import HomeExpenses from '@screens/homeExpenses';
 import AddHomeExpense from '@screens/homeExpenses/addHomeExpense';
-import CropAnalysis from '@screens/cropTracker/cropAnalysis';
 
 const Stack = createNativeStackNavigator();
 
@@ -85,14 +80,6 @@ export default function Stacks() {
       <Stack.Screen name="AddTransaction" component={AddTransaction} />
       <Stack.Screen name="AadhatDetail" component={AadhatDetail} />
       <Stack.Screen name="AadhatTransactionDetail" component={AadhatTransactionDetail} />
-
-
-      {/* Crop */}
-      <Stack.Screen name="CropUpdate" component={CropUpdate} />
-      <Stack.Screen name="AddCrop" component={AddCrop} />
-      <Stack.Screen name="AddEvent" component={AddEvent} />
-      <Stack.Screen name="CropAnalysis" component={CropAnalysis} />
-      <Stack.Screen name="CropDetail" component={CropDetail} />
 
 
       <Stack.Screen name="Setting" component={Setting} />

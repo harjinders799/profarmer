@@ -561,3 +561,6 @@ export const tabsData = [
     //     iconType: 'MaterialCommunityIcons',
     // },
 ];
+
+
+export const hideTabScreens = ['CropDetail', 'AddEvent', 'AddCrop', 'CropAnalysis']

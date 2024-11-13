@@ -1,5 +1,5 @@
 import { useTheme } from '@react-navigation/native';
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { StyleSheet, TextInput, View } from 'react-native';
 import Icon from './icon';
 import Text from './text';
@@ -28,14 +28,14 @@ const Input = ({
   const { colors } = useTheme();
   const [inputHeight, setInputHeight] = useState(45);
 
-  const handleChange = (value) => {
+  const handleChange = useCallback((value) => {
     setValue(value);
 
     // Calculate the height based on content
     const lines = value.split('\n').length; // Count number of lines
     const newHeight = Math.min(40 + lines * 20, 150); // Calculate new height, max 200
     setInputHeight(newHeight);
-  };
+  }, [value]);
 
   return (
     <Animated.View {...props} style={[styles.container, { borderColor: colors.border }, style]}>

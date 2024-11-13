@@ -15,7 +15,6 @@ const CropAnalysis = () => {
     const {
         params: { data, events },
     } = useRoute();
-    // console.log(JSON.stringify(events))
 
     // Flatten categories and group data by category
     const flattenedData = _.flatMap(events, entry =>
@@ -43,30 +42,31 @@ const CropAnalysis = () => {
                 items.filter(i => i.type === 'expense'),
                 'amount',
             ), // Sum expense amounts
-            earningAmount: 0, // Set earningAmount to 0, assuming no earnings in the provided data
+            earningAmount: _.sumBy(
+                items.filter(i => i.type === 'earning'),
+                'amount',
+            ), // Set earningAmount to 0, assuming no earnings in the provided data
             expenseData: items.filter(i => i.type === 'expense'), // Filter expense items
-            earningData: [], // No earning data in the provided input
+            earningData: items.filter(i => i.type === 'earning'), // No earning data in the provided input
         }))
         .value();
-
-    console.log(groupedData);
 
     return (
         <BaseView>
             <Header back label={'Crop Analysis'} />
             {/* <Text>यहाँ पर आप केटेगरी के हिसाब से खर्चे और कमाई देख सको गे।</Text> */}
             <View style={common.row_btw}>
-                <View style={[styles.box, { backgroundColor: colors.success }]}>
-                    <Text h4 color={white}>
-                        {currencyFormat(data?.total_earning)}
-                    </Text>
-                    <Text color={white}>{strings.earning}</Text>
-                </View>
                 <View style={[styles.box, { backgroundColor: colors.error }]}>
                     <Text h4 color={white}>
                         {currencyFormat(data?.total_expense)}
                     </Text>
                     <Text color={white}>{strings.expense}</Text>
+                </View>
+                <View style={[styles.box, { backgroundColor: colors.success }]}>
+                    <Text h4 color={white}>
+                        {currencyFormat(data?.total_earning)}
+                    </Text>
+                    <Text color={white}>{strings.earning}</Text>
                 </View>
             </View>
             <FlatList

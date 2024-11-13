@@ -279,5 +279,7 @@
   "sold": "Sold",
   "liter": "Liter",
   "equipment": "Equipment",
-  "quantity": "Quantity"
+  "quantity": "Quantity",
+  "crop_period_completed": "Crop Period Completed",
+  "crop_period": "Crop Period"
 }

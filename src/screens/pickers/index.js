@@ -144,7 +144,7 @@ function Pickers() {
                 label={strings.pickers} // Updated for localization
                 rightComponent={
                     <View style={common.row_center}>
-                        <Icon
+                        {/* <Icon
                             name={'information-circle-outline'}
                             size={22}
                             type="Ionicons"
@@ -154,7 +154,7 @@ function Pickers() {
                                     start();
                                 }
                             }}
-                        />
+                        /> */}
                         <Icon
                             name={showConclusion ? 'eye-off' : 'eye'}
                             size={25}
@@ -173,7 +173,10 @@ function Pickers() {
                     <Tabs
                         tabs={[strings.pickers_list, strings.group_list, strings.date_wise]} // Updated for localization
                         activeTab={activeTab}
-                        setActiveTab={setActiveTab}
+                        setActiveTab={tab => {
+                            setShowConclusion(false)
+                            setActiveTab(tab)
+                        }}
                     />
                 </TourGuideZone>
             )}

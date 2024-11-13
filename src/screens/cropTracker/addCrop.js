@@ -16,12 +16,16 @@ import DropdownPicker from '@components/dropdown';
 import { common } from '@utils/style';
 import { currentStamp, dateFormat } from '@utils/dateformat';
 import DateTimePicker from '@components/DateTime';
+import { useCropTracker } from '@context/cropTrackerContext';
 
 export default function AddCrop() {
   const { params } = useRoute();
+  const { getMyCrops, getPublicCrops } = useCropTracker();
   const editData = params?.data ?? {};
   const addSowingData = params?.addSowingData ?? false;
+  const addStopDate = params?.addStopDate ?? false;
   const [showDate, setShowDate] = useState(addSowingData);
+  const [showStopDate, setShowStopDate] = useState(addStopDate);
 
   const [data, setData] = useState({
     name: editData?.name ?? '',
@@ -30,24 +34,41 @@ export default function AddCrop() {
     totalArea: editData?.totalArea ?? '',
     areaUnit: editData?.areaUnit ?? 'bigha',
     isPublic: editData?.isPublic ?? 'private',
-    dateOfSowing: editData?.dateOfSowing ? new Date(editData?.dateOfSowing) : addSowingData ? new Date() : null,
+    dateOfSowing: editData?.dateOfSowing
+      ? new Date(editData?.dateOfSowing)
+      : addSowingData
+        ? new Date()
+        : null,
+    cropPeriodCompleted: editData?.cropPeriodCompleted
+      ? new Date(editData?.cropPeriodCompleted)
+      : addStopDate
+        ? new Date()
+        : null,
   });
   const [loading, setLoading] = useState(false);
-  const { name, variety, farm, totalArea, areaUnit, isPublic, dateOfSowing } = data;
+  const { name, variety, farm, totalArea, areaUnit, isPublic, dateOfSowing, cropPeriodCompleted } =
+    data;
 
   const handleSubmit = useCallback(async () => {
     try {
       setLoading(true);
-      editData?.id ? await updateCrop({ id: editData?.id, ...data, dateOfSowing: currentStamp(dateOfSowing) }) : await addNewCrop(data);
+      editData?.id
+        ? await updateCrop({
+          id: editData?.id,
+          ...data,
+          dateOfSowing: currentStamp(dateOfSowing),
+          cropPeriodCompleted: currentStamp(cropPeriodCompleted),
+        })
+        : await addNewCrop(data);
       setLoading(false);
       ToastSuccess(strings.successfully_saved);
+      isPublic == 'public' ? getPublicCrops() : getMyCrops();
       goBack();
     } catch (error) {
       setLoading(false);
       ToastError(error?.message);
     }
   }, [data, editData]);
-
 
   return (
     <BaseView>
@@ -66,9 +87,7 @@ export default function AddCrop() {
             autoCapitalize="words"
             value={name}
             autoFocus
-            setValue={value =>
-              onChangeValue({ setData, key: 'name', value })
-            }
+            setValue={value => onChangeValue({ setData, key: 'name', value })}
           />
           <View style={common.row_btw}>
             <Input
@@ -86,9 +105,7 @@ export default function AddCrop() {
               label={strings.farm}
               placeholder={'9BGS, 2LNP...'}
               value={farm}
-              setValue={value =>
-                onChangeValue({ setData, key: 'farm', value })
-              }
+              setValue={value => onChangeValue({ setData, key: 'farm', value })}
               style={{ width: '48%' }}
             />
           </View>
@@ -143,9 +160,8 @@ export default function AddCrop() {
               onChangeValue({ setData, key: 'isPublic', value: value?.value });
             }}
           />
-          {addSowingData || editData?.dateOfSowing ?
+          {addSowingData || editData?.dateOfSowing ? (
             <>
-
               <Pressable
                 onPress={() => {
                   setShowDate(true);
@@ -167,9 +183,41 @@ export default function AddCrop() {
                 show={showDate}
                 setShow={setShowDate}
                 date={dateOfSowing}
-                setDate={value => onChangeValue({ setData, key: 'dateOfSowing', value })}
+                setDate={value =>
+                  onChangeValue({ setData, key: 'dateOfSowing', value })
+                }
               />
-            </> : null}
+            </>
+          ) : null}
+          {addStopDate || editData?.cropPeriodCompleted ? (
+            <>
+              <Pressable
+                onPress={() => {
+                  setShowDate(true);
+                  Keyboard.dismiss();
+                }}>
+                <Input
+                  entering={FadeInDown.delay(450)}
+                  label={strings.crop_period_completed}
+                  editable={false}
+                  placeholder={strings.date}
+                  value={dateFormat(cropPeriodCompleted)}
+                  onPress={() => {
+                    setShowDate(true);
+                    Keyboard.dismiss();
+                  }}
+                />
+              </Pressable>
+              <DateTimePicker
+                show={showStopDate}
+                setShow={setShowStopDate}
+                date={cropPeriodCompleted}
+                setDate={value =>
+                  onChangeValue({ setData, key: 'cropPeriodCompleted', value })
+                }
+              />
+            </>
+          ) : null}
           <Button
             entering={FadeInDown.delay(600)}
             label={strings.save}

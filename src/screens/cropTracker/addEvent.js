@@ -236,6 +236,7 @@ import { common } from '@utils/style';
 import Text from '@components/text';
 import DropdownPicker from '@components/dropdown';
 import { sumBy } from 'lodash';
+import { normalize } from '@utils/fonts';
 
 export default function AddEvent() {
   const EventCategories = [
@@ -256,10 +257,10 @@ export default function AddEvent() {
       value: 'pesticide',
       data: [
         {
-          name: "",
-          quantity: ''
-        }
-      ]
+          name: '',
+          quantity: '',
+        },
+      ],
     },
     {
       label: strings.seed,
@@ -270,10 +271,10 @@ export default function AddEvent() {
       value: 'fertilizer',
       data: [
         {
-          name: "",
-          quantity: ''
-        }
-      ]
+          name: '',
+          quantity: '',
+        },
+      ],
     },
     {
       label: strings.sold,
@@ -525,7 +526,16 @@ export default function AddEvent() {
                   onChange={value => {
                     setData(prevs => {
                       let arr = [...prevs?.categories];
-                      arr[i] = { ...arr[i], category: value.value, data: value.data };
+                      if (
+                        value.value == 'fertilizer' ||
+                        value.value == 'pesticide'
+                      )
+                        arr[i] = {
+                          ...arr[i],
+                          category: value.value,
+                          data: value.data,
+                        };
+                      else arr[i] = { ...arr[i], category: value.value };
                       return { ...prevs, categories: arr };
                     });
                   }}
@@ -581,11 +591,19 @@ export default function AddEvent() {
               {cat?.category == 'diesel' ? (
                 <View style={common.row_top_start}>
                   <Input
-                    placeholder={strings.liter}
+                    placeholder={'2,4,6...'}
                     style={{ width: '38%' }}
-                    innerStyle={{ height: 35 }}
+                    rightComponent={<Text h6>{`( ${strings.liter} )`}</Text>}
                     value={cat?.quantity}
-                    keyboardType={'numeric'}
+                    multiline
+                    inputStyle={{
+                      fontSize: normalize(14),
+                      paddingHorizontal: 5,
+                      width: '70%',
+                      maxHeight: 150,
+                      minHeight: 35,
+                      lineHeight: normalize(18),
+                    }}
                     setValue={value =>
                       setData(prevs => {
                         let arr = [...prevs?.categories];
@@ -600,8 +618,15 @@ export default function AddEvent() {
                   <Input
                     placeholder={`${strings.diesel} ${strings.remark}`}
                     style={{ width: '45%', marginLeft: 10 }}
-                    innerStyle={{ height: 35 }}
                     value={cat?.detail}
+                    inputStyle={{
+                      fontSize: normalize(14),
+                      paddingHorizontal: 5,
+                      maxHeight: 150,
+                      minHeight: 35,
+                      lineHeight: normalize(18),
+                    }}
+                    multiline
                     setValue={value =>
                       setData(prevs => {
                         let arr = [...prevs?.categories];
@@ -618,10 +643,19 @@ export default function AddEvent() {
               {cat?.category == 'labour' ? (
                 <View style={common.row_top_start}>
                   <Input
-                    placeholder={strings.labour_count}
+                    placeholder={'1,2,3...'}
                     style={{ width: '38%' }}
-                    innerStyle={{ height: 35 }}
+                    rightComponent={<Text h6>{`( ${strings.labour} )`}</Text>}
                     value={cat?.quantity}
+                    inputStyle={{
+                      fontSize: normalize(14),
+                      paddingHorizontal: 5,
+                      width: '60%',
+                      maxHeight: 150,
+                      minHeight: 35,
+                      lineHeight: normalize(18),
+                    }}
+                    multiline
                     keyboardType={'numeric'}
                     setValue={value =>
                       setData(prevs => {
@@ -637,7 +671,14 @@ export default function AddEvent() {
                   <Input
                     placeholder={strings.remark}
                     style={{ width: '45%', marginLeft: 10 }}
-                    innerStyle={{ height: 35 }}
+                    inputStyle={{
+                      fontSize: normalize(14),
+                      paddingHorizontal: 5,
+                      maxHeight: 150,
+                      minHeight: 35,
+                      lineHeight: normalize(18),
+                    }}
+                    multiline
                     value={cat?.detail}
                     setValue={value =>
                       setData(prevs => {
@@ -657,7 +698,14 @@ export default function AddEvent() {
                   <Input
                     placeholder={strings.equipment}
                     style={{ width: '38%' }}
-                    innerStyle={{ height: 35 }}
+                    inputStyle={{
+                      fontSize: normalize(14),
+                      paddingHorizontal: 5,
+                      maxHeight: 150,
+                      minHeight: 35,
+                      lineHeight: normalize(18),
+                    }}
+                    multiline
                     value={cat?.equipment}
                     setValue={value =>
                       setData(prevs => {
@@ -673,8 +721,14 @@ export default function AddEvent() {
                   <Input
                     placeholder={`${strings.rent} ${strings.remark}`}
                     style={{ width: '45%', marginLeft: 10 }}
-                    innerStyle={{ height: 35 }}
-                    inputStyle={{ height: 'auto', maxHeight: 100 }}
+                    inputStyle={{
+                      fontSize: normalize(14),
+                      paddingHorizontal: 5,
+                      maxHeight: 150,
+                      minHeight: 35,
+                      lineHeight: normalize(18),
+                    }}
+                    multiline
                     value={cat?.detail}
                     setValue={value =>
                       setData(prevs => {
@@ -697,29 +751,37 @@ export default function AddEvent() {
                       entering={FadeInDown.delay(10)}
                       // label={strings.add_more}
                       iconLeft={'plus'}
-                      onPress={() => setData(prevs => {
-                        // Copy the categories array
-                        const updatedCategories = [...prevs.categories];
-                        // Copy the data array of the category
-                        const updatedData = [...updatedCategories[i].data];
-                        // Add the item in the data array
-                        updatedData.push({ name: '', quantity: '' });
-                        // Update the category's data with the updated data array
-                        updatedCategories[i] = {
-                          ...updatedCategories[i],
-                          data: updatedData,
-                        };
-                        // Return the updated state
-                        return { ...prevs, categories: updatedCategories };
-                      })
+                      onPress={() =>
+                        setData(prevs => {
+                          // Copy the categories array
+                          const updatedCategories = [...prevs.categories];
+                          // Copy the data array of the category
+                          const updatedData = [...updatedCategories[i].data];
+                          // Add the item in the data array
+                          updatedData.push({ name: '', quantity: '' });
+                          // Update the category's data with the updated data array
+                          updatedCategories[i] = {
+                            ...updatedCategories[i],
+                            data: updatedData,
+                          };
+                          // Return the updated state
+                          return { ...prevs, categories: updatedCategories };
+                        })
                       }
                       btnStyle={{ width: '10%' }}
                     />
                     <Input
                       placeholder={strings.name}
-                      style={{ width: '38%' }}
-                      innerStyle={{ height: 35 }}
+                      style={{ width: '28%', marginLeft: 5 }}
                       value={scat?.name}
+                      inputStyle={{
+                        fontSize: normalize(14),
+                        paddingHorizontal: 5,
+                        maxHeight: 150,
+                        minHeight: 35,
+                        lineHeight: normalize(18),
+                      }}
+                      multiline
                       setValue={value =>
                         setData(prevs => {
                           // Copy the categories array
@@ -739,14 +801,20 @@ export default function AddEvent() {
                           // Return the updated state
                           return { ...prevs, categories: updatedCategories };
                         })
-
                       }
                     />
                     <Input
-                      placeholder={`${strings.quantity}`}
-                      style={{ width: '45%', marginLeft: 10 }}
-                      innerStyle={{ height: 35 }}
+                      placeholder={`20ml, 2ltr...`}
+                      style={{ width: '20%', marginLeft: 5 }}
                       value={scat?.quantity}
+                      inputStyle={{
+                        fontSize: normalize(14),
+                        paddingHorizontal: 5,
+                        maxHeight: 150,
+                        minHeight: 35,
+                        lineHeight: normalize(18),
+                      }}
+                      multiline
                       setValue={value =>
                         setData(prevs => {
                           // Copy the categories array
@@ -757,6 +825,40 @@ export default function AddEvent() {
                           updatedData[inx] = {
                             ...updatedData[inx],
                             quantity: value,
+                          };
+                          // Update the category's data with the updated data array
+                          updatedCategories[i] = {
+                            ...updatedCategories[i],
+                            data: updatedData,
+                          };
+                          // Return the updated state
+                          return { ...prevs, categories: updatedCategories };
+                        })
+                      }
+                    />
+                    <Input
+                      placeholder={strings.remark}
+                      style={{ width: '35%', marginLeft: 5 }}
+                      innerStyle={{}}
+                      value={scat?.detail}
+                      multiline
+                      inputStyle={{
+                        fontSize: normalize(14),
+                        paddingHorizontal: 5,
+                        maxHeight: 150,
+                        minHeight: 35,
+                        lineHeight: normalize(18),
+                      }}
+                      setValue={value =>
+                        setData(prevs => {
+                          // Copy the categories array
+                          const updatedCategories = [...prevs.categories];
+                          // Copy the data array of the category
+                          const updatedData = [...updatedCategories[i].data];
+                          // Update the specific item in the data array
+                          updatedData[inx] = {
+                            ...updatedData[inx],
+                            detail: value,
                           };
                           // Update the category's data with the updated data array
                           updatedCategories[i] = {
@@ -779,29 +881,37 @@ export default function AddEvent() {
                       entering={FadeInDown.delay(10)}
                       // label={strings.add_more}
                       iconLeft={'plus'}
-                      onPress={() => setData(prevs => {
-                        // Copy the categories array
-                        const updatedCategories = [...prevs.categories];
-                        // Copy the data array of the category
-                        const updatedData = [...updatedCategories[i].data];
-                        // Add the item in the data array
-                        updatedData.push({ name: '', quantity: '' });
-                        // Update the category's data with the updated data array
-                        updatedCategories[i] = {
-                          ...updatedCategories[i],
-                          data: updatedData,
-                        };
-                        // Return the updated state
-                        return { ...prevs, categories: updatedCategories };
-                      })
+                      onPress={() =>
+                        setData(prevs => {
+                          // Copy the categories array
+                          const updatedCategories = [...prevs.categories];
+                          // Copy the data array of the category
+                          const updatedData = [...updatedCategories[i].data];
+                          // Add the item in the data array
+                          updatedData.push({ name: '', quantity: '' });
+                          // Update the category's data with the updated data array
+                          updatedCategories[i] = {
+                            ...updatedCategories[i],
+                            data: updatedData,
+                          };
+                          // Return the updated state
+                          return { ...prevs, categories: updatedCategories };
+                        })
                       }
                       btnStyle={{ width: '10%' }}
                     />
                     <Input
                       placeholder={strings.name}
-                      style={{ width: '38%' }}
-                      innerStyle={{ height: 35 }}
+                      style={{ width: '28%', marginLeft: 5 }}
                       value={scat?.name}
+                      inputStyle={{
+                        fontSize: normalize(14),
+                        paddingHorizontal: 5,
+                        maxHeight: 150,
+                        minHeight: 35,
+                        lineHeight: normalize(18),
+                      }}
+                      multiline
                       setValue={value =>
                         setData(prevs => {
                           // Copy the categories array
@@ -821,14 +931,20 @@ export default function AddEvent() {
                           // Return the updated state
                           return { ...prevs, categories: updatedCategories };
                         })
-
                       }
                     />
                     <Input
-                      placeholder={`${strings.quantity}`}
-                      style={{ width: '45%', marginLeft: 10 }}
-                      innerStyle={{ height: 35 }}
+                      placeholder={`200gm, 2kg...`}
+                      style={{ width: '20%', marginLeft: 5 }}
                       value={scat?.quantity}
+                      inputStyle={{
+                        fontSize: normalize(14),
+                        paddingHorizontal: 5,
+                        maxHeight: 150,
+                        minHeight: 35,
+                        lineHeight: normalize(18),
+                      }}
+                      multiline
                       setValue={value =>
                         setData(prevs => {
                           // Copy the categories array
@@ -850,16 +966,57 @@ export default function AddEvent() {
                         })
                       }
                     />
+                    <Input
+                      placeholder={strings.remark}
+                      style={{ width: '35%', marginLeft: 5 }}
+                      innerStyle={{}}
+                      value={scat?.detail}
+                      multiline
+                      inputStyle={{
+                        fontSize: normalize(14),
+                        paddingHorizontal: 5,
+                        maxHeight: 150,
+                        minHeight: 35,
+                        lineHeight: normalize(18),
+                      }}
+                      setValue={value =>
+                        setData(prevs => {
+                          // Copy the categories array
+                          const updatedCategories = [...prevs.categories];
+                          // Copy the data array of the category
+                          const updatedData = [...updatedCategories[i].data];
+                          // Update the specific item in the data array
+                          updatedData[inx] = {
+                            ...updatedData[inx],
+                            detail: value,
+                          };
+                          // Update the category's data with the updated data array
+                          updatedCategories[i] = {
+                            ...updatedCategories[i],
+                            data: updatedData,
+                          };
+                          // Return the updated state
+                          return { ...prevs, categories: updatedCategories };
+                        })
+                      }
+                    />
                   </View>
                 ))
                 : null}
               {cat?.category == 'sold' ? (
                 <View style={common.row_top_start}>
                   <Input
-                    placeholder={strings.quantity}
+                    placeholder={'2kg, 5Qtl...'}
                     style={{ width: '38%' }}
-                    innerStyle={{ height: 35 }}
                     value={cat?.quantity}
+                    multiline
+                    inputStyle={{
+                      fontSize: normalize(14),
+                      paddingHorizontal: 5,
+                      maxHeight: 150,
+                      minHeight: 35,
+                      lineHeight: normalize(18),
+                    }}
                     setValue={value =>
                       setData(prevs => {
                         let arr = [...prevs?.categories];
@@ -874,8 +1031,15 @@ export default function AddEvent() {
                   <Input
                     placeholder={`${strings.remark}`}
                     style={{ width: '45%', marginLeft: 10 }}
-                    innerStyle={{ height: 35 }}
                     value={cat?.detail}
+                    multiline
+                    inputStyle={{
+                      fontSize: normalize(14),
+                      paddingHorizontal: 5,
+                      maxHeight: 150,
+                      minHeight: 35,
+                      lineHeight: normalize(18),
+                    }}
                     setValue={value =>
                       setData(prevs => {
                         let arr = [...prevs?.categories];
@@ -892,9 +1056,16 @@ export default function AddEvent() {
               {cat?.category == 'seed' ? (
                 <View style={common.row_top_start}>
                   <Input
-                    placeholder={strings.quantity}
+                    placeholder={`200gm, 2kg, 5kg...`}
                     style={{ width: '38%' }}
-                    innerStyle={{ height: 35 }}
+                    multiline
+                    inputStyle={{
+                      fontSize: normalize(14),
+                      paddingHorizontal: 5,
+                      maxHeight: 150,
+                      minHeight: 35,
+                      lineHeight: normalize(18),
+                    }}
                     value={cat?.quantity}
                     setValue={value =>
                       setData(prevs => {
@@ -910,7 +1081,14 @@ export default function AddEvent() {
                   <Input
                     placeholder={`${strings.seed} ${strings.remark}`}
                     style={{ width: '45%', marginLeft: 10 }}
-                    innerStyle={{ height: 35 }}
+                    inputStyle={{
+                      fontSize: normalize(14),
+                      paddingHorizontal: 5,
+                      maxHeight: 150,
+                      minHeight: 35,
+                      lineHeight: normalize(18),
+                    }}
+                    multiline
                     value={cat?.detail}
                     setValue={value =>
                       setData(prevs => {
@@ -930,7 +1108,14 @@ export default function AddEvent() {
                   <Input
                     placeholder={strings.other + ' ' + strings.remark}
                     style={{ width: '85%' }}
-                    innerStyle={{ height: 35 }}
+                    inputStyle={{
+                      fontSize: normalize(14),
+                      paddingHorizontal: 5,
+                      maxHeight: 150,
+                      minHeight: 35,
+                      lineHeight: normalize(18),
+                    }}
+                    multiline
                     value={cat?.detail}
                     setValue={value =>
                       setData(prevs => {

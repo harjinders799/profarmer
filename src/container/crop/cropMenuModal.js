@@ -11,13 +11,18 @@ import Icon from '@components/icon';
 import Text from '@components/text';
 import { strings } from '@translations/locale';
 import { common } from '@utils/style';
+import HarvestingIcon from '@assets/svgs/harvesting-icon';
 
 const MenuOptionItem = React.memo(
-    ({ iconName, label, onSelect, iconType, iconColor }) => (
+    ({ iconName, Svg, label, onSelect, iconType, iconColor }) => (
         <>
             <MenuOption onSelect={onSelect}>
                 <View style={styles.menuOption}>
-                    <Icon name={iconName} size={20} type={iconType} color={iconColor} />
+                    {Svg ? (
+                        <Svg color={iconColor} />
+                    ) : (
+                        <Icon name={iconName} size={20} type={iconType} color={iconColor} />
+                    )}
                     <Text h5 color={iconColor} style={styles.text}>
                         {label}
                     </Text>
@@ -28,7 +33,14 @@ const MenuOptionItem = React.memo(
     ),
 );
 
-const CropMenuModal = ({ handleShare, onDeletePress, onEditPress, onAnalysisPress }) => {
+const CropMenuModal = ({
+    isOwner,
+    handleShare,
+    onDeletePress,
+    onEditPress,
+    onAnalysisPress,
+    onStopPress
+}) => {
     const { colors } = useTheme();
     const [showPopup, setShowPopup] = useState(false);
 
@@ -55,21 +67,34 @@ const CropMenuModal = ({ handleShare, onDeletePress, onEditPress, onAnalysisPres
                     },
                 }}
                 optionsContainerStyle={styles.optionsContainer}>
-                <MenuOptionItem
-                    iconName="edit"
-                    iconType="MaterialIcons"
-                    label="Edit"
-                    onSelect={() => { setShowPopup(false); onEditPress() }}
-                />
-                <MenuOptionItem
-                    iconName="pdffile1"
-                    label={strings.share}
-                    onSelect={() => { setShowPopup(false); handleShare() }}
-                />
+                {isOwner ? (
+                    <MenuOptionItem
+                        iconName="edit"
+                        iconType="MaterialIcons"
+                        label="Edit"
+                        onSelect={() => {
+                            setShowPopup(false);
+                            onEditPress();
+                        }}
+                    />
+                ) : null}
+                {isOwner ? (
+                    <MenuOptionItem
+                        iconName="pdffile1"
+                        label={strings.share}
+                        onSelect={() => {
+                            setShowPopup(false);
+                            handleShare();
+                        }}
+                    />
+                ) : null}
                 <MenuOptionItem
                     iconName="search1"
                     label={strings.analysis}
-                    onSelect={() => { setShowPopup(false); onAnalysisPress() }}
+                    onSelect={() => {
+                        setShowPopup(false);
+                        onAnalysisPress();
+                    }}
                 />
                 {/* <MenuOptionItem
                     iconName="hand-stop-o"
@@ -79,12 +104,26 @@ const CropMenuModal = ({ handleShare, onDeletePress, onEditPress, onAnalysisPres
                     iconColor={colors.error}
                 /> */}
                 <MenuOptionItem
-                    iconName="trash-can"
-                    label={strings.delete}
-                    onSelect={() => { setShowPopup(false); onDeletePress() }}
-                    iconType="FontAwesome6"
-                    iconColor={colors.error}
+                    Svg={HarvestingIcon}
+                    label={strings.crop_period_completed}
+                    onSelect={() => {
+                        setShowPopup(false);
+                        onStopPress();
+                    }}
+                    iconColor={colors.warning}
                 />
+                {isOwner ? (
+                    <MenuOptionItem
+                        iconName="trash-can"
+                        label={strings.delete}
+                        onSelect={() => {
+                            setShowPopup(false);
+                            onDeletePress();
+                        }}
+                        iconType="FontAwesome6"
+                        iconColor={colors.error}
+                    />
+                ) : null}
             </MenuOptions>
         </Menu>
     );

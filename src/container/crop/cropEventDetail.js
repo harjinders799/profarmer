@@ -10,8 +10,9 @@ import Animated, {
 } from 'react-native-reanimated';
 import { common } from '@utils/style';
 import { strings } from '@translations/locale';
-import { navigate, replace } from '@navigation/ref';
+import { navigate } from '@navigation/ref';
 import { sumBy } from 'lodash';
+import auth from '@react-native-firebase/auth';
 
 const CropEventDetail = ({ data, events }) => {
     const { colors } = useTheme();
@@ -42,17 +43,20 @@ const CropEventDetail = ({ data, events }) => {
                                 common.row_btw,
                                 styles.touchableContainer(isExpense, isEarning),
                             ]}
-                            onPress={() => replace('AddEvent', { item, data })}>
+                            disabled={data?.uid != auth().currentUser?.uid}
+                            onPress={() => navigate('AddEvent', { item, data })}>
                             <View style={styles.dateContainer(isExpense, isEarning)}>
-                                {item?.type ? <Text center bold>
-                                    {currencyFormat(
-                                        item?.expense_amount ||
-                                        item?.earning_amount ||
-                                        sumBy(item?.categories, o =>
-                                            parseFloat(o?.amount || '0'),
-                                        ),
-                                    )}
-                                </Text> : null}
+                                {item?.type ? (
+                                    <Text center bold>
+                                        {currencyFormat(
+                                            item?.expense_amount ||
+                                            item?.earning_amount ||
+                                            sumBy(item?.categories, o =>
+                                                parseFloat(o?.amount || '0'),
+                                            ),
+                                        )}
+                                    </Text>
+                                ) : null}
                                 <Text center style={{ marginVertical: item?.type ? 10 : 0 }}>
                                     {dayCount(item?.date)} {strings.day} {strings.ago}
                                 </Text>
@@ -72,9 +76,11 @@ const CropEventDetail = ({ data, events }) => {
                                 <Text bold h4>
                                     {item?.title}
                                 </Text>
-                                {item?.description ? <Text h5 style={styles.description}>
-                                    {item?.description}
-                                </Text> : null}
+                                {item?.description ? (
+                                    <Text h5 style={styles.description}>
+                                        {item?.description}
+                                    </Text>
+                                ) : null}
                                 {(isExpense && item?.expense_amount) ||
                                     (isEarning && item?.earning_amount) ? (
                                     <Text bold style={styles.amount}>
@@ -84,11 +90,43 @@ const CropEventDetail = ({ data, events }) => {
                                     </Text>
                                 ) : null}
                                 {item?.categories && Array.isArray(item?.categories)
-                                    ? item.categories.map((cat, index) => (
-                                        cat?.category ? <Text key={index} bold style={styles.amount}>
-                                            {strings[cat?.category]} = {currencyFormat(cat?.amount)}
-                                        </Text> : null
-                                    ))
+                                    ? item.categories.map((cat, index) =>
+                                        cat?.category ? (
+                                            <View key={index} style={{ width: '99%' }}>
+                                                <View style={[common.row_btw, styles.amount]}>
+                                                    <Text h5 bold>
+                                                        {strings[cat?.category]}
+                                                    </Text>
+                                                    <Text h5 bold>
+                                                        {currencyFormat(cat?.amount)}
+                                                    </Text>
+                                                </View>
+                                                {cat?.quantity || cat?.equipment ? (
+                                                    <View style={common.row_btw}>
+                                                        <Text>
+                                                            {`${cat?.quantity || cat?.equipment || ''} ${cat?.category == 'diesel' ? strings.liter : ''
+                                                                }`}
+                                                        </Text>
+                                                        <Text>{cat?.detail}</Text>
+                                                    </View>
+                                                ) : null}
+                                                {cat?.data && Array.isArray(cat.data)
+                                                    ? cat.data.map((scat, inx) => (
+                                                        <View
+                                                            key={inx}
+                                                            style={[
+                                                                common.row_btw,
+                                                                { flexWrap: 'wrap', marginTop: 5 },
+                                                            ]}>
+                                                            <Text medium>{`${scat?.name}`}</Text>
+                                                            <Text medium>{scat?.quantity}</Text>
+                                                            <Text>{scat?.detail}</Text>
+                                                        </View>
+                                                    ))
+                                                    : null}
+                                            </View>
+                                        ) : null,
+                                    )
                                     : null}
                             </View>
                         </TouchableOpacity>

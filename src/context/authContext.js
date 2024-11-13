@@ -89,10 +89,10 @@ export const AuthProvider = props => {
       setUserVerified: () => {
         dispatch({ type: 'SET_USER_VERIFIED' });
       },
-      reset: () => {
+      reset: async () => {
         // console.log('reset')
         // console.log('reset', res, '-----')
-        auth()
+        await auth()
           .signOut()
           .then(() => {
             storage.clearAll();

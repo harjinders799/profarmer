@@ -1,8 +1,7 @@
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
 import { useRoute, useTheme } from '@react-navigation/native';
-import { useAuth } from '@context/authContext';
-import { goBack, navigate, replace } from '@navigation/ref';
+import { goBack, navigate } from '@navigation/ref';
 import { deleteCropCollection, getCropEvents } from '@network/crop-service';
 import BaseView from '@container/base';
 import Loader from '@components/loader';
@@ -15,14 +14,14 @@ import Animated, {
   FadeInRight,
   FadeInUp,
 } from 'react-native-reanimated';
-import { sumBy } from 'lodash';
 import { currencyFormat, dateFormat, dayCount } from '@utils/dateformat';
 import { ToastError, ToastProgress } from '@utils/toast';
 import { common } from '@utils/style';
 import { white } from '@utils/colors';
 import { strings } from '@translations/locale';
-import Icon from '@components/icon';
 import CropMenuModal from '@container/crop/cropMenuModal';
+import { useCropTracker } from '@context/cropTrackerContext';
+import auth from '@react-native-firebase/auth';
 
 const useCropEvents = cropId => {
   const [events, setEvents] = useState([]);
@@ -45,11 +44,14 @@ const useCropEvents = cropId => {
 const CropDetail = () => {
   const { params } = useRoute();
   const { colors } = useTheme();
-  const data = params?.item ?? [];
-  const { user } = useAuth();
-
-  const { events, loading } = useCropEvents(data?.id);
+  const { selectedCrop, myCrops } = useCropTracker();
+  const data =
+    myCrops.find(c => c?.id == selectedCrop?.id) ||
+    selectedCrop ||
+    params?.item ||
+    {};
   const [openModal, setOpenModal] = useState(false);
+  const { events, loading } = useCropEvents(data?.id);
 
   const handleDelete = useCallback(async () => {
     try {
@@ -81,8 +83,10 @@ const CropDetail = () => {
           <CropMenuModal
             handleShare={() => ToastProgress('Coming Soon')}
             onDeletePress={() => setOpenModal(true)}
-            onEditPress={() => replace('AddCrop', { data })}
+            onEditPress={() => navigate('AddCrop', { data })}
             onAnalysisPress={() => navigate('CropAnalysis', { data, events })}
+            onStopPress={() => navigate('AddCrop', { data, addStopDate: true })}
+            isOwner={data?.uid == auth().currentUser?.uid}
           />
         }
       />
@@ -170,6 +174,21 @@ const CropDetail = () => {
                 {`${dateFormat(data?.dateOfSowing) ?? '--'}`}
               </Text>
             </Animated.View>
+            {data?.cropPeriodCompleted ? (
+              <Animated.View
+                entering={FadeInUp.delay(350).duration(500)}
+                style={[
+                  common.row_btw,
+                  { marginVertical: 5, paddingHorizontal: 20 },
+                ]}>
+                <Text center h4>
+                  {strings.crop_period_completed}
+                </Text>
+                <Text center h4>
+                  {`${dateFormat(data?.cropPeriodCompleted) ?? '--'}`}
+                </Text>
+              </Animated.View>
+            ) : null}
             <Animated.View
               entering={FadeInUp.delay(350).duration(500)}
               style={[
@@ -177,14 +196,19 @@ const CropDetail = () => {
                 { marginVertical: 5, paddingHorizontal: 20 },
               ]}>
               <Text center h4>
-                {strings.total_days_from_sowing}
+                {data?.cropPeriodCompleted
+                  ? strings.crop_period
+                  : strings.total_days_from_sowing}
               </Text>
               <Text center h4>
-                {`${dayCount(data?.dateOfSowing) ?? '--'} ${strings.day}`}
+                {`${dayCount(data?.dateOfSowing, data?.cropPeriodCompleted) ??
+                  '--'
+                  } ${strings.day}`}
               </Text>
             </Animated.View>
           </>
         ) : null}
+        <View style={common.underline} />
         <CropEventDetail data={data} events={events} />
       </ScrollView>
       <DeleteModal

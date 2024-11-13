@@ -281,5 +281,7 @@
   "sold": "बेचा",
   "liter": "लीटर",
   "equipment": "उपकरण",
-  "quantity": "मात्रा"
+  "quantity": "मात्रा",
+  "crop_period_completed": "फसल कार्यकाल समाप्त",
+  "crop_period": "फसल अवधि"
 }

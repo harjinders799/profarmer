@@ -120,14 +120,28 @@ export const deleteEvent = data => {
   });
 };
 
-export const getCropData = onUpdate =>
-  getDocumentsListener(
-    // __DEV__ ? firestore().collection('crops_data') :
-    firestore()
+export const getCropData = () => {
+  try {
+    return firestore()
       .collection('crops_data')
-      .where('uid', '==', auth().currentUser?.uid),
-    onUpdate,
-  );
+      .where('uid', '==', auth().currentUser?.uid)
+      .onSnapshot(
+        querySnapshot => {
+          const documents = querySnapshot.docs.map(doc => ({
+            ...doc.data(),
+            id: doc.id,
+          }));
+          return documents;
+        },
+        error => {
+          ToastError(error?.message);
+          throw new Error(error);
+        },
+      );
+  } catch (error) {
+    reject(new Error(error));
+  }
+};
 
 export const getCropEvents = (id, onUpdate) =>
   getDocumentsListener(
@@ -144,7 +158,10 @@ export const deleteCropCollection = async id => {
 
   try {
     // Reference to the subcollection
-    const subcollectionRef = firestore().collection('crops_data').doc(id).collection('events'); // Replace with your actual subcollection name
+    const subcollectionRef = firestore()
+      .collection('crops_data')
+      .doc(id)
+      .collection('events'); // Replace with your actual subcollection name
 
     // Get all documents in the subcollection
     const subcollectionSnapshot = await subcollectionRef.get();
@@ -166,4 +183,3 @@ export const deleteCropCollection = async id => {
     throw new Error(error);
   }
 };
-

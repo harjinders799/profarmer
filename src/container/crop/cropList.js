@@ -8,19 +8,25 @@ import { navigate } from '@navigation/ref';
 import { currencyFormat, dayCount } from '@utils/dateformat';
 import Animated, { FadeInUp } from 'react-native-reanimated';
 import { common } from '@utils/style';
+import { useCropTracker } from '@context/cropTrackerContext';
+import auth from '@react-native-firebase/auth'
 
 const ITEM_HEIGHT = 100;
 
 const CropList = React.memo(({ data }) => {
   const { colors } = useTheme();
+  const { setSelectedCrop } = useCropTracker();
 
   const renderItem = useCallback(({ item }) => {
     let finalAmount = item?.total_earning - item?.total_expense;
     const balanceColor = finalAmount >= 0 ? colors.success : colors.error;
-
+    const isOwner = item?.uid == auth().currentUser?.uid
     return (
       <Animated.View style={[styles.list, styles.line]} entering={FadeInUp}>
-        <TouchableOpacity onPress={() => navigate('CropDetail', { item })}>
+        <TouchableOpacity onPress={() => {
+          setSelectedCrop(item);
+          navigate('CropDetail', { item })
+        }}>
           <View style={styles.row}>
             <Text numberOfLines={1} h3 style={{ width: '70%' }}>
               {`${item?.name ?? item?.title} (${item?.variety})`}
@@ -50,12 +56,13 @@ const CropList = React.memo(({ data }) => {
               btnStyle={{
                 maxWidth: '50%',
                 width: 'auto',
+                display: isOwner ? 'flex' : 'none'
               }}
               onPress={() => navigate('AddEvent', { data: item })}
             />
             {item?.dateOfSowing ? (
               <Text numberOfLines={1} h3>
-                {`${dayCount(item?.dateOfSowing) ?? '--'} ${strings.day}`}
+                {`${dayCount(item?.dateOfSowing, item?.cropPeriodCompleted) ?? '--'} ${strings.day}`}
               </Text>
             ) : (
               <Button
@@ -66,6 +73,7 @@ const CropList = React.memo(({ data }) => {
                   maxWidth: '50%',
                   width: 'auto',
                   backgroundColor: colors.success,
+                  display: isOwner ? 'flex' : 'none'
                 }}
                 onPress={() => navigate('AddCrop', { data: item, addSowingData: true })}
               />
