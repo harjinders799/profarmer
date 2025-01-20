@@ -38,7 +38,7 @@ const Input = ({
   }, [value]);
 
   return (
-    <Animated.View {...props} style={[styles.container, { borderColor: colors.border }, style]}>
+    <Animated.View {...props} style={[styles.container, style]}>
       {label ? <Text h4 style={styles.label}>{label}</Text> : null}
 
       <View
@@ -78,7 +78,7 @@ const Input = ({
             emailType
               ? 'email-address'
               : numberType
-                ? 'phone-pad'
+                ? 'numeric'
                 : keyboardType
           }
           placeholderTextColor={colors.border}

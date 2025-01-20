@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
-import { FlatList, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { FlatList, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { useTheme } from '@react-navigation/native';
 import Text from '@components/text';
 import Button from '@components/button';
@@ -10,49 +10,41 @@ import Animated, { FadeInUp } from 'react-native-reanimated';
 import { common } from '@utils/style';
 import { useCropTracker } from '@context/cropTrackerContext';
 import auth from '@react-native-firebase/auth';
-import { orange } from '@utils/colors';
-import { hp } from '@utils/fonts';
+import { blue, orange } from '@utils/colors';
 
-const ITEM_HEIGHT = hp(13.6);
+const ITEM_HEIGHT = 100;
 
-const CropList = React.memo(({ data }) => {
+const LandList = React.memo(({ data }) => {
   const { colors } = useTheme();
-  const { setSelectedCrop } = useCropTracker();
+  const { setSelectedLand } = useCropTracker();
 
   const renderItem = useCallback(({ item }) => {
-    let finalAmount = item?.total_earning - item?.total_expense;
-    const balanceColor = finalAmount >= 0 ? colors.success : colors.error;
-    const isOwner = item?.uid == auth().currentUser?.uid;
+    // let finalAmount = item?.total_earning - item?.total_expense;
+    // const balanceColor = finalAmount >= 0 ? colors.success : colors.error;
+    // const isOwner = item?.uid == auth().currentUser?.uid
+    console.log('--------')
     return (
-      <Animated.View entering={FadeInUp}>
+      <Animated.View style={[styles.list, styles.line]} entering={FadeInUp}>
         <TouchableOpacity
           onPress={() => {
-            setSelectedCrop(item);
-            navigate('CropDetail', { item })
-          }}
-          style={[styles.list, styles.line]}>
+            setSelectedLand(item);
+            navigate('LandDetail', { item });
+          }}>
           <View style={styles.row}>
             <Text numberOfLines={1} h3 style={{ width: '70%' }}>
-              {`${item?.name ?? item?.title} (${item?.variety})`}
+              {`${item?.name ?? item?.title}`}
             </Text>
-            <Text numberOfLines={1} h3 color={balanceColor}>
-              {currencyFormat(finalAmount > 0 ? finalAmount : -finalAmount)}
-            </Text>
-          </View>
-          <View style={styles.row}>
             <Text numberOfLines={1} h3>
               {`${item?.totalArea} ${item?.areaUnit}`}
             </Text>
-
-            <Text numberOfLines={1} h3 color={balanceColor}>
-              {finalAmount == 0
-                ? '--'
-                : finalAmount > 0
-                  ? strings.profit
-                  : strings.loss}
-            </Text>
           </View>
           <View style={[styles.row, { marginVertical: 0 }]}>
+            <Text numberOfLines={1} color={colors.error}>
+              {`Free Land`}
+              <Text semi color={colors.error}>
+                {` ${item?.remainingArea} ${item?.areaUnit}`}
+              </Text>
+            </Text>
             <Button
               label={strings.add_activity}
               hitSlop={10}
@@ -60,34 +52,25 @@ const CropList = React.memo(({ data }) => {
               btnStyle={{
                 maxWidth: '50%',
                 width: 'auto',
-                display: isOwner ? 'flex' : 'none',
                 backgroundColor: orange,
+                display: item?.totalArea == item?.remainingArea ? 'none' : 'flex'
               }}
-              onPress={() => {
-                navigate('AddEvent', { data: item });
-              }}
+              onPress={() => { setSelectedLand(item); navigate('AddLandEvent', { land: item }) }}
             />
-            {item?.dateOfSowing ? (
-              <Text numberOfLines={1} h3>
-                {`${dayCount(item?.dateOfSowing, item?.cropPeriodCompleted) ?? '--'
-                  } ${strings.day}`}
-              </Text>
-            ) : (
+          </View>
+          <View style={[styles.row, { marginVertical: 0 }]}>
+            {item?.remainingArea > 0 ?
               <Button
-                label={strings.date_of_sowing}
+                label={strings.add_crop}
                 hitSlop={10}
                 small
                 btnStyle={{
                   maxWidth: '50%',
                   width: 'auto',
-                  backgroundColor: colors.success,
-                  display: isOwner ? 'flex' : 'none',
+                  backgroundColor: blue
                 }}
-                onPress={() =>
-                  navigate('AddCrop', { data: item, addSowingData: true })
-                }
-              />
-            )}
+                onPress={() => navigate('AddCrop', { data: item })}
+              /> : null}
           </View>
         </TouchableOpacity>
       </Animated.View>
@@ -123,26 +106,12 @@ const CropList = React.memo(({ data }) => {
       showsVerticalScrollIndicator={false}
       renderItem={renderItem}
     />
-    // <ScrollView
-    //   style={{
-    //     width: '100%',
-    //   }}
-    //   contentContainerStyle={{
-    //     alignItems: 'center',
-    //     paddingHorizontal: 20,
-    //     paddingBottom: '30%',
-    //   }}>
-    //   {Array.isArray(data) && data.length > 0
-    //     ? data.map((item, index) => renderItem({ item, index }))
-    //     : memoizedEmptyComponent}{' '}
-    // </ScrollView>
   );
 });
 
 const styles = StyleSheet.create({
   flatList: {
     width: '100%',
-    height: hp(70),
     paddingHorizontal: 20,
   },
   contentContainer: {
@@ -163,4 +132,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CropList;
+export default LandList;

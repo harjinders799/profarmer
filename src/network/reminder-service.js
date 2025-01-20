@@ -229,14 +229,20 @@ export const scheduleReminder = async data => {
     id: 'reminder',
     name: 'Reminder Channel',
     importance: AndroidImportance.HIGH,
+    sound: 'ProFarmer',
   });
 
   // Define the reminder content
   const notification = {
     title: data?.title,
     body: data?.description,
+
     android: {
       channelId,
+      lightUpScreen: true,
+      colorized: true,
+      vibrationPattern: [200, 1000, 3000],
+      sound: 'ProFarmer',
       actions: [
         {
           title: '<p style="color: #128557;"><b>Completed</b></p>',

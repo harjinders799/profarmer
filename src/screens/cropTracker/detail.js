@@ -37,39 +37,18 @@ import Button from '@components/button';
 import { getRemindersData } from '@network/reminder-service';
 import ReminderList from '@container/reminder/reminderList';
 
-const useCropEvents = cropId => {
-  const [events, setEvents] = useState([]);
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    setLoading(true);
-    const unsubscribeWork = getCropEvents(cropId, updatedEvents => {
-      setEvents(updatedEvents);
-      setLoading(false);
-    });
-
-    return () => {
-      if (unsubscribeWork) unsubscribeWork();
-    };
-  }, [cropId]);
-
-  return { events, loading };
-};
-
 const CropDetail = () => {
   const { params } = useRoute();
   const { colors } = useTheme();
-  const { selectedCrop, myCrops } = useCropTracker();
+  const { selectedCrop, events, selectedLand, myCrops, loading } = useCropTracker();
   const data =
-    myCrops.find(c => c?.id == selectedCrop?.id) ||
     selectedCrop ||
     params?.item ||
     {};
   const [openModal, setOpenModal] = useState(false);
-  const { events, loading } = useCropEvents(data?.id);
   const [reminders, setReminders] = useState([]);
   const [expandReminders, setExpandReminders] = useState(false);
-
+  console.log({ selectedCrop })
   const fetchData = useCallback(() => {
     const unsubscribe = getRemindersData(
       updatedDocuments => {
@@ -127,7 +106,7 @@ const CropDetail = () => {
           <CropMenuModal
             handleShare={() => ToastProgress('Coming Soon')}
             onDeletePress={() => setOpenModal(true)}
-            onEditPress={() => navigate('AddCrop', { data })}
+            onEditPress={() => navigate('AddCrop', { data: selectedLand, crop: selectedCrop })}
             onAnalysisPress={() => navigate('CropAnalysis', { data, events })}
             onStopPress={() => navigate('AddCrop', { data, addStopDate: true })}
             isOwner={data?.uid == auth().currentUser?.uid}

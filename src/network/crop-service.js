@@ -1,6 +1,7 @@
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import { sanitizeData } from '@utils/helper';
+import { currentStamp } from '@utils/dateformat';
 
 const getDocumentsListener = (query, onUpdate) => {
   try {
@@ -39,6 +40,40 @@ export const addNewCrop = data => {
             total_earning: '0.00',
             read_access: [],
             full_access: [userId],
+            createdAt: currentStamp(),
+            updatedAt: currentStamp(),
+          }),
+        );
+      if (data?.lid) firestore()
+        .collection('lands_data')
+        .doc(data?.lid)
+        .update(sanitizeData({
+          remainingArea: data?.remainingArea,
+          updatedAt: currentStamp(),
+        }));
+      resolve('success');
+    } catch (error) {
+      reject(new Error(error));
+    }
+  });
+};
+
+
+export const addNewLand = data => {
+  return new Promise(function (resolve, reject) {
+    try {
+      let userId = auth().currentUser?.uid;
+      firestore()
+        .collection('lands_data')
+        .add(
+          sanitizeData({
+            ...data,
+            uid: userId,
+            read_access: [],
+            full_access: [userId],
+            remainingArea: data?.totalArea,
+            createdAt: currentStamp(),
+            updatedAt: currentStamp(),
           }),
         );
       resolve('success');
@@ -47,6 +82,7 @@ export const addNewCrop = data => {
     }
   });
 };
+
 
 export const submitEvent = data => {
   return new Promise(function (resolve, reject) {
@@ -68,12 +104,20 @@ export const submitEvent = data => {
 };
 
 export const updateCrop = data => {
-  return new Promise(function (resolve, reject) {
+  console.log(data)
+  return new Promise(async function (resolve, reject) {
     try {
-      firestore()
+      await firestore()
         .collection('crops_data')
         .doc(data?.id)
         .update(sanitizeData(data));
+      if (data?.lid) await firestore()
+        .collection('lands_data')
+        .doc(data?.lid)
+        .update(sanitizeData({
+          remainingArea: data?.remainingArea,
+          updatedAt: currentStamp(),
+        }));
       resolve('success');
     } catch (error) {
       reject(new Error(error));

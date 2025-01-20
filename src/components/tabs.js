@@ -1,21 +1,21 @@
-import { useTheme } from '@react-navigation/native';
-import { WIDTH } from '@utils/constants';
 import React, { useEffect } from 'react';
-import { View, TouchableOpacity, StyleSheet } from 'react-native';
+import { TouchableOpacity, StyleSheet } from 'react-native';
 import Animated, {
     useSharedValue,
     useAnimatedStyle,
     withTiming,
-    LinearTransition,
 } from 'react-native-reanimated';
+import { useTheme } from '@react-navigation/native';
 import Text from './text';
+import { WIDTH } from '@utils/constants';
 import { white } from '@utils/colors';
+
 
 const Tabs = ({ tabs, activeTab, setActiveTab, style, activeTextColor, activeBGColor, inactiveTextColor, inactiveBGColor }) => {
     const translateX = useSharedValue(0);
     const { colors } = useTheme();
+
     useEffect(() => {
-        // Initialize the position of the indicator based on the default active tab
         const index = tabs.indexOf(activeTab);
         translateX.value = withTiming(index * (WIDTH / tabs.length), {
             duration: 200,
@@ -32,7 +32,6 @@ const Tabs = ({ tabs, activeTab, setActiveTab, style, activeTextColor, activeBGC
 
     return (
         <Animated.View
-            layout={LinearTransition}
             style={[styles.container, { backgroundColor: inactiveBGColor ?? colors.secondaryCard }, style]}>
             <Animated.View
                 style={[
@@ -67,17 +66,14 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     tab: {
-        // padding: 10,
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
     },
     indicator: {
         position: 'absolute',
         bottom: 0,
         height: '100%',
         width: '50%',
-        // marginHorizontal: '2%',
-        // borderRadius: 5,
     },
 });
 

@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { View, StyleSheet, ScrollView, Keyboard, Pressable } from 'react-native';
-import { useRoute } from '@react-navigation/native';
+import { useRoute, useTheme } from '@react-navigation/native';
 import Button from '@components/button';
 import Input from '@components/input';
 import Loader from '@components/loader';
@@ -17,52 +17,74 @@ import { common } from '@utils/style';
 import { currentStamp, dateFormat } from '@utils/dateformat';
 import DateTimePicker from '@components/DateTime';
 import { useCropTracker } from '@context/cropTrackerContext';
+import Text from '@components/text';
 
 export default function AddCrop() {
   const { params } = useRoute();
-  const { getMyCrops, getPublicCrops } = useCropTracker();
+  const { colors } = useTheme();
+  const { getMyCrops, refreshCrop, myCrops } = useCropTracker();
   const editData = params?.data ?? {};
+  const editCrop = params?.crop ?? {};
   const addSowingData = params?.addSowingData ?? false;
   const addStopDate = params?.addStopDate ?? false;
   const [showDate, setShowDate] = useState(addSowingData);
   const [showStopDate, setShowStopDate] = useState(addStopDate);
-
+  const [selectCrop, setSelectCrop] = useState([]);
+  console.log(editData);
   const [data, setData] = useState({
-    name: editData?.name ?? '',
-    variety: editData?.variety ?? '',
-    farm: editData?.farm ?? '',
-    totalArea: editData?.totalArea ?? '',
+    name: editCrop?.name ?? '',
+    variety: editCrop?.variety ?? '',
+    farm: editData?.name ?? '',
+    totalArea: editCrop?.totalArea ?? '',
     areaUnit: editData?.areaUnit ?? 'bigha',
-    isPublic: editData?.isPublic ?? 'private',
-    dateOfSowing: editData?.dateOfSowing
-      ? new Date(editData?.dateOfSowing)
+    isPublic: editCrop?.isPublic ?? 'private',
+    dateOfSowing: editCrop?.dateOfSowing
+      ? new Date(editCrop?.dateOfSowing)
       : addSowingData
         ? new Date()
         : null,
-    cropPeriodCompleted: editData?.cropPeriodCompleted
-      ? new Date(editData?.cropPeriodCompleted)
+    cropPeriodCompleted: editCrop?.cropPeriodCompleted
+      ? new Date(editCrop?.cropPeriodCompleted)
       : addStopDate
         ? new Date()
         : null,
   });
   const [loading, setLoading] = useState(false);
-  const { name, variety, farm, totalArea, areaUnit, isPublic, dateOfSowing, cropPeriodCompleted } =
-    data;
+  const {
+    name,
+    variety,
+    totalArea,
+    isPublic,
+    dateOfSowing,
+    cropPeriodCompleted,
+  } = data;
 
   const handleSubmit = useCallback(async () => {
     try {
       setLoading(true);
-      editData?.id
+      editData?.id && (selectCrop?.id || editCrop?.id)
         ? await updateCrop({
-          id: editData?.id,
+          id: editCrop?.id || selectCrop?.id,
+          lid: editData?.id,
           ...data,
-          dateOfSowing: currentStamp(dateOfSowing),
-          cropPeriodCompleted: currentStamp(cropPeriodCompleted),
+          remainingArea:
+            editData?.remainingArea -
+            (totalArea - (editCrop?.totalArea || 0)),
+          dateOfSowing: dateOfSowing ? currentStamp(dateOfSowing) : null,
+          cropPeriodCompleted: cropPeriodCompleted
+            ? currentStamp(cropPeriodCompleted)
+            : null,
         })
-        : await addNewCrop(data);
+        : await addNewCrop({
+          ...data,
+          lid: editData?.id,
+          remainingArea:
+            editData?.remainingArea -
+            (totalArea - (editCrop?.totalArea || 0)),
+        });
       setLoading(false);
       ToastSuccess(strings.successfully_saved);
-      isPublic == 'public' ? getPublicCrops() : getMyCrops();
+      refreshCrop(editCrop);
       goBack();
     } catch (error) {
       setLoading(false);
@@ -73,78 +95,88 @@ export default function AddCrop() {
   return (
     <BaseView>
       <Loader visible={loading} />
-      <Header back label={strings.add_crop} />
+      <Header back label={`${strings.add_crop} (${editData?.name})`} />
       <ScrollView
         keyboardShouldPersistTaps="always"
         automaticallyAdjustKeyboardInsets
         contentContainerStyle={{ paddingHorizontal: 20 }}
         showsVerticalScrollIndicator={false}>
+        {Array.isArray(myCrops) &&
+          myCrops.length > 0 &&
+          (selectCrop?.name || (!data?.name && !data?.variety)) ? (
+          <DropdownPicker
+            entering={FadeInDown.delay(450)}
+            data={myCrops.map(item => ({
+              ...item,
+              detail: `${item.name} ${item.variety} (${item.farm})`,
+            }))}
+            label={strings.crop}
+            labelField="detail"
+            valueField="id"
+            placeholder={strings.crop}
+            showSelectedOnFocus
+            value={data}
+            onChange={value => {
+              setSelectCrop(value);
+              setData(value);
+            }}
+          />
+        ) : null}
+        <Text
+          center
+          bold
+          style={{
+            marginTop: 25,
+            display: data?.name || data?.variety ? 'none' : 'flex',
+          }}>
+          OR
+        </Text>
+        {/* {Array.isArray(crops) && crops.length == 0 ? ( */}
         <View style={styles.form}>
           <Input
             entering={FadeInDown.delay(350)}
-            label={strings.name}
-            placeholder={strings.name}
+            label={`${strings.crop} ${strings.name}`}
+            placeholder={`${strings.crop} ${strings.name}`}
             autoCapitalize="words"
             value={name}
             autoFocus
+            editable={!selectCrop?.id}
+            inputStyle={{
+              backgroundColor: selectCrop?.id
+                ? colors.disable
+                : colors.background,
+            }}
             setValue={value => onChangeValue({ setData, key: 'name', value })}
           />
-          <View style={common.row_btw}>
-            <Input
-              entering={FadeInDown.delay(400)}
-              label={strings.variety}
-              placeholder={'ABC, BWB303...'}
-              value={variety}
-              setValue={value =>
-                onChangeValue({ setData, key: 'variety', value })
-              }
-              style={{ width: '48%' }}
-            />
-            <Input
-              entering={FadeInDown.delay(450)}
-              label={strings.farm}
-              placeholder={'9BGS, 2LNP...'}
-              value={farm}
-              setValue={value => onChangeValue({ setData, key: 'farm', value })}
-              style={{ width: '48%' }}
-            />
-          </View>
-          <View style={common.row_btw}>
-            <Input
-              entering={FadeInDown.delay(400)}
-              label={strings.total_area}
-              placeholder={'2, 5, 20...'}
-              numberType
-              value={totalArea}
-              setValue={value =>
-                onChangeValue({
-                  setData,
-                  key: 'totalArea',
-                  value,
-                  isAmount: true,
-                })
-              }
-              style={{ width: '48%' }}
-            />
-            <DropdownPicker
-              entering={FadeInDown.delay(400)}
-              data={[
-                { label: strings.hectare, value: 'hectare' },
-                { label: strings.acre, value: 'acre' },
-                { label: strings.bigha, value: 'bigha' },
-              ]}
-              label={strings.area_unit}
-              placeholder={strings.area_unit_placeholder}
-              value={areaUnit}
-              labelField="label"
-              valueField="value"
-              onChange={value => {
-                onChangeValue({ setData, key: 'areaUnit', value: value?.value });
-              }}
-              style={{ width: '48%' }}
-              dropdownStyle={{ height: 48, minHeight: 48 }}
-            />
-          </View>
+          <Input
+            entering={FadeInDown.delay(400)}
+            label={strings.variety}
+            placeholder={'ABC, BWB303...'}
+            value={variety}
+            editable={!selectCrop?.id}
+            inputStyle={{
+              backgroundColor: selectCrop?.id
+                ? colors.disable
+                : colors.background,
+            }}
+            setValue={value => onChangeValue({ setData, key: 'variety', value })}
+          />
+          <Input
+            entering={FadeInDown.delay(400)}
+            label={`${strings.total_area} (${strings[editData?.areaUnit ?? 'bigha']
+              })`}
+            placeholder={'2, 5, 20...'}
+            keyboardType={'numeric'}
+            value={totalArea}
+            setValue={value =>
+              onChangeValue({
+                setData,
+                key: 'totalArea',
+                value,
+                isAmount: true,
+              })
+            }
+          />
           <DropdownPicker
             entering={FadeInDown.delay(450)}
             data={[
@@ -218,12 +250,13 @@ export default function AddCrop() {
               />
             </>
           ) : null}
-          <Button
-            entering={FadeInDown.delay(600)}
-            label={strings.save}
-            onPress={handleSubmit}
-          />
         </View>
+        {/* ) : null} */}
+        <Button
+          entering={FadeInDown.delay(600)}
+          label={strings.save}
+          onPress={handleSubmit}
+        />
       </ScrollView>
     </BaseView>
   );
@@ -231,7 +264,7 @@ export default function AddCrop() {
 
 const styles = StyleSheet.create({
   form: {
-    paddingVertical: 25,
+    paddingVertical: 15,
     width: '100%',
   },
 });

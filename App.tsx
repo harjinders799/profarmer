@@ -3,7 +3,7 @@ import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {StoreProvider} from 'src/context/context';
 import FlashMessage from 'react-native-flash-message';
 import Button from 'src/components/button';
-import {checkVersion} from 'react-native-check-version';
+import {checkVersion, VersionInfo} from 'react-native-check-version';
 import Text from 'src/components/text';
 import {
   Linking,
@@ -37,9 +37,9 @@ import {
 import 'react-native-gesture-handler';
 import {CropTrackerProvider} from '@context/cropTrackerContext';
 
-export default function App() {
-  const [version, setVersion] = useState();
-  const [visible, setVisible] = useState(true);
+const App: React.FC = () => {
+  const [version, setVersion] = useState<VersionInfo | null>(null);
+  const [visible, setVisible] = useState<boolean>(true);
 
   useEffect(() => {
     (async () => {
@@ -83,6 +83,7 @@ export default function App() {
   const update = () => {
     if (version?.url) Linking.openURL(version?.url);
   };
+
   return (
     <SafeAreaProvider>
       <GestureHandlerRootView>
@@ -126,4 +127,6 @@ export default function App() {
       </GestureHandlerRootView>
     </SafeAreaProvider>
   );
-}
+};
+
+export default App;

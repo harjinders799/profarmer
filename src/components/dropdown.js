@@ -13,6 +13,7 @@ export default function DropdownPicker({
     dropdownStyle,
     search = false,
     multiple = false,
+    showSelectedOnFocus = false,
     ...rest
 }) {
     const [insideShow, setInsideShow] = useState(true);
@@ -40,7 +41,7 @@ export default function DropdownPicker({
                 searchPlaceholder="Search..."
                 selectedStyle={styles.selectedStyle}
                 inside={insideShow}
-                onFocus={() => setInsideShow(multiple ? false : true)}
+                onFocus={() => setInsideShow(multiple && !showSelectedOnFocus ? false : true)}
                 onBlur={() => setInsideShow(true)}
                 {...rest}
             />

@@ -14,6 +14,12 @@ import PickerStack from '@navigation/pickerStack';
 import { currentStamp } from './dateformat';
 export const storage = new MMKV();
 
+export const debugLog = (message, data) => {
+    if (__DEV__) {
+        console.log(message, data);
+    }
+};
+
 export const onChangeValue = ({
     setData,
     key,
