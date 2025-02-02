@@ -6,6 +6,7 @@ import {
 export const navigationRef = createNavigationContainerRef();
 
 export function navigate(name, params) {
+  console.log('sdfsdf', navigationRef.isReady());
   navigationRef.navigate(name, params);
 }
 

@@ -5,23 +5,22 @@ import Button from 'src/components/button';
 import Logo from 'src/container/logo';
 import Text from 'src/components/text';
 import Loader from 'src/components/loader';
-import {ToastError} from 'src/utils/toast';
+import {ToastError, ToastSuccess} from 'src/utils/toast';
 import {strings} from 'src/translations/locale';
-import {SignInWithEmailUser} from '../../network/auth-service';
-import {navigate} from '@navigation/ref';
+import {sendPasswordResetEmail} from '../../network/auth-service';
 import {ScrollView, TouchableOpacity} from 'react-native';
 import Header from '@components/header';
+import {goBack} from '@navigation/ref';
 
-const SignInWithEmail = () => {
+const ForgotPassword = () => {
   const [loading, setLoading] = useState(false);
-  const [email, setEmail] = useState(__DEV__ ? 'test@tes.com' : '');
-  const [password, setPassword] = useState(__DEV__ ? '123456' : '');
+  const [email, setEmail] = useState('');
 
-  const signIn = async () => {
+  const resetPassword = async () => {
     setLoading(true);
     try {
-      await SignInWithEmailUser(email, password);
-      // Handle successful sign-in (e.g., redirect or show success message)
+      await sendPasswordResetEmail(email);
+      ToastSuccess(strings.reset_link_sent);
     } catch (error) {
       ToastError(error?.message);
     } finally {
@@ -44,7 +43,7 @@ const SignInWithEmail = () => {
         keyboardShouldPersistTaps="handled">
         <Logo />
         <Text h2 style={{marginBottom: 20}}>
-          {strings.welcome}
+          {strings.forgot_password}
         </Text>
         <Input
           emailType
@@ -54,26 +53,13 @@ const SignInWithEmail = () => {
           value={email}
           setValue={setEmail}
         />
-        <Input
-          iconName="locked"
-          iconType="Fontisto"
-          placeholder={strings.password}
-          value={password}
-          setValue={setPassword}
-        />
-        <TouchableOpacity
-          hitSlop={20}
-          onPress={() => navigate('ForgotPassword')}
-          style={{alignSelf: 'flex-end'}}>
-          <Text>{strings['forgot_password']}</Text>
-        </TouchableOpacity>
-        <Button label={strings.login} onPress={signIn} />
-        <TouchableOpacity hitSlop={20} onPress={() => navigate('SignUp')}>
-          <Text>{strings["don't_have_account"]}</Text>
+        <Button label={strings.reset_password} onPress={resetPassword} />
+        <TouchableOpacity hitSlop={20} onPress={goBack}>
+          <Text>{strings.back_to_login}</Text>
         </TouchableOpacity>
       </ScrollView>
     </BaseView>
   );
 };
 
-export default SignInWithEmail;
+export default ForgotPassword;

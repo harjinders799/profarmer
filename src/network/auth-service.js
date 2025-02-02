@@ -1,9 +1,9 @@
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
-import { ToastSuccess } from 'src/utils/toast';
+import {ToastSuccess} from 'src/utils/toast';
 import messaging from '@react-native-firebase/messaging';
-import { formatPhoneNumber, sanitizeData } from '@utils/helper';
-import { strings } from '@translations/locale';
+import {formatPhoneNumber, sanitizeData} from '@utils/helper';
+import {strings} from '@translations/locale';
 import storage from '@react-native-firebase/storage';
 
 export const SignUpUser = async (email, password) => {
@@ -91,7 +91,10 @@ export const UpdateUser = async data => {
       await imgRef.putFile(uri); // Upload image to Firebase Storage
       updatedImageUri = await imgRef.getDownloadURL(); // Get the download URL of the uploaded image
     }
-    await auth().currentUser.updateProfile({ photoURL: updatedImageUri, displayName: data?.name });
+    await auth().currentUser.updateProfile({
+      photoURL: updatedImageUri,
+      displayName: data?.name,
+    });
     return await firestore()
       .collection('users')
       .doc(id)
@@ -120,7 +123,7 @@ export const logout = async () => {
 
 export const getFCMToken = async () => {
   try {
-    let res = await messaging().registerDeviceForRemoteMessages()
+    let res = await messaging().registerDeviceForRemoteMessages();
     const token = await messaging().getToken();
 
     if (token) {
@@ -129,7 +132,7 @@ export const getFCMToken = async () => {
       await saveTokenToFirestore(token);
     }
   } catch (error) {
-    console.log({ error });
+    console.log({error});
   }
 };
 
@@ -143,7 +146,7 @@ export const saveTokenToFirestore = async token => {
         {
           fcmToken: token,
         },
-        { merge: true }, // Use merge to avoid overwriting other user data
+        {merge: true}, // Use merge to avoid overwriting other user data
       );
     console.log('Token saved to Firestore');
   } catch (error) {
@@ -186,7 +189,6 @@ export const getUserById = async id => {
   });
 };
 
-
 export const getAllUsers = async id => {
   return new Promise(async function (resolve, reject) {
     try {
@@ -196,12 +198,13 @@ export const getAllUsers = async id => {
           const users = [];
           if (!snapshot?.empty) {
             snapshot?.forEach(user => {
-              if (user.data()?.name) users.push({
-                name: user.data()?.name,
-                email: user.data()?.email,
-                phone: user.data()?.phone,
-                id: user.id,
-              });
+              if (user.data()?.name)
+                users.push({
+                  name: user.data()?.name,
+                  email: user.data()?.email,
+                  phone: user.data()?.phone,
+                  id: user.id,
+                });
             });
             resolve(users);
           }
@@ -234,8 +237,8 @@ export const updateReadAccessToUID = async phone => {
       const newReadAccess = data.read_access.map(item =>
         item === phone ? uid : item,
       ); // Replace phone with uid
-      console.log({ newReadAccess });
-      batch.update(doc.ref, { read_access: newReadAccess });
+      console.log({newReadAccess});
+      batch.update(doc.ref, {read_access: newReadAccess});
     });
 
     await batch.commit();
@@ -250,7 +253,7 @@ export const linkEmailWithPhone = async (email, password) => {
   try {
     const user = auth().currentUser;
     const credential = getEmailCredential(email, password);
-    console.log({ credential });
+    console.log({credential});
     // Link email and password to the current user
     const linkedUser = await user.linkWithCredential(credential);
     return linkedUser;
@@ -264,4 +267,15 @@ export const linkEmailWithPhone = async (email, password) => {
     }
     throw error;
   }
+};
+
+export const sendPasswordResetEmail = async email => {
+  await auth().sendPasswordResetEmail(email, {
+    url: 'profarmer://reset-password',
+    handleCodeInApp: true,
+  });
+};
+
+export const resetPasswordWithCode = async (oobCode, newPassword) => {
+  await auth().confirmPasswordReset(oobCode, newPassword);
 };

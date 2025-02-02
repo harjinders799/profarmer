@@ -5,23 +5,29 @@ import Button from 'src/components/button';
 import Logo from 'src/container/logo';
 import Text from 'src/components/text';
 import Loader from 'src/components/loader';
-import {ToastError} from 'src/utils/toast';
+import {ToastError, ToastSuccess} from 'src/utils/toast';
 import {strings} from 'src/translations/locale';
-import {SignInWithEmailUser} from '../../network/auth-service';
-import {navigate} from '@navigation/ref';
+import {resetPasswordWithCode} from '../../network/auth-service';
 import {ScrollView, TouchableOpacity} from 'react-native';
 import Header from '@components/header';
+import {navigate, replace} from '@navigation/ref';
 
-const SignInWithEmail = () => {
+const ResetPassword = ({route}) => {
+  const {oobCode} = route.params;
   const [loading, setLoading] = useState(false);
-  const [email, setEmail] = useState(__DEV__ ? 'test@tes.com' : '');
-  const [password, setPassword] = useState(__DEV__ ? '123456' : '');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
 
-  const signIn = async () => {
+  const resetPassword = async () => {
+    if (password !== confirmPassword) {
+      ToastError(strings.passwords_do_not_match);
+      return;
+    }
     setLoading(true);
     try {
-      await SignInWithEmailUser(email, password);
-      // Handle successful sign-in (e.g., redirect or show success message)
+      await resetPasswordWithCode(oobCode, password);
+      ToastSuccess(strings.successfully_updated);
+      replace('SignInWithEmail');
     } catch (error) {
       ToastError(error?.message);
     } finally {
@@ -44,36 +50,28 @@ const SignInWithEmail = () => {
         keyboardShouldPersistTaps="handled">
         <Logo />
         <Text h2 style={{marginBottom: 20}}>
-          {strings.welcome}
+          {strings.reset_password}
         </Text>
         <Input
-          emailType
-          iconName="email"
-          iconType="Zocial"
-          placeholder={strings.email}
-          value={email}
-          setValue={setEmail}
+          iconName="locked"
+          iconType="Fontisto"
+          placeholder={strings.new_password}
+          value={password}
+          setValue={setPassword}
+          secureTextEntry
         />
         <Input
           iconName="locked"
           iconType="Fontisto"
-          placeholder={strings.password}
-          value={password}
-          setValue={setPassword}
+          placeholder={strings.confirm_password}
+          value={confirmPassword}
+          setValue={setConfirmPassword}
+          secureTextEntry
         />
-        <TouchableOpacity
-          hitSlop={20}
-          onPress={() => navigate('ForgotPassword')}
-          style={{alignSelf: 'flex-end'}}>
-          <Text>{strings['forgot_password']}</Text>
-        </TouchableOpacity>
-        <Button label={strings.login} onPress={signIn} />
-        <TouchableOpacity hitSlop={20} onPress={() => navigate('SignUp')}>
-          <Text>{strings["don't_have_account"]}</Text>
-        </TouchableOpacity>
+        <Button label={strings.reset_password} onPress={resetPassword} />
       </ScrollView>
     </BaseView>
   );
 };
 
-export default SignInWithEmail;
+export default ResetPassword;

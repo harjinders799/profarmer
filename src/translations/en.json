@@ -136,7 +136,10 @@
   "given_amount_added": "Given Amount Added",
   "given_amount_with_interest": "Given Amount With Interset",
   "taken_amount_with_interest": "Taken Amount With Interset",
-
+  "reset_password": "Reset Password",
+  "new_password": "New Password",
+  "back_to_login": "Back to Login",
+  "forgot_password": "Forgot Password",
   "description": "Description",
   "title": "Title",
   "variety": "Variety",

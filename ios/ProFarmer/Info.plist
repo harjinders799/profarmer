@@ -31,6 +31,13 @@
 			<array>
 				<string>com.googleusercontent.apps.416058833468-u78siqkj7nt15a8can4vi7qafnraeb2i</string>
 			</array>
+			 <!-- <key>CFBundleURLSchemes</key>
+        <array>
+            <string>profarmer</string>
+        </array>
+        <key>CFBundleURLName</key>
+        <string>com.harjinder.profarmer</string>
+    </dict> -->
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>

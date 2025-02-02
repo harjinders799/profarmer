@@ -290,5 +290,9 @@
   "completed": "ਪੂਰਾ ਕੀਤਾ",
   "active": "ਚਾਲੂ",
   "canceled": "ਰੱਦ ਕੀਤਾ",
-  "add_land": "ਜ਼ਮੀਨ ਜੋੜੋ"
+  "add_land": "ਜ਼ਮੀਨ ਜੋੜੋ",
+  "reset_password": "ਪਾਸਵਰਡ ਰੀਸੈਟ ਕਰੋ",
+  "new_password": "ਨਵਾਂ ਪਾਸਵਰਡ",
+  "back_to_login": "ਵਾਪਸ ਲਾਗਇਨ ਤੇ",
+  "forgot_password": "ਪਾਸਵਰਡ ਭੁੱਲ ਗਏ"
 }

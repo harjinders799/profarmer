@@ -1,29 +1,32 @@
-import React, { useEffect, useState } from 'react';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { NavigationContainer } from '@react-navigation/native';
+import React, {useEffect, useState} from 'react';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {NavigationContainer} from '@react-navigation/native';
 import Login from 'src/screens/auth/login';
-import { themeDark, themeLight } from 'src/utils/themes';
+import {themeDark, themeLight} from 'src/utils/themes';
 // import AdBanner from "src/components/adBanner";
-import { useLang } from 'src/context/langContext';
-import { navigationRef } from './ref';
+import {useLang} from 'src/context/langContext';
+import {navigationRef} from './ref';
 import auth from '@react-native-firebase/auth';
 import Loader from 'src/components/loader';
-import { useAuth } from '../context/authContext';
+import {useAuth} from '../context/authContext';
 import LoginMethods from '../screens/auth/loginMethods';
 import SignInWithEmail from '../screens/auth/signInWithEmail';
 import Stacks from './stacks';
 import LocalAuth from '../screens/auth/localAuth';
 import PinSecurity from '../screens/auth/pinSecurity';
-import { useTab } from '../context/tabContext';
+import {useTab} from '../context/tabContext';
 import ContactUs from '@screens/settings/contactUs';
 import SignUp from '@screens/auth/registerWithEmail';
+import ForgotPassword from '@screens/auth/forgotPassword';
+import ResetPassword from '@screens/auth/resetPassword';
+import {setupDeepLinking} from '@utils/helper';
 
 const Stack = createNativeStackNavigator();
 
 export default function Navigation() {
-  const { getLang, theme } = useLang();
-  const { getUser, userVerified, getPin } = useAuth();
-  const { getTab, tabs } = useTab();
+  const {getLang, theme} = useLang();
+  const {getUser, userVerified, getPin} = useAuth();
+  const {getTab, tabs} = useTab();
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState();
 
@@ -44,6 +47,7 @@ export default function Navigation() {
     if (initializing) setInitializing(false);
   }
   useEffect(() => {
+    setupDeepLinking();
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
     return subscriber;
   }, [userVerified]);
@@ -59,30 +63,20 @@ export default function Navigation() {
         __DEV__ || userVerified ? (
           <Stacks />
         ) : (
-          <Stack.Navigator screenOptions={{ headerShown: false }}>
+          <Stack.Navigator screenOptions={{headerShown: false}}>
             <Stack.Screen name="LocalAuth" component={LocalAuth} />
             <Stack.Screen name="PinSecurity" component={PinSecurity} />
           </Stack.Navigator>
         )
       ) : (
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
-          <Stack.Screen
-            name="LoginMethods"
-            component={LoginMethods}
-          />
-          <Stack.Screen
-            name="SignInWithEmail"
-            component={SignInWithEmail}
-          />
-          <Stack.Screen
-            name="SignUp"
-            component={SignUp}
-          />
-          <Stack.Screen
-            name="Login"
-            component={Login}
-          />
+        <Stack.Navigator screenOptions={{headerShown: false}}>
+          <Stack.Screen name="LoginMethods" component={LoginMethods} />
+          <Stack.Screen name="SignInWithEmail" component={SignInWithEmail} />
+          <Stack.Screen name="SignUp" component={SignUp} />
+          <Stack.Screen name="Login" component={Login} />
           <Stack.Screen name="ContactUs" component={ContactUs} />
+          <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
+          <Stack.Screen name="ResetPassword" component={ResetPassword} />
         </Stack.Navigator>
       )}
       {/* <AdBanner /> */}
